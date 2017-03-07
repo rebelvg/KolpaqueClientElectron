@@ -3,14 +3,11 @@
 <head>
     <title>KLPQ Client</title>
     <meta charset="utf-8">
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="assets/css/photon.css">
     <link rel="stylesheet" href="assets/css/klpq.css">
     <script>if (typeof module === 'object') {
         window.module = module;
         module = undefined;
     }</script>
-
     <!-- normal script imports etc  -->
     <script type="text/javascript" src="assets/js/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="application/setting.js"></script>
@@ -23,53 +20,12 @@
 
 <body>
 <!-- Wrap your entire app inside .window -->
-<div class="window">
-    <div class="tab-group">
-        <div class="tab-item">
-            <span class="icon icon-cancel icon-close-tab"></span>
-            Tab
-        </div>
-        <div class="tab-item active">
-            <span class="icon icon-cancel icon-close-tab"></span>
-            Tab active
-        </div>
-        <div class="tab-item">
-            <span class="icon icon-cancel icon-close-tab"></span>
-            Tab
-        </div>
-        <div class="tab-item tab-item-fixed">
-            <span class="icon icon-plus"></span>
-        </div>
-    </div>
-    <div class="window-content">
-        <div class="pane-group">
-            <div class="pane-sm sidebar">
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox"> This is a checkbox too
-                    </label>
-                </div>
-
-            </div>
-            <div class="pane">
-                <ul class="list-group">
-
-                    <li class="list-group-item">
-                        <div class="media-body">
-                            <strong>List item title</strong>
-                        </div>
-                    </li>
 
 
-                </ul>
-
-            </div>
-        </div>
-    </div>
-    <script>
-        // You can also require other files to run in this process
-        require('./renderer.js')
-    </script>
-</div>
 </body>
+<script>
+
+    require('./renderer.js')
+</script>
+
 </html>
