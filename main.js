@@ -1,4 +1,7 @@
 const electron = require('electron');
+const storage = require('electron-json-storage');
+const Handlebars = require('electron-handlebars');
+let channels = [];
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
@@ -13,17 +16,23 @@ let mainWindow;
 
 function createWindow() {
     // Create the browser window.
+    channels.push({name: 'main', link: 'main.klpq.men'});
+    channels.push({name: 'test', link: 'main.klpq.men'});
     mainWindow = new BrowserWindow({width: 800, height: 600});
-
+    storage.get('channels', function (err, data) {
+        data.channels.forEach(function (channel) {
+            console.log(channel.name);
+        });
+    });
     // and load the index.html of the app.
     mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
+        pathname: path.join(__dirname, 'index.hbs'),
         protocol: 'file:',
         slashes: true
     }));
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -32,6 +41,7 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null
     })
+    console.log(app.getPath('userData'));
 }
 
 // This method will be called when Electron has finished
