@@ -16,9 +16,15 @@ let mainWindow;
 
 function createWindow() {
     // Create the browser window.
-    channels.push({name: 'main', link: 'main.klpq.men'});
-    channels.push({name: 'test', link: 'main.klpq.men'});
-    mainWindow = new BrowserWindow({width: 800, height: 600});
+
+    mainWindow = new BrowserWindow({
+        width: 400,
+        height: 667,
+        resizable: false,
+        fullscreenable: false,
+
+    });
+    mainWindow.setMenu(null);
     storage.get('channels', function (err, data) {
         data.channels.forEach(function (channel) {
             console.log(channel.name);
@@ -32,7 +38,7 @@ function createWindow() {
     }));
 
     // Open the DevTools.
-    //mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
