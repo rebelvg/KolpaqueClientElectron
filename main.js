@@ -1,8 +1,18 @@
 const electron = require('electron');
-const storage = require('electron-json-storage');
-const Handlebars = require('electron-handlebars');
-let channels = [];
-// Module to control application life.
+const Config = require('electron-config');
+const channelsStore = new Config({name: 'channels'});
+const settingsStore = new Config({name: 'channels'});
+let channels = channelsStore.get('channels');
+let settings = settingsStore.get('settings');
+require('electron-handlebars')({
+    settings: settings,
+    channels: channels
+});
+
+let ipcMain = electron.ipcMain;
+ipcMain.on('add-channel', (event, channel) => {
+    channels.push(channel);
+});
 const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
@@ -13,6 +23,7 @@ const url = require('url');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+
 
 function createWindow() {
     // Create the browser window.
@@ -25,11 +36,7 @@ function createWindow() {
 
     });
     mainWindow.setMenu(null);
-    storage.get('channels', function (err, data) {
-        data.channels.forEach(function (channel) {
-            console.log(channel.name);
-        });
-    });
+
     // and load the index.html of the app.
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'index.hbs'),
@@ -42,12 +49,15 @@ function createWindow() {
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
+        channelsStore.set('channels', channels);
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
+
         mainWindow = null
     })
-    console.log(app.getPath('userData'));
+
+
 }
 
 // This method will be called when Electron has finished

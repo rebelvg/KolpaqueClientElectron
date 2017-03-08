@@ -1,3 +1,11 @@
+@font-face {
+    font-family: 'Open Sans';
+    src: url("../fonts/OpenSans-Regular.ttf");
+    src: url("../fonts/OpenSans-Bold.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
 .title {
     font-size: 14px;
 }
@@ -13,6 +21,7 @@
 }
 
 body, html {
+    font-family: "Open Sans";
     min-width: 100%;
     min-height: 100%;
     position: absolute;
@@ -53,22 +62,42 @@ body, html {
 .add-channel {
     margin: 0px 10px;
     clear: both;
+    display: flex;
 }
 
 .collapse-list .fa {
+    width: 9px;
     margin-right: 4px;
+}
+
+.item div {
+
 }
 
 .collapse-wrap {
     display: none;
-    padding: 0px 10px;
+    padding: 0px 5px;
 }
 
 .collapse-wrap.active {
     display: block;
 }
 
+.item-name {
+    margin-left: 4px;
+}
+
+.item {
+    margin: 5px 3px;
+    font-size: 13px;
+    display: flex;
+    font-weight: 600;
+    align-items: center;
+
+}
+
 .collapse-list {
+    font-size: 13px;
     background-color: #fcfcfc;
     height: 25px;
     line-height: 25px;
@@ -79,20 +108,83 @@ body, html {
     cursor: pointer;
 }
 
+#add-channel-btn {
+    padding: 0px 13px 0px 13px;
+    margin: 15px 0px;
+    height: 30px;
+    margin-left: -10px;
+    line-height: 30px;
+    border: 1px solid #393939;
+    background-color: #96ea98;
+    text-align: center;
+    box-sizing: border-box;
+    border-radius: 0px 5px 5px 0px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
 #add-channel {
     margin: 15px 0px;
     height: 30px;
-    width: 100%;
     box-sizing: border-box;
     border-radius: 5px;
     border: 1px solid #393939;
     padding: 10px;
+    flex: 1;
 }
 
 .icon-settings {
     width: 50%;
     float: left;
     text-align: left;
+    font-size: 15px;
+}
+
+#channels-page {
+    height: 100%;
+}
+
+#settings-page {
+    display: none;
+    height: 100%;
+    background-color: #fcfcfc;
+    padding: 0px 10px;
+}
+
+.form-group {
+    margin: 10px 0px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.go-back .change-page .fa {
+    margin-right: 5px;
+}
+
+.change-page {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.form-control {
+
+    height: 30px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid #393939;
+    padding: 10px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.icon-settings a {
+    color: black;
+    text-decoration: none;
 }
 
 footer {
