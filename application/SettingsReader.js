@@ -40,7 +40,8 @@ function ReadFile() {
         let file = fs.readFileSync(settingsPath, 'utf8');
 
         try {
-            return JSON.parse(file);
+            settingsJson = JSON.parse(file);
+            return settingsJson;
         } catch (e) {
             console.log(e);
             return CreateSettings();
@@ -52,7 +53,6 @@ function ReadFile() {
     }
 }
 
-FileReader.settingsJson = settingsJson;
 FileReader.prototype.SaveFile = SaveFile;
 FileReader.prototype.ReadFile = ReadFile;
 
