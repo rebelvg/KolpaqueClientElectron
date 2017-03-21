@@ -1,12 +1,11 @@
 const electron = require('electron');
-const Config = require('electron-config');
-const channelsStore = new Config({name: 'channels'});
-const settingsStore = new Config({name: 'channels'});
-let channels = channelsStore.get('channels');
-let settings = settingsStore.get('settings');
+const SettingsReader = require('./application/SettingsReader');
+let SettingsFile = new SettingsReader().ReadFile();
+let channels = SettingsFile.channels;
+let settings = SettingsFile.settings;
 require('electron-handlebars')({
-    settings: settings,
-    channels: channels
+    channels: channels,
+    settings: settings
 });
 
 let ipcMain = electron.ipcMain;
@@ -24,17 +23,15 @@ const url = require('url');
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-
 function createWindow() {
     // Create the browser window.
-
     mainWindow = new BrowserWindow({
         width: 400,
         height: 667,
         resizable: false,
-        fullscreenable: false,
-
+        fullscreenable: false
     });
+
     mainWindow.setMenu(null);
 
     // and load the index.html of the app.
@@ -47,17 +44,18 @@ function createWindow() {
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
 
+    mainWindow.on('close', function () {
+        new SettingsReader().SaveFile();
+    });
+
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
-        channelsStore.set('channels', channels);
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
 
         mainWindow = null
-    })
-
-
+    });
 }
 
 // This method will be called when Electron has finished
