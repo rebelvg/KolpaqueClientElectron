@@ -5,14 +5,14 @@
 const {app} = require('electron');
 const fs = require('fs');
 let settingsPath = app.getPath('documents') + '\\KolpaqueClient.json';
-let settingsJson = {};
+let settingsJson = [];
 
 function FileReader() {
 }
 
 function CreateSettings() {
-    settingsJson.channels = {};
-    settingsJson.settings = {};
+    settingsJson.channels = [];
+    settingsJson.settings = [];
 
     settingsJson.settings.livestreamerPath = "C:\\Program Files (x86)\\Streamlink\\bin\\streamlink.exe";
     settingsJson.settings.LQ = false;
@@ -28,7 +28,6 @@ function CreateSettings() {
 function SaveFile() {
     try {
         fs.writeFileSync(settingsPath, JSON.stringify(settingsJson, null, 4));
-        console.log("The file was saved!");
     }
     catch (e) {
         console.log(e);

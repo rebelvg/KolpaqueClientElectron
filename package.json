@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "electron-handlebars": "^1.0.0",
-    "electron-json-storage": "^3.0.1"
+    "electron-json-storage": "^3.0.1",
+    "request": "^2.81.0"
   }
 }

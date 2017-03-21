@@ -1,4 +1,5 @@
 const electron = require('electron');
+const ChannelCheck = require('./application/ChannelCheck');
 const SettingsReader = require('./application/SettingsReader');
 let SettingsFile = new SettingsReader().ReadFile();
 let channels = SettingsFile.channels;
@@ -86,12 +87,12 @@ app.on('activate', function () {
  name: "main",
  link: "rtmp://stream.klpq.men/live/main"
  };
- SettingsFile.channels['klpq'] = {
+ SettingsFile.channels['rtmp://stream.klpq.men/live/klpq'] = {
  service: "klpq",
  name: "klpq",
  link: "rtmp://stream.klpq.men/live/klpq"
  };
- SettingsFile.channels['murshun'] = {
+ SettingsFile.channels['rtmp://stream.klpq.men/live/murshun'] = {
  service: "klpq",
  name: "murshun",
  link: "rtmp://stream.klpq.men/live/murshun"

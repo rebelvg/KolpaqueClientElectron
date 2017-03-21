@@ -7,6 +7,7 @@ $('document').ready(function () {
         console.log($pageToOpen);
         $pageToOpen.fadeIn();
     });
+
     $('.collapse-list').on('click', function () {
         let $button = $(this);
         console.log($button.data('id'));
@@ -22,6 +23,7 @@ $('document').ready(function () {
             $button.find('.fa').removeClass('fa-caret-right').addClass('fa-caret-down');
         }
     });
+
     $('#add-channel-btn').on('click', function () {
         let channel = $('#add-channel').val();
         if (channel.length > 0) {
@@ -33,6 +35,5 @@ $('document').ready(function () {
                 '</div>';
             $('#online').append(channel_form);
         }
-
     });
 });
