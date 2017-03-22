@@ -3,15 +3,16 @@
 <head>
     <title>KLPQ Client</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="assets/css/klpq.css">
-    <link rel="stylesheet" href="assets/css/font-awesome.css">
+    <link rel="stylesheet" href="./assets/css/klpq.css">
+    <link rel="stylesheet" id="theme-css" href="./assets/css/light.css">
+
     <script>if (typeof module === 'object') {
         window.module = module;
         module = undefined;
     }</script>
     <!-- normal script imports etc  -->
-    <script type="text/javascript" src="assets/js/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" src="application/scripts.js"></script>
+    <script type="text/javascript" src="./assets/js/jquery-3.1.1.min.js"></script>
+
 
     <!-- Insert this line after script imports -->
     <script>if (window.module) module = window.module;</script>
@@ -20,11 +21,11 @@
 </head>
 
 <body>
-<div id="channels-page" class="page">
+<div id="channels-page" class="page active">
     <div class="wrapper">
         <div class="channels">
-            <div class="collapse-list" data-id="online"><span class="fa fa-caret-right"></span>Online (<span
-                    id="online-number">0</span>)
+            <div class="collapse-list" data-id="online">Online (<span
+                    id="online-number">{{channels.length}}</span>)
             </div>
             <div class="collapse-wrap" id="online">
                 {{#each channels}}
@@ -34,7 +35,7 @@
                     </div>
                 {{/each}}
             </div>
-            <div class="collapse-list" data-id="offline"><span class="fa fa-caret-right"></span>Offline (<span
+            <div class="collapse-list" data-id="offline"></span>Offline (<span
                     id="offline-number">0</span>)
             </div>
             <div class="collapse-wrap" id="offline">
@@ -48,57 +49,86 @@
         <div class="top-footer">
             <div class="add-channel">
                 <input placeholder="Add Channel" id="add-channel">
-                <div class="btn" id="add-channel-btn"><i class="fa fa-plus" aria-hidden="true"></i>
+                <div class="btn" id="add-channel-btn">
                 </div>
             </div>
         </div>
         <div class="bottom-footer">
             <div class="icon-settings">
-                <a data-page="settings" class="fa fa-cog change-page" aria-hidden="true"></a>
+                <a data-page="settings" class="change-page" aria-hidden="true">setting</a>
             </div>
-            <div class="version">
-                version <span id="#version-number">4.20</span>
-            </div>
+
         </div>
     </footer>
 </div>
 <div id="settings-page" class="page">
-    <div class="go-back">
-        <a href="#" class="change-page" data-page="channels"> <span class="fa fa-chevron-left"></span>Back </a>
-    </div>
 
     <div class="form-group">
         <label>Livestreamer Path</label>
-        <input class="form-control" name="livestreamer_path" id="livestreamer_path">
-    </div>
-    <div class="form-group">
-        <label>Screenshot Path</label>
-        <input class="form-control" name="screenshot_path" id="screenshot_path">
+        <input class="form-control" name="livestreamer_path" id="livestreamer_path"
+               value="{{settings.livestreamerPath}}">
     </div>
     <div class="form-group">
         <label>
-            <input id="notification" name="notifications" type="checkbox"> Show Notifications
+
+            <input id="notification" class="settings" data-settings="LQ" {{#if settings.LQ}}checked{{/if}}
+                   type="checkbox"> Low Quality
         </label>
     </div>
     <div class="form-group">
         <label>
-            <input id="notification" name="minimize" type="checkbox"> Minimize at start
+            <input id="notification" class="settings" data-settings="showNotificaions"
+                   {{#if settings.showNotificaions}}checked{{/if}}
+                   type="checkbox"> Show Notifications
         </label>
     </div>
     <div class="form-group">
         <label>
-            <input id="notification" name="play_on_balloon" type="checkbox"> Play on Balloon Click
+            <input id="notification" class="settings" data-settings="autoPlay" {{#if settings.autoPlay}}checked{{/if}}
+                   type="checkbox"> Autoplay
         </label>
     </div>
     <div class="form-group">
         <label>
-            <input id="notification" name="check_updates" type="checkbox"> Check Updates
+            <input id="notification" class="settings" data-settings="minimizeAtStart"
+                   {{#if settings.minimizeAtStart}}checked{{/if}}
+                   type="checkbox">
+            Minimize at
+            start
         </label>
     </div>
     <div class="form-group">
         <label>
-            <input id="notification" name="logs" type="checkbox"> Write Logs
+            <input id="notification" class="settings" data-settings="launchOnBalloonClick"
+                   {{#if settings.launchOnBalloonClick}}checked{{/if}}
+                   type="checkbox"> Play on
+            Balloon
+            Click
         </label>
+    </div>
+
+    <div class="form-group">
+        <label>
+            <input id="notification" class="settings" {{#if settings.enableLog}}checked{{/if}} data-settings="enableLog"
+                   type="checkbox"> Write Logs
+        </label>
+    </div>
+    <div class="form-group">
+        <label>
+            Theme
+        </label>
+        <select id="theme" class=" theme" data-settings="light">
+            <option data-theme="light">Default</option>
+            <option data-theme="dark">Dark</option>
+        </select>
+    </div>
+    <div class="settings-footer">
+        <div class="go-back">
+            <a href="#" class="change-page" data-page="channels"> Back </a>
+        </div>
+        <div class="version">
+            version <span id="#version-number">4.20</span>
+        </div>
     </div>
 </div>
 </body>

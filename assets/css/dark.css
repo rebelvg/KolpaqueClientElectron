@@ -1,0 +1,66 @@
+.tabs {
+    background-color: #292b2c;
+}
+
+.bottom-footer {
+    background-color: #5d5c5c;;
+}
+
+.collapse-list {
+    background-color: #3e4041;
+    color: #b4b4b4;
+    border-color: #343638;
+
+}
+
+input {
+    background-color: #252525;
+    color: white;
+}
+
+#add-channel-btn {
+    border-color: #393939;
+    background-color: #2d4c2d;
+}
+
+#theme {
+    background-color: #252525;
+    color: white;
+}
+
+#add-channel {
+    border-color: #393939;
+}
+
+#settings-page {
+    background-color: #292b2c;
+    color: white;
+}
+
+#settings-page * {
+    color: white
+}
+
+.change-page {
+    color: black;
+}
+
+.item-name {
+    color: white;
+}
+
+body {
+    background-color: #292b2c
+}
+
+.form-control {
+    border-color: #393939;
+}
+
+.icon-settings a {
+    color: black;
+}
+
+footer {
+    background-color: #2f2f2f;
+}

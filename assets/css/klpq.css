@@ -16,8 +16,15 @@
 }
 
 .tabs {
-    background-color: #adabab;
+
     padding: 5px 0px;
+}
+
+#theme {
+    width: 100%;
+    padding: 5px;
+    font-size: 1.0em;
+    margin-top: 10px;
 }
 
 body, html {
@@ -28,7 +35,11 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
+}
 
+.settings-footer > div {
+    width: 50%;
+    display: inline-block;
 }
 
 .channels {
@@ -46,7 +57,7 @@ body, html {
 }
 
 .bottom-footer {
-    background-color: #d0d0d0;
+
     height: 20px;
     padding: 0px 10px;
     font-size: 12px;
@@ -98,13 +109,13 @@ body, html {
 
 .collapse-list {
     font-size: 13px;
-    background-color: #fcfcfc;
+
     height: 25px;
     line-height: 25px;
     padding: 0px 10px;
-    color: #676767;
-    border-top: 1px solid #95989a;
-    border-bottom: 1px solid #95989a;
+
+    border-top: 1px solid;
+    border-bottom: 1px solid;
     cursor: pointer;
 }
 
@@ -114,8 +125,8 @@ body, html {
     height: 30px;
     margin-left: -10px;
     line-height: 30px;
-    border: 1px solid #393939;
-    background-color: #96ea98;
+    border: 1px solid;
+
     text-align: center;
     box-sizing: border-box;
     border-radius: 0px 5px 5px 0px;
@@ -144,11 +155,24 @@ body, html {
     height: 100%;
 }
 
+#settings-page.active {
+    display: flex;
+}
+
+#channels-page.active {
+    display: block;
+}
+
 #settings-page {
-    display: none;
+
     height: 100%;
-    background-color: #fcfcfc;
     padding: 0px 10px;
+
+    flex-direction: column;
+}
+
+.page:not(.active) {
+    display: none;
 }
 
 .form-group {
@@ -157,7 +181,6 @@ body, html {
 
 .form-group label {
     display: block;
-    font-weight: bold;
     font-size: 14px;
 }
 
@@ -166,7 +189,6 @@ body, html {
 }
 
 .change-page {
-    color: black;
     text-decoration: none;
     cursor: pointer;
 }
@@ -176,7 +198,7 @@ body, html {
     height: 30px;
     box-sizing: border-box;
     border-radius: 5px;
-    border: 1px solid #393939;
+    border: 1px solid;
     padding: 10px;
     width: 100%;
     margin-top: 8px;
@@ -187,10 +209,19 @@ body, html {
     text-decoration: none;
 }
 
+.settings-footer {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: flex-end;
+    margin-bottom: 5px;
+}
+
 footer {
     position: relative;
     height: 75px;
-    background-color: #ededed;
+
     margin-top: -75px;
     width: 100%;
+
 }

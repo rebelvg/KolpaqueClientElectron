@@ -11,7 +11,11 @@ require('electron-handlebars')({
 
 let ipcMain = electron.ipcMain;
 ipcMain.on('add-channel', (event, channel) => {
-    channels.push(channel);
+    return true
+});
+ipcMain.on('change-setting', (event, setting) => {
+
+    console.log('Setting ' + setting.name + 'changed to ' + setting.value);
 });
 const app = electron.app;
 // Module to create native browser window.

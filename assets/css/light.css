@@ -1,0 +1,42 @@
+.tabs {
+    background-color: #adabab;
+}
+
+.bottom-footer {
+    background-color: #d0d0d0;
+}
+
+.collapse-list {
+    background-color: #fcfcfc;
+    color: #676767;
+    border-color: #95989a;
+}
+
+#add-channel-btn {
+    border-color: #393939;
+    background-color: #96ea98;
+}
+
+#add-channel {
+    border: 1px solid #393939;
+}
+
+#settings-page {
+    background-color: #fcfcfc;
+}
+
+.change-page {
+    color: black;
+}
+
+.form-control {
+    border-color: #393939;
+}
+
+.icon-settings a {
+    color: black;
+}
+
+footer {
+    background-color: #ededed;
+}
