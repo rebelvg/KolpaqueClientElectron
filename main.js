@@ -1,22 +1,35 @@
 const electron = require('electron');
-const ChannelCheck = require('./application/ChannelCheck');
 const SettingsReader = require('./application/SettingsReader');
 let SettingsFile = new SettingsReader().ReadFile();
 let channels = SettingsFile.channels;
 let settings = SettingsFile.settings;
+
+const ChannelCheck = require('./application/ChannelCheck');
+const PlayStreamModule = require('./application/PlayStreamModule');
+
 require('electron-handlebars')({
     channels: channels,
     settings: settings
 });
 
 let ipcMain = electron.ipcMain;
-ipcMain.on('add-channel', (event, channel) => {
-    return true
-});
-ipcMain.on('change-setting', (event, setting) => {
 
-    console.log('Setting ' + setting.name + 'changed to ' + setting.value);
+ipcMain.on('add-channel', (event, channel) => {
+    let channelObj = new SettingsReader().addChannel(channel.link);
+
+    if (channelObj === false)
+        return false;
+
+    console.log('channel ' + channelObj.name + ' was added');
+
+    event.returnValue = {status: true, channel: channelObj};
 });
+
+ipcMain.on('change-setting', (event, setting) => {
+    settings[setting.name] = setting.value;
+    console.log('setting ' + setting.name + ' changed to ' + setting.value);
+});
+
 const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
@@ -85,23 +98,11 @@ app.on('activate', function () {
     }
 });
 
-/*
- SettingsFile.channels['rtmp://stream.klpq.men/live/main'] = {
- service: "klpq",
- name: "main",
- link: "rtmp://stream.klpq.men/live/main"
- };
- SettingsFile.channels['rtmp://stream.klpq.men/live/klpq'] = {
- service: "klpq",
- name: "klpq",
- link: "rtmp://stream.klpq.men/live/klpq"
- };
- SettingsFile.channels['rtmp://stream.klpq.men/live/murshun'] = {
- service: "klpq",
- name: "murshun",
- link: "rtmp://stream.klpq.men/live/murshun"
- };
- */
+for (var channel in SettingsFile.channels) {
+    let channelObj = SettingsFile.channels[channel];
+    new ChannelCheck().GetStats(channelObj);
+    //new PlayStreamModule().LaunchPlayer(channelObj);
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

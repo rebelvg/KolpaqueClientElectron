@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron ."
   },
-  "repository": "http://klpq.men/",
+  "repository": {},
   "keywords": [
     "Electron",
     "quick",
@@ -24,6 +24,7 @@
   "dependencies": {
     "electron-handlebars": "^1.0.0",
     "electron-json-storage": "^3.0.1",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "underscore": "^1.8.3"
   }
 }

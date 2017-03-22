@@ -3,69 +3,75 @@
  */
 
 var request = require("request");
+const PlayStreamModule = require('./PlayStreamModule');
 let twitchApiKey = "dk330061dv4t81s21utnhhdona0a91x";
-let onlineChannels = [];
+let onlineChannels = {};
 
 function ChannelCheck() {
 }
 
-function WentOnline(service, channel) {
-    if (!onlineChannels.hasOwnProperty(service)) {
-        onlineChannels[service] = [];
+function WentOnline(channelObj) {
+    let channelService = channelObj.service;
+    let channelName = channelObj.name;
+
+    if (!onlineChannels.hasOwnProperty(channelService)) {
+        onlineChannels[channelService] = [];
     }
 
-    if (onlineChannels[service].indexOf(channel) == -1) {
-        console.log(service + " " + channel + " went online.");
+    if (onlineChannels[channelService].indexOf(channelName) == -1) {
+        console.log(channelService + " " + channelName + " went online.");
 
-        onlineChannels[service].push(channel);
+        onlineChannels[channelService].push(channelName);
     }
 }
 
-function WentOffline(service, channel) {
-    if (!onlineChannels.hasOwnProperty(service)) {
-        onlineChannels[service] = [];
+function WentOffline(channelObj) {
+    let channelService = channelObj.service;
+    let channelName = channelObj.name;
+
+    if (!onlineChannels.hasOwnProperty(channelService)) {
+        onlineChannels[channelService] = [];
     }
 
-    var index = onlineChannels[service].indexOf(channel);
+    var index = onlineChannels[channelService].indexOf(channelName);
 
     if (index > -1) {
-        console.log(service + " " + channel + " went offline.");
+        console.log(channelService + " " + channelName + " went offline.");
 
-        onlineChannels[service].splice(1, index);
+        onlineChannels[channelService].splice(1, index);
     }
 }
 
 function GetStats(channelObj) {
-    var service = channelObj.service;
-    var channel = channelObj.channel;
+    var channelService = channelObj.service;
 
-    switch (service) {
+    switch (channelService) {
         case 'klpq':
-            GetKlpqStats(channel);
+            GetKlpqStats(channelObj);
             break;
         case 'twitch':
-            GetTwitchStats(channel);
+            GetTwitchStats(channelObj);
             break;
         default:
             break;
     }
 }
 
-function GetKlpqStats(channel) {
-    let service = 'klpq';
-    var url = "http://stats.klpq.men/channel/" + channel;
+function GetKlpqStats(channelObj) {
+    let channelService = 'klpq';
+    var url = "http://stats.klpq.men/channel/" + channelObj.name;
 
     request({url: url, json: true}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             try {
                 if (body.isLive) {
-                    console.log(service + " " + channel + " is online.");
+                    console.log(channelService + " " + channelObj.name + " is online.");
 
-                    WentOnline(service, channel);
+                    WentOnline(channelObj);
                 } else {
-                    console.log(service + " " + channel + " is offline.");
+                    console.log(channelService + " " + channelObj.name + " is offline.");
 
-                    WentOffline(service, channel);
+                    WentOffline(channelObj);
                 }
             }
             catch (e) {
@@ -75,21 +81,21 @@ function GetKlpqStats(channel) {
     })
 }
 
-function GetTwitchStats(channel) {
-    let service = 'twitch';
-    var url = "https://api.twitch.tv/kraken/streams?channel=" + channel + "&client_id=" + twitchApiKey;
+function GetTwitchStats(channelObj) {
+    let channelService = 'twitch';
+    var url = "https://api.twitch.tv/kraken/streams?channel=" + channelObj.name + "&client_id=" + twitchApiKey;
 
     request({url: url, json: true}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             try {
                 if (body.streams.length > 0) {
-                    console.log(service + " " + channel + " is online.");
+                    console.log(channelService + " " + channelObj.name + " is online.");
 
-                    WentOnline(service, channel);
+                    WentOnline(channelObj);
                 } else {
-                    console.log(service + " " + channel + " is offline.");
+                    console.log(channelService + " " + channelObj.name + " is offline.");
 
-                    WentOffline(service, channel);
+                    WentOffline(channelObj);
                 }
             }
             catch (e) {
