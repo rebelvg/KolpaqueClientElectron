@@ -1,12 +1,12 @@
 {
-  "name": "KLPQ client",
+  "name": "Kolpaque Client",
   "version": "0.0.4",
   "description": "GUI client for StreamLink/LiveStreamer",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "http://klpq.men/",
   "keywords": [
     "Electron",
     "quick",
@@ -14,7 +14,7 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
+  "author": "KLPQ",
   "license": "CC0-1.0",
   "devDependencies": {
     "babel-cli": "^6.23.0",
