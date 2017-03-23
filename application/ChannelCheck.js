@@ -6,44 +6,41 @@ const request = require('request');
 const SettingsFile = require('./SettingsFile');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
-let onlineChannels = {};
+let onlineChannels = [];
 let settingsJson = new SettingsFile().readFile();
 let clientChannels = settingsJson.channels;
 let clientSettings = settingsJson.settings;
+let mainWindow = null;
 
 function ChannelCheck() {
 }
 
 function wentOnline(channelObj) {
-    let channelService = channelObj.service;
-    let channelName = channelObj.name;
+    let channelLink = channelObj.link;
 
-    if (!onlineChannels.hasOwnProperty(channelService)) {
-        onlineChannels[channelService] = [];
-    }
+    if (onlineChannels.indexOf(channelLink) > -1)
+        return;
 
-    if (onlineChannels[channelService].indexOf(channelName) == -1) {
-        console.log(channelService + " " + channelName + " went online.");
+    console.log(channelLink + " went online.");
 
-        onlineChannels[channelService].push(channelName);
-    }
+    onlineChannels.push(channelLink);
+
+    mainWindow.webContents.send('channel-went-online', channelObj);
 }
 
 function wentOffline(channelObj) {
-    let channelService = channelObj.service;
-    let channelName = channelObj.name;
+    let channelLink = channelObj.link;
 
-    if (!onlineChannels.hasOwnProperty(channelService)) {
-        onlineChannels[channelService] = [];
-    }
+    var index = onlineChannels.indexOf(channelLink);
 
-    var index = onlineChannels[channelService].indexOf(channelName);
+    if (index == -1)
+        return;
 
-    if (index > -1) {
-        console.log(channelService + " " + channelName + " went offline.");
+    console.log(channelLink + " went offline.");
 
-        onlineChannels[channelService].splice(1, index);
-    }
+    onlineChannels.splice(1, index);
+
+    mainWindow.webContents.send('channel-went-offline', channelObj);
 }
 
 function getKlpqStats(channelObj) {
@@ -109,7 +106,9 @@ function getStats(channelObj) {
     }
 }
 
-function checkLoop() {
+function checkLoop(mainWindowRef) {
+    mainWindow = mainWindowRef;
+
     setInterval(function () {
         for (var channel in clientChannels) {
             if (clientChannels.hasOwnProperty(channel)) {
