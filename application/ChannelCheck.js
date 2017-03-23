@@ -3,10 +3,13 @@
  */
 
 const request = require('request');
-const ChannelPlay = require('./ChannelPlay');
+const SettingsFile = require('./SettingsFile');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = {};
+let settingsJson = new SettingsFile().readFile();
+let clientChannels = settingsJson.channels;
+let clientSettings = settingsJson.settings;
 
 function ChannelCheck() {
 }
@@ -106,6 +109,18 @@ function getStats(channelObj) {
     }
 }
 
-ChannelCheck.prototype.getStats = getStats;
+function checkLoop() {
+    setInterval(function () {
+        for (var channel in clientChannels) {
+            if (clientChannels.hasOwnProperty(channel)) {
+                let channelObj = clientChannels[channel];
+
+                getStats(channelObj);
+            }
+        }
+    }, 5000);
+}
+
+ChannelCheck.prototype.checkLoop = checkLoop;
 
 module.exports = ChannelCheck;

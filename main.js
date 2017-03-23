@@ -98,14 +98,7 @@ app.on('activate', function () {
     }
 });
 
-for (var channel in clientChannels) {
-    if (clientChannels.hasOwnProperty(channel)) {
-        let channelObj = clientChannels[channel];
-
-        new ChannelCheck().getStats(channelObj);
-        //new ChannelPlay().launchPlayer(channelObj);
-    }
-}
+new ChannelCheck().checkLoop();
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
