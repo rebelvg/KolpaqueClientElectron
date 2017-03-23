@@ -82,7 +82,7 @@ body {
 }
 
 .file-input-addon {
-    color: black;
+    color: black !important;
 }
 
 footer {

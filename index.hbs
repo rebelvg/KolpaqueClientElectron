@@ -4,7 +4,7 @@
     <title>Kolpaque Client</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="./assets/css/klpq.css">
-    <link rel="stylesheet" id="theme-css" href="./assets/css/light.css">
+    <link rel="stylesheet" id="theme-css" href="./assets/css/{{settings.theme}}.css">
 
     <script>if (typeof module === 'object') {
         window.module = module;
@@ -21,25 +21,24 @@
 </head>
 
 <body>
+<span class="d-none" id="theme-selected">{{settings.theme}}</span>
 <div id="channels-page" class="page active">
     <div class="wrapper">
         <div class="channels">
-            <div class="collapse-list" data-id="online"><span class="icon caret"></span>Online (<span
-                    id="online-number">{{channels.length}}</span>)
+            <div class="collapse-list" data-id="online"><span class="icon caret"></span>Online
             </div>
             <div class="collapse-wrap" id="online">
+
+            </div>
+            <div class="collapse-list" data-id="offline"><span class="icon caret"></span>Offline
+            </div>
+            <div class="collapse-wrap" id="offline">
                 {{#each channels}}
-                    <div class="item">
+                    <div class="item" data-id="{{link}}">
                         <div class="item-icon fa-twitch fa"></div>
                         <div class="item-name"> {{link}}</div>
                     </div>
                 {{/each}}
-            </div>
-            <div class="collapse-list" data-id="offline"><span class="icon caret"></span>Offline (<span
-                    id="offline-number">0</span>)
-            </div>
-            <div class="collapse-wrap" id="offline">
-
             </div>
         </div>
 
@@ -124,8 +123,8 @@
             Theme
         </label>
         <select id="theme" class=" theme" data-settings="light">
-            <option data-theme="light">Default</option>
-            <option data-theme="dark">Dark</option>
+            <option data-theme="light" value="light">Default</option>
+            <option data-theme="dark" value="dark">Dark</option>
         </select>
     </div>
     <div class="settings-footer">
