@@ -30,7 +30,7 @@ function launchPlayer(channelObj) {
         child(path, [link, quality], function (err, data) {
             //console.log(err);
             //console.log(data.toString());
-            console.log('player was close.');
+            console.log('player was closed.');
         });
     } else {
         console.log(path + " not found.");
