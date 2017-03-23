@@ -4,14 +4,15 @@
 
 const {app} = require('electron');
 const fs = require('fs');
+const _ = require('underscore');
+
 let settingsPath = app.getPath('documents') + '\\KolpaqueClient.json';
 let settingsJson = {};
-var _ = require('underscore');
 
-function FileReader() {
+function SettingsFile() {
 }
 
-function CreateSettings() {
+function createSettings() {
     settingsJson.channels = {};
     settingsJson.settings = {};
 
@@ -27,7 +28,7 @@ function CreateSettings() {
     return settingsJson;
 }
 
-function SaveFile() {
+function saveFile() {
     try {
         fs.writeFileSync(settingsPath, JSON.stringify(settingsJson, null, 4));
     }
@@ -36,7 +37,7 @@ function SaveFile() {
     }
 }
 
-function ReadFile() {
+function readFile() {
     try {
         let file = fs.readFileSync(settingsPath, 'utf8');
 
@@ -45,22 +46,24 @@ function ReadFile() {
             return settingsJson;
         } catch (e) {
             console.log(e);
-            return CreateSettings();
+            return createSettings();
         }
     }
     catch (e) {
         console.log(e);
-        return CreateSettings();
+        return createSettings();
     }
 }
 
 function addChannel(channelLink) {
+    let clientChannels = settingsJson.channels;
+
     channelLink = channelLink.replace(/\s+/g, '').toLowerCase();
 
     if (channelLink.length == 0)
         return false;
 
-    if (settingsJson.channels.hasOwnProperty(channelLink))
+    if (clientChannels.hasOwnProperty(channelLink))
         return false;
 
     let channelService = "custom";
@@ -92,18 +95,18 @@ function addChannel(channelLink) {
         'link': channelLink
     };
 
-    _.extend(settingsJson.channels, channelObj);
+    _.extend(clientChannels, channelObj);
 
     return channelObj[channelLink];
 }
 
-function ReturnSettings() {
+function returnSettings() {
     return settingsJson;
 }
 
-FileReader.prototype.SaveFile = SaveFile;
-FileReader.prototype.ReadFile = ReadFile;
-FileReader.prototype.addChannel = addChannel;
-FileReader.prototype.ReturnSettings = ReturnSettings;
+SettingsFile.prototype.saveFile = saveFile;
+SettingsFile.prototype.readFile = readFile;
+SettingsFile.prototype.addChannel = addChannel;
+SettingsFile.prototype.returnSettings = returnSettings;
 
-module.exports = FileReader;
+module.exports = SettingsFile;

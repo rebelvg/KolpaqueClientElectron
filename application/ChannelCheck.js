@@ -2,15 +2,16 @@
  * Created by rebel on 21/03/2017.
  */
 
-var request = require("request");
-const PlayStreamModule = require('./PlayStreamModule');
-let twitchApiKey = "dk330061dv4t81s21utnhhdona0a91x";
+const request = require('request');
+const ChannelPlay = require('./ChannelPlay');
+
+let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = {};
 
 function ChannelCheck() {
 }
 
-function WentOnline(channelObj) {
+function wentOnline(channelObj) {
     let channelService = channelObj.service;
     let channelName = channelObj.name;
 
@@ -25,7 +26,7 @@ function WentOnline(channelObj) {
     }
 }
 
-function WentOffline(channelObj) {
+function wentOffline(channelObj) {
     let channelService = channelObj.service;
     let channelName = channelObj.name;
 
@@ -42,22 +43,7 @@ function WentOffline(channelObj) {
     }
 }
 
-function GetStats(channelObj) {
-    var channelService = channelObj.service;
-
-    switch (channelService) {
-        case 'klpq':
-            GetKlpqStats(channelObj);
-            break;
-        case 'twitch':
-            GetTwitchStats(channelObj);
-            break;
-        default:
-            break;
-    }
-}
-
-function GetKlpqStats(channelObj) {
+function getKlpqStats(channelObj) {
     let channelService = 'klpq';
     var url = "http://stats.klpq.men/channel/" + channelObj.name;
 
@@ -67,11 +53,11 @@ function GetKlpqStats(channelObj) {
                 if (body.isLive) {
                     console.log(channelService + " " + channelObj.name + " is online.");
 
-                    WentOnline(channelObj);
+                    wentOnline(channelObj);
                 } else {
                     console.log(channelService + " " + channelObj.name + " is offline.");
 
-                    WentOffline(channelObj);
+                    wentOffline(channelObj);
                 }
             }
             catch (e) {
@@ -81,7 +67,7 @@ function GetKlpqStats(channelObj) {
     })
 }
 
-function GetTwitchStats(channelObj) {
+function getTwitchStats(channelObj) {
     let channelService = 'twitch';
     var url = "https://api.twitch.tv/kraken/streams?channel=" + channelObj.name + "&client_id=" + twitchApiKey;
 
@@ -91,11 +77,11 @@ function GetTwitchStats(channelObj) {
                 if (body.streams.length > 0) {
                     console.log(channelService + " " + channelObj.name + " is online.");
 
-                    WentOnline(channelObj);
+                    wentOnline(channelObj);
                 } else {
                     console.log(channelService + " " + channelObj.name + " is offline.");
 
-                    WentOffline(channelObj);
+                    wentOffline(channelObj);
                 }
             }
             catch (e) {
@@ -105,6 +91,21 @@ function GetTwitchStats(channelObj) {
     })
 }
 
-ChannelCheck.prototype.GetStats = GetStats;
+function getStats(channelObj) {
+    var channelService = channelObj.service;
+
+    switch (channelService) {
+        case 'klpq':
+            getKlpqStats(channelObj);
+            break;
+        case 'twitch':
+            getTwitchStats(channelObj);
+            break;
+        default:
+            break;
+    }
+}
+
+ChannelCheck.prototype.getStats = getStats;
 
 module.exports = ChannelCheck;
