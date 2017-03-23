@@ -24,7 +24,7 @@
 <div id="channels-page" class="page active">
     <div class="wrapper">
         <div class="channels">
-            <div class="collapse-list" data-id="online">Online (<span
+            <div class="collapse-list" data-id="online"><span class="icon caret"></span>Online (<span
                     id="online-number">{{channels.length}}</span>)
             </div>
             <div class="collapse-wrap" id="online">
@@ -35,7 +35,7 @@
                     </div>
                 {{/each}}
             </div>
-            <div class="collapse-list" data-id="offline"></span>Offline (<span
+            <div class="collapse-list" data-id="offline"><span class="icon caret"></span>Offline (<span
                     id="offline-number">0</span>)
             </div>
             <div class="collapse-wrap" id="offline">
@@ -50,12 +50,13 @@
             <div class="add-channel">
                 <input placeholder="Add Channel" id="add-channel">
                 <div class="btn" id="add-channel-btn">
+                    <span class="icon plus"></span>
                 </div>
             </div>
         </div>
         <div class="bottom-footer">
             <div class="icon-settings">
-                <a data-page="settings" class="change-page" aria-hidden="true">setting</a>
+                <a data-page="settings" class="change-page" aria-hidden="true"><span class="icon cog"></span></a>
             </div>
 
         </div>
@@ -65,8 +66,13 @@
 
     <div class="form-group">
         <label>Livestreamer Path</label>
-        <input class="form-control" name="livestreamer_path" id="livestreamer_path"
-               value="{{settings.livestreamerPath}}">
+        <input type="file" class="d-none" id="livestreamer_input" value="C:\Program Files (x86)\Streamlink\bin\">
+        <div class="file-input-group">
+            <input disabled class="form-control" name="livestreamer_path" id="livestreamer_path"
+                   value="{{settings.livestreamerPath}}">
+            <div class="btn file-input-addon">...</div>
+        </div>
+
     </div>
     <div class="form-group">
         <label>

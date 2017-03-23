@@ -119,6 +119,40 @@ body, html {
     cursor: pointer;
 }
 
+.d-none {
+    display: none;
+}
+
+.file-input-group {
+    clear: both;
+    display: flex;
+}
+
+#livestreamer_path {
+    height: 30px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid #393939;
+    flex: 1;
+}
+
+.file-input-addon {
+    padding: 0px 8px 0px 8px;
+    margin: 8px 0px 0px 0px;
+    height: 30px;
+    margin-left: -10px;
+    line-height: 30px;
+    border: 1px solid;
+    text-align: center;
+    box-sizing: border-box;
+    border-radius: 0px 5px 5px 0px;
+    font-size: 13px;
+    display: flex;
+    cursor: pointer;
+    background-color: white;
+    align-items: center;
+}
+
 #add-channel-btn {
     padding: 0px 13px 0px 13px;
     margin: 15px 0px;
@@ -126,12 +160,13 @@ body, html {
     margin-left: -10px;
     line-height: 30px;
     border: 1px solid;
-
     text-align: center;
     box-sizing: border-box;
     border-radius: 0px 5px 5px 0px;
     font-size: 13px;
+    display: flex;
     cursor: pointer;
+    align-items: center;
 }
 
 #add-channel {
@@ -207,6 +242,38 @@ body, html {
 .icon-settings a {
     color: black;
     text-decoration: none;
+}
+
+.caret {
+    background-image: url('caret-right.svg');
+    padding-top: 7px;
+}
+
+.caret.active {
+    background-image: url('caret-down.svg');
+    padding-top: 7px;
+}
+
+.cog {
+    background-image: url('cog.svg');
+    padding-top: 2px;
+}
+
+.plus {
+    background-image: url('plus.svg');
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    background-size: 100%;
+    display: block;
+    clear: both;
+    background-position: center center;
+
+    position: relative;
+    background-repeat: no-repeat;
+    float: left;
 }
 
 .settings-footer {

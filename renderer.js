@@ -16,12 +16,15 @@ $('document').ready(function () {
 
         if ($item.hasClass('active')) {
             $item.removeClass('active');
-            $button.find('.fa').removeClass('fa-caret-down').addClass('fa-caret-right');
+            $button.find('.icon').removeClass('active');
         }
         else {
             $item.addClass('active');
-            $button.find('.fa').removeClass('fa-caret-right').addClass('fa-caret-down');
+            $button.find('.icon').addClass('active');
         }
+    });
+    ipcRenderer.on('channel-status', function () {
+
     });
     $('#add-channel-btn').on('click', function () {
         let channel = $('#add-channel').val();
@@ -39,7 +42,20 @@ $('document').ready(function () {
     $('#theme').on('change', function () {
         $selected = $(this).find(':selected').data('theme');
         $('#theme-css').attr('href', "./assets/css/" + $selected + '.css');
+        ipcRenderer.send('change-setting', {name: 'theme', value: $selected});
     });
+
+    $('#livestreamer_input').on('change', function () {
+        if ($(this).get(0).files.length != 0) {
+            let path = this.files[0].path;
+            $('#livestreamer_path').val(path);
+            ipcRenderer.send('change-setting', {name: "livestreamerPath", value: path});
+        }
+    });
+
+    $('.file-input-addon').on('click', function () {
+        $('#livestreamer_input').click();
+    })
     $('.settings').on('change', function () {
         settingsName = $(this).data('settings');
         settingsValue = $(this).prop('checked');

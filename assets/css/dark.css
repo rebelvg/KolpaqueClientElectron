@@ -57,7 +57,31 @@ body {
     border-color: #393939;
 }
 
+.icon {
+    background: white;
+}
+
+.cog {
+    -webkit-mask: url(cog.svg) center / contain no-repeat;
+}
+
+.plus {
+    -webkit-mask: url(plus.svg) center / contain no-repeat;
+}
+
+.caret {
+    -webkit-mask: url(caret-right.svg) center / contain no-repeat;
+}
+
+.caret.active {
+    -webkit-mask: url(caret-down.svg) center / contain no-repeat;
+}
+
 .icon-settings a {
+    color: black;
+}
+
+.file-input-addon {
     color: black;
 }
 
