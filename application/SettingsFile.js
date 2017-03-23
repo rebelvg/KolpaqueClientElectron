@@ -23,12 +23,12 @@ function createSettings() {
     settingsJson.settings.minimizeAtStart = false;
     settingsJson.settings.launchOnBalloonClick = true;
     settingsJson.settings.enableLog = false;
-    settingsJson.settings.theme = "Default";
+    settingsJson.settings.theme = "light";
 
     return settingsJson;
 }
 
-function saveFile(settingsJson) {
+function saveFile() {
     try {
         console.log(settingsJson);
         fs.writeFileSync(settingsPath, JSON.stringify(settingsJson, null, 4));
@@ -57,14 +57,12 @@ function readFile() {
 }
 
 function addChannel(channelLink) {
-    let clientChannels = settingsJson.channels;
-
     channelLink = channelLink.replace(/\s+/g, '').toLowerCase();
 
     if (channelLink.length == 0)
         return false;
 
-    if (clientChannels.hasOwnProperty(channelLink))
+    if (settingsJson.channels.hasOwnProperty(channelLink))
         return false;
 
     let channelService = "custom";
@@ -96,9 +94,15 @@ function addChannel(channelLink) {
         'link': channelLink
     };
 
-    _.extend(clientChannels, channelObj);
+    _.extend(settingsJson.channels, channelObj);
+
+    console.log(settingsJson.channels);
 
     return channelObj[channelLink];
+}
+
+function changeSetting(settingName, settingValue) {
+    settingsJson.settings[settingName] = settingValue;
 }
 
 function returnSettings() {
@@ -108,6 +112,7 @@ function returnSettings() {
 SettingsFile.prototype.saveFile = saveFile;
 SettingsFile.prototype.readFile = readFile;
 SettingsFile.prototype.addChannel = addChannel;
+SettingsFile.prototype.changeSetting = changeSetting;
 SettingsFile.prototype.returnSettings = returnSettings;
 
 module.exports = SettingsFile;

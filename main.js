@@ -26,9 +26,7 @@ ipcMain.on('add-channel', (event, channel) => {
 });
 
 ipcMain.on('change-setting', (event, setting) => {
-    clientSettings[setting.name] = setting.value;
-
-    console.log(clientSettings[setting.name]);
+    new SettingsFile().changeSetting(setting.name, setting.value);
 
     console.log('setting ' + setting.name + ' changed to ' + setting.value);
 });
