@@ -27,6 +27,9 @@ ipcMain.on('add-channel', (event, channel) => {
 
 ipcMain.on('change-setting', (event, setting) => {
     clientSettings[setting.name] = setting.value;
+
+    console.log(clientSettings[setting.name]);
+
     console.log('setting ' + setting.name + ' changed to ' + setting.value);
 });
 
@@ -65,7 +68,7 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
 
     mainWindow.on('close', function () {
-        new SettingsFile().saveFile();
+        new SettingsFile().saveFile(settingsJson);
     });
 
     // Emitted when the window is closed.

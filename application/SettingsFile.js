@@ -28,8 +28,9 @@ function createSettings() {
     return settingsJson;
 }
 
-function saveFile() {
+function saveFile(settingsJson) {
     try {
+        console.log(settingsJson);
         fs.writeFileSync(settingsPath, JSON.stringify(settingsJson, null, 4));
     }
     catch (e) {
