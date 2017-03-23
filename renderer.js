@@ -1,6 +1,49 @@
-var remote = require('electron').remote;
+const remote = require('electron').remote;
+const Menu = remote.Menu;
+const MenuItem = remote.MenuItem;
 const {ipcRenderer} = require('electron');
+
+var menu = new Menu();
+menu.append(new MenuItem({
+    label: 'Play Original', click: function () {
+        console.log('play original');
+    }
+}));
+menu.append(new MenuItem({
+    label: 'Play Low Quality', click: function () {
+        console.log('play lq');
+    }
+}));
+menu.append(new MenuItem({
+    label: 'Open Page', click: function () {
+        console.log('open page');
+    }
+}));
+menu.append(new MenuItem({
+    label: 'Open Chat', click: function () {
+        console.log('open chat');
+    }
+}));
+menu.append(new MenuItem({
+    label: 'Copy to Clipboard', click: function () {
+        console.log('copy');
+    }
+}));
+menu.append(new MenuItem({
+    label: 'Remove Channel', click: function () {
+        console.log('remove');
+    }
+}));
+
+
+$(document).on('contextmenu', '.item', function (e) {
+    console.log('test');
+    e.preventDefault();
+    menu.popup(remote.getCurrentWindow());
+});
 $('document').ready(function () {
+
+
     let theme = $('#theme-selected').html();
     $('#theme').val(theme);
     $('.change-page').on('click', function () {
