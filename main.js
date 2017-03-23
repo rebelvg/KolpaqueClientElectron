@@ -17,12 +17,14 @@ let ipcMain = electron.ipcMain;
 ipcMain.on('add-channel', (event, channel) => {
     let channelObj = new SettingsFile().addChannel(channel.link);
 
-    if (channelObj === false)
+    if (channelObj === false) {
+        event.sender.send('add-channel-response', {status: false});
         return;
+    }
 
     console.log('channel ' + channelObj.name + ' was added');
 
-    event.returnValue = {status: true, channel: channelObj};
+    event.sender.send('add-channel-response', {status: true, channel: channelObj});
 });
 
 ipcMain.on('change-setting', (event, setting) => {

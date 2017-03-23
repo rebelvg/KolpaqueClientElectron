@@ -1,6 +1,8 @@
 var remote = require('electron').remote;
 const {ipcRenderer} = require('electron');
 $('document').ready(function () {
+    let theme = $('#theme-selected').html();
+    $('#theme').val(theme);
     $('.change-page').on('click', function () {
         $('.page').removeClass('active');
         $pageToOpen = $('#' + $(this).data('page') + '-page');
@@ -23,21 +25,35 @@ $('document').ready(function () {
             $button.find('.icon').addClass('active');
         }
     });
-    ipcRenderer.on('channel-status', function () {
-
+    ipcRenderer.on('channel-went-online', function (event, channel) {
+        $item = $('.item[data-id="' + channel.link + '"]');
+        $('.item[data-id="' + channel.link + '"]').remove();
+        $('#online').append($item);
+    });
+    ipcRenderer.on('channel-went-offline', function (event, channel) {
+        $item = $('.item[data-id="' + channel.link + '"]');
+        $('.item[data-id="' + channel.link + '"]').remove();
+        $('#offline').append($item);
     });
     $('#add-channel-btn').on('click', function () {
         let channel = $('#add-channel').val();
         if (channel.length > 0) {
             let channelToSend = {'name': channel, 'link': channel};
             ipcRenderer.send('add-channel', channelToSend);
+
+        }
+    });
+    ipcRenderer.on('add-channel-response', function (event, output) {
+        console.log(output);
+        if (output.status) {
             let channel_form = '<div class="item">' +
                 '<span class="item-icon fa-twitch fa"></span>' +
-                '<span class="item-name">' + channel + '</span>' +
+                '<span class="item-name">' + output.channel.link + '</span>' +
                 '</div>';
-            $('#online').append(channel_form);
-            $('#add-channel').val('');
+            $('#offline').append(channel_form);
         }
+
+        $('#add-channel').val('');
     });
     $('#theme').on('change', function () {
         $selected = $(this).find(':selected').data('theme');
@@ -62,4 +78,5 @@ $('document').ready(function () {
         let settingsToChange = {name: settingsName, value: settingsValue};
         ipcRenderer.send('change-setting', settingsToChange);
     });
+
 });

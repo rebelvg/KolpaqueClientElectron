@@ -49,7 +49,7 @@ body, html {
 
 .wrapper {
     height: 100%;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .top-footer {
