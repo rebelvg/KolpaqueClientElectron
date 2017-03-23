@@ -103,7 +103,7 @@ for (var channel in clientChannels) {
         let channelObj = clientChannels[channel];
 
         new ChannelCheck().getStats(channelObj);
-        new ChannelPlay().launchPlayer(channelObj);
+        //new ChannelPlay().launchPlayer(channelObj);
     }
 }
 
