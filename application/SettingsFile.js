@@ -96,8 +96,6 @@ function addChannel(channelLink) {
 
     _.extend(settingsJson.channels, channelObj);
 
-    console.log(settingsJson.channels);
-
     return channelObj[channelLink];
 }
 

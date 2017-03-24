@@ -38,7 +38,7 @@ function wentOffline(channelObj) {
 
     console.log(channelLink + " went offline.");
 
-    onlineChannels.splice(1, index);
+    onlineChannels.splice(index, 1);
 
     mainWindow.webContents.send('channel-went-offline', channelObj);
 }
@@ -51,12 +51,8 @@ function getKlpqStats(channelObj) {
         if (!error && response.statusCode === 200) {
             try {
                 if (body.isLive) {
-                    console.log(channelService + " " + channelObj.name + " is online.");
-
                     wentOnline(channelObj);
                 } else {
-                    console.log(channelService + " " + channelObj.name + " is offline.");
-
                     wentOffline(channelObj);
                 }
             }
@@ -75,12 +71,8 @@ function getTwitchStats(channelObj) {
         if (!error && response.statusCode === 200) {
             try {
                 if (body.streams.length > 0) {
-                    console.log(channelService + " " + channelObj.name + " is online.");
-
                     wentOnline(channelObj);
                 } else {
-                    console.log(channelService + " " + channelObj.name + " is offline.");
-
                     wentOffline(channelObj);
                 }
             }

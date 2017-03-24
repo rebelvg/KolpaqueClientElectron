@@ -68,7 +68,7 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
 
     mainWindow.on('close', function () {
-        new SettingsFile().saveFile(settingsJson);
+        new SettingsFile().saveFile();
     });
 
     // Emitted when the window is closed.
@@ -101,6 +101,39 @@ app.on('activate', function () {
     if (mainWindow === null) {
         createWindow()
     }
+});
+
+const {Menu, Tray} = require('electron');
+
+let appIcon = null;
+app.on('ready', () => {
+    appIcon = new Tray('./icon.ico');
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Close Client', type: 'normal', click: () => {
+            app.quit();
+        }
+        }
+    ]);
+
+    appIcon.on('click', () => {
+        mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+    });
+
+    appIcon.on('balloon-click', () => {
+        console.log('balloon was clicked.');
+    });
+
+    appIcon.title = 'Title';
+    appIcon.content = 'Content';
+
+    appIcon.displayBalloon({
+        title: appIcon.title,
+        content: appIcon.content
+    });
+
+    // Call this again for Linux because we modified the context menu
+    appIcon.setContextMenu(contextMenu);
 });
 
 // In this file you can include the rest of your app's specific main process
