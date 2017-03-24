@@ -1,4 +1,5 @@
 const electron = require('electron');
+const {clipboard} = require('electron');
 const SettingsFile = require('./application/SettingsFile');
 let settingsJson = new SettingsFile().readFile();
 let clientChannels = settingsJson.channels;
@@ -67,6 +68,10 @@ function createWindow() {
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
 
+    mainWindow.on('minimize', function () {
+        mainWindow.hide();
+    });
+
     mainWindow.on('close', function () {
         new SettingsFile().saveFile();
     });
@@ -109,6 +114,11 @@ let appIcon = null;
 app.on('ready', () => {
     appIcon = new Tray('./icon.ico');
     const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Play from Clipboard', type: 'normal', click: () => {
+            new ChannelPlay().launchPlayerLink(clipboard.readText());
+        }
+        },
         {
             label: 'Close Client', type: 'normal', click: () => {
             app.quit();

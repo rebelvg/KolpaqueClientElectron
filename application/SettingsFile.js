@@ -30,7 +30,6 @@ function createSettings() {
 
 function saveFile() {
     try {
-        console.log(settingsJson);
         fs.writeFileSync(settingsPath, JSON.stringify(settingsJson, null, 4));
     }
     catch (e) {

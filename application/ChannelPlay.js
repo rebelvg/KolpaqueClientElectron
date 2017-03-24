@@ -13,11 +13,16 @@ function ChannelPlay() {
 }
 
 function launchPlayer(channelObj) {
-    let link = channelObj.link;
+    let channelLink = channelObj.link;
+
+    launchPlayerLink(channelLink);
+}
+
+function launchPlayerLink(channelLink) {
     let quality = "best";
 
-    if (link.startsWith("rtmp")) {
-        link += " live=1";
+    if (channelLink.startsWith("rtmp")) {
+        channelLink += " live=1";
     }
 
     let path = clientSettings.livestreamerPath;
@@ -25,9 +30,9 @@ function launchPlayer(channelObj) {
     if (fs.existsSync(path)) {
         var child = require('child_process').execFile;
 
-        console.log('launching player for ' + link);
+        console.log('launching player for ' + channelLink);
 
-        child(path, [link, quality], function (err, data) {
+        child(path, [channelLink, quality], function (err, data) {
             //console.log(err);
             //console.log(data.toString());
             console.log('player was closed.');
@@ -38,5 +43,6 @@ function launchPlayer(channelObj) {
 }
 
 ChannelPlay.prototype.launchPlayer = launchPlayer;
+ChannelPlay.prototype.launchPlayerLink = launchPlayerLink;
 
 module.exports = ChannelPlay;
