@@ -40,6 +40,7 @@ menu.append(new MenuItem({
 menu.append(new MenuItem({
     label: 'Remove Channel', click: function () {
         ipcRenderer.send('remove-channel', current_context.data('id'));
+     
     }
 }));
 
@@ -68,9 +69,13 @@ $('document').ready(function () {
     let theme = $('#theme-selected').html();
     $('#theme').val(theme);
     $('.change-page').on('click', function () {
-        $('.page').removeClass('active');
-        $pageToOpen = $('#' + $(this).data('page') + '-page');
-        $pageToOpen.addClass('active');
+        let $pageToOpen = $('#' + $(this).data('page') + '-page');
+        $('.page.active').fadeOut(150, function () {
+            $(this).removeClass('active');
+
+            $pageToOpen.fadeIn(150).addClass('active');
+        });
+
 
     });
 
@@ -109,6 +114,15 @@ $('document').ready(function () {
             ipcRenderer.send('add-channel', channelToSend);
 
         }
+    });
+
+    ipcRenderer.on('remove-channel-response', function (event, output) {
+
+        if (output.status) {
+            $('.item[data-id="' + output.channel.link + '"]').remove();
+        }
+
+        $('#add-channel').val('');
     });
 
     ipcRenderer.on('add-channel-response', function (event, output) {

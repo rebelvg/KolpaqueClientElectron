@@ -210,11 +210,11 @@ body, html {
 }
 
 #settings-page.active {
-    display: flex;
+    display: flex !important;
 }
 
 #channels-page.active {
-    display: block;
+    display: block !important;
 }
 
 #settings-page {
