@@ -2,44 +2,57 @@ const remote = require('electron').remote;
 const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;
 const {ipcRenderer} = require('electron');
+let current_context = "";
+
 
 var menu = new Menu();
 menu.append(new MenuItem({
     label: 'Play Original', click: function () {
-        console.log('play original');
+        ipcRenderer.send('channel-play', current_context.data('id'), false);
     }
 }));
 menu.append(new MenuItem({
     label: 'Play Low Quality', click: function () {
-        console.log('play lq');
+        ipcRenderer.send('channel-play', current_context.data('id'), true);
     }
 }));
 menu.append(new MenuItem({
     label: 'Open Page', click: function () {
-        console.log('open page');
+        ipcRenderer.send('open-page', current_context.data('id'));
     }
 }));
 menu.append(new MenuItem({
     label: 'Open Chat', click: function () {
-        console.log('open chat');
+        ipcRenderer.send('open-chat', current_context.data('id'));
     }
 }));
 menu.append(new MenuItem({
     label: 'Copy to Clipboard', click: function () {
-        console.log('copy');
+        ipcRenderer.send('copy-clipboard', current_context.data('id'));
     }
 }));
 menu.append(new MenuItem({
     label: 'Remove Channel', click: function () {
-        console.log('remove');
+        ipcRenderer.send('remove-channel', current_context.data('id'));
     }
 }));
 
 
 $(document).on('contextmenu', '.item', function (e) {
-    console.log('test');
+    current_context = $(this);
     e.preventDefault();
     menu.popup(remote.getCurrentWindow());
+});
+$(document).on('mousedown', '.item', function (e) {
+    if (event.which == 3) {
+        $('.item.selected').removeClass('selected');
+        $(this).addClass('selected');
+    }
+});
+$(document).on('mouseup', '.item', function (e) {
+    if (event.which == 3) {
+        $('.item.selected').removeClass('selected');
+    }
 });
 $('document').ready(function () {
 

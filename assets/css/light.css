@@ -25,6 +25,14 @@
     background-color: #fcfcfc;
 }
 
+.item {
+    border-color: #eaeaea;
+}
+
+.item.selected {
+    background-color: #e8e8e8;
+}
+
 .change-page {
     color: black;
 }
