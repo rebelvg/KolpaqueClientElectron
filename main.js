@@ -29,7 +29,27 @@ ipcMain.on('add-channel', (event, channel) => {
 });
 
 ipcMain.on('channel-play', (event, channel) => {
-    new ChannelPlay().launchPlayerLink(channel);
+    new ChannelPlay().launchPlayerLink(channel.link, channel.LQ);
+});
+
+ipcMain.on('open-page', (event, channel) => {
+
+});
+
+ipcMain.on('open-chat', (event, channel) => {
+
+});
+
+ipcMain.on('copy-clipboard', (event, channel) => {
+
+});
+
+ipcMain.on('channel-play', (event, channel) => {
+
+});
+
+ipcMain.on('remove-channel', (event, channel) => {
+
 });
 
 ipcMain.on('change-setting', (event, setting) => {

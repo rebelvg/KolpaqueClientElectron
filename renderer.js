@@ -9,13 +9,13 @@ var menu = new Menu();
 
 menu.append(new MenuItem({
     label: 'Play Original', click: function () {
-        ipcRenderer.send('channel-play', current_context.data('id'), false);
+        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: true});
     }
 }));
 
 menu.append(new MenuItem({
     label: 'Play Low Quality', click: function () {
-        ipcRenderer.send('channel-play', current_context.data('id'), true);
+        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: true});
     }
 }));
 
