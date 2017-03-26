@@ -87,7 +87,7 @@ body, html {
 
 .collapse-wrap {
     display: none;
-    padding: 0px 5px;
+
 }
 
 .collapse-wrap.active {
@@ -95,28 +95,47 @@ body, html {
 }
 
 .item-name {
-    margin-left: 4px;
+    margin-left: 10px;
+}
+
+.collapse-list {
+    -webkit-user-select: none; /* Chrome/Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
+
+    /* Rules below not implemented in browsers yet */
+    -o-user-select: none;
+    user-select: none;
 }
 
 .item {
-    margin: 5px 3px;
+    margin: 0px 3px;
     font-size: 13px;
     display: flex;
     font-weight: 600;
+    border-top: 1px solid;
     align-items: center;
+    padding: 3px 0px;
+    cursor: default;
+    -webkit-user-select: none; /* Chrome/Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
 
+    /* Rules below not implemented in browsers yet */
+    -o-user-select: none;
+    user-select: none;
 }
 
 .collapse-list {
     font-size: 13px;
-
+    cursor: default;
     height: 25px;
     line-height: 25px;
     padding: 0px 10px;
 
     border-top: 1px solid;
     border-bottom: 1px solid;
-    cursor: pointer;
+
 }
 
 .d-none {

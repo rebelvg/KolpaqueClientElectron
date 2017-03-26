@@ -28,6 +28,10 @@ ipcMain.on('add-channel', (event, channel) => {
     event.sender.send('add-channel-response', {status: true, channel: channelObj});
 });
 
+ipcMain.on('channel-play', (event, channel) => {
+    new ChannelPlay().launchPlayerLink(channel);
+});
+
 ipcMain.on('change-setting', (event, setting) => {
     new SettingsFile().changeSetting(setting.name, setting.value);
 

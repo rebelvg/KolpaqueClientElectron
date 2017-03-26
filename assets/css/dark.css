@@ -49,6 +49,14 @@ input {
     color: white;
 }
 
+.item.selected {
+    background-color: #3a3a3a;
+}
+
+.item {
+    border-color: #3c3b3b;
+}
+
 body {
     background-color: #292b2c
 }
