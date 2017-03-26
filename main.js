@@ -9,7 +9,8 @@ let settingsJson = new SettingsFile().readFile();
 
 require('electron-handlebars')({
     channels: settingsJson.channels,
-    settings: settingsJson.settings
+    settings: settingsJson.settings,
+    version: '0.0.1'
 });
 
 let ipcMain = electron.ipcMain;
