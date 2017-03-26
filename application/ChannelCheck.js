@@ -4,12 +4,10 @@
 
 const request = require('request');
 const SettingsFile = require('./SettingsFile');
+const Notifications = require('./Notifications');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = [];
-let settingsJson = new SettingsFile().readFile();
-let clientChannels = settingsJson.channels;
-let clientSettings = settingsJson.settings;
 let mainWindow = null;
 
 function ChannelCheck() {
@@ -26,6 +24,8 @@ function wentOnline(channelObj) {
     onlineChannels.push(channelLink);
 
     mainWindow.webContents.send('channel-went-online', channelObj);
+
+    new Notifications().printNotification('Stream is Live', channelObj.link);
 }
 
 function wentOffline(channelObj) {
@@ -99,12 +99,13 @@ function getStats(channelObj) {
 }
 
 function checkLoop(mainWindowRef) {
+    let settingsJson = new SettingsFile().returnSettings();
     mainWindow = mainWindowRef;
 
     setInterval(function () {
-        for (var channel in clientChannels) {
-            if (clientChannels.hasOwnProperty(channel)) {
-                let channelObj = clientChannels[channel];
+        for (var channel in settingsJson.channels) {
+            if (settingsJson.channels.hasOwnProperty(channel)) {
+                let channelObj = settingsJson.channels[channel];
 
                 getStats(channelObj);
             }

@@ -1,16 +1,15 @@
 const electron = require('electron');
 const {clipboard} = require('electron');
 const SettingsFile = require('./application/SettingsFile');
-let settingsJson = new SettingsFile().readFile();
-let clientChannels = settingsJson.channels;
-let clientSettings = settingsJson.settings;
-
 const ChannelCheck = require('./application/ChannelCheck');
 const ChannelPlay = require('./application/ChannelPlay');
+const Notifications = require('./application/Notifications');
+
+let settingsJson = new SettingsFile().readFile();
 
 require('electron-handlebars')({
-    channels: clientChannels,
-    settings: clientSettings
+    channels: settingsJson.channels,
+    settings: settingsJson.settings
 });
 
 let ipcMain = electron.ipcMain;
@@ -112,6 +111,13 @@ app.on('activate', function () {
     }
 });
 
+app.on('ready', function () {
+    if (!settingsJson.settings.minimizeAtStart)
+        return;
+
+    mainWindow.hide();
+});
+
 const {Menu, Tray} = require('electron');
 
 let appIcon = null;
@@ -134,20 +140,14 @@ app.on('ready', () => {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     });
 
-    appIcon.on('balloon-click', () => {
-        console.log('balloon was clicked.');
-    });
-
-    appIcon.title = 'Title';
-    appIcon.content = 'Content';
-
-    appIcon.displayBalloon({
-        title: appIcon.title,
-        content: appIcon.content
+    appIcon.on('balloon-click', function () {
+        new Notifications().onBalloonClick();
     });
 
     // Call this again for Linux because we modified the context menu
     appIcon.setContextMenu(contextMenu);
+
+    new Notifications().takeIconReference(appIcon);
 });
 
 // In this file you can include the rest of your app's specific main process

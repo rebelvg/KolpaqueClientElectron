@@ -5,27 +5,36 @@
 const fs = require('fs');
 const SettingsFile = require('./SettingsFile');
 
-let settingsJson = new SettingsFile().returnSettings();
-let clientChannels = settingsJson.channels;
-let clientSettings = settingsJson.settings;
-
 function ChannelPlay() {
 }
 
-function launchPlayer(channelObj) {
+function launchPlayer(channelObj, LQ = null) {
     let channelLink = channelObj.link;
 
-    launchPlayerLink(channelLink);
+    launchPlayerLink(channelLink, LQ);
 }
 
-function launchPlayerLink(channelLink) {
-    let quality = "best";
+function launchPlayerLink(channelLink, LQ = null) {
+    let settingsJson = new SettingsFile().returnSettings();
+
+    let quality = 'best';
+
+    if (LQ == null)
+        LQ = settingsJson.settings.LQ;
 
     if (channelLink.startsWith("rtmp")) {
         channelLink += " live=1";
+
+        if (LQ && channelLink.indexOf('klpq.men/live/') >= 0) {
+            console.log('live to restream');
+            channelLink = channelLink.replace('/live/', '/restream/');
+        }
+    } else {
+        if (LQ)
+            quality = 'high';
     }
 
-    let path = clientSettings.livestreamerPath;
+    let path = settingsJson.settings.livestreamerPath;
 
     if (fs.existsSync(path)) {
         var child = require('child_process').execFile;
