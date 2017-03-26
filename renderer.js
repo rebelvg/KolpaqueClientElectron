@@ -110,6 +110,7 @@ $('document').ready(function () {
 
         }
     });
+
     ipcRenderer.on('add-channel-response', function (event, output) {
         console.log(output);
         if (output.status) {
@@ -122,6 +123,7 @@ $('document').ready(function () {
 
         $('#add-channel').val('');
     });
+
     $('#theme').on('change', function () {
         $selected = $(this).find(':selected').data('theme');
         $('#theme-css').attr('href', "./assets/css/" + $selected + '.css');
@@ -138,7 +140,8 @@ $('document').ready(function () {
 
     $('.file-input-addon').on('click', function () {
         $('#livestreamer_input').click();
-    })
+    });
+
     $('.settings').on('change', function () {
         settingsName = $(this).data('settings');
         settingsValue = $(this).prop('checked');
