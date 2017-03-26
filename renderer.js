@@ -6,31 +6,37 @@ let current_context = "";
 
 
 var menu = new Menu();
+
 menu.append(new MenuItem({
     label: 'Play Original', click: function () {
         ipcRenderer.send('channel-play', current_context.data('id'), false);
     }
 }));
+
 menu.append(new MenuItem({
     label: 'Play Low Quality', click: function () {
         ipcRenderer.send('channel-play', current_context.data('id'), true);
     }
 }));
+
 menu.append(new MenuItem({
     label: 'Open Page', click: function () {
         ipcRenderer.send('open-page', current_context.data('id'));
     }
 }));
+
 menu.append(new MenuItem({
     label: 'Open Chat', click: function () {
         ipcRenderer.send('open-chat', current_context.data('id'));
     }
 }));
+
 menu.append(new MenuItem({
     label: 'Copy to Clipboard', click: function () {
         ipcRenderer.send('copy-clipboard', current_context.data('id'));
     }
 }));
+
 menu.append(new MenuItem({
     label: 'Remove Channel', click: function () {
         ipcRenderer.send('remove-channel', current_context.data('id'));
@@ -43,19 +49,21 @@ $(document).on('contextmenu', '.item', function (e) {
     e.preventDefault();
     menu.popup(remote.getCurrentWindow());
 });
+
 $(document).on('mousedown', '.item', function (e) {
     if (event.which == 3) {
         $('.item.selected').removeClass('selected');
         $(this).addClass('selected');
     }
 });
+
 $(document).on('mouseup', '.item', function (e) {
     if (event.which == 3) {
         $('.item.selected').removeClass('selected');
     }
 });
-$('document').ready(function () {
 
+$('document').ready(function () {
 
     let theme = $('#theme-selected').html();
     $('#theme').val(theme);
@@ -81,16 +89,19 @@ $('document').ready(function () {
             $button.find('.icon').addClass('active');
         }
     });
+
     ipcRenderer.on('channel-went-online', function (event, channel) {
         $item = $('.item[data-id="' + channel.link + '"]');
         $('.item[data-id="' + channel.link + '"]').remove();
         $('#online').append($item);
     });
+
     ipcRenderer.on('channel-went-offline', function (event, channel) {
         $item = $('.item[data-id="' + channel.link + '"]');
         $('.item[data-id="' + channel.link + '"]').remove();
         $('#offline').append($item);
     });
+
     $('#add-channel-btn').on('click', function () {
         let channel = $('#add-channel').val();
         if (channel.length > 0) {
