@@ -62,7 +62,7 @@ function onBalloonClick() {
 }
 
 function rebuildIconMenu(onlineChannels) {
-    contextMenuTemplate[0].submenu = onlineChannels.map(function (channelLink) {
+    contextMenuTemplate[1].submenu = onlineChannels.map(function (channelLink) {
         return {
             label: channelLink, type: 'normal', click: (menuItem) => {
                 const ChannelPlay = require('./ChannelPlay');

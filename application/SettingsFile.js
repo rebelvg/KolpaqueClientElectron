@@ -3,10 +3,11 @@
  */
 
 const {app} = require('electron');
+const path = require('path');
 const fs = require('fs');
 const _ = require('underscore');
 
-let settingsPath = app.getPath('documents') + '\\KolpaqueClient.json';
+let settingsPath = path.normalize(app.getPath('documents') + '/KolpaqueClient.json');
 let settingsJson = {};
 let preInstalledChannels = ['rtmp://stream.klpq.men/live/main', 'rtmp://stream.klpq.men/live/klpq', 'rtmp://stream.klpq.men/live/murshun'];
 

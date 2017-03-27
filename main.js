@@ -96,7 +96,7 @@ function createWindow() {
         height: 667,
         resizable: false,
         fullscreenable: false,
-        icon: path.join(__dirname, 'icon.ico')
+        icon: path.normalize(path.join(__dirname, 'icon.png'))
     });
 
     mainWindow.setMenu(null);
@@ -108,10 +108,8 @@ function createWindow() {
         slashes: true
     }));
 
-    new ChannelCheck().checkLoop(mainWindow);
-
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
 
     mainWindow.on('minimize', function () {
         mainWindow.hide();
@@ -154,20 +152,27 @@ app.on('activate', function () {
 });
 
 app.on('ready', function () {
+    new ChannelCheck().checkLoop(mainWindow);
+
     if (!settingsJson.settings.minimizeAtStart)
         return;
 
     mainWindow.hide();
 });
 
-const {Menu, Tray} = require('electron');
+const {Menu, Tray, nativeImage} = require('electron');
 
 let appIcon = null;
 app.on('ready', () => {
-    appIcon = new Tray(path.join(__dirname, 'icon.ico'));
+    appIcon = new Tray(nativeImage.createFromPath(path.normalize(path.join(__dirname, 'icon.png'))));
     appIcon.setToolTip('Kolpaque Client');
 
     let contextMenuTemplate = [
+        {
+            label: 'Toggle Client', type: 'normal', click: () => {
+            mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+        }
+        },
         {
             label: 'Online Channels', type: 'submenu', submenu: []
         },
