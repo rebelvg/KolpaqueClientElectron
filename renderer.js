@@ -4,6 +4,29 @@ const MenuItem = remote.MenuItem;
 const {ipcRenderer} = require('electron');
 let current_context = "";
 
+var template = [
+    {
+        label: 'Cut',
+        accelerator: 'CmdOrCtrl+X',
+        role: 'cut'
+    },
+    {
+        label: 'Copy',
+        accelerator: 'CmdOrCtrl+C',
+        role: 'copy'
+    },
+    {
+        label: 'Paste',
+        accelerator: 'CmdOrCtrl+V',
+        role: 'paste'
+    },
+    {
+        label: 'Select All',
+        accelerator: 'CmdOrCtrl+A',
+        role: 'selectall'
+    },
+];
+
 
 var menu = new Menu();
 
@@ -62,6 +85,13 @@ $(document).on('mouseup', '.item', function (e) {
         $('.item.selected').removeClass('selected');
     }
 });
+$('#add-channel').on('contextmenu', function (e) {
+    e.preventDefault();
+    var macMenu = Menu.buildFromTemplate(template);
+    macMenu.popup(remote.getCurrentWindow());
+
+});
+
 
 $('document').ready(function () {
 
