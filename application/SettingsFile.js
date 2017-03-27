@@ -8,6 +8,7 @@ const _ = require('underscore');
 
 let settingsPath = app.getPath('documents') + '\\KolpaqueClient.json';
 let settingsJson = {};
+let preInstalledChannels = ['rtmp://stream.klpq.men/live/main', 'rtmp://stream.klpq.men/live/klpq', 'rtmp://stream.klpq.men/live/murshun'];
 
 function SettingsFile() {
 }
@@ -24,6 +25,8 @@ function createSettings() {
     settingsJson.settings.launchOnBalloonClick = true;
     settingsJson.settings.enableLog = false;
     settingsJson.settings.theme = "light";
+
+    preInstalledChannels.forEach(addChannel);
 
     return settingsJson;
 }
@@ -66,6 +69,9 @@ function addChannel(channelLink) {
 
     let channelService = "custom";
 
+    if (channelLink.indexOf('rtmp') != 0 && channelLink.indexOf('http') != 0)
+        return false;
+
     if (channelLink.includes('klpq.men/live/')) {
         channelService = 'klpq';
     }
@@ -77,6 +83,9 @@ function addChannel(channelLink) {
     console.log(channelService);
 
     let array = channelLink.split('/');
+
+    if (array.length < 2)
+        return false;
 
     let channelName = array[array.length - 1];
 
@@ -98,6 +107,18 @@ function addChannel(channelLink) {
     return channelObj[channelLink];
 }
 
+function removeChannel(channelLink) {
+    if (!settingsJson.channels.hasOwnProperty(channelLink))
+        return true;
+
+    if (preInstalledChannels.indexOf(channelLink) >= 0)
+        return false;
+
+    delete settingsJson.channels[channelLink];
+
+    return true;
+}
+
 function changeSetting(settingName, settingValue) {
     settingsJson.settings[settingName] = settingValue;
 }
@@ -109,6 +130,7 @@ function returnSettings() {
 SettingsFile.prototype.saveFile = saveFile;
 SettingsFile.prototype.readFile = readFile;
 SettingsFile.prototype.addChannel = addChannel;
+SettingsFile.prototype.removeChannel = removeChannel;
 SettingsFile.prototype.changeSetting = changeSetting;
 SettingsFile.prototype.returnSettings = returnSettings;
 

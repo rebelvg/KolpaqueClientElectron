@@ -1,5 +1,6 @@
 const electron = require('electron');
 const {clipboard} = require('electron');
+const {shell} = require('electron');
 const SettingsFile = require('./application/SettingsFile');
 const ChannelCheck = require('./application/ChannelCheck');
 const ChannelPlay = require('./application/ChannelPlay');
@@ -10,7 +11,7 @@ let settingsJson = new SettingsFile().readFile();
 require('electron-handlebars')({
     channels: settingsJson.channels,
     settings: settingsJson.settings,
-    version: '0.0.1'
+    version: '0.1'
 });
 
 let ipcMain = electron.ipcMain;
@@ -33,23 +34,35 @@ ipcMain.on('channel-play', (event, channel) => {
 });
 
 ipcMain.on('open-page', (event, channel) => {
+    if (channel.indexOf('klpq.men') >= 0) {
+        shell.openExternal('http://stream.klpq.men/');
+    }
 
+    if (channel.startsWith('http')) {
+        shell.openExternal(channel);
+    }
 });
 
 ipcMain.on('open-chat', (event, channel) => {
+    if (channel.indexOf('klpq.men') >= 0) {
+        shell.openExternal('http://stream.klpq.men/chat/');
+    }
 
+    if (channel.startsWith('http')) {
+        shell.openExternal(channel + '/chat');
+    }
 });
 
 ipcMain.on('copy-clipboard', (event, channel) => {
-
-});
-
-ipcMain.on('channel-play', (event, channel) => {
-
+    clipboard.writeText(channel);
 });
 
 ipcMain.on('remove-channel', (event, channel) => {
+    let result = new SettingsFile().removeChannel(channel);
 
+    console.log('channel ' + channel + ' was removed');
+
+    event.sender.send('remove-channel-response', {status: result});
 });
 
 ipcMain.on('change-setting', (event, setting) => {
