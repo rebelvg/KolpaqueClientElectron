@@ -7,6 +7,7 @@ const ChannelPlay = require('./application/ChannelPlay');
 const Notifications = require('./application/Notifications');
 
 let settingsJson = new SettingsFile().readFile();
+let forceQuit = false;
 
 require('electron-handlebars')({
     channels: settingsJson.channels,
@@ -122,6 +123,11 @@ function createWindow() {
     });
 
     mainWindow.on('close', function (e) {
+        console.log(forceQuit);
+
+        if (forceQuit)
+            return;
+
         if (process.platform === 'darwin') {
             e.preventDefault();
             mainWindow.hide();
@@ -149,6 +155,7 @@ app.on('ready', createWindow);
 app.on('window-all-closed', function () {
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
+
     if (process.platform !== 'darwin') {
         app.quit()
     }
@@ -192,6 +199,7 @@ app.on('ready', () => {
         },
         {
             label: 'Close Client', type: 'normal', click: () => {
+            forceQuit = true;
             app.quit();
         }
         }
