@@ -36,7 +36,7 @@ function wentOnline(channelObj, printBalloon) {
         new ChannelPlay().launchPlayer(channelObj);
     }
 
-    new Notifications().rebuildIconMenu(onlineChannels);
+    new Notifications().rebuildIconMenu(onlineChannels, ChannelPlay);
 }
 
 function wentOffline(channelObj) {
@@ -53,7 +53,7 @@ function wentOffline(channelObj) {
 
     mainWindow.webContents.send('channel-went-offline', channelObj);
 
-    new Notifications().rebuildIconMenu(onlineChannels);
+    new Notifications().rebuildIconMenu(onlineChannels, ChannelPlay);
 }
 
 function getKlpqStats(channelObj, printBalloon) {

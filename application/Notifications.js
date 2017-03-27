@@ -48,7 +48,7 @@ function printNotification(title, content) {
     }, 10000, title, content);
 }
 
-function onBalloonClick() {
+function onBalloonClick(ChannelPlay) {
     let settingsJson = new SettingsFile().returnSettings();
 
     console.log('balloon was clicked.');
@@ -61,12 +61,10 @@ function onBalloonClick() {
     }
 }
 
-function rebuildIconMenu(onlineChannels) {
+function rebuildIconMenu(onlineChannels, ChannelPlay) {
     contextMenuTemplate[1].submenu = onlineChannels.map(function (channelLink) {
         return {
             label: channelLink, type: 'normal', click: (menuItem) => {
-                const ChannelPlay = require('./ChannelPlay');
-
                 new ChannelPlay().launchPlayerLink(menuItem.label);
             }
         }

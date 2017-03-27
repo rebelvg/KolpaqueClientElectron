@@ -84,6 +84,8 @@ const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const url = require('url');
 
+let iconPath = process.platform === 'win32' ? 'icon.ico' : 'icon.png';
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -96,7 +98,7 @@ function createWindow() {
         height: 667,
         resizable: false,
         fullscreenable: false,
-        icon: path.normalize(path.join(__dirname, 'icon.png'))
+        icon: path.normalize(path.join(__dirname, iconPath))
     });
 
     mainWindow.setMenu(null);
@@ -164,7 +166,7 @@ const {Menu, Tray, nativeImage} = require('electron');
 
 let appIcon = null;
 app.on('ready', () => {
-    appIcon = new Tray(nativeImage.createFromPath(path.normalize(path.join(__dirname, 'icon.png'))));
+    appIcon = new Tray(nativeImage.createFromPath(path.normalize(path.join(__dirname, iconPath))));
     appIcon.setToolTip('Kolpaque Client');
 
     let contextMenuTemplate = [
@@ -195,7 +197,7 @@ app.on('ready', () => {
     });
 
     appIcon.on('balloon-click', function () {
-        new Notifications().onBalloonClick();
+        new Notifications().onBalloonClick(ChannelPlay);
     });
 
     // Call this again for Linux because we modified the context menu
