@@ -79,7 +79,10 @@ $(document).on('mousedown', '.item', function (e) {
         $(this).addClass('selected');
     }
 });
-
+$(document).on('dblclick', '.item', function (e) {
+    let isLQ = $('#LQ').prop('checked');
+    ipcRenderer.send('channel-play', {link: $(this).data('id'), LQ: isLQ});
+});
 $(document).on('mouseup', '.item', function (e) {
     if (event.which == 3) {
         $('.item.selected').removeClass('selected');
