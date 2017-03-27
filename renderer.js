@@ -68,6 +68,7 @@ $('document').ready(function () {
 
     $('.twitch-import').on('click', function () {
         ipcRenderer.send('twitch-import', $('#twitch-nickname').val());
+        $('#twitch-nickname').val('');
     });
 
     let theme = $('#theme-selected').html();
