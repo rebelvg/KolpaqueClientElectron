@@ -34,7 +34,7 @@
 }
 
 .item.selected {
-    background-color: #e8e8e8;
+    background-color: #e8e8e8 !important;
 }
 
 .change-page {
