@@ -127,6 +127,8 @@ function createWindow() {
 
         mainWindow = null
     });
+
+    new ChannelCheck().checkLoop(mainWindow);
 }
 
 // This method will be called when Electron has finished
@@ -152,8 +154,6 @@ app.on('activate', function () {
 });
 
 app.on('ready', function () {
-    new ChannelCheck().checkLoop(mainWindow);
-
     if (!settingsJson.settings.minimizeAtStart)
         return;
 
