@@ -196,6 +196,7 @@ body, html {
     border: 1px solid #393939;
     padding: 10px;
     flex: 1;
+    outline: none;
 }
 
 .icon-settings {

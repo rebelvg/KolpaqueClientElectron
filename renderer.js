@@ -118,7 +118,7 @@ $('document').ready(function () {
     ipcRenderer.on('remove-channel-response', function (event, output) {
 
         if (output.status) {
-            $('.item[data-id="' + output.channel.link + '"]').remove();
+            $('.item[data-id="' + output.channelLink + '"]').remove();
         }
 
         $('#add-channel').val('');
@@ -127,7 +127,7 @@ $('document').ready(function () {
     ipcRenderer.on('add-channel-response', function (event, output) {
         console.log(output);
         if (output.status) {
-            let channel_form = '<div class="item">' +
+            let channel_form = '<div class="item" data-id="' + output.channel.link + '">' +
                 '<span class="item-icon fa-twitch fa"></span>' +
                 '<span class="item-name">' + output.channel.link + '</span>' +
                 '</div>';
