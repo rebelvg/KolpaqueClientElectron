@@ -88,7 +88,8 @@ function createWindow() {
         width: 400,
         height: 667,
         resizable: false,
-        fullscreenable: false
+        fullscreenable: false,
+        icon: './icon.ico'
     });
 
     mainWindow.setMenu(null);
