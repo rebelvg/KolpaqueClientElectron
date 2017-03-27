@@ -9,7 +9,7 @@ var menu = new Menu();
 
 menu.append(new MenuItem({
     label: 'Play Original', click: function () {
-        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: true});
+        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: false});
     }
 }));
 

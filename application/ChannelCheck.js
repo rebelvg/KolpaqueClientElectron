@@ -4,6 +4,7 @@
 
 const request = require('request');
 const SettingsFile = require('./SettingsFile');
+const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
@@ -14,6 +15,8 @@ function ChannelCheck() {
 }
 
 function wentOnline(channelObj) {
+    let settingsJson = new SettingsFile().returnSettings();
+
     let channelLink = channelObj.link;
 
     if (onlineChannels.indexOf(channelLink) > -1)
@@ -26,6 +29,10 @@ function wentOnline(channelObj) {
     mainWindow.webContents.send('channel-went-online', channelObj);
 
     new Notifications().printNotification('Stream is Live', channelObj.link);
+
+    if (settingsJson.settings.autoPlay) {
+        new ChannelPlay().launchPlayer(channelObj);
+    }
 }
 
 function wentOffline(channelObj) {
