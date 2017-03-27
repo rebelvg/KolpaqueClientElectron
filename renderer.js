@@ -40,7 +40,6 @@ menu.append(new MenuItem({
 menu.append(new MenuItem({
     label: 'Remove Channel', click: function () {
         ipcRenderer.send('remove-channel', current_context.data('id'));
-     
     }
 }));
 
