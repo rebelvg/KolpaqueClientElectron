@@ -121,6 +121,13 @@ function createWindow() {
         new SettingsFile().saveFile();
     });
 
+    mainWindow.on('close', function (e) {
+        if (process.platform === 'darwin') {
+            e.preventDefault();
+            mainWindow.hide();
+        }
+    });
+
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
         // Dereference the window object, usually you would store windows

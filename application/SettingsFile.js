@@ -6,6 +6,7 @@ const {app} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const _ = require('underscore');
+const Notifications = require('./Notifications');
 
 let settingsPath = path.normalize(app.getPath('documents') + '/KolpaqueClient.json');
 let settingsJson = {};
@@ -116,6 +117,8 @@ function removeChannel(channelLink) {
         return false;
 
     delete settingsJson.channels[channelLink];
+
+    new Notifications().rebuildIconMenu();
 
     return true;
 }
