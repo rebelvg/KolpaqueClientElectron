@@ -65,6 +65,11 @@ $(document).on('mouseup', '.item', function (e) {
 
 $('document').ready(function () {
 
+
+    $('.twitch-import').on('click', function () {
+        ipcRenderer.send('twitch-import', $('#twitch-nickname').val());
+    });
+
     let theme = $('#theme-selected').html();
     $('#theme').val(theme);
     $('.change-page').on('click', function () {

@@ -199,6 +199,17 @@ body, html {
     outline: none;
 }
 
+.twitch-import {
+    float: right;
+    font-size: 14px;
+    padding: 4px 15px;
+    border: 1px solid;
+    margin-top: 10px;
+    border-radius: 4px;
+
+    cursor: pointer;
+}
+
 .icon-settings {
     width: 50%;
     float: left;

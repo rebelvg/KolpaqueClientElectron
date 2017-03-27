@@ -21,6 +21,10 @@
     border: 1px solid #393939;
 }
 
+.twitch-import {
+    background-color: #fff;
+}
+
 #settings-page {
     background-color: #fcfcfc;
 }
