@@ -65,6 +65,12 @@ ipcMain.on('remove-channel', (event, channel) => {
     event.sender.send('remove-channel-response', {status: result, channelLink: channel});
 });
 
+ipcMain.on('twitch-import', (event, channel) => {
+    console.log('log - ' + channel);
+
+    new ChannelCheck().twitchImport(channel);
+});
+
 ipcMain.on('change-setting', (event, setting) => {
     new SettingsFile().changeSetting(setting.name, setting.value);
 

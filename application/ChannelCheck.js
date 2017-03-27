@@ -105,6 +105,35 @@ function getStats(channelObj) {
     }
 }
 
+function twitchImport(twitchChannel) {
+    twitchChannel = twitchChannel.replace(/\s+/g, '').toLowerCase();
+
+    if (twitchChannel.length == 0)
+        return false;
+
+    var url = "https://api.twitch.tv/kraken/users/" + twitchChannel + "/follows/channels" + "?client_id=" + twitchApiKey + "&limit=200";
+
+    request({url: url, json: true}, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            try {
+                let channels = body.follows.reverse();
+
+                channels.forEach(function (channel) {
+                    let channelObj = new SettingsFile().addChannel(channel.channel.url);
+
+                    if (channelObj !== false)
+                        mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
+                });
+
+                console.log('import done.');
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+    })
+}
+
 function checkLoop(mainWindowRef) {
     let settingsJson = new SettingsFile().returnSettings();
     mainWindow = mainWindowRef;
@@ -120,6 +149,7 @@ function checkLoop(mainWindowRef) {
     }, 5000);
 }
 
+ChannelCheck.prototype.twitchImport = twitchImport;
 ChannelCheck.prototype.checkLoop = checkLoop;
 
 module.exports = ChannelCheck;
