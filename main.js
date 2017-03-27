@@ -91,6 +91,7 @@ let mainWindow;
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
+        title: 'Kolpaque Client',
         width: 400,
         height: 667,
         resizable: false,
@@ -164,7 +165,12 @@ const {Menu, Tray} = require('electron');
 let appIcon = null;
 app.on('ready', () => {
     appIcon = new Tray(path.join(__dirname, 'icon.ico'));
-    const contextMenu = Menu.buildFromTemplate([
+    appIcon.setToolTip('Kolpaque Client');
+
+    let contextMenuTemplate = [
+        {
+            label: 'Online Channels', type: 'submenu', submenu: []
+        },
         {
             label: 'Play from Clipboard', type: 'normal', click: () => {
             new ChannelPlay().launchPlayerLink(clipboard.readText());
@@ -175,7 +181,9 @@ app.on('ready', () => {
             app.quit();
         }
         }
-    ]);
+    ];
+
+    let contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
 
     appIcon.on('click', () => {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
@@ -188,7 +196,7 @@ app.on('ready', () => {
     // Call this again for Linux because we modified the context menu
     appIcon.setContextMenu(contextMenu);
 
-    new Notifications().takeIconReference(appIcon);
+    new Notifications().takeIconReference(appIcon, contextMenuTemplate);
 });
 
 // In this file you can include the rest of your app's specific main process

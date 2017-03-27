@@ -4,6 +4,7 @@
 
 const fs = require('fs');
 const SettingsFile = require('./SettingsFile');
+const Notifications = require('./Notifications');
 
 function ChannelPlay() {
 }
@@ -15,6 +16,9 @@ function launchPlayer(channelObj, LQ = null) {
 }
 
 function launchPlayerLink(channelLink, LQ = null) {
+    if (channelLink.indexOf('rtmp') != 0 && channelLink.indexOf('http') != 0)
+        return;
+
     let settingsJson = new SettingsFile().returnSettings();
 
     let quality = 'best';
@@ -43,8 +47,10 @@ function launchPlayerLink(channelLink, LQ = null) {
 
         child(path, [channelLink, quality], function (err, data) {
             //console.log(err);
-            //console.log(data.toString());
+            console.log(data);
             console.log('player was closed.');
+
+            //new Notifications().printNotification('Player was Closed', channelLink);
         });
     } else {
         console.log(path + " not found.");

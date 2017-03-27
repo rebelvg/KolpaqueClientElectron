@@ -14,7 +14,7 @@ let mainWindow = null;
 function ChannelCheck() {
 }
 
-function wentOnline(channelObj) {
+function wentOnline(channelObj, printBalloon) {
     let settingsJson = new SettingsFile().returnSettings();
 
     let channelLink = channelObj.link;
@@ -28,11 +28,15 @@ function wentOnline(channelObj) {
 
     mainWindow.webContents.send('channel-went-online', channelObj);
 
-    new Notifications().printNotification('Stream is Live', channelObj.link);
+    if (printBalloon) {
+        new Notifications().printNotification('Stream is Live', channelObj.link);
+    }
 
     if (settingsJson.settings.autoPlay) {
         new ChannelPlay().launchPlayer(channelObj);
     }
+
+    new Notifications().rebuildIconMenu(onlineChannels);
 }
 
 function wentOffline(channelObj) {
@@ -48,9 +52,11 @@ function wentOffline(channelObj) {
     onlineChannels.splice(index, 1);
 
     mainWindow.webContents.send('channel-went-offline', channelObj);
+
+    new Notifications().rebuildIconMenu(onlineChannels);
 }
 
-function getKlpqStats(channelObj) {
+function getKlpqStats(channelObj, printBalloon) {
     let channelService = 'klpq';
     var url = "http://stats.klpq.men/channel/" + channelObj.name;
 
@@ -58,7 +64,7 @@ function getKlpqStats(channelObj) {
         if (!error && response.statusCode === 200) {
             try {
                 if (body.isLive) {
-                    wentOnline(channelObj);
+                    wentOnline(channelObj, printBalloon);
                 } else {
                     wentOffline(channelObj);
                 }
@@ -70,7 +76,7 @@ function getKlpqStats(channelObj) {
     })
 }
 
-function getTwitchStats(channelObj) {
+function getTwitchStats(channelObj, printBalloon) {
     let channelService = 'twitch';
     var url = "https://api.twitch.tv/kraken/streams?channel=" + channelObj.name + "&client_id=" + twitchApiKey;
 
@@ -78,7 +84,7 @@ function getTwitchStats(channelObj) {
         if (!error && response.statusCode === 200) {
             try {
                 if (body.streams.length > 0) {
-                    wentOnline(channelObj);
+                    wentOnline(channelObj, printBalloon);
                 } else {
                     wentOffline(channelObj);
                 }
@@ -90,15 +96,22 @@ function getTwitchStats(channelObj) {
     })
 }
 
-function getStats(channelObj) {
+function getStats5(channelObj, printBalloon = true) {
     var channelService = channelObj.service;
 
     switch (channelService) {
         case 'klpq':
-            getKlpqStats(channelObj);
+            getKlpqStats(channelObj, printBalloon);
             break;
+    }
+}
+
+function getStats30(channelObj, printBalloon = true) {
+    var channelService = channelObj.service;
+
+    switch (channelService) {
         case 'twitch':
-            getTwitchStats(channelObj);
+            getTwitchStats(channelObj, printBalloon);
             break;
         default:
             break;
@@ -138,15 +151,34 @@ function checkLoop(mainWindowRef) {
     let settingsJson = new SettingsFile().returnSettings();
     mainWindow = mainWindowRef;
 
+    for (var channel in settingsJson.channels) {
+        if (settingsJson.channels.hasOwnProperty(channel)) {
+            let channelObj = settingsJson.channels[channel];
+
+            getStats5(channelObj, false);
+            getStats30(channelObj, false);
+        }
+    }
+
     setInterval(function () {
         for (var channel in settingsJson.channels) {
             if (settingsJson.channels.hasOwnProperty(channel)) {
                 let channelObj = settingsJson.channels[channel];
 
-                getStats(channelObj);
+                getStats5(channelObj);
             }
         }
     }, 5000);
+
+    setInterval(function () {
+        for (var channel in settingsJson.channels) {
+            if (settingsJson.channels.hasOwnProperty(channel)) {
+                let channelObj = settingsJson.channels[channel];
+
+                getStats30(channelObj);
+            }
+        }
+    }, 30000);
 }
 
 ChannelCheck.prototype.twitchImport = twitchImport;
