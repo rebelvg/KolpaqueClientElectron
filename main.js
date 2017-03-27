@@ -11,7 +11,7 @@ let settingsJson = new SettingsFile().readFile();
 require('electron-handlebars')({
     channels: settingsJson.channels,
     settings: settingsJson.settings,
-    version: '0.1'
+    version: require('./package.json').version
 });
 
 let ipcMain = electron.ipcMain;
