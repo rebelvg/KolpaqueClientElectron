@@ -19,6 +19,7 @@ function launchPlayerLink(channelLink, LQ = null) {
     if (channelLink.indexOf('rtmp') != 0 && channelLink.indexOf('http') != 0)
         return;
 
+    const SettingsFile = require('./SettingsFile');
     let settingsJson = new SettingsFile().returnSettings();
 
     let quality = 'best';
