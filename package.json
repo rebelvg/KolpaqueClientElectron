@@ -1,6 +1,6 @@
 {
   "name": "KolpaqueClient",
-  "version": "0.1",
+  "version": "0.0.4",
   "description": "GUI client for StreamLink/LiveStreamer",
   "main": "main.js",
   "scripts": {
@@ -9,11 +9,10 @@
   "repository": {},
   "keywords": [
     "Electron",
-    "node.js",
-    "KLPQ",
-    "StreamLink",
-    "LiveStreamer",
-    "GUI"
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
   ],
   "author": "KLPQ",
   "license": "CC0-1.0",
