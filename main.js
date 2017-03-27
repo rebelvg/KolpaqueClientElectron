@@ -95,7 +95,7 @@ function createWindow() {
         height: 667,
         resizable: false,
         fullscreenable: false,
-        icon: './icon.ico'
+        icon: path.join(__dirname, 'icon.ico')
     });
 
     mainWindow.setMenu(null);
@@ -163,7 +163,7 @@ const {Menu, Tray} = require('electron');
 
 let appIcon = null;
 app.on('ready', () => {
-    appIcon = new Tray('./icon.ico');
+    appIcon = new Tray(path.join(__dirname, 'icon.ico'));
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Play from Clipboard', type: 'normal', click: () => {
