@@ -62,7 +62,7 @@ ipcMain.on('remove-channel', (event, channel) => {
 
     console.log('channel ' + channel + ' was removed');
 
-    event.sender.send('remove-channel-response', {status: result});
+    event.sender.send('remove-channel-response', {status: result, channelLink: channel});
 });
 
 ipcMain.on('change-setting', (event, setting) => {
