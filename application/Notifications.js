@@ -3,6 +3,7 @@
  */
 
 const {Menu} = require('electron');
+const path = require('path');
 const request = require('request');
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
@@ -19,18 +20,17 @@ function takeIconReference(appIconRef, contentMenuTemplateRef) {
 }
 
 function printNotification(title, content) {
+    const SettingsFile = require('./SettingsFile');
     let settingsJson = new SettingsFile().returnSettings();
 
     if (!settingsJson.settings.showNotificaions)
-        return;
-
-    if (appIcon == null)
         return;
 
     appIcon.title = title;
     appIcon.content = content;
 
     appIcon.displayBalloon({
+        icon: appIcon.iconPath,
         title: appIcon.title,
         content: appIcon.content
     });
@@ -49,6 +49,7 @@ function printNotification(title, content) {
 }
 
 function onBalloonClick(ChannelPlay) {
+    const SettingsFile = require('./SettingsFile');
     let settingsJson = new SettingsFile().returnSettings();
 
     console.log('balloon was clicked.');

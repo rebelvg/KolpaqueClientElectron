@@ -51,7 +51,12 @@ function launchPlayerLink(channelLink, LQ = null) {
             console.log(data);
             console.log('player was closed.');
 
-            //new Notifications().printNotification('Player was Closed', channelLink);
+            if (data.indexOf('error:') >= 0) {
+                let error = data.split('error:');
+
+                const Notifications = require('./Notifications');
+                new Notifications().printNotification('Error', error[1]);
+            }
         });
     } else {
         console.log(path + " not found.");

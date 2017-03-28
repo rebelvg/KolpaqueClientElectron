@@ -24,7 +24,7 @@ var template = [
         label: 'Select All',
         accelerator: 'CmdOrCtrl+A',
         role: 'selectall'
-    },
+    }
 ];
 
 

@@ -156,8 +156,8 @@ function checkLoop(mainWindowRef) {
             if (settingsJson.channels.hasOwnProperty(channel)) {
                 let channelObj = settingsJson.channels[channel];
 
-                getStats5(channelObj, false);
-                getStats30(channelObj, false);
+                getStats5(channelObj);
+                getStats30(channelObj);
             }
         }
     }, 2500);
