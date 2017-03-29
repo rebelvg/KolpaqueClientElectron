@@ -7,8 +7,9 @@ const path = require('path');
 const fs = require('fs');
 const _ = require('underscore');
 const Notifications = require('./Notifications');
+const dialog = require('electron').dialog;
 
-let settingsPath = path.normalize(app.getPath('documents') + '/KolpaqueClient.json');
+let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 let settingsJson = {};
 let preInstalledChannels = ['rtmp://stream.klpq.men/live/main', 'rtmp://stream.klpq.men/live/klpq', 'rtmp://stream.klpq.men/live/murshun'];
 
@@ -71,8 +72,10 @@ function addChannel(channelLink) {
 
     let channelService = "custom";
 
-    if (channelLink.indexOf('rtmp') != 0 && channelLink.indexOf('http') != 0)
+    if (channelLink.indexOf('rtmp') != 0 && channelLink.indexOf('http') != 0) {
+        dialog.showErrorBox('Error adding channel', 'Channel should start with http or rtmp.');
         return false;
+    }
 
     if (channelLink.includes('klpq.men/live/')) {
         channelService = 'klpq';
