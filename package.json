@@ -1,25 +1,19 @@
 {
   "name": "KolpaqueClient",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "GUI client for StreamLink/LiveStreamer",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
   "repository": {},
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
+  "keywords": [],
   "author": "KLPQ",
   "license": "CC0-1.0",
   "devDependencies": {
     "babel-cli": "^6.23.0",
     "devtron": "^1.4.0",
-    "electron": "^1.4.1",
+    "electron": "^1.6.2",
     "electron-config": "^0.2.1"
   },
   "dependencies": {
