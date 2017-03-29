@@ -98,7 +98,7 @@ function addChannel(channelLink) {
     let channelService = "custom";
 
     if (channelLink.indexOf('rtmp') != 0 && channelLink.indexOf('http') != 0) {
-        dialog.showErrorBox('Error adding channel', 'Channel should start with http or rtmp.');
+        dialog.showErrorBox('Error adding channel', 'Channel should start with rtmp or http.');
         return false;
     }
 
