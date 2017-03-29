@@ -2,12 +2,14 @@
  * Created by rebel on 22/03/2017.
  */
 
+const {ipcMain} = require('electron');
 const fs = require('fs');
 const SettingsFile = require('./SettingsFile');
 const Notifications = require('./Notifications');
 
-function ChannelPlay() {
-}
+ipcMain.on('channel-play', (event, channel) => {
+    launchPlayerLink(channel.link, channel.LQ);
+});
 
 function launchPlayer(channelObj, LQ = null) {
     let channelLink = channelObj.link;
@@ -19,8 +21,7 @@ function launchPlayerLink(channelLink, LQ = null) {
     if (channelLink.indexOf('rtmp') != 0 && channelLink.indexOf('http') != 0)
         return;
 
-    const SettingsFile = require('./SettingsFile');
-    let settingsJson = new SettingsFile().returnSettings();
+    let settingsJson = SettingsFile.returnSettings();
 
     let quality = 'best';
 
@@ -54,8 +55,7 @@ function launchPlayerLink(channelLink, LQ = null) {
             if (data.indexOf('error: ') >= 0) {
                 let error = data.split('error: ');
 
-                const Notifications = require('./Notifications');
-                new Notifications().printNotification('Error', error[1]);
+                Notifications.printNotification('Error', error[1]);
             }
         });
     } else {
@@ -63,7 +63,5 @@ function launchPlayerLink(channelLink, LQ = null) {
     }
 }
 
-ChannelPlay.prototype.launchPlayer = launchPlayer;
-ChannelPlay.prototype.launchPlayerLink = launchPlayerLink;
-
-module.exports = ChannelPlay;
+exports.launchPlayer = launchPlayer;
+exports.launchPlayerLink = launchPlayerLink;

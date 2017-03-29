@@ -6,7 +6,7 @@ const ChannelCheck = require('./application/ChannelCheck');
 const ChannelPlay = require('./application/ChannelPlay');
 const Notifications = require('./application/Notifications');
 
-let settingsJson = new SettingsFile().readFile();
+let settingsJson = SettingsFile.readFile();
 let forceQuit = false;
 
 require('electron-handlebars')({
@@ -16,23 +16,6 @@ require('electron-handlebars')({
 });
 
 let ipcMain = electron.ipcMain;
-
-ipcMain.on('add-channel', (event, channel) => {
-    let channelObj = new SettingsFile().addChannel(channel.link);
-
-    if (channelObj === false) {
-        event.sender.send('add-channel-response', {status: false});
-        return;
-    }
-
-    console.log('channel ' + channelObj.name + ' was added');
-
-    event.sender.send('add-channel-response', {status: true, channel: channelObj});
-});
-
-ipcMain.on('channel-play', (event, channel) => {
-    new ChannelPlay().launchPlayerLink(channel.link, channel.LQ);
-});
 
 ipcMain.on('open-page', (event, channel) => {
     if (channel.indexOf('klpq.men') >= 0) {
@@ -58,26 +41,6 @@ ipcMain.on('copy-clipboard', (event, channel) => {
     clipboard.writeText(channel);
 });
 
-ipcMain.on('remove-channel', (event, channel) => {
-    let result = new SettingsFile().removeChannel(channel);
-
-    console.log('channel ' + channel + ' was removed');
-
-    event.sender.send('remove-channel-response', {status: result, channelLink: channel});
-});
-
-ipcMain.on('twitch-import', (event, channel) => {
-    console.log('log - ' + channel);
-
-    new ChannelCheck().twitchImport(channel);
-});
-
-ipcMain.on('change-setting', (event, setting) => {
-    new SettingsFile().changeSetting(setting.name, setting.value);
-
-    console.log('setting ' + setting.name + ' changed to ' + setting.value);
-});
-
 const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
@@ -90,6 +53,8 @@ let iconPath = path.normalize(path.join(__dirname, 'icon.png'));
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+
+app.setName('Kolpaque Client');
 
 function createWindow() {
     // Create the browser window.
@@ -119,7 +84,7 @@ function createWindow() {
     });
 
     mainWindow.on('close', function () {
-        new SettingsFile().saveFile();
+        SettingsFile.saveFile();
     });
 
     mainWindow.on('close', function (e) {
@@ -143,7 +108,7 @@ function createWindow() {
         mainWindow = null
     });
 
-    new ChannelCheck().checkLoop(mainWindow);
+    ChannelCheck.checkLoop(mainWindow);
 }
 
 // This method will be called when Electron has finished
@@ -179,47 +144,44 @@ app.on('ready', function () {
 const {Menu, Tray, nativeImage} = require('electron');
 
 let appIcon = null;
+let contextMenuTemplate = [
+    {
+        label: 'Toggle Client', type: 'normal', click: () => {
+        mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+    }
+    },
+    {
+        label: 'Online Channels', type: 'submenu', submenu: []
+    },
+    {
+        label: 'Play from Clipboard', type: 'normal', click: () => {
+        ChannelPlay.launchPlayerLink(clipboard.readText());
+    }
+    },
+    {
+        label: 'Close Client', type: 'normal', click: () => {
+        forceQuit = true;
+        app.quit();
+    }
+    }
+];
+
 app.on('ready', () => {
     appIcon = new Tray(nativeImage.createFromPath(iconPath));
     appIcon.setToolTip('Kolpaque Client');
     appIcon.iconPath = iconPath;
-
-    let contextMenuTemplate = [
-        {
-            label: 'Toggle Client', type: 'normal', click: () => {
-            mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
-        }
-        },
-        {
-            label: 'Online Channels', type: 'submenu', submenu: []
-        },
-        {
-            label: 'Play from Clipboard', type: 'normal', click: () => {
-            new ChannelPlay().launchPlayerLink(clipboard.readText());
-        }
-        },
-        {
-            label: 'Close Client', type: 'normal', click: () => {
-            forceQuit = true;
-            app.quit();
-        }
-        }
-    ];
-
-    let contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
 
     appIcon.on('click', () => {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     });
 
     appIcon.on('balloon-click', function () {
-        new Notifications().onBalloonClick(ChannelPlay);
+        Notifications.onBalloonClick();
     });
 
-    // Call this again for Linux because we modified the context menu
-    appIcon.setContextMenu(contextMenu);
+    Notifications.takeRef(appIcon, contextMenuTemplate);
 
-    new Notifications().takeIconReference(appIcon, contextMenuTemplate);
+    Notifications.rebuildIconMenu();
 });
 
 // In this file you can include the rest of your app's specific main process

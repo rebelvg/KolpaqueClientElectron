@@ -3,6 +3,7 @@
  */
 
 const {app} = require('electron');
+const {ipcMain} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const _ = require('underscore');
@@ -13,8 +14,32 @@ let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueC
 let settingsJson = {};
 let preInstalledChannels = ['rtmp://stream.klpq.men/live/main', 'rtmp://stream.klpq.men/live/klpq', 'rtmp://stream.klpq.men/live/murshun'];
 
-function SettingsFile() {
-}
+ipcMain.on('change-setting', (event, setting) => {
+    changeSetting(setting.name, setting.value);
+
+    console.log('setting ' + setting.name + ' changed to ' + setting.value);
+});
+
+ipcMain.on('add-channel', (event, channel) => {
+    let channelObj = addChannel(channel.link);
+
+    if (channelObj === false) {
+        event.sender.send('add-channel-response', {status: false});
+        return;
+    }
+
+    console.log('channel ' + channelObj.name + ' was added');
+
+    event.sender.send('add-channel-response', {status: true, channel: channelObj});
+});
+
+ipcMain.on('remove-channel', (event, channel) => {
+    let result = removeChannel(channel);
+
+    console.log('channel ' + channel + ' was removed');
+
+    event.sender.send('remove-channel-response', {status: result, channelLink: channel});
+});
 
 function createSettings() {
     settingsJson.channels = {};
@@ -121,7 +146,7 @@ function removeChannel(channelLink) {
 
     delete settingsJson.channels[channelLink];
 
-    new Notifications().rebuildIconMenu();
+    Notifications.rebuildIconMenu();
 
     return true;
 }
@@ -134,11 +159,9 @@ function returnSettings() {
     return settingsJson;
 }
 
-SettingsFile.prototype.saveFile = saveFile;
-SettingsFile.prototype.readFile = readFile;
-SettingsFile.prototype.addChannel = addChannel;
-SettingsFile.prototype.removeChannel = removeChannel;
-SettingsFile.prototype.changeSetting = changeSetting;
-SettingsFile.prototype.returnSettings = returnSettings;
-
-module.exports = SettingsFile;
+exports.saveFile = saveFile;
+exports.readFile = readFile;
+exports.addChannel = addChannel;
+exports.removeChannel = removeChannel;
+exports.changeSetting = changeSetting;
+exports.returnSettings = returnSettings;

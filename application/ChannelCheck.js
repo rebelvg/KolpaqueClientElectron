@@ -2,6 +2,7 @@
  * Created by rebel on 21/03/2017.
  */
 
+const {ipcMain} = require('electron');
 const request = require('request');
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
@@ -11,11 +12,14 @@ let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = [];
 let mainWindow = null;
 
-function ChannelCheck() {
-}
+ipcMain.on('twitch-import', (event, channel) => {
+    console.log('log - ' + channel);
+
+    twitchImport(channel);
+});
 
 function wentOnline(channelObj, printBalloon) {
-    let settingsJson = new SettingsFile().returnSettings();
+    let settingsJson = SettingsFile.returnSettings();
 
     let channelLink = channelObj.link;
 
@@ -29,14 +33,14 @@ function wentOnline(channelObj, printBalloon) {
     mainWindow.webContents.send('channel-went-online', channelObj);
 
     if (printBalloon) {
-        new Notifications().printNotification('Stream is Live', channelObj.link);
+        Notifications.printNotification('Stream is Live', channelObj.link);
     }
 
     if (settingsJson.settings.autoPlay) {
-        new ChannelPlay().launchPlayer(channelObj);
+        ChannelPlay.launchPlayer(channelObj);
     }
 
-    new Notifications().rebuildIconMenu(onlineChannels, ChannelPlay);
+    Notifications.rebuildIconMenu(onlineChannels);
 }
 
 function wentOffline(channelObj) {
@@ -53,7 +57,7 @@ function wentOffline(channelObj) {
 
     mainWindow.webContents.send('channel-went-offline', channelObj);
 
-    new Notifications().rebuildIconMenu(onlineChannels, ChannelPlay);
+    Notifications.rebuildIconMenu(onlineChannels);
 }
 
 function getKlpqStats(channelObj, printBalloon) {
@@ -132,7 +136,7 @@ function twitchImport(twitchChannel) {
                 let channels = body.follows.reverse();
 
                 channels.forEach(function (channel) {
-                    let channelObj = new SettingsFile().addChannel(channel.channel.url);
+                    let channelObj = SettingsFile.addChannel(channel.channel.url);
 
                     if (channelObj !== false)
                         mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
@@ -148,7 +152,7 @@ function twitchImport(twitchChannel) {
 }
 
 function checkLoop(mainWindowRef) {
-    let settingsJson = new SettingsFile().returnSettings();
+    let settingsJson = SettingsFile.returnSettings();
     mainWindow = mainWindowRef;
 
     setTimeout(function () {
@@ -183,7 +187,5 @@ function checkLoop(mainWindowRef) {
     }, 30000);
 }
 
-ChannelCheck.prototype.twitchImport = twitchImport;
-ChannelCheck.prototype.checkLoop = checkLoop;
-
-module.exports = ChannelCheck;
+exports.twitchImport = twitchImport;
+exports.checkLoop = checkLoop;

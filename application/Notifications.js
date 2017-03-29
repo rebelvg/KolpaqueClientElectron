@@ -3,6 +3,7 @@
  */
 
 const {Menu} = require('electron');
+const {app} = require('electron');
 const path = require('path');
 const request = require('request');
 const SettingsFile = require('./SettingsFile');
@@ -11,17 +12,13 @@ const ChannelPlay = require('./ChannelPlay');
 let appIcon = null;
 let contextMenuTemplate = [];
 
-function Notifications() {
-}
-
-function takeIconReference(appIconRef, contentMenuTemplateRef) {
+function takeRef(appIconRef, contextMenuTemplateRef) {
     appIcon = appIconRef;
-    contextMenuTemplate = contentMenuTemplateRef;
+    contextMenuTemplate = contextMenuTemplateRef;
 }
 
 function printNotification(title, content) {
-    const SettingsFile = require('./SettingsFile');
-    let settingsJson = new SettingsFile().returnSettings();
+    let settingsJson = SettingsFile.returnSettings();
 
     if (!settingsJson.settings.showNotificaions)
         return;
@@ -48,9 +45,8 @@ function printNotification(title, content) {
     }, 10000, title, content);
 }
 
-function onBalloonClick(ChannelPlay) {
-    const SettingsFile = require('./SettingsFile');
-    let settingsJson = new SettingsFile().returnSettings();
+function onBalloonClick() {
+    let settingsJson = SettingsFile.returnSettings();
 
     console.log('balloon was clicked.');
 
@@ -58,15 +54,15 @@ function onBalloonClick(ChannelPlay) {
         return;
 
     if (appIcon.title == 'Stream is Live') {
-        new ChannelPlay().launchPlayerLink(appIcon.content);
+        ChannelPlay.launchPlayerLink(appIcon.content);
     }
 }
 
-function rebuildIconMenu(onlineChannels, ChannelPlay) {
+function rebuildIconMenu(onlineChannels = []) {
     contextMenuTemplate[1].submenu = onlineChannels.map(function (channelLink) {
         return {
             label: channelLink, type: 'normal', click: (menuItem) => {
-                new ChannelPlay().launchPlayerLink(menuItem.label);
+                ChannelPlay.launchPlayerLink(menuItem.label);
             }
         }
     });
@@ -76,9 +72,7 @@ function rebuildIconMenu(onlineChannels, ChannelPlay) {
     appIcon.setContextMenu(contextMenu);
 }
 
-Notifications.prototype.takeIconReference = takeIconReference;
-Notifications.prototype.printNotification = printNotification;
-Notifications.prototype.onBalloonClick = onBalloonClick;
-Notifications.prototype.rebuildIconMenu = rebuildIconMenu;
-
-module.exports = Notifications;
+exports.takeRef = takeRef;
+exports.printNotification = printNotification;
+exports.onBalloonClick = onBalloonClick;
+exports.rebuildIconMenu = rebuildIconMenu;
