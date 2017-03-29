@@ -51,8 +51,8 @@ function launchPlayerLink(channelLink, LQ = null) {
             console.log(data);
             console.log('player was closed.');
 
-            if (data.indexOf('error:') >= 0) {
-                let error = data.split('error:');
+            if (data.indexOf('error: ') >= 0) {
+                let error = data.split('error: ');
 
                 const Notifications = require('./Notifications');
                 new Notifications().printNotification('Error', error[1]);
