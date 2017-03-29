@@ -36,17 +36,30 @@ function printNotificationWin(title, content) {
     appIcon.content = content;
 
     appIcon.displayBalloon({
-        icon: appIcon.iconPath,
+        icon: appIcon.iconPathBalloon,
         title: appIcon.title,
         content: appIcon.content
     });
 }
 
 function printNotificationMac(title, content) {
+    let settingsJson = SettingsFile.returnSettings();
+
+    if (!settingsJson.settings.showNotificaions)
+        return;
+
+    appIcon.title = title;
+    appIcon.content = content;
+
     notifier.notify({
-        icon: appIcon.iconPath,
+        icon: appIcon.iconPathBalloon,
         title: title,
-        message: content
+        message: content,
+        sound: false,
+        wait: true
+    }, function (err, response) {
+        if (response === 'activate')
+            onBalloonClick();
     });
 }
 

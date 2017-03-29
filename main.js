@@ -49,11 +49,13 @@ const path = require('path');
 const url = require('url');
 
 let iconPath = path.normalize(path.join(__dirname, 'icon.png'));
+let iconPathTray = path.normalize(path.join(__dirname, 'icon.png'));
+let iconPathBalloon = path.normalize(path.join(__dirname, 'icon.png'));
 
 if (process.platform === 'darwin') {
     app.dock.setIcon(iconPath);
     app.dock.hide();
-    iconPath = path.normalize(path.join(__dirname, 'iconTemplate.png'));
+    iconPathTray = path.normalize(path.join(__dirname, 'iconTemplate.png'));
 }
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -173,9 +175,9 @@ let contextMenuTemplate = [
 ];
 
 app.on('ready', () => {
-    appIcon = new Tray(nativeImage.createFromPath(iconPath));
+    appIcon = new Tray(nativeImage.createFromPath(iconPathTray));
     appIcon.setToolTip('Kolpaque Client');
-    appIcon.iconPath = iconPath;
+    appIcon.iconPathBalloon = iconPathBalloon;
 
     appIcon.on('click', () => {
         console.log('left-click event.');
