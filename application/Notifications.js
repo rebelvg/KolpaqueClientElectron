@@ -31,18 +31,6 @@ function printNotification(title, content) {
         title: appIcon.title,
         content: appIcon.content
     });
-
-    setTimeout(function (title, content) {
-        if (title != appIcon.title || content != appIcon.content)
-            return;
-
-        console.log('closing balloon');
-
-        appIcon.displayBalloon({
-            title: '',
-            content: ''
-        });
-    }, 10000, title, content);
 }
 
 function onBalloonClick() {
