@@ -50,6 +50,12 @@ const url = require('url');
 
 let iconPath = path.normalize(path.join(__dirname, 'icon.png'));
 
+if (process.platform === 'darwin') {
+    app.dock.setIcon(iconPath);
+    app.dock.hide();
+    iconPath = path.normalize(path.join(__dirname, 'iconTemplate.png'));
+}
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -146,7 +152,7 @@ const {Menu, Tray, nativeImage} = require('electron');
 let appIcon = null;
 let contextMenuTemplate = [
     {
-        label: 'Toggle Client', type: 'normal', click: () => {
+        label: 'Toggle Client', type: 'normal', visible: false, click: () => {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     }
     },
@@ -172,6 +178,12 @@ app.on('ready', () => {
     appIcon.iconPath = iconPath;
 
     appIcon.on('click', () => {
+        console.log('left-click event.');
+        mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+    });
+
+    appIcon.on('right-click', () => {
+        console.log('right-click event.');
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     });
 

@@ -8,6 +8,7 @@ const path = require('path');
 const request = require('request');
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
+const notifier = require('node-notifier');
 
 let appIcon = null;
 let contextMenuTemplate = [];
@@ -18,6 +19,14 @@ function takeRef(appIconRef, contextMenuTemplateRef) {
 }
 
 function printNotification(title, content) {
+    if (process.platform === 'win32') {
+        printNotificationWin(title, content);
+    } else {
+        printNotificationMac(title, content);
+    }
+}
+
+function printNotificationWin(title, content) {
     let settingsJson = SettingsFile.returnSettings();
 
     if (!settingsJson.settings.showNotificaions)
@@ -30,6 +39,14 @@ function printNotification(title, content) {
         icon: appIcon.iconPath,
         title: appIcon.title,
         content: appIcon.content
+    });
+}
+
+function printNotificationMac(title, content) {
+    notifier.notify({
+        icon: appIcon.iconPath,
+        title: title,
+        message: content
     });
 }
 
