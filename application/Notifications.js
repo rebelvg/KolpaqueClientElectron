@@ -19,6 +19,14 @@ function takeRef(appIconRef, contextMenuTemplateRef) {
 }
 
 function printNotification(title, content) {
+    let settingsJson = SettingsFile.returnSettings();
+
+    if (!settingsJson.settings.showNotificaions)
+        return;
+
+    appIcon.title = title;
+    appIcon.content = content;
+
     if (process.platform === 'win32') {
         printNotificationWin(title, content);
     } else {
@@ -27,30 +35,14 @@ function printNotification(title, content) {
 }
 
 function printNotificationWin(title, content) {
-    let settingsJson = SettingsFile.returnSettings();
-
-    if (!settingsJson.settings.showNotificaions)
-        return;
-
-    appIcon.title = title;
-    appIcon.content = content;
-
     appIcon.displayBalloon({
         icon: appIcon.iconPathBalloon,
-        title: appIcon.title,
-        content: appIcon.content
+        title: title,
+        content: content
     });
 }
 
 function printNotificationMac(title, content) {
-    let settingsJson = SettingsFile.returnSettings();
-
-    if (!settingsJson.settings.showNotificaions)
-        return;
-
-    appIcon.title = title;
-    appIcon.content = content;
-
     notifier.notify({
         icon: appIcon.iconPathBalloon,
         title: title,
@@ -59,11 +51,11 @@ function printNotificationMac(title, content) {
         wait: true
     }, function (err, response) {
         if (response === 'activate')
-            onBalloonClick();
+            onBalloonClick(title, content);
     });
 }
 
-function onBalloonClick() {
+function onBalloonClick(title, content) {
     let settingsJson = SettingsFile.returnSettings();
 
     console.log('balloon was clicked.');
@@ -71,8 +63,8 @@ function onBalloonClick() {
     if (!settingsJson.settings.launchOnBalloonClick)
         return;
 
-    if (appIcon.title == 'Stream is Live') {
-        ChannelPlay.launchPlayerLink(appIcon.content);
+    if (title == 'Stream is Live') {
+        ChannelPlay.launchPlayerLink(content);
     }
 }
 
