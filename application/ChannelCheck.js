@@ -7,14 +7,13 @@ const request = require('request');
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
+const {dialog} = require('electron');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = [];
 let mainWindow = null;
 
 ipcMain.on('twitch-import', (event, channel) => {
-    console.log('log - ' + channel);
-
     twitchImport(channel);
 });
 
@@ -135,18 +134,29 @@ function twitchImport(twitchChannel) {
             try {
                 let channels = body.follows.reverse();
 
+                let i = 0;
                 channels.forEach(function (channel) {
                     let channelObj = SettingsFile.addChannel(channel.channel.url);
 
-                    if (channelObj !== false)
+                    if (channelObj !== false) {
                         mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
+                        i++;
+                    }
                 });
 
-                console.log('import done.');
+                dialog.showMessageBox({
+                    type: 'info',
+                    message: 'Import done. ' + i + ' channels added.'
+                });
             }
             catch (e) {
                 console.log(e);
             }
+        } else {
+            dialog.showMessageBox({
+                type: 'error',
+                message: 'Import error.'
+            });
         }
     })
 }

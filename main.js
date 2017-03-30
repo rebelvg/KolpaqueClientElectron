@@ -69,7 +69,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         title: 'Kolpaque Client',
         width: 400,
-        height: 667,
+        height: 700,
         resizable: false,
         fullscreenable: false,
         icon: iconPath

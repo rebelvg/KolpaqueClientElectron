@@ -36,8 +36,6 @@ ipcMain.on('add-channel', (event, channel) => {
 ipcMain.on('remove-channel', (event, channel) => {
     let result = removeChannel(channel);
 
-    console.log('channel ' + channel + ' was removed');
-
     event.sender.send('remove-channel-response', {status: result, channelLink: channel});
 });
 
@@ -98,7 +96,10 @@ function addChannel(channelLink) {
     let channelService = "custom";
 
     if (channelLink.indexOf('rtmp') != 0 && channelLink.indexOf('http') != 0) {
-        dialog.showErrorBox('Error adding channel', 'Channel should start with rtmp or http.');
+        dialog.showMessageBox({
+            type: 'error',
+            message: 'Channels should start with rtmp or http.'
+        });
         return false;
     }
 

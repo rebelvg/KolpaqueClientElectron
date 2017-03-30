@@ -6,6 +6,7 @@ const {ipcMain} = require('electron');
 const fs = require('fs');
 const SettingsFile = require('./SettingsFile');
 const Notifications = require('./Notifications');
+const {dialog} = require('electron');
 
 ipcMain.on('channel-play', (event, channel) => {
     launchPlayerLink(channel.link, channel.LQ);
@@ -43,7 +44,7 @@ function launchPlayerLink(channelLink, LQ = null) {
     let path = settingsJson.settings.livestreamerPath;
 
     if (fs.existsSync(path)) {
-        var child = require('child_process').execFile;
+        let child = require('child_process').execFile;
 
         console.log('launching player for ' + channelLink);
 
@@ -59,7 +60,10 @@ function launchPlayerLink(channelLink, LQ = null) {
             }
         });
     } else {
-        console.log(path + " not found.");
+        dialog.showMessageBox({
+            type: 'error',
+            message: path + ' not found.'
+        });
     }
 }
 
