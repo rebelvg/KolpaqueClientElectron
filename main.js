@@ -49,7 +49,7 @@ const path = require('path');
 const url = require('url');
 
 let iconPath = path.normalize(path.join(__dirname, 'icon.png'));
-let iconPathTray = path.normalize(path.join(__dirname, 'icon.png'));
+let iconPathTray = path.normalize(path.join(__dirname, 'icon32.png'));
 let iconPathBalloon = path.normalize(path.join(__dirname, 'icon.png'));
 
 if (process.platform === 'darwin') {
