@@ -63,7 +63,7 @@ function onBalloonClick(title, content) {
     if (!settingsJson.settings.launchOnBalloonClick)
         return;
 
-    if (title == 'Stream is Live') {
+    if (title.indexOf('Stream is Live') == 0) {
         ChannelPlay.launchPlayerLink(content);
     }
 }

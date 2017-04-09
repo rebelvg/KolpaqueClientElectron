@@ -8,6 +8,7 @@ const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
 const {dialog} = require('electron');
+const moment = require('moment');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = [];
@@ -32,7 +33,7 @@ function wentOnline(channelObj, printBalloon) {
     mainWindow.webContents.send('channel-went-online', channelObj);
 
     if (printBalloon) {
-        Notifications.printNotification('Stream is Live', channelObj.link);
+        Notifications.printNotification('Stream is Live (' + moment().format('D/MMM, H:mm') + ')', channelObj.link);
     }
 
     if (settingsJson.settings.autoPlay) {
