@@ -4,7 +4,7 @@ const MenuItem = remote.MenuItem;
 const {ipcRenderer} = require('electron');
 let current_context = "";
 
-var template = [
+let template = [
     {
         label: 'Cut',
         accelerator: 'CmdOrCtrl+X',
@@ -28,7 +28,7 @@ var template = [
 ];
 
 
-var menu = new Menu();
+let menu = new Menu();
 
 menu.append(new MenuItem({
     label: 'Play Original', click: function () {
@@ -98,6 +98,7 @@ $('#add-channel').on('contextmenu', function (e) {
 
 $('document').ready(function () {
 
+    ipcRenderer.send('client_ready', true);
 
     $('.twitch-import').on('click', function () {
         ipcRenderer.send('twitch-import', $('#twitch-nickname').val());
@@ -135,14 +136,16 @@ $('document').ready(function () {
 
     ipcRenderer.on('channel-went-online', function (event, channel) {
         $item = $('.item[data-id="' + channel.link + '"]');
-        $('.item[data-id="' + channel.link + '"]').remove();
-        $('#online').append($item);
+        let $temp = $item;
+        $item.remove();
+        $('#online').append($temp);
     });
 
     ipcRenderer.on('channel-went-offline', function (event, channel) {
         $item = $('.item[data-id="' + channel.link + '"]');
-        $('.item[data-id="' + channel.link + '"]').remove();
-        $('#offline').append($item);
+        let $temp = $item;
+        $item.remove();
+        $('#offline').append($temp);
     });
 
     $('#add-channel-btn').on('click', function () {
