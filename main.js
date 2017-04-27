@@ -37,6 +37,12 @@ ipcMain.on('open-chat', (event, channel) => {
     }
 });
 
+ipcMain.on('client_ready', function (bool) {
+    console.log('client ready.');
+
+    ChannelCheck.checkLoop(mainWindow);
+});
+
 ipcMain.on('copy-clipboard', (event, channel) => {
     clipboard.writeText(channel);
 });
@@ -115,8 +121,6 @@ function createWindow() {
 
         mainWindow = null
     });
-
-    ChannelCheck.checkLoop(mainWindow);
 }
 
 // This method will be called when Electron has finished

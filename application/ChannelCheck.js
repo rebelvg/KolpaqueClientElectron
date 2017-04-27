@@ -166,16 +166,14 @@ function checkLoop(mainWindowRef) {
     let settingsJson = SettingsFile.returnSettings();
     mainWindow = mainWindowRef;
 
-    setTimeout(function () {
-        for (var channel in settingsJson.channels) {
-            if (settingsJson.channels.hasOwnProperty(channel)) {
-                let channelObj = settingsJson.channels[channel];
+    for (var channel in settingsJson.channels) {
+        if (settingsJson.channels.hasOwnProperty(channel)) {
+            let channelObj = settingsJson.channels[channel];
 
-                getStats5(channelObj);
-                getStats30(channelObj);
-            }
+            getStats5(channelObj);
+            getStats30(channelObj);
         }
-    }, 2500);
+    }
 
     setInterval(function () {
         for (var channel in settingsJson.channels) {
