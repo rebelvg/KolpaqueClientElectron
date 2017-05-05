@@ -57,15 +57,6 @@ function createSettings() {
     return settingsJson;
 }
 
-function saveFile() {
-    try {
-        fs.writeFileSync(settingsPath, JSON.stringify(settingsJson, null, 4));
-    }
-    catch (e) {
-        console.log(e);
-    }
-}
-
 function readFile() {
     try {
         let file = fs.readFileSync(settingsPath, 'utf8');
@@ -81,6 +72,16 @@ function readFile() {
     catch (e) {
         console.log(e);
         return createSettings();
+    }
+}
+
+function saveFile() {
+    try {
+        fs.writeFileSync(settingsPath, JSON.stringify(settingsJson, null, 4));
+        console.log('settings saved.');
+    }
+    catch (e) {
+        console.log(e);
     }
 }
 
@@ -152,6 +153,10 @@ function removeChannel(channelLink) {
     return true;
 }
 
+function saveLoop() {
+    setInterval(saveFile, 5 * 60 * 1000);
+}
+
 function changeSetting(settingName, settingValue) {
     settingsJson.settings[settingName] = settingValue;
 }
@@ -160,9 +165,10 @@ function returnSettings() {
     return settingsJson;
 }
 
-exports.saveFile = saveFile;
 exports.readFile = readFile;
+exports.saveFile = saveFile;
 exports.addChannel = addChannel;
 exports.removeChannel = removeChannel;
 exports.changeSetting = changeSetting;
 exports.returnSettings = returnSettings;
+exports.saveLoop = saveLoop;
