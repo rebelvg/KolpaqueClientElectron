@@ -128,7 +128,7 @@ function twitchImport(twitchChannel) {
     if (twitchChannel.length == 0)
         return false;
 
-    var url = "https://api.twitch.tv/kraken/users/" + twitchChannel + "/follows/channels" + "?client_id=" + twitchApiKey + "&limit=200";
+    var url = "https://api.twitch.tv/kraken/users/" + twitchChannel + "/follows/channels" + "?client_id=" + twitchApiKey + "&limit=100";
 
     request({url: url, json: true}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
