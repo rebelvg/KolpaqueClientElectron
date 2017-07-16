@@ -182,6 +182,25 @@ async function twitchImport(twitchChannel) {
     }
 }
 
+let newClientVersion = require('../package.json').version;
+
+async function checkNewVersion() {
+    try {
+        var url = "https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases";
+
+        var response = await request_async(url, {headers: {'user-agent': "KolpaqueClientElectron"}});
+        response = JSON.parse(response.body);
+
+        if (response[0].tag_name != newClientVersion) {
+            Notifications.printNotification("New Version Available", "ftp://main.klpq.men:359/KolpaqueClientElectron/");
+
+            newClientVersion = response[0].tag_name;
+        }
+    }
+    catch (e) {
+    }
+}
+
 function checkLoop(mainWindowRef) {
     let settingsJson = SettingsFile.returnSettings();
     mainWindow = mainWindowRef;
@@ -195,6 +214,8 @@ function checkLoop(mainWindowRef) {
         }
     }
 
+    checkNewVersion();
+
     setInterval(function () {
         for (var channel in settingsJson.channels) {
             if (settingsJson.channels.hasOwnProperty(channel)) {
@@ -203,7 +224,7 @@ function checkLoop(mainWindowRef) {
                 getStats5(channelObj);
             }
         }
-    }, 5000);
+    }, 5 * 1000);
 
     setInterval(function () {
         for (var channel in settingsJson.channels) {
@@ -213,7 +234,9 @@ function checkLoop(mainWindowRef) {
                 getStats30(channelObj);
             }
         }
-    }, 30000);
+    }, 30 * 1000);
+
+    setInterval(checkNewVersion, 30 * 1000);
 }
 
 exports.twitchImport = twitchImport;

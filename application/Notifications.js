@@ -3,7 +3,7 @@
  */
 
 const {Menu} = require('electron');
-const {app} = require('electron');
+const {app, shell} = require('electron');
 const path = require('path');
 const request = require('request');
 const SettingsFile = require('./SettingsFile');
@@ -65,6 +65,10 @@ function onBalloonClick(title, content) {
 
     if (title.indexOf('Stream is Live') == 0) {
         ChannelPlay.launchPlayerLink(content);
+    }
+
+    if (title.indexOf('New Version Available') == 0) {
+        shell.openExternal(content);
     }
 }
 
