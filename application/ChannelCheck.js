@@ -4,6 +4,7 @@
 
 const {ipcMain} = require('electron');
 const request = require('request');
+const request_async = require('async-request');
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
@@ -122,44 +123,63 @@ function getStats30(channelObj, printBalloon = true) {
     }
 }
 
-function twitchImport(twitchChannel) {
+function twitchImportChannels(channels, i) {
+    channels.forEach(function (channel) {
+        let channelObj = SettingsFile.addChannel(channel.channel.url);
+
+        if (channelObj !== false) {
+            mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
+            i++;
+        }
+    });
+
+    return i;
+}
+
+async function twitchImport(twitchChannel) {
     twitchChannel = twitchChannel.replace(/\s+/g, '').toLowerCase();
 
     if (twitchChannel.length == 0)
-        return false;
+        return;
 
-    var url = "https://api.twitch.tv/kraken/users/" + twitchChannel + "/follows/channels" + "?client_id=" + twitchApiKey + "&limit=100";
+    try {
+        var url = "https://api.twitch.tv/kraken/users/" + twitchChannel + "/follows/channels?direction=ASC&limit=100&sortby=created_at&user=" + twitchChannel + "&client_id=" + twitchApiKey;
 
-    request({url: url, json: true}, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            try {
-                let channels = body.follows.reverse();
+        var response = await request_async(url);
+        response = JSON.parse(response.body);
+        let channels = response.follows;
 
-                let i = 0;
-                channels.forEach(function (channel) {
-                    let channelObj = SettingsFile.addChannel(channel.channel.url);
+        console.log(channels.length);
 
-                    if (channelObj !== false) {
-                        mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
-                        i++;
-                    }
-                });
+        if (channels.length == 0)
+            return;
 
-                dialog.showMessageBox({
-                    type: 'info',
-                    message: 'Import done. ' + i + ' channels added.'
-                });
-            }
-            catch (e) {
-                console.log(e);
-            }
-        } else {
-            dialog.showMessageBox({
-                type: 'error',
-                message: 'Import error.'
-            });
+        let i = 0;
+        i = twitchImportChannels(channels, i);
+
+        while (channels.length != 0) {
+            response = await request_async(response._links.next + "&client_id=" + twitchApiKey);
+            response = JSON.parse(response.body);
+            channels = response.follows;
+
+            console.log(channels.length);
+
+            i = twitchImportChannels(channels, i);
         }
-    })
+
+        dialog.showMessageBox({
+            type: 'info',
+            message: 'Import done. ' + i + ' channels added.'
+        });
+    }
+    catch (e) {
+        console.log(e);
+
+        dialog.showMessageBox({
+            type: 'error',
+            message: 'Import error.'
+        });
+    }
 }
 
 function checkLoop(mainWindowRef) {
