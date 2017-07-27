@@ -13,7 +13,7 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "devtron": "^1.4.0",
-    "electron": "^1.7.4",
+    "electron": "^1.7.5",
     "electron-config": "^0.2.1"
   },
   "dependencies": {

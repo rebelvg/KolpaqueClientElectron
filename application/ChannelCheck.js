@@ -12,24 +12,26 @@ const {dialog} = require('electron');
 const moment = require('moment');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
-let onlineChannels = [];
+let onlineChannels = {};
 let mainWindow = null;
 
 ipcMain.on('twitch-import', (event, channel) => {
     twitchImport(channel);
 });
 
-function wentOnline(channelObj, printBalloon) {
+function isOnline(channelObj, printBalloon) {
     let settingsJson = SettingsFile.returnSettings();
 
     let channelLink = channelObj.link;
 
-    if (onlineChannels.indexOf(channelLink) > -1)
+    if (onlineChannels.hasOwnProperty(channelLink)) {
+        onlineChannels[channelLink] = 0;
         return;
+    }
 
     console.log(channelLink + " went online.");
 
-    onlineChannels.push(channelLink);
+    onlineChannels[channelLink] = 0;
 
     mainWindow.webContents.send('channel-went-online', channelObj);
 
@@ -41,24 +43,27 @@ function wentOnline(channelObj, printBalloon) {
         ChannelPlay.launchPlayer(channelObj);
     }
 
-    Notifications.rebuildIconMenu(onlineChannels);
+    Notifications.rebuildIconMenu(Object.keys(onlineChannels));
 }
 
-function wentOffline(channelObj) {
+function isOffline(channelObj) {
     let channelLink = channelObj.link;
 
-    var index = onlineChannels.indexOf(channelLink);
+    if (!onlineChannels.hasOwnProperty(channelLink))
+        return;
 
-    if (index == -1)
+    onlineChannels[channelLink]++;
+
+    if (onlineChannels[channelLink] < 3)
         return;
 
     console.log(channelLink + " went offline.");
 
-    onlineChannels.splice(index, 1);
+    delete onlineChannels[channelLink];
 
     mainWindow.webContents.send('channel-went-offline', channelObj);
 
-    Notifications.rebuildIconMenu(onlineChannels);
+    Notifications.rebuildIconMenu(Object.keys(onlineChannels));
 }
 
 function getKlpqStats(channelObj, printBalloon) {
@@ -69,9 +74,9 @@ function getKlpqStats(channelObj, printBalloon) {
         if (!error && response.statusCode === 200) {
             try {
                 if (body.isLive) {
-                    wentOnline(channelObj, printBalloon);
+                    isOnline(channelObj, printBalloon);
                 } else {
-                    wentOffline(channelObj);
+                    isOffline(channelObj);
                 }
             }
             catch (e) {
@@ -89,9 +94,9 @@ function getTwitchStats(channelObj, printBalloon) {
         if (!error && response.statusCode === 200) {
             try {
                 if (body.streams.length > 0) {
-                    wentOnline(channelObj, printBalloon);
+                    isOnline(channelObj, printBalloon);
                 } else {
-                    wentOffline(channelObj);
+                    isOffline(channelObj);
                 }
             }
             catch (e) {
@@ -196,12 +201,15 @@ async function checkNewVersion() {
 
             newClientVersion = response[0].tag_name;
         }
+
+        return true;
     }
     catch (e) {
+        return false;
     }
 }
 
-function checkLoop(mainWindowRef) {
+async function checkLoop(mainWindowRef) {
     let settingsJson = SettingsFile.returnSettings();
     mainWindow = mainWindowRef;
 
@@ -214,7 +222,7 @@ function checkLoop(mainWindowRef) {
         }
     }
 
-    checkNewVersion();
+    await checkNewVersion();
 
     setInterval(function () {
         for (var channel in settingsJson.channels) {

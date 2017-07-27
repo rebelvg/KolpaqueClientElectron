@@ -38,7 +38,7 @@ function launchPlayerLink(channelLink, LQ = null) {
         }
     } else {
         if (LQ)
-            quality = 'high';
+            quality = '720p,high,480p,medium,360p';
     }
 
     let path = settingsJson.settings.livestreamerPath;
@@ -48,9 +48,10 @@ function launchPlayerLink(channelLink, LQ = null) {
 
         console.log('launching player for ' + channelLink);
 
-        child(path, [channelLink, quality], function (err, data) {
+        child(path, [channelLink, quality], function (err, data, stderr) {
             //console.log(err);
             console.log(data);
+            //console.log(stderr);
             console.log('player was closed.');
 
             if (data.indexOf('error: ') >= 0) {

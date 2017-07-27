@@ -12,7 +12,7 @@ const dialog = require('electron').dialog;
 
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 let settingsJson = {};
-let preInstalledChannels = ['rtmp://stream.klpq.men/live/main', 'rtmp://stream.klpq.men/live/klpq', 'rtmp://stream.klpq.men/live/murshun'];
+let preInstalledChannels = ['rtmp://stream.klpq.men/live/main'];
 
 ipcMain.on('change-setting', (event, setting) => {
     changeSetting(setting.name, setting.value);
