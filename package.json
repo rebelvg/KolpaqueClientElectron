@@ -12,12 +12,12 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "babel-cli": "^6.24.1",
-    "devtron": "^1.4.0",
-    "electron": "^1.7.5",
-    "electron-config": "^0.2.1"
+    "devtron": "^1.4.0"
   },
   "dependencies": {
     "async-request": "^1.2.0",
+    "electron": "^1.7.5",
+    "electron-config": "^0.2.1",
     "electron-handlebars": "^1.0.0",
     "electron-json-storage": "^3.0.6",
     "moment": "^2.18.1",
