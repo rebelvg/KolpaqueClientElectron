@@ -247,6 +247,8 @@ async function checkLoop(mainWindowRef) {
             }
         }
     }, 30 * 1000);
+
+    setInterval(checkNewVersion, 10 * 60 * 1000);
 }
 
 exports.twitchImport = twitchImport;
