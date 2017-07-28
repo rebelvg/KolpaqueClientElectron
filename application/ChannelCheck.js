@@ -196,6 +196,9 @@ async function checkNewVersion() {
         var response = await request_async(url, {headers: {'user-agent': "KolpaqueClientElectron"}});
         response = JSON.parse(response.body);
 
+        if (!response[0])
+            return false;
+
         if (response[0].tag_name != newClientVersion) {
             Notifications.printNotification("New Version Available", "ftp://main.klpq.men:359/KolpaqueClientElectron/");
 
@@ -244,8 +247,6 @@ async function checkLoop(mainWindowRef) {
             }
         }
     }, 30 * 1000);
-
-    setInterval(checkNewVersion, 30 * 1000);
 }
 
 exports.twitchImport = twitchImport;
