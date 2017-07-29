@@ -204,13 +204,13 @@ async function checkNewVersion() {
 
             newClientVersion = response[0].tag_name;
         }
-
-        return true;
     }
     catch (e) {
         console.log(e);
         return false;
     }
+
+    return true;
 }
 
 async function checkLoop(mainWindowRef) {
