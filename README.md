@@ -11,3 +11,6 @@ git clone
 npm install
 npm start
 ```
+
+Builds.
+ftp://main.klpq.men:359/KolpaqueClientElectron/
