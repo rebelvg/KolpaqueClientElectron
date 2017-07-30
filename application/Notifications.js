@@ -21,7 +21,7 @@ function takeRef(appIconRef, contextMenuTemplateRef) {
 function printNotification(title, content) {
     let settingsJson = SettingsFile.returnSettings();
 
-    if (!settingsJson.settings.showNotificaions)
+    if (!settingsJson.settings.showNotifications)
         return;
 
     appIcon.title = title;

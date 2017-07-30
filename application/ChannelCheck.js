@@ -253,3 +253,4 @@ async function checkLoop(mainWindowRef) {
 
 exports.twitchImport = twitchImport;
 exports.checkLoop = checkLoop;
+exports.onlineChannels = onlineChannels;

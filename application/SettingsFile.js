@@ -39,18 +39,22 @@ ipcMain.on('remove-channel', (event, channel) => {
     event.sender.send('remove-channel-response', {status: result, channelLink: channel});
 });
 
-function createSettings() {
-    settingsJson.channels = {};
-    settingsJson.settings = {};
+let defaultSettings = {
+    channels: {},
+    settings: {
+        livestreamerPath: "C:\\Program Files (x86)\\Streamlink\\bin\\streamlink.exe",
+        LQ: false,
+        showNotifications: true,
+        autoPlay: false,
+        minimizeAtStart: false,
+        launchOnBalloonClick: true,
+        enableLog: false,
+        theme: "light"
+    }
+};
 
-    settingsJson.settings.livestreamerPath = "C:\\Program Files (x86)\\Streamlink\\bin\\streamlink.exe";
-    settingsJson.settings.LQ = false;
-    settingsJson.settings.showNotificaions = true;
-    settingsJson.settings.autoPlay = false;
-    settingsJson.settings.minimizeAtStart = false;
-    settingsJson.settings.launchOnBalloonClick = true;
-    settingsJson.settings.enableLog = false;
-    settingsJson.settings.theme = "light";
+function createSettings() {
+    settingsJson = defaultSettings;
 
     preInstalledChannels.forEach(addChannel);
 
@@ -61,13 +65,15 @@ function readFile() {
     try {
         let file = fs.readFileSync(settingsPath, 'utf8');
 
-        try {
-            settingsJson = JSON.parse(file);
-            return settingsJson;
-        } catch (e) {
-            console.log(e);
-            return createSettings();
-        }
+        settingsJson = JSON.parse(file);
+
+        _.forEach(defaultSettings.settings, function (value, key) {
+            if (!settingsJson.settings.hasOwnProperty(key)) {
+                settingsJson.settings[key] = value;
+            }
+        });
+
+        return settingsJson;
     }
     catch (e) {
         console.log(e);
@@ -143,12 +149,15 @@ function removeChannel(channelLink) {
     if (!settingsJson.channels.hasOwnProperty(channelLink))
         return true;
 
-    if (preInstalledChannels.indexOf(channelLink) >= 0)
-        return false;
-
     delete settingsJson.channels[channelLink];
 
-    Notifications.rebuildIconMenu();
+    let {onlineChannels} = require('./ChannelCheck');
+
+    if (onlineChannels.hasOwnProperty(channelLink)) {
+        delete onlineChannels[channelLink];
+    }
+
+    Notifications.rebuildIconMenu(Object.keys(onlineChannels));
 
     return true;
 }
