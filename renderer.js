@@ -3,7 +3,8 @@ const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;
 const {ipcRenderer} = require('electron');
 let current_context = "";
-
+let online_count = 0;
+let offline_count = 0;
 let template = [
     {
         label: 'Cut',
@@ -95,9 +96,16 @@ $('#add-channel').on('contextmenu', function (e) {
 
 });
 
+const setNewCount = () => {
+    "use strict";
+    $('.online-count').html(online_count);
+    $('.offline-count').html(offline_count);
+}
 
 $('document').ready(function () {
-
+    offline_count = $('.offline-count').html();
+    console.log(offline_count);
+    setNewCount();
     ipcRenderer.send('client_ready', true);
 
     $('.twitch-import').on('click', function () {
@@ -135,18 +143,29 @@ $('document').ready(function () {
     });
 
     ipcRenderer.on('channel-went-online', function (event, channel) {
+        online_count++;
+        offline_count--;
         $item = $('.item[data-id="' + channel.link + '"]');
         let $temp = $item;
         $item.remove();
         $('#online').append($temp);
+        setNewCount();
     });
 
     ipcRenderer.on('channel-went-offline', function (event, channel) {
+        offline_count++;
+        online_count--;
+
         $item = $('.item[data-id="' + channel.link + '"]');
         let $temp = $item;
         $item.remove();
         $('#offline').append($temp);
+        setNewCount();
     });
+
+    ipcRenderer.on('check-update', function (event, data) {
+        $('#update').html('Update');
+    })
 
     $('#add-channel-btn').on('click', function () {
         let channel = $('#add-channel').val();
@@ -158,9 +177,11 @@ $('document').ready(function () {
     });
 
     ipcRenderer.on('remove-channel-response', function (event, output) {
-
         if (output.status) {
             $('.item[data-id="' + output.channelLink + '"]').remove();
+            offline_count = $('#offline > .item').length;
+            online_count = $('#online > .item').length;
+            setNewCount();
         }
 
         $('#add-channel').val('');
@@ -168,6 +189,8 @@ $('document').ready(function () {
 
     ipcRenderer.on('add-channel-response', function (event, output) {
         console.log(output);
+        offline_count++;
+        setNewCount();
         if (output.status) {
             let channel_form = '<div class="item" data-id="' + output.channel.link + '">' +
                 '<span class="item-icon fa-twitch fa"></span>' +

@@ -25,12 +25,14 @@
 <div id="channels-page" class="page active">
     <div class="wrapper">
         <div class="channels">
-            <div class="collapse-list" data-id="online"><span class="icon caret active"></span>Online
+            <div class="collapse-list" data-id="online"><span class="icon caret active"></span>
+                Online (<span class="online-count">0</span>)
             </div>
             <div class="collapse-wrap active" id="online">
 
             </div>
-            <div class="collapse-list" data-id="offline"><span class="icon caret active"></span>Offline
+            <div class="collapse-list" data-id="offline"><span class="icon caret active"></span>
+                Offline (<span class="offline-count">{{channels_count}}</span>)
             </div>
             <div class="collapse-wrap active" id="offline">
                 {{#each channels}}
@@ -56,6 +58,7 @@
         <div class="bottom-footer">
             <div class="icon-settings">
                 <a data-page="settings" class="change-page" aria-hidden="true"><span class="icon cog"></span></a>
+                <a id="update" aria-hidden="true"></a>
             </div>
 
         </div>

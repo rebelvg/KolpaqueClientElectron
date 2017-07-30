@@ -11,6 +11,7 @@ let forceQuit = false;
 
 require('electron-handlebars')({
     channels: settingsJson.channels,
+    channels_count: Object.keys(settingsJson.channels).length,
     settings: settingsJson.settings,
     version: require('./package.json').version
 });
