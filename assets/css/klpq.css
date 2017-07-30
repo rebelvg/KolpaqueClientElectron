@@ -225,6 +225,7 @@ body, html {
 #update {
     color: darkblue;
     font-size: 13px;
+    cursor: pointer;
 }
 
 #channels-page {
