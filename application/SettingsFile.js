@@ -65,11 +65,14 @@ function readFile() {
     try {
         let file = fs.readFileSync(settingsPath, 'utf8');
 
-        settingsJson = JSON.parse(file);
+        let parseJson = JSON.parse(file);
+
+        settingsJson.channels = parseJson.channels;
+        settingsJson.settings = defaultSettings.settings;
 
         _.forEach(defaultSettings.settings, function (value, key) {
-            if (!settingsJson.settings.hasOwnProperty(key)) {
-                settingsJson.settings[key] = value;
+            if (parseJson.settings.hasOwnProperty(key)) {
+                settingsJson.settings[key] = parseJson.settings[key];
             }
         });
 
