@@ -215,10 +215,16 @@ body, html {
 }
 
 .icon-settings {
-    width: 50%;
-    float: left;
+    width: 100%;
     text-align: left;
     font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#update {
+    color: darkblue;
+    font-size: 10px;
 }
 
 #channels-page {

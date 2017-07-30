@@ -164,7 +164,7 @@ $('document').ready(function () {
     });
 
     ipcRenderer.on('check-update', function (event, data) {
-        $('#update').html('Update');
+        $('#update').html(data.text);
     })
 
     $('#add-channel-btn').on('click', function () {
@@ -188,15 +188,14 @@ $('document').ready(function () {
     });
 
     ipcRenderer.on('add-channel-response', function (event, output) {
-        console.log(output);
-        offline_count++;
-        setNewCount();
         if (output.status) {
             let channel_form = '<div class="item" data-id="' + output.channel.link + '">' +
                 '<span class="item-icon fa-twitch fa"></span>' +
                 '<span class="item-name">' + output.channel.link + '</span>' +
                 '</div>';
             $('#offline').append(channel_form);
+            offline_count++;
+            setNewCount();
         }
 
         $('#add-channel').val('');
@@ -207,7 +206,10 @@ $('document').ready(function () {
         $('#theme-css').attr('href', "./assets/css/" + $selected + '.css');
         ipcRenderer.send('change-setting', {name: 'theme', value: $selected});
     });
-
+    $('#update').on('click', function () {
+        "use strict";
+        ipcRenderer.send('get-update');
+    })
     $('#livestreamer_input').on('change', function () {
         if ($(this).get(0).files.length != 0) {
             let path = this.files[0].path;
