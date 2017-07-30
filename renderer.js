@@ -106,7 +106,7 @@ $('document').ready(function () {
     offline_count = $('.offline-count').html();
     console.log(offline_count);
     setNewCount();
-    ipcRenderer.send('client_ready', true);
+    ipcRenderer.send('client-ready', true);
 
     $('.twitch-import').on('click', function () {
         ipcRenderer.send('twitch-import', $('#twitch-nickname').val());
@@ -165,7 +165,7 @@ $('document').ready(function () {
 
     ipcRenderer.on('check-update', function (event, data) {
         $('#update').html(data.text);
-    })
+    });
 
     $('#add-channel-btn').on('click', function () {
         let channel = $('#add-channel').val();

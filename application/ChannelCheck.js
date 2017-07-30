@@ -2,13 +2,12 @@
  * Created by rebel on 21/03/2017.
  */
 
-const {ipcMain} = require('electron');
+const {ipcMain, dialog, shell} = require('electron');
 const request = require('request');
 const request_async = require('async-request');
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
-const {dialog} = require('electron');
 const moment = require('moment');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
@@ -187,7 +186,15 @@ async function twitchImport(twitchChannel) {
     }
 }
 
+let buildsLink = "ftp://main.klpq.men:359/KolpaqueClientElectron/";
+
 let newClientVersion = require('../package.json').version;
+
+ipcMain.on('get-update', (event, data) => {
+    console.log('get-update');
+
+    shell.openExternal(buildsLink);
+});
 
 async function checkNewVersion() {
     try {
@@ -200,9 +207,11 @@ async function checkNewVersion() {
             return false;
 
         if (response[0].tag_name != newClientVersion) {
-            Notifications.printNotification("New Version Available", "ftp://main.klpq.men:359/KolpaqueClientElectron/");
+            Notifications.printNotification("New Version Available", buildsLink);
 
             newClientVersion = response[0].tag_name;
+
+            mainWindow.webContents.send('check-update', {text: 'Update Available'});
         }
     }
     catch (e) {

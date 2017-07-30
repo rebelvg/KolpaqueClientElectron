@@ -38,10 +38,12 @@ ipcMain.on('open-chat', (event, channel) => {
     }
 });
 
-ipcMain.on('client_ready', function (bool) {
+ipcMain.once('client-ready', function (bool) {
     console.log('client ready.');
 
     ChannelCheck.checkLoop(mainWindow);
+
+    SettingsFile.saveLoop();
 });
 
 ipcMain.on('copy-clipboard', (event, channel) => {
@@ -202,8 +204,6 @@ app.on('ready', () => {
 
     Notifications.rebuildIconMenu();
 });
-
-SettingsFile.saveLoop();
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
