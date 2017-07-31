@@ -77,9 +77,11 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         title: 'Kolpaque Client',
-        width: 400,
-        height: 700,
-        resizable: false,
+        minWidth: 200,
+        minHeight: 350,
+        width: settingsJson.settings.width,
+        height: settingsJson.settings.height,
+        resizable: true,
         fullscreenable: false,
         icon: iconPath
     });
@@ -114,6 +116,17 @@ function createWindow() {
             e.preventDefault();
             mainWindow.hide();
         }
+    });
+
+    mainWindow.on('resize', function () {
+        let size = mainWindow.getSize();
+
+        let width = size[0];
+        let height = size[1];
+
+        let settingsJson = SettingsFile.settingsJson;
+        settingsJson.settings.width = width;
+        settingsJson.settings.height = height;
     });
 
     // Emitted when the window is closed.
@@ -203,6 +216,10 @@ app.on('ready', () => {
     Notifications.takeRef(appIcon, contextMenuTemplate);
 
     Notifications.rebuildIconMenu();
+});
+
+process.on('uncaughtException', function (err) {
+    console.log('Caught exception: ' + err);
 });
 
 // In this file you can include the rest of your app's specific main process

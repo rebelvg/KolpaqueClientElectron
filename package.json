@@ -1,6 +1,6 @@
 {
   "name": "KolpaqueClient",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "GUI client for StreamLink/LiveStreamer",
   "main": "main.js",
   "scripts": {

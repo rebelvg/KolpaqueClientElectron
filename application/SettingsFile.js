@@ -49,7 +49,9 @@ let defaultSettings = {
         minimizeAtStart: false,
         launchOnBalloonClick: true,
         enableLog: false,
-        theme: "light"
+        theme: "light",
+        width: 400,
+        height: 700
     }
 };
 
@@ -184,3 +186,4 @@ exports.removeChannel = removeChannel;
 exports.changeSetting = changeSetting;
 exports.returnSettings = returnSettings;
 exports.saveLoop = saveLoop;
+exports.settingsJson = settingsJson;
