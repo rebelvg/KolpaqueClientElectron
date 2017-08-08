@@ -9,6 +9,7 @@ const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
 const moment = require('moment');
+const lodash = require('lodash');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = {};
@@ -160,56 +161,33 @@ function getYoutubeStatsChannel(channelObj, printBalloon) {
 }
 
 function buildChannelObj(channelLink) {
-    try {
-        return SettingsFile.buildChannelObj(channelLink);
-    }
-    catch (e) {
-        return null;
-    }
+    return SettingsFile.buildChannelObj(channelLink);
 }
 
-function getStats5(channelObj, printBalloon = true) {
-    channelObj = buildChannelObj(channelObj.link);
+function getStats5(channelLink, printBalloon = true) {
+    let channelObj = buildChannelObj(channelLink);
 
-    if (!channelObj) {
-        return;
-    }
-
-    let channelService = channelObj.service;
-
-    switch (channelService) {
+    switch (channelObj.service) {
         case 'klpq-main':
             getKlpqStats(channelObj, printBalloon);
             break;
     }
 }
 
-function getStats30(channelObj, printBalloon = true) {
-    channelObj = buildChannelObj(channelObj.link);
+function getStats30(channelLink, printBalloon = true) {
+    let channelObj = buildChannelObj(channelLink);
 
-    if (!channelObj) {
-        return;
-    }
-
-    let channelService = channelObj.service;
-
-    switch (channelService) {
+    switch (channelObj.service) {
         case 'twitch':
             getTwitchStats(channelObj, printBalloon);
             break;
     }
 }
 
-function getStats120(channelObj, printBalloon = true) {
-    channelObj = buildChannelObj(channelObj.link);
+function getStats120(channelLink, printBalloon = true) {
+    let channelObj = buildChannelObj(channelLink);
 
-    if (!channelObj) {
-        return;
-    }
-
-    let channelService = channelObj.service;
-
-    switch (channelService) {
+    switch (channelObj.service) {
         case 'youtube-user':
             getYoutubeStatsUser(channelObj, printBalloon);
             break;
@@ -318,46 +296,30 @@ async function checkLoop(mainWindowRef) {
     let settingsJson = SettingsFile.returnSettings();
     mainWindow = mainWindowRef;
 
-    for (let channel in settingsJson.channels) {
-        if (settingsJson.channels.hasOwnProperty(channel)) {
-            let channelObj = settingsJson.channels[channel];
-
-            getStats5(channelObj, false);
-            getStats30(channelObj, false);
-            getStats120(channelObj, false);
-        }
-    }
+    lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
+        getStats5(channelLink, false);
+        getStats30(channelLink, false);
+        getStats120(channelLink, false);
+    });
 
     await checkNewVersion();
 
     setInterval(function () {
-        for (let channel in settingsJson.channels) {
-            if (settingsJson.channels.hasOwnProperty(channel)) {
-                let channelObj = settingsJson.channels[channel];
-
-                getStats5(channelObj);
-            }
-        }
+        lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
+            getStats5(channelLink);
+        });
     }, 5 * 1000);
 
     setInterval(function () {
-        for (let channel in settingsJson.channels) {
-            if (settingsJson.channels.hasOwnProperty(channel)) {
-                let channelObj = settingsJson.channels[channel];
-
-                getStats30(channelObj);
-            }
-        }
+        lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
+            getStats30(channelLink);
+        });
     }, 30 * 1000);
 
     setInterval(function () {
-        for (let channel in settingsJson.channels) {
-            if (settingsJson.channels.hasOwnProperty(channel)) {
-                let channelObj = settingsJson.channels[channel];
-
-                getStats120(channelObj);
-            }
-        }
+        lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
+            getStats120(channelLink);
+        });
     }, 2 * 60 * 1000);
 
     setInterval(checkNewVersion, 10 * 60 * 1000);

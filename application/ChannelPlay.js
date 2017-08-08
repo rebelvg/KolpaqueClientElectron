@@ -19,26 +19,26 @@ function launchPlayer(channelObj, LQ = null) {
 }
 
 function launchPlayerLink(channelLink, LQ = null) {
-    if (channelLink.indexOf('rtmp') !== 0 && channelLink.indexOf('http') !== 0)
-        return;
+    let channelObj = SettingsFile.buildChannelObj(channelLink);
 
     let settingsJson = SettingsFile.returnSettings();
 
     let quality = 'best';
 
-    if (LQ === null)
+    if (LQ === null) {
         LQ = settingsJson.settings.LQ;
+    }
 
-    if (channelLink.startsWith("rtmp")) {
+    if (channelObj.protocol === 'rtmp:') {
         channelLink += " live=1";
 
-        if (LQ && channelLink.indexOf('klpq.men/live/') >= 0) {
-            console.log('live to restream');
+        if (LQ && channelObj.service === 'klpq-main') {
             channelLink = channelLink.replace('/live/', '/restream/');
         }
     } else {
-        if (LQ)
+        if (LQ) {
             quality = '720p,high,480p,medium,360p';
+        }
     }
 
     let path = settingsJson.settings.livestreamerPath;

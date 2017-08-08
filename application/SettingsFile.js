@@ -101,8 +101,12 @@ function readFile() {
 
         let parseJson = JSON.parse(file);
 
-        settingsJson.channels = parseJson.channels;
+        settingsJson.channels = {};
         settingsJson.settings = defaultSettings.settings;
+
+        _.forEach(parseJson.channels, function (channelObj, channelLink) {
+            settingsJson.channels[channelLink] = buildChannelObj(channelLink);
+        });
 
         _.forEach(defaultSettings.settings, function (value, key) {
             if (parseJson.settings.hasOwnProperty(key)) {
@@ -132,37 +136,45 @@ function buildChannelObj(channelLink) {
     let channelObj = {
         service: 'custom',
         name: null,
-        link: channelLink
+        link: channelLink,
+        protocol: null
     };
 
-    let channelURL = new URL(channelLink);
+    try {
+        let channelURL = new URL(channelLink);
 
-    if (!allowedProtocols.includes(channelURL.protocol)) {
-        throw Error(`Only [${allowedProtocols}] are allowed.`);
-    }
-
-    if (!channelURL.host.length) {
-        throw Error(`Hostname can't be empty.`);
-    }
-
-    if (channelURL.pathname.length < 2) {
-        throw Error(`Pathname can't be empty.`);
-    }
-
-    lodash.forEach(registeredServices, function (serviceObj, serviceName) {
-        if (serviceObj.protocols.includes(channelURL.protocol.toLowerCase()) && serviceObj.hosts.includes(channelURL.host.toLowerCase())) {
-            let nameArray = lodash.split(channelURL.pathname, '/');
-
-            if (nameArray[serviceObj.name]) {
-                lodash.forEach(serviceObj.paths, function (path) {
-                    if (channelURL.pathname.toLowerCase().indexOf(path) === 0) {
-                        channelObj.service = serviceName;
-                        channelObj.name = nameArray[serviceObj.name];
-                    }
-                });
-            }
+        if (!allowedProtocols.includes(channelURL.protocol)) {
+            throw Error(`Only [${allowedProtocols}] are allowed.`);
         }
-    });
+
+        channelObj.protocol = channelURL.protocol;
+
+        if (!channelURL.host.length) {
+            throw Error(`Hostname can't be empty.`);
+        }
+
+        if (channelURL.pathname.length < 2) {
+            throw Error(`Pathname can't be empty.`);
+        }
+
+        lodash.forEach(registeredServices, function (serviceObj, serviceName) {
+            if (serviceObj.protocols.includes(channelURL.protocol.toLowerCase()) && serviceObj.hosts.includes(channelURL.host.toLowerCase())) {
+                let nameArray = lodash.split(channelURL.pathname, '/');
+
+                if (nameArray[serviceObj.name]) {
+                    lodash.forEach(serviceObj.paths, function (path) {
+                        if (channelURL.pathname.toLowerCase().indexOf(path) === 0) {
+                            channelObj.service = serviceName;
+                            channelObj.name = nameArray[serviceObj.name];
+                        }
+                    });
+                }
+            }
+        });
+    }
+    catch (e) {
+        console.log(e.message);
+    }
 
     return channelObj;
 }
