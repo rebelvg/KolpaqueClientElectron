@@ -7,12 +7,43 @@ const {ipcMain} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const _ = require('underscore');
+const lodash = require('lodash');
 const Notifications = require('./Notifications');
 const dialog = require('electron').dialog;
+const {URL} = require('url');
 
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 let settingsJson = {};
-let preInstalledChannels = ['rtmp://stream.klpq.men/live/main'];
+
+const preInstalledChannels = ['rtmp://main.klpq.men/live/main'];
+
+const allowedProtocols = ['rtmp:', 'http:', 'https:'];
+const registeredServices = {
+    'klpq-main': {
+        protocols: ['rtmp:'],
+        hosts: ['main.klpq.men', 'stream.klpq.men'],
+        paths: ['/live/'],
+        name: 2
+    },
+    'twitch': {
+        protocols: ['http:', 'https:'],
+        hosts: ['twitch.tv', 'www.twitch.tv'],
+        paths: ['/'],
+        name: 1
+    },
+    'youtube-user': {
+        protocols: ['http:', 'https:'],
+        hosts: ['youtube.com', 'www.youtube.com'],
+        paths: ['/user/'],
+        name: 2
+    },
+    'youtube-channel': {
+        protocols: ['http:', 'https:'],
+        hosts: ['youtube.com', 'www.youtube.com'],
+        paths: ['/channel/'],
+        name: 2
+    }
+};
 
 ipcMain.on('change-setting', (event, setting) => {
     changeSetting(setting.name, setting.value);
@@ -97,66 +128,70 @@ function saveFile() {
     }
 }
 
+function buildChannelObj(channelLink) {
+    let channelObj = {
+        service: 'custom',
+        name: null,
+        link: channelLink
+    };
+
+    let channelURL = new URL(channelLink);
+
+    if (!allowedProtocols.includes(channelURL.protocol)) {
+        throw Error(`Only [${allowedProtocols}] are allowed.`);
+    }
+
+    if (!channelURL.host.length) {
+        throw Error(`Hostname can't be empty.`);
+    }
+
+    if (channelURL.pathname.length < 2) {
+        throw Error(`Pathname can't be empty.`);
+    }
+
+    lodash.forEach(registeredServices, function (serviceObj, serviceName) {
+        if (serviceObj.protocols.includes(channelURL.protocol.toLowerCase()) && serviceObj.hosts.includes(channelURL.host.toLowerCase())) {
+            let nameArray = lodash.split(channelURL.pathname, '/');
+
+            if (nameArray[serviceObj.name]) {
+                lodash.forEach(serviceObj.paths, function (path) {
+                    if (channelURL.pathname.toLowerCase().indexOf(path) === 0) {
+                        channelObj.service = serviceName;
+                        channelObj.name = nameArray[serviceObj.name];
+                    }
+                });
+            }
+        }
+    });
+
+    return channelObj;
+}
+
 function addChannel(channelLink) {
     channelLink = channelLink.replace(/\s+/g, '');
-
-    if (channelLink.length === 0)
-        return false;
 
     if (settingsJson.channels.hasOwnProperty(channelLink))
         return false;
 
-    let channelService = "custom";
+    try {
+        let channelObj = buildChannelObj(channelLink);
 
-    if (channelLink.indexOf('rtmp') !== 0 && channelLink.indexOf('http') !== 0) {
+        let channels = {};
+
+        channels[channelLink] = channelObj;
+
+        _.extend(settingsJson.channels, channels);
+
+        return channelObj;
+    }
+    catch (e) {
         dialog.showMessageBox({
             type: 'error',
-            message: 'Channels should start with rtmp or http.'
+            message: e.message
         });
 
         return false;
     }
-
-    switch (true) {
-        case channelLink.includes('klpq.men/live/'):
-            channelService = 'klpq';
-            break;
-        case channelLink.includes('twitch.tv/'):
-            channelService = 'twitch';
-            break;
-        case channelLink.includes('youtube.com/user/'):
-            channelService = 'youtube-user';
-            break;
-        case channelLink.includes('youtube.com/channel/'):
-            channelService = 'youtube-channel';
-            break;
-    }
-
-    console.log(channelService);
-
-    let channelArray = channelLink.split('/');
-
-    if (channelArray.length < 2)
-        return false;
-
-    let channelName = channelArray[channelArray.length - 1];
-
-    console.log(channelName);
-
-    if (channelName.length === 0)
-        return false;
-
-    let channelObj = {};
-
-    channelObj[channelLink] = {
-        'service': channelService,
-        'name': channelName,
-        'link': channelLink
-    };
-
-    _.extend(settingsJson.channels, channelObj);
-
-    return channelObj[channelLink];
 }
 
 function removeChannel(channelLink) {
@@ -196,3 +231,4 @@ exports.changeSetting = changeSetting;
 exports.returnSettings = returnSettings;
 exports.saveLoop = saveLoop;
 exports.settingsJson = settingsJson;
+exports.buildChannelObj = buildChannelObj;

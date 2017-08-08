@@ -160,48 +160,25 @@ function getYoutubeStatsChannel(channelObj, printBalloon) {
 }
 
 function buildChannelObj(channelLink) {
-    let channelObj = {
-        service: 'custom',
-        name: null,
-        link: channelLink
-    };
-
-    switch (true) {
-        case channelLink.includes('klpq.men/live/'):
-            channelObj.service = 'klpq';
-            break;
-        case channelLink.includes('twitch.tv/'):
-            channelObj.service = 'twitch';
-            break;
-        case channelLink.includes('youtube.com/user/'):
-            channelObj.service = 'youtube-user';
-            break;
-        case channelLink.includes('youtube.com/channel/'):
-            channelObj.service = 'youtube-channel';
-            break;
+    try {
+        return SettingsFile.buildChannelObj(channelLink);
     }
-
-    let channelArray = channelLink.split('/');
-
-    if (channelArray.length < 2)
+    catch (e) {
         return null;
-
-    let channelName = channelArray[channelArray.length - 1];
-
-    if (channelName.length === 0)
-        return null;
-
-    channelObj.name = channelName;
-
-    return channelObj;
+    }
 }
 
 function getStats5(channelObj, printBalloon = true) {
     channelObj = buildChannelObj(channelObj.link);
+
+    if (!channelObj) {
+        return;
+    }
+
     let channelService = channelObj.service;
 
     switch (channelService) {
-        case 'klpq':
+        case 'klpq-main':
             getKlpqStats(channelObj, printBalloon);
             break;
     }
@@ -209,6 +186,11 @@ function getStats5(channelObj, printBalloon = true) {
 
 function getStats30(channelObj, printBalloon = true) {
     channelObj = buildChannelObj(channelObj.link);
+
+    if (!channelObj) {
+        return;
+    }
+
     let channelService = channelObj.service;
 
     switch (channelService) {
@@ -220,6 +202,11 @@ function getStats30(channelObj, printBalloon = true) {
 
 function getStats120(channelObj, printBalloon = true) {
     channelObj = buildChannelObj(channelObj.link);
+
+    if (!channelObj) {
+        return;
+    }
+
     let channelService = channelObj.service;
 
     switch (channelService) {
