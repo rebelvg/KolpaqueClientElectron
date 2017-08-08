@@ -66,8 +66,7 @@ function isOffline(channelObj) {
 }
 
 function getKlpqStats(channelObj, printBalloon) {
-    let channelService = 'klpq';
-    var url = "http://stats.klpq.men/channel/" + channelObj.name;
+    let url = "http://stats.klpq.men/channel/" + channelObj.name;
 
     request({url: url, json: true}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
@@ -82,12 +81,11 @@ function getKlpqStats(channelObj, printBalloon) {
                 console.log(e);
             }
         }
-    })
+    });
 }
 
 function getTwitchStats(channelObj, printBalloon) {
-    let channelService = 'twitch';
-    var url = "https://api.twitch.tv/kraken/streams?channel=" + channelObj.name + "&client_id=" + twitchApiKey;
+    let url = "https://api.twitch.tv/kraken/streams?channel=" + channelObj.name + "&client_id=" + twitchApiKey;
 
     request({url: url, json: true}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
@@ -102,11 +100,105 @@ function getTwitchStats(channelObj, printBalloon) {
                 console.log(e);
             }
         }
-    })
+    });
+}
+
+function getYoutubeStatsUser(channelObj, printBalloon) {
+    let apiKey = SettingsFile.settingsJson.settings.youtubeApiKey;
+    let idUrl = `https://www.googleapis.com/youtube/v3/channels?forUsername=${channelObj.name}&part=id&key=${apiKey}`;
+
+    request({url: idUrl, json: true}, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            try {
+                if (body.items.length > 0) {
+                    let channelId = body.items[0].id;
+                    let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&eventType=live&key=${apiKey}`;
+
+                    request({url: url, json: true}, function (error, response, body) {
+                        if (!error && response.statusCode === 200) {
+                            try {
+                                if (body.items.length > 0) {
+                                    isOnline(channelObj, printBalloon);
+                                } else {
+                                    isOffline(channelObj);
+                                }
+                            }
+                            catch (e) {
+                                console.log(e);
+                            }
+                        }
+                    });
+                } else {
+                    console.log('youtube user id not found.');
+                }
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+    });
+}
+
+function getYoutubeStatsChannel(channelObj, printBalloon) {
+    let apiKey = SettingsFile.settingsJson.settings.youtubeApiKey;
+    let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelObj.name}&type=video&eventType=live&key=${apiKey}`;
+
+    request({url: url, json: true}, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            try {
+                if (body.items.length > 0) {
+                    isOnline(channelObj, printBalloon);
+                } else {
+                    isOffline(channelObj);
+                }
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+    });
+}
+
+function buildChannelObj(channelLink) {
+    let channelObj = {
+        service: 'custom',
+        name: null,
+        link: channelLink
+    };
+
+    switch (true) {
+        case channelLink.includes('klpq.men/live/'):
+            channelObj.service = 'klpq';
+            break;
+        case channelLink.includes('twitch.tv/'):
+            channelObj.service = 'twitch';
+            break;
+        case channelLink.includes('youtube.com/user/'):
+            channelObj.service = 'youtube-user';
+            break;
+        case channelLink.includes('youtube.com/channel/'):
+            channelObj.service = 'youtube-channel';
+            break;
+    }
+
+    let channelArray = channelLink.split('/');
+
+    if (channelArray.length < 2)
+        return null;
+
+    let channelName = channelArray[channelArray.length - 1];
+
+    if (channelName.length === 0)
+        return null;
+
+    channelObj.name = channelName;
+
+    return channelObj;
 }
 
 function getStats5(channelObj, printBalloon = true) {
-    var channelService = channelObj.service;
+    channelObj = buildChannelObj(channelObj.link);
+    let channelService = channelObj.service;
 
     switch (channelService) {
         case 'klpq':
@@ -116,13 +208,26 @@ function getStats5(channelObj, printBalloon = true) {
 }
 
 function getStats30(channelObj, printBalloon = true) {
-    var channelService = channelObj.service;
+    channelObj = buildChannelObj(channelObj.link);
+    let channelService = channelObj.service;
 
     switch (channelService) {
         case 'twitch':
             getTwitchStats(channelObj, printBalloon);
             break;
-        default:
+    }
+}
+
+function getStats120(channelObj, printBalloon = true) {
+    channelObj = buildChannelObj(channelObj.link);
+    let channelService = channelObj.service;
+
+    switch (channelService) {
+        case 'youtube-user':
+            getYoutubeStatsUser(channelObj, printBalloon);
+            break;
+        case 'youtube-channel':
+            getYoutubeStatsChannel(channelObj, printBalloon);
             break;
     }
 }
@@ -143,25 +248,25 @@ function twitchImportChannels(channels, i) {
 async function twitchImport(twitchChannel) {
     twitchChannel = twitchChannel.replace(/\s+/g, '').toLowerCase();
 
-    if (twitchChannel.length == 0)
+    if (twitchChannel.length === 0)
         return;
 
     try {
-        var url = "https://api.twitch.tv/kraken/users/" + twitchChannel + "/follows/channels?direction=ASC&limit=100&sortby=created_at&user=" + twitchChannel + "&client_id=" + twitchApiKey;
+        let url = "https://api.twitch.tv/kraken/users/" + twitchChannel + "/follows/channels?direction=ASC&limit=100&sortby=created_at&user=" + twitchChannel + "&client_id=" + twitchApiKey;
 
-        var response = await request_async(url);
+        let response = await request_async(url);
         response = JSON.parse(response.body);
         let channels = response.follows;
 
         console.log(channels.length);
 
-        if (channels.length == 0)
+        if (channels.length === 0)
             return;
 
         let i = 0;
         i = twitchImportChannels(channels, i);
 
-        while (channels.length != 0) {
+        while (channels.length !== 0) {
             response = await request_async(response._links.next + "&client_id=" + twitchApiKey);
             response = JSON.parse(response.body);
             channels = response.follows;
@@ -198,15 +303,15 @@ ipcMain.on('get-update', (event, data) => {
 
 async function checkNewVersion() {
     try {
-        var url = "https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases";
+        let url = "https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases";
 
-        var response = await request_async(url, {headers: {'user-agent': "KolpaqueClientElectron"}});
+        let response = await request_async(url, {headers: {'user-agent': "KolpaqueClientElectron"}});
         response = JSON.parse(response.body);
 
         if (!response[0])
             return false;
 
-        if (response[0].tag_name != newClientVersion) {
+        if (response[0].tag_name !== newClientVersion) {
             Notifications.printNotification("New Version Available", buildsLink);
 
             newClientVersion = response[0].tag_name;
@@ -226,19 +331,20 @@ async function checkLoop(mainWindowRef) {
     let settingsJson = SettingsFile.returnSettings();
     mainWindow = mainWindowRef;
 
-    for (var channel in settingsJson.channels) {
+    for (let channel in settingsJson.channels) {
         if (settingsJson.channels.hasOwnProperty(channel)) {
             let channelObj = settingsJson.channels[channel];
 
             getStats5(channelObj, false);
             getStats30(channelObj, false);
+            getStats120(channelObj, false);
         }
     }
 
     await checkNewVersion();
 
     setInterval(function () {
-        for (var channel in settingsJson.channels) {
+        for (let channel in settingsJson.channels) {
             if (settingsJson.channels.hasOwnProperty(channel)) {
                 let channelObj = settingsJson.channels[channel];
 
@@ -248,7 +354,7 @@ async function checkLoop(mainWindowRef) {
     }, 5 * 1000);
 
     setInterval(function () {
-        for (var channel in settingsJson.channels) {
+        for (let channel in settingsJson.channels) {
             if (settingsJson.channels.hasOwnProperty(channel)) {
                 let channelObj = settingsJson.channels[channel];
 
@@ -256,6 +362,16 @@ async function checkLoop(mainWindowRef) {
             }
         }
     }, 30 * 1000);
+
+    setInterval(function () {
+        for (let channel in settingsJson.channels) {
+            if (settingsJson.channels.hasOwnProperty(channel)) {
+                let channelObj = settingsJson.channels[channel];
+
+                getStats120(channelObj);
+            }
+        }
+    }, 2 * 60 * 1000);
 
     setInterval(checkNewVersion, 10 * 60 * 1000);
 }

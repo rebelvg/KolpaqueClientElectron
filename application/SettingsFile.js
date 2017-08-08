@@ -51,7 +51,8 @@ let defaultSettings = {
         enableLog: false,
         theme: "light",
         width: 400,
-        height: 700
+        height: 700,
+        youtubeApiKey: null
     }
 };
 
@@ -97,9 +98,9 @@ function saveFile() {
 }
 
 function addChannel(channelLink) {
-    channelLink = channelLink.replace(/\s+/g, '').toLowerCase();
+    channelLink = channelLink.replace(/\s+/g, '');
 
-    if (channelLink.length == 0)
+    if (channelLink.length === 0)
         return false;
 
     if (settingsJson.channels.hasOwnProperty(channelLink))
@@ -107,34 +108,42 @@ function addChannel(channelLink) {
 
     let channelService = "custom";
 
-    if (channelLink.indexOf('rtmp') != 0 && channelLink.indexOf('http') != 0) {
+    if (channelLink.indexOf('rtmp') !== 0 && channelLink.indexOf('http') !== 0) {
         dialog.showMessageBox({
             type: 'error',
             message: 'Channels should start with rtmp or http.'
         });
+
         return false;
     }
 
-    if (channelLink.includes('klpq.men/live/')) {
-        channelService = 'klpq';
-    }
-
-    if (channelLink.includes('twitch.tv/')) {
-        channelService = 'twitch';
+    switch (true) {
+        case channelLink.includes('klpq.men/live/'):
+            channelService = 'klpq';
+            break;
+        case channelLink.includes('twitch.tv/'):
+            channelService = 'twitch';
+            break;
+        case channelLink.includes('youtube.com/user/'):
+            channelService = 'youtube-user';
+            break;
+        case channelLink.includes('youtube.com/channel/'):
+            channelService = 'youtube-channel';
+            break;
     }
 
     console.log(channelService);
 
-    let array = channelLink.split('/');
+    let channelArray = channelLink.split('/');
 
-    if (array.length < 2)
+    if (channelArray.length < 2)
         return false;
 
-    let channelName = array[array.length - 1];
+    let channelName = channelArray[channelArray.length - 1];
 
     console.log(channelName);
 
-    if (channelName.length == 0)
+    if (channelName.length === 0)
         return false;
 
     let channelObj = {};

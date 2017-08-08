@@ -19,14 +19,14 @@ function launchPlayer(channelObj, LQ = null) {
 }
 
 function launchPlayerLink(channelLink, LQ = null) {
-    if (channelLink.indexOf('rtmp') != 0 && channelLink.indexOf('http') != 0)
+    if (channelLink.indexOf('rtmp') !== 0 && channelLink.indexOf('http') !== 0)
         return;
 
     let settingsJson = SettingsFile.returnSettings();
 
     let quality = 'best';
 
-    if (LQ == null)
+    if (LQ === null)
         LQ = settingsJson.settings.LQ;
 
     if (channelLink.startsWith("rtmp")) {

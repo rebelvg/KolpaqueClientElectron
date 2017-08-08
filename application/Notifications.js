@@ -63,11 +63,11 @@ function onBalloonClick(title, content) {
     if (!settingsJson.settings.launchOnBalloonClick)
         return;
 
-    if (title.indexOf('Stream is Live') == 0) {
+    if (title.indexOf('Stream is Live') === 0) {
         ChannelPlay.launchPlayerLink(content);
     }
 
-    if (title.indexOf('New Version Available') == 0) {
+    if (title.indexOf('New Version Available') === 0) {
         shell.openExternal(content);
     }
 }

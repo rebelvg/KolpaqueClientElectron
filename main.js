@@ -174,7 +174,7 @@ const {Menu, Tray, nativeImage} = require('electron');
 let appIcon = null;
 let contextMenuTemplate = [
     {
-        label: 'Toggle Client', type: 'normal', visible: process.platform == 'linux', click: () => {
+        label: 'Toggle Client', type: 'normal', visible: process.platform === 'linux', click: () => {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     }
     },
