@@ -83,7 +83,8 @@ let defaultSettings = {
         theme: "light",
         width: 400,
         height: 700,
-        youtubeApiKey: null
+        youtubeApiKey: null,
+        twitchImport: []
     }
 };
 
@@ -193,6 +194,8 @@ function addChannel(channelLink) {
         channels[channelLink] = channelObj;
 
         _.extend(settingsJson.channels, channels);
+
+        console.log('added channel.', channelObj);
 
         return channelObj;
     }

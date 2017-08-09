@@ -106,6 +106,11 @@ function getTwitchStats(channelObj, printBalloon) {
 
 function getYoutubeStatsUser(channelObj, printBalloon) {
     let apiKey = SettingsFile.settingsJson.settings.youtubeApiKey;
+
+    if (!apiKey) {
+        return;
+    }
+
     let idUrl = `https://www.googleapis.com/youtube/v3/channels?forUsername=${channelObj.name}&part=id&key=${apiKey}`;
 
     request({url: idUrl, json: true}, function (error, response, body) {
@@ -142,6 +147,11 @@ function getYoutubeStatsUser(channelObj, printBalloon) {
 
 function getYoutubeStatsChannel(channelObj, printBalloon) {
     let apiKey = SettingsFile.settingsJson.settings.youtubeApiKey;
+
+    if (!apiKey) {
+        return;
+    }
+
     let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelObj.name}&type=video&eventType=live&key=${apiKey}`;
 
     request({url: url, json: true}, function (error, response, body) {
@@ -210,11 +220,11 @@ function twitchImportChannels(channels, i) {
     return i;
 }
 
-async function twitchImport(twitchChannel) {
+async function twitchImportBase(twitchChannel) {
     twitchChannel = twitchChannel.replace(/\s+/g, '').toLowerCase();
 
     if (twitchChannel.length === 0)
-        return;
+        return null;
 
     try {
         let url = "https://api.twitch.tv/kraken/users/" + twitchChannel + "/follows/channels?direction=ASC&limit=100&sortby=created_at&user=" + twitchChannel + "&client_id=" + twitchApiKey;
@@ -223,10 +233,8 @@ async function twitchImport(twitchChannel) {
         response = JSON.parse(response.body);
         let channels = response.follows;
 
-        console.log(channels.length);
-
-        if (channels.length === 0)
-            return;
+        if (!channels || channels.length === 0)
+            return null;
 
         let i = 0;
         i = twitchImportChannels(channels, i);
@@ -236,24 +244,38 @@ async function twitchImport(twitchChannel) {
             response = JSON.parse(response.body);
             channels = response.follows;
 
-            console.log(channels.length);
-
             i = twitchImportChannels(channels, i);
         }
 
-        dialog.showMessageBox({
-            type: 'info',
-            message: 'Import done. ' + i + ' channels added.'
-        });
+        return i;
     }
     catch (e) {
         console.log(e);
 
+        return null;
+    }
+}
+
+async function twitchImport(twitchChannel) {
+    let res = await twitchImportBase(twitchChannel);
+
+    if (res !== null) {
+        dialog.showMessageBox({
+            type: 'info',
+            message: 'Import done. ' + res + ' channels added.'
+        });
+    } else {
         dialog.showMessageBox({
             type: 'error',
             message: 'Import error.'
         });
     }
+}
+
+function autoTwitchImport() {
+    lodash.forEach(SettingsFile.settingsJson.settings.twitchImport, async function (value) {
+        await twitchImportBase(value);
+    });
 }
 
 let buildsLink = "ftp://main.klpq.men:359/KolpaqueClientElectron/";
@@ -304,6 +326,8 @@ async function checkLoop(mainWindowRef) {
 
     await checkNewVersion();
 
+    autoTwitchImport();
+
     setInterval(function () {
         lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
             getStats5(channelLink);
@@ -323,6 +347,8 @@ async function checkLoop(mainWindowRef) {
     }, 2 * 60 * 1000);
 
     setInterval(checkNewVersion, 10 * 60 * 1000);
+
+    setInterval(autoTwitchImport, 10 * 60 * 1000);
 }
 
 exports.twitchImport = twitchImport;
