@@ -10,6 +10,7 @@ const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
 const moment = require('moment');
 const lodash = require('lodash');
+const {URL} = require('url');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = {};
@@ -177,6 +178,10 @@ function buildChannelObj(channelLink) {
 function getStats5(channelLink, printBalloon = true) {
     let channelObj = buildChannelObj(channelLink);
 
+    if (channelObj === false) {
+        return false;
+    }
+
     switch (channelObj.service) {
         case 'klpq-main':
             getKlpqStats(channelObj, printBalloon);
@@ -187,6 +192,10 @@ function getStats5(channelLink, printBalloon = true) {
 function getStats30(channelLink, printBalloon = true) {
     let channelObj = buildChannelObj(channelLink);
 
+    if (channelObj === false) {
+        return false;
+    }
+
     switch (channelObj.service) {
         case 'twitch':
             getTwitchStats(channelObj, printBalloon);
@@ -196,6 +205,10 @@ function getStats30(channelLink, printBalloon = true) {
 
 function getStats120(channelLink, printBalloon = true) {
     let channelObj = buildChannelObj(channelLink);
+
+    if (channelObj === false) {
+        return false;
+    }
 
     switch (channelObj.service) {
         case 'youtube-user':
@@ -209,7 +222,7 @@ function getStats120(channelLink, printBalloon = true) {
 
 function twitchImportChannels(channels, i) {
     channels.forEach(function (channel) {
-        let channelObj = SettingsFile.addChannel(channel.channel.url);
+        let channelObj = SettingsFile.addChannel(channel.channel.url, false);
 
         if (channelObj !== false) {
             mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
@@ -272,6 +285,28 @@ async function twitchImport(twitchChannel) {
     }
 }
 
+function autoKlpqImport() {
+    let url = 'http://stats.klpq.men/channels';
+
+    request.get({url: url, json: true}, function (error, res, body) {
+        if (!error) {
+            lodash.forEach(body.result, function (channel) {
+                let channelUrlObj = new URL('protocol://host/path');
+
+                channelUrlObj.protocol = SettingsFile.registeredServices['klpq-main'].protocols[0];
+                channelUrlObj.host = SettingsFile.registeredServices['klpq-main'].hosts[0];
+                channelUrlObj.pathname = SettingsFile.registeredServices['klpq-main'].paths[0] + `${channel}`;
+
+                let channelObj = SettingsFile.addChannel(channelUrlObj.href, false);
+
+                if (channelObj !== false) {
+                    mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
+                }
+            });
+        }
+    });
+}
+
 function autoTwitchImport() {
     lodash.forEach(SettingsFile.settingsJson.settings.twitchImport, async function (value) {
         await twitchImportBase(value);
@@ -296,7 +331,7 @@ async function checkNewVersion() {
         response = JSON.parse(response.body);
 
         if (!response[0])
-            return false;
+            return;
 
         if (response[0].tag_name !== newClientVersion) {
             Notifications.printNotification("New Version Available", buildsLink);
@@ -308,10 +343,7 @@ async function checkNewVersion() {
     }
     catch (e) {
         console.log(e);
-        return false;
     }
-
-    return true;
 }
 
 async function checkLoop(mainWindowRef) {
@@ -324,8 +356,8 @@ async function checkLoop(mainWindowRef) {
         getStats120(channelLink, false);
     });
 
-    await checkNewVersion();
-
+    checkNewVersion();
+    autoKlpqImport();
     autoTwitchImport();
 
     setInterval(function () {
@@ -347,7 +379,7 @@ async function checkLoop(mainWindowRef) {
     }, 2 * 60 * 1000);
 
     setInterval(checkNewVersion, 10 * 60 * 1000);
-
+    setInterval(autoKlpqImport, 10 * 60 * 1000);
     setInterval(autoTwitchImport, 10 * 60 * 1000);
 }
 

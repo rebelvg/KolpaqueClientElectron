@@ -1,6 +1,5 @@
 const electron = require('electron');
-const {clipboard} = require('electron');
-const {shell} = require('electron');
+const {clipboard, shell} = require('electron');
 const SettingsFile = require('./application/SettingsFile');
 const ChannelCheck = require('./application/ChannelCheck');
 const ChannelPlay = require('./application/ChannelPlay');

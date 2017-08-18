@@ -2,11 +2,10 @@
  * Created by rebel on 22/03/2017.
  */
 
-const {ipcMain} = require('electron');
+const {ipcMain, dialog} = require('electron');
 const fs = require('fs');
 const SettingsFile = require('./SettingsFile');
 const Notifications = require('./Notifications');
-const {dialog} = require('electron');
 
 ipcMain.on('channel-play', (event, channel) => {
     launchPlayerLink(channel.link, channel.LQ);
@@ -20,6 +19,10 @@ function launchPlayer(channelObj, LQ = null) {
 
 function launchPlayerLink(channelLink, LQ = null) {
     let channelObj = SettingsFile.buildChannelObj(channelLink);
+
+    if (channelObj === false) {
+        return false;
+    }
 
     let settingsJson = SettingsFile.returnSettings();
 

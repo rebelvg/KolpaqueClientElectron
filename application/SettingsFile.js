@@ -2,14 +2,12 @@
  * Created by rebel on 21/03/2017.
  */
 
-const {app} = require('electron');
-const {ipcMain} = require('electron');
+const {app, ipcMain, dialog} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const _ = require('underscore');
 const lodash = require('lodash');
 const Notifications = require('./Notifications');
-const dialog = require('electron').dialog;
 const {URL} = require('url');
 
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
@@ -106,7 +104,11 @@ function readFile() {
         settingsJson.settings = defaultSettings.settings;
 
         _.forEach(parseJson.channels, function (channelObj, channelLink) {
-            settingsJson.channels[channelLink] = buildChannelObj(channelLink);
+            channelObj = buildChannelObj(channelLink);
+
+            if (channelObj !== false) {
+                settingsJson.channels[channelLink] = channelObj;
+            }
         });
 
         _.forEach(defaultSettings.settings, function (value, key) {
@@ -150,7 +152,7 @@ function buildChannelObj(channelLink) {
 
         channelObj.protocol = channelURL.protocol;
 
-        if (!channelURL.host.length) {
+        if (channelURL.host.length < 1) {
             throw Error(`Hostname can't be empty.`);
         }
 
@@ -175,12 +177,13 @@ function buildChannelObj(channelLink) {
     }
     catch (e) {
         console.log(e.message);
+        return false;
     }
 
     return channelObj;
 }
 
-function addChannel(channelLink) {
+function addChannel(channelLink, printError = true) {
     channelLink = channelLink.replace(/\s+/g, '');
 
     if (settingsJson.channels.hasOwnProperty(channelLink))
@@ -188,6 +191,10 @@ function addChannel(channelLink) {
 
     try {
         let channelObj = buildChannelObj(channelLink);
+
+        if (channelObj === false) {
+            throw Error('Error adding channel.');
+        }
 
         let channels = {};
 
@@ -200,10 +207,12 @@ function addChannel(channelLink) {
         return channelObj;
     }
     catch (e) {
-        dialog.showMessageBox({
-            type: 'error',
-            message: e.message
-        });
+        if (printError) {
+            dialog.showMessageBox({
+                type: 'error',
+                message: e.message
+            });
+        }
 
         return false;
     }
@@ -247,3 +256,4 @@ exports.returnSettings = returnSettings;
 exports.saveLoop = saveLoop;
 exports.settingsJson = settingsJson;
 exports.buildChannelObj = buildChannelObj;
+exports.registeredServices = registeredServices;

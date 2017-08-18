@@ -2,8 +2,7 @@
  * Created by rebel on 27/03/2017.
  */
 
-const {Menu} = require('electron');
-const {app, shell} = require('electron');
+const {app, shell, Menu} = require('electron');
 const path = require('path');
 const request = require('request');
 const SettingsFile = require('./SettingsFile');
