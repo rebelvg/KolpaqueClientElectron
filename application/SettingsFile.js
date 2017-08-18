@@ -24,20 +24,20 @@ const registeredServices = {
         name: 2
     },
     'twitch': {
-        protocols: ['http:', 'https:'],
-        hosts: ['twitch.tv', 'www.twitch.tv'],
+        protocols: ['https:', 'http:'],
+        hosts: ['www.twitch.tv', 'twitch.tv'],
         paths: ['/'],
         name: 1
     },
     'youtube-user': {
-        protocols: ['http:', 'https:'],
-        hosts: ['youtube.com', 'www.youtube.com'],
+        protocols: ['https:', 'http:'],
+        hosts: ['www.youtube.com', 'youtube.com'],
         paths: ['/user/'],
         name: 2
     },
     'youtube-channel': {
-        protocols: ['http:', 'https:'],
-        hosts: ['youtube.com', 'www.youtube.com'],
+        protocols: ['https:', 'http:'],
+        hosts: ['www.youtube.com', 'youtube.com'],
         paths: ['/channel/'],
         name: 2
     }
@@ -86,14 +86,6 @@ let defaultSettings = {
     }
 };
 
-function createSettings() {
-    settingsJson = defaultSettings;
-
-    preInstalledChannels.forEach(addChannel);
-
-    return settingsJson;
-}
-
 function readFile() {
     try {
         let file = fs.readFileSync(settingsPath, 'utf8');
@@ -107,7 +99,7 @@ function readFile() {
             channelObj = buildChannelObj(channelLink);
 
             if (channelObj !== false) {
-                settingsJson.channels[channelLink] = channelObj;
+                settingsJson.channels[channelObj.link] = channelObj;
             }
         });
 
@@ -120,8 +112,14 @@ function readFile() {
         return settingsJson;
     }
     catch (e) {
-        console.log(e);
-        return createSettings();
+        console.log(e.message);
+
+        settingsJson.channels = {};
+        settingsJson.settings = defaultSettings.settings;
+
+        preInstalledChannels.forEach(addChannel);
+
+        return settingsJson;
     }
 }
 
@@ -131,7 +129,7 @@ function saveFile() {
         console.log('settings saved.');
     }
     catch (e) {
-        console.log(e);
+        console.log(e.message);
     }
 }
 
@@ -169,6 +167,12 @@ function buildChannelObj(channelLink) {
                         if (channelURL.pathname.toLowerCase().indexOf(path) === 0) {
                             channelObj.service = serviceName;
                             channelObj.name = nameArray[serviceObj.name];
+
+                            channelURL.protocol = serviceObj.protocols[0];
+                            channelURL.host = serviceObj.hosts[0];
+                            channelURL.path = serviceObj.paths[0] + `${nameArray[serviceObj.name]}`;
+
+                            channelObj.link = channelURL.href;
                         }
                     });
                 }
@@ -186,9 +190,6 @@ function buildChannelObj(channelLink) {
 function addChannel(channelLink, printError = true) {
     channelLink = channelLink.replace(/\s+/g, '');
 
-    if (settingsJson.channels.hasOwnProperty(channelLink))
-        return false;
-
     try {
         let channelObj = buildChannelObj(channelLink);
 
@@ -196,9 +197,12 @@ function addChannel(channelLink, printError = true) {
             throw Error('Error adding channel.');
         }
 
+        if (settingsJson.channels.hasOwnProperty(channelObj.link))
+            return false;
+
         let channels = {};
 
-        channels[channelLink] = channelObj;
+        channels[channelObj.link] = channelObj;
 
         _.extend(settingsJson.channels, channels);
 

@@ -52,9 +52,6 @@ function launchPlayerLink(channelLink, LQ = null) {
         console.log('launching player for ' + channelLink);
 
         child(path, [channelLink, quality], function (err, data, stderr) {
-            //console.log(err);
-            console.log(data);
-            //console.log(stderr);
             console.log('player was closed.');
 
             if (data.indexOf('error: ') >= 0) {
