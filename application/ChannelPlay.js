@@ -7,6 +7,8 @@ const fs = require('fs');
 const SettingsFile = require('./SettingsFile');
 const Notifications = require('./Notifications');
 
+let lastClosed = null;
+
 ipcMain.on('channel-play', (event, channel) => {
     launchPlayerLink(channel.link, channel.LQ);
 });
@@ -26,11 +28,13 @@ function launchPlayerLink(channelLink, LQ = null) {
 
     let settingsJson = SettingsFile.returnSettings();
 
-    let quality = 'best';
-
     if (LQ === null) {
         LQ = settingsJson.settings.LQ;
     }
+
+    lastClosed = {link: channelLink, LQ: LQ};
+
+    let quality = [];
 
     if (channelObj.protocol === 'rtmp:') {
         channelLink += " live=1";
@@ -40,7 +44,7 @@ function launchPlayerLink(channelLink, LQ = null) {
         }
     } else {
         if (LQ) {
-            quality = '720p,high,480p,medium,360p';
+            quality = ['--stream-sorting-excludes', '>=720p,>=high'];
         }
     }
 
@@ -51,14 +55,22 @@ function launchPlayerLink(channelLink, LQ = null) {
 
         console.log('launching player for ' + channelLink);
 
-        child(path, [channelLink, quality], function (err, data, stderr) {
-            console.log('player was closed.');
+        child(path, [channelLink, 'best', '--twitch-disable-hosting'].concat(quality), function (err, data, stderr) {
+            console.log(err);
+            console.log(data);
+            console.log('streamlink exited.');
+
+            if (err) {
+                Notifications.printNotification('Error', err.message);
+            }
 
             if (data.indexOf('error: ') >= 0) {
                 let error = data.split('error: ');
 
                 Notifications.printNotification('Error', error[1]);
             }
+
+            lastClosed = channelObj;
         });
     } else {
         dialog.showMessageBox({
@@ -68,5 +80,12 @@ function launchPlayerLink(channelLink, LQ = null) {
     }
 }
 
+function launchLastClosed() {
+    if (lastClosed) {
+        launchPlayerLink(lastClosed.link, lastClosed.LQ);
+    }
+}
+
 exports.launchPlayer = launchPlayer;
 exports.launchPlayerLink = launchPlayerLink;
+exports.launchLastClosed = launchLastClosed;

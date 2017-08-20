@@ -1,5 +1,5 @@
 const electron = require('electron');
-const {clipboard, shell} = require('electron');
+const {clipboard, shell, globalShortcut} = require('electron');
 const SettingsFile = require('./application/SettingsFile');
 const ChannelCheck = require('./application/ChannelCheck');
 const ChannelPlay = require('./application/ChannelPlay');
@@ -181,7 +181,12 @@ let contextMenuTemplate = [
         label: 'Online Channels', type: 'submenu', submenu: []
     },
     {
-        label: 'Play from Clipboard', type: 'normal', click: () => {
+        label: 'Play Last Closed', type: 'normal', click: () => {
+        ChannelPlay.launchLastClosed();
+    }
+    },
+    {
+        label: 'Play From Clipboard', type: 'normal', click: () => {
         ChannelPlay.launchPlayerLink(clipboard.readText());
     }
     },
