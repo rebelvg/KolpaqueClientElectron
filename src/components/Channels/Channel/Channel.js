@@ -23,17 +23,18 @@ const Channel = ({channel}) => (
 const StyledChannelWrap = styled.div`
     display: flex;
     align-items: center;
-    `;
+`;
 
 const StyledIcon = styled.div`
     margin-right: 10px;
     display: flex;
     align-items: center;
-    `;
+    margin-left: 5px;
+`;
 
 const StyledName = styled.div`
-    flex-grow: 2
-    `;
+    flex-grow: 2;
+`;
 
 
 export default Channel;
