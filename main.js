@@ -4,7 +4,8 @@ const SettingsFile = require('./application/SettingsFile');
 const ChannelCheck = require('./application/ChannelCheck');
 const ChannelPlay = require('./application/ChannelPlay');
 const Notifications = require('./application/Notifications');
-
+const isDev = process.env.NODE_ENV === 'dev';
+console.log(isDev);
 let settingsJson = SettingsFile.readFile();
 let forceQuit = false;
 
@@ -88,11 +89,17 @@ function createWindow() {
     mainWindow.setMenu(null);
 
     // and load the index.html of the app.
-    mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.hbs'),
-        protocol: 'file:',
-        slashes: true
-    }));
+    if (!isDev)
+        mainWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'index.hbs'),
+            protocol: 'file:',
+            slashes: true
+        }));
+    else {
+        mainWindow.loadURL(
+            'http://localhost:3000'
+        );
+    }
 
     // Open the DevTools.
     //mainWindow.webContents.openDevTools();
