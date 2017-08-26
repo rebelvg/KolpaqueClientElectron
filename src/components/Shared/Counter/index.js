@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
-import Button from 'src/components/Button';
+import Button from 'src/components/Shared/Button';
 
 import * as actions from 'src/redux/actions/counter';
 

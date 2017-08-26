@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import {BrowserRouter} from 'react-router-dom';
-
 import AppContainer from './containers/AppContainer/AppContainer'
 
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'normalize.css/normalize.css'
 import store from './store';
 
 const appElement = document.createElement('div');
@@ -21,8 +22,5 @@ ReactDOM.render(
 );
 
 if (module.hot) {
-    module.hot.accept('src/components/Counter', function () {
-        console.log('Accepting the updated printMe module!');
-        printMe();
-    })
+
 }

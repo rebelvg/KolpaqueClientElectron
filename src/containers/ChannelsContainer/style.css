@@ -1,0 +1,21 @@
+.tabs {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    border-bottom: 1px solid lightgray;
+}
+
+.tab {
+    display: flex;
+    flex-basis: 50%;
+
+    justify-content: center;
+
+}
+
+.tab.active {
+    background-color: darkgreen;
+    color: white;
+
+}
