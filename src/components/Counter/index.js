@@ -6,7 +6,7 @@ import Button from 'src/components/Button';
 
 import * as actions from 'src/redux/actions/counter';
 
-import s from './style.css';
+import './style.css';
 
 class Counter extends Component {
     state = {cnt: 0};
@@ -21,7 +21,7 @@ class Counter extends Component {
 
     render() {
         return (
-            <div className={s.container}>
+            <div className="container">
                 TEST
                 <Button onClick={this.subtract}>-</Button>
                 &nbsp;|&nbsp;{this.props.state.counter.count}&nbsp;|&nbsp;

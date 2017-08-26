@@ -38,7 +38,7 @@ ipcMain.on('open-chat', (event, channel) => {
     }
 });
 
-ipcMain.once('client-ready', function (bool) {
+ipcMain.once('client-ready', (bool) => {
     console.log('client ready.');
 
     ChannelCheck.checkLoop(mainWindow);
@@ -49,6 +49,10 @@ ipcMain.once('client-ready', function (bool) {
 ipcMain.on('copy-clipboard', (event, channel) => {
     clipboard.writeText(channel);
 });
+
+ipcMain.on('getChannels', (event) => (event.returnValue = settingsJson.channels));
+
+ipcMain.on('getSettings', (event) => (event.returnValue = settingsJson.settings));
 
 const app = electron.app;
 // Module to create native browser window.
@@ -99,10 +103,10 @@ function createWindow() {
         mainWindow.loadURL(
             'http://localhost:3000'
         );
+        // Open the DevTools.
+        mainWindow.webContents.openDevTools();
     }
 
-    // Open the DevTools.
-    //mainWindow.webContents.openDevTools();
 
     mainWindow.on('minimize', function () {
         mainWindow.hide();

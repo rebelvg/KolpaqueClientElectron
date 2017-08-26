@@ -1,11 +1,11 @@
 import React from 'react';
 
-import s from './style.css';
+import './style.css';
 
 const About = () => (
-  <div className={s.container}>
-    <p>Lorem Ipsum another Page</p>
-  </div>
+    <div className="container">
+        <p>Lorem Ipsum another Page</p>
+    </div>
 );
 
 export default About;

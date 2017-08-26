@@ -1,16 +1,21 @@
-import React, { Component } from 'react';
-import * as s from './style.css';
+import React, {Component} from 'react';
+import styled from 'styled-components';
 
 class Button extends Component {
-  render() {
-    const { children, onClick = () => {} } = this.props;
+    render() {
+        const {
+            children, onClick = () => {
+            }
+        } = this.props;
 
-    return (
-      <button onClick={onClick} className={s.buttonContainer}>
-        {children}
-      </button>
-    )
-  }
+        return (
+            <StyledButton onClick={onClick}>
+                {children}
+            </StyledButton>
+        )
+    }
 }
-
+const StyledButton = styled.button`
+  background-color:red;
+`;
 export default Button;
