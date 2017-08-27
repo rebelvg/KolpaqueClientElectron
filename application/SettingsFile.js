@@ -138,7 +138,9 @@ function buildChannelObj(channelLink) {
         service: 'custom',
         name: null,
         link: channelLink,
-        protocol: null
+        protocol: null,
+        isLive: false,
+        isPinned: false
     };
 
     try {
@@ -247,6 +249,12 @@ function changeSetting(settingName, settingValue) {
     settingsJson.settings[settingName] = settingValue;
 }
 
+function returnChannels() {
+    return _.map(settingsJson.channels, function (channelObj, channelLink) {
+        return channelObj;
+    })
+}
+
 function returnSettings() {
     return settingsJson;
 }
@@ -256,6 +264,7 @@ exports.saveFile = saveFile;
 exports.addChannel = addChannel;
 exports.removeChannel = removeChannel;
 exports.changeSetting = changeSetting;
+exports.returnChannels = returnChannels;
 exports.returnSettings = returnSettings;
 exports.saveLoop = saveLoop;
 exports.settingsJson = settingsJson;
