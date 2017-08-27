@@ -19,3 +19,17 @@
     color: white;
 
 }
+
+.pinned-channel {
+    background-color: yellow;
+    color: white
+}
+
+body {
+    overflow: hidden;
+}
+
+.tab-panel {
+    overflow-y: auto;
+    max-height: 100vh;
+}

@@ -4,69 +4,50 @@ import {bindActionCreators} from 'redux';
 import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
+const {ipcRenderer} = window.require('electron');
+import {initChannels, changeStatus} from '../../redux/actions/channels'
+import {getOffline, getOnline} from '../../redux/reducers/channels'
 import './style.css';
 import ChannelWrapper from '../../components/Channels/ChannelWrapper/ChannelWrapper'
+import Channel from '../../components/Channels/Channel/Channel'
 import ChannelForm from '../../components/Channels/ChannelForm/ChannelForm'
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
-
-const mockData = [
-    {
-        'live': false,
-        "service": "klpq-main",
-        "name": "klpq",
-        "link": "rtmp://main.klpq.men/live/klpq",
-        "protocol": "rtmp:"
-    },
-    {
-        'live': true,
-        "service": "klpq-main",
-        "name": "murshun",
-        "link": "rtmp://main.klpq.men/live/murshun",
-        "protocol": "rtmp:"
-    },
-    {
-        'live': false,
-        "service": "twitch",
-        "name": "xra_",
-        "link": "https://www.twitch.tv/xra_",
-        "protocol": "https:"
-    },
-    {
-        'live': true,
-        "service": "twitch",
-        "name": "adam_ak",
-        "link": "https://www.twitch.tv/adam_ak",
-        "protocol": "https:"
-    },
-];
 
 export class ChannelContainer extends Component {
     constructor() {
         super()
     }
 
+    componentWillMount() {
+        this.props.initChannels()
+    }
+
+    componentDidMount() {
+        ipcRenderer.on('channel-went-online', (event, channel) => this.props.changeStatus(channel.link));
+    }
+
     render() {
-        const offlineChannels = mockData.filter((channel) => (!channel.live));
-        const onlineChannels = mockData.filter((channel) => (!!channel.live));
+        const {online, offline} = this.props;
+
         return (
             <StyledContainerWrapper>
                 <Tabs>
                     <TabList className="tabs">
-                        <Tab className='tab' selectedClassName="active">Online</Tab>
-                        <Tab className='tab' selectedClassName="active">Offline</Tab>
+                        <Tab className='tab' selectedClassName="active">Online ({online.length})</Tab>
+                        <Tab className='tab' selectedClassName="active">Offline ({offline.length})</Tab>
                     </TabList>
-
-                    <TabPanel>
-                        <ChannelWrapper channels={onlineChannels}/>
+                    <Channel pinned={true} channel={{name: 'Nozlar One Love'}}/>
+                    <TabPanel className='tab-panel'>
+                        <ChannelWrapper channels={online}/>
                     </TabPanel>
-                    <TabPanel>
-                        <ChannelWrapper channels={offlineChannels}/>
+                    <TabPanel className='tab-panel'>
+                        <ChannelWrapper channels={offline}/>
                     </TabPanel>
                 </Tabs>
 
                 <StyledFooter className="fixed-bottom">
                     <ChannelForm/>
-                    <SettingsIcon to="/about"><Ionicon icon="ion-settings" color="white"/></SettingsIcon>
+                    <SettingsIcon to="/about"><Ionicon icon="ion-ios-cog" color="white"/></SettingsIcon>
                 </StyledFooter>
             </StyledContainerWrapper>
         );
@@ -84,15 +65,19 @@ const StyledContainerWrapper = styled.div`
   
 `
 
-const pickState = ({counter}) => ({
-    //state: {counter},
-});
+const StyledChannel = styled(Channel)`
+background-color: yellow
+color: white;
+`
 
-const mapDispatch = dispatch => ({
-    //actions: bindActionCreators(actions, dispatch),
-});
-
-const ConnectedChannelContainer = connect(pickState, mapDispatch)(ChannelContainer);
-
-export default ConnectedChannelContainer;
+export default connect(
+    (state) => ({
+        online: getOnline(state),
+        offline: getOffline(state)
+    }),
+    (dispatch) => bindActionCreators({
+        initChannels,
+        changeStatus,
+    }, dispatch)
+)(ChannelContainer);
 

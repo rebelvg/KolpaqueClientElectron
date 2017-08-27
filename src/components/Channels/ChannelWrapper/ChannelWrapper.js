@@ -11,9 +11,12 @@ const ChannelWrapper = ({channels = []}) => (
     </StyledWrapper>
 );
 
+
 const StyledWrapper = styled.div`
     display: flex;
-    flex-direction: column
+    color: black;
+    flex-direction: column;
+        padding-bottom: 80px;
 `
 
 export default ChannelWrapper;

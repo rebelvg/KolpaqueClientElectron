@@ -1,8 +1,8 @@
-import { combineReducers } from 'redux';
-import counter from './counter';
+import {combineReducers} from 'redux';
+import channel from './channels';
 
 const reducers = combineReducers({
-  counter,
+    channel,
 });
 
 export default reducers;

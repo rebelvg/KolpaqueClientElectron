@@ -11,17 +11,18 @@ const renderIcon = (service) => {
     }
 };
 
-const Channel = ({channel}) => (
-    <StyledChannelWrap>
+const Channel = ({channel, pinned}) => (
+    <StyledChannelWrap pinned={pinned}>
         <StyledIcon > {renderIcon(channel.service)} </StyledIcon>
 
-        <StyledName>{channel.name} </StyledName>
+        <StyledName>{channel.name || channel.link} </StyledName>
 
     </StyledChannelWrap>
 );
 
 const StyledChannelWrap = styled.div`
     display: flex;
+    background-color: ${props => props.pinned ? 'yellow' : 'transparent'};
     align-items: center;
 `;
 
