@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron .",
     "start-client-dev": "cross-env NODE_ENV=dev electron .",
-    "start-dev": "./node_modules/.bin/webpack-dev-server",
+    "start-react-dev": "./node_modules/.bin/webpack-dev-server",
+    "dev": "npm run start-client-dev | npm run start-react-dev",
     "build": "./node_modules/.bin/webpack --config webpack.config.production"
   },
   "repository": {},
