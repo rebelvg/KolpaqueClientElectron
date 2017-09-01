@@ -192,12 +192,12 @@ let contextMenuTemplate = [
         label: 'Online Channels', type: 'submenu', submenu: []
     },
     {
-        label: 'Play Last Closed', type: 'normal', click: () => {
+        label: 'Play / Last Closed', type: 'normal', click: () => {
         ChannelPlay.launchLastClosed();
     }
     },
     {
-        label: 'Play From Clipboard', type: 'normal', click: () => {
+        label: 'Play / Clipboard', type: 'normal', click: () => {
         ChannelPlay.launchPlayerLink(clipboard.readText());
     }
     },
