@@ -93,13 +93,13 @@ function createWindow() {
     mainWindow.setMenu(null);
 
     // and load the index.html of the app.
-    if (!isDev)
+    if (!isDev) {
         mainWindow.loadURL(url.format({
             pathname: path.join(__dirname, 'index.hbs'),
             protocol: 'file:',
             slashes: true
         }));
-    else {
+    } else {
         mainWindow.loadURL(
             'http://localhost:3000'
         );
