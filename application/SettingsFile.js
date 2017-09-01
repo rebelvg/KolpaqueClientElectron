@@ -172,7 +172,7 @@ function buildChannelObj(channelLink) {
 
                             channelURL.protocol = serviceObj.protocols[0];
                             channelURL.host = serviceObj.hosts[0];
-                            channelURL.path = serviceObj.paths[0] + `${nameArray[serviceObj.name]}`;
+                            channelURL.path = serviceObj.paths[0] + nameArray[serviceObj.name];
 
                             channelObj.link = channelURL.href;
                         }
