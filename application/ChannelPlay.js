@@ -32,8 +32,6 @@ function launchPlayerLink(channelLink, LQ = null) {
         LQ = settingsJson.settings.LQ;
     }
 
-    lastClosed = {link: channelLink, LQ: LQ};
-
     let quality = [];
 
     if (channelObj.protocol === 'rtmp:') {
@@ -70,7 +68,7 @@ function launchPlayerLink(channelLink, LQ = null) {
                 Notifications.printNotification('Error', error[1]);
             }
 
-            lastClosed = channelObj;
+            lastClosed = {link: channelLink, LQ: LQ};
         });
     } else {
         dialog.showMessageBox({
