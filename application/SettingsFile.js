@@ -232,9 +232,7 @@ function removeChannel(channelLink) {
 
     let {onlineChannels} = require('./ChannelCheck');
 
-    if (onlineChannels.hasOwnProperty(channelLink)) {
-        delete onlineChannels[channelLink];
-    }
+    delete onlineChannels[channelLink];
 
     Notifications.rebuildIconMenu(Object.keys(onlineChannels));
 

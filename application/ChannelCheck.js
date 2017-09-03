@@ -171,10 +171,6 @@ function getYoutubeStatsChannel(channelObj, printBalloon) {
     });
 }
 
-function buildChannelObj(channelLink) {
-    return SettingsFile.buildChannelObj(channelLink);
-}
-
 function getStats5(channelObj, printBalloon = true) {
     switch (channelObj.service) {
         case 'klpq-main':
@@ -273,13 +269,15 @@ function autoKlpqImport() {
     request.get({url: url, json: true}, function (error, res, body) {
         if (!error) {
             lodash.forEach(body.result, function (channel) {
-                let channelUrlObj = new URL('protocol://host/path');
+                let protocol = SettingsFile.registeredServices['klpq-web'].protocols[0];
+                let host = SettingsFile.registeredServices['klpq-web'].hosts[0];
+                let pathname = SettingsFile.registeredServices['klpq-web'].paths[0] + `${channel}`;
 
-                channelUrlObj.protocol = SettingsFile.registeredServices['klpq-main'].protocols[0];
-                channelUrlObj.host = SettingsFile.registeredServices['klpq-main'].hosts[0];
-                channelUrlObj.pathname = SettingsFile.registeredServices['klpq-main'].paths[0] + `${channel}`;
+                let channelUrl = protocol + "//" + host + pathname;
 
-                let channelObj = SettingsFile.addChannel(channelUrlObj.href, false);
+                console.log(channelUrl);
+
+                let channelObj = SettingsFile.addChannel(channelUrl, false);
 
                 if (channelObj !== false) {
                     mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
