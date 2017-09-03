@@ -175,13 +175,7 @@ function buildChannelObj(channelLink) {
     return SettingsFile.buildChannelObj(channelLink);
 }
 
-function getStats5(channelLink, printBalloon = true) {
-    let channelObj = buildChannelObj(channelLink);
-
-    if (channelObj === false) {
-        return false;
-    }
-
+function getStats5(channelObj, printBalloon = true) {
     switch (channelObj.service) {
         case 'klpq-main':
             getKlpqStats(channelObj, printBalloon);
@@ -189,13 +183,7 @@ function getStats5(channelLink, printBalloon = true) {
     }
 }
 
-function getStats30(channelLink, printBalloon = true) {
-    let channelObj = buildChannelObj(channelLink);
-
-    if (channelObj === false) {
-        return false;
-    }
-
+function getStats30(channelObj, printBalloon = true) {
     switch (channelObj.service) {
         case 'twitch':
             getTwitchStats(channelObj, printBalloon);
@@ -203,13 +191,7 @@ function getStats30(channelLink, printBalloon = true) {
     }
 }
 
-function getStats120(channelLink, printBalloon = true) {
-    let channelObj = buildChannelObj(channelLink);
-
-    if (channelObj === false) {
-        return false;
-    }
-
+function getStats120(channelObj, printBalloon = true) {
     switch (channelObj.service) {
         case 'youtube-user':
             getYoutubeStatsUser(channelObj, printBalloon);
@@ -351,9 +333,9 @@ async function checkLoop(mainWindowRef) {
     mainWindow = mainWindowRef;
 
     lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
-        getStats5(channelLink, false);
-        getStats30(channelLink, false);
-        getStats120(channelLink, false);
+        getStats5(channelObj, false);
+        getStats30(channelObj, false);
+        getStats120(channelObj, false);
     });
 
     checkNewVersion();
@@ -362,19 +344,19 @@ async function checkLoop(mainWindowRef) {
 
     setInterval(function () {
         lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
-            getStats5(channelLink);
+            getStats5(channelObj);
         });
     }, 5 * 1000);
 
     setInterval(function () {
         lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
-            getStats30(channelLink);
+            getStats30(channelObj);
         });
     }, 30 * 1000);
 
     setInterval(function () {
         lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
-            getStats120(channelLink);
+            getStats120(channelObj);
         });
     }, 2 * 60 * 1000);
 

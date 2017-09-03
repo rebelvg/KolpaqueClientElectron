@@ -4,8 +4,10 @@ const SettingsFile = require('./application/SettingsFile');
 const ChannelCheck = require('./application/ChannelCheck');
 const ChannelPlay = require('./application/ChannelPlay');
 const Notifications = require('./application/Notifications');
+
 const isDev = process.env.NODE_ENV === 'dev';
-console.log(isDev);
+console.log('isDev', isDev);
+
 let settingsJson = SettingsFile.readFile();
 let forceQuit = false;
 
@@ -38,7 +40,7 @@ ipcMain.on('open-chat', (event, channel) => {
     }
 });
 
-ipcMain.once('client-ready', (bool) => {
+ipcMain.once('client-ready', () => {
     console.log('client ready.');
 
     ChannelCheck.checkLoop(mainWindow);
@@ -107,7 +109,6 @@ function createWindow() {
         mainWindow.webContents.openDevTools();
     }
 
-
     mainWindow.on('minimize', function () {
         mainWindow.hide();
     });
@@ -117,7 +118,7 @@ function createWindow() {
     });
 
     mainWindow.on('close', function (e) {
-        console.log(forceQuit);
+        console.log('forceQuit', forceQuit);
 
         if (forceQuit)
             return;
