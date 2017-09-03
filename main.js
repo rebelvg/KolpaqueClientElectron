@@ -4,6 +4,7 @@ const SettingsFile = require('./application/SettingsFile');
 const ChannelCheck = require('./application/ChannelCheck');
 const ChannelPlay = require('./application/ChannelPlay');
 const Notifications = require('./application/Notifications');
+const _ = require('lodash');
 
 const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);
@@ -21,8 +22,10 @@ require('electron-handlebars')({
 let ipcMain = electron.ipcMain;
 
 ipcMain.on('open-page', (event, channel) => {
-    if (channel.indexOf('klpq.men') >= 0) {
-        shell.openExternal('http://stream.klpq.men/');
+    if (channel.startsWith('rtmp') && channel.includes('klpq.men')) {
+        let name = channel.split('/');
+
+        shell.openExternal('http://stream.klpq.men/' + _.last(name));
     }
 
     if (channel.startsWith('http')) {
@@ -31,7 +34,7 @@ ipcMain.on('open-page', (event, channel) => {
 });
 
 ipcMain.on('open-chat', (event, channel) => {
-    if (channel.indexOf('klpq.men') >= 0) {
+    if (channel.startsWith('rtmp') && channel.includes('klpq.men')) {
         shell.openExternal('http://stream.klpq.men/chat/');
     }
 
