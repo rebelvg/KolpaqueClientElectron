@@ -269,13 +269,11 @@ function autoKlpqImport() {
     request.get({url: url, json: true}, function (error, res, body) {
         if (!error) {
             lodash.forEach(body.result, function (channel) {
-                let protocol = SettingsFile.registeredServices['klpq-web'].protocols[0];
-                let host = SettingsFile.registeredServices['klpq-web'].hosts[0];
-                let pathname = SettingsFile.registeredServices['klpq-web'].paths[0] + `${channel}`;
+                let protocol = SettingsFile.registeredServices['klpq-main'].protocols[0];
+                let host = SettingsFile.registeredServices['klpq-main'].hosts[0];
+                let pathname = SettingsFile.registeredServices['klpq-main'].paths[0] + `${channel}`;
 
                 let channelUrl = protocol + "//" + host + pathname;
-
-                console.log(channelUrl);
 
                 let channelObj = SettingsFile.addChannel(channelUrl, false);
 

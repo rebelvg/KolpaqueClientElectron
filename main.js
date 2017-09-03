@@ -238,7 +238,7 @@ app.on('ready', () => {
 });
 
 process.on('uncaughtException', function (err) {
-    console.log('Caught exception: ' + err);
+    console.log('Caught exception: ' + err.stack);
 });
 
 // In this file you can include the rest of your app's specific main process
