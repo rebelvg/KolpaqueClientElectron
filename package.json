@@ -1,6 +1,6 @@
 {
   "name": "KolpaqueClient",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "GUI client for StreamLink/LiveStreamer",
   "main": "main.js",
   "scripts": {
@@ -43,7 +43,7 @@
     "electron-config": "^0.2.1",
     "electron-handlebars": "^1.0.0",
     "electron-json-storage": "^3.1.0",
-    "eslint": "^4.6.0",
+    "eslint": "^4.6.1",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-import-resolver-webpack": "^0.8.3",
     "html-webpack-plugin": "^2.30.1",
