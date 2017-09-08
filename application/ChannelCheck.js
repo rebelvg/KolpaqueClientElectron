@@ -333,7 +333,7 @@ function checkNewVersion() {
             return;
         }
 
-        if (!body[0].tag_name) {
+        if (!body[0] || !body[0].tag_name) {
             return;
         }
 
