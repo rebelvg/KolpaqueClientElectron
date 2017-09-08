@@ -37,7 +37,7 @@ function launchPlayerLink(channelLink, LQ = null) {
     if (channelObj.protocol === 'rtmp:') {
         channelLink += " live=1";
 
-        if (LQ && channelObj.service === 'klpq-main') {
+        if (LQ && channelObj.service.includes('klpq')) {
             channelLink = channelLink.replace('/live/', '/restream/');
         }
     } else {

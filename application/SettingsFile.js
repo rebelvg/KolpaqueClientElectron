@@ -23,6 +23,12 @@ const registeredServices = {
         paths: ['/live/'],
         name: 2
     },
+    'klpq-vps': {
+        protocols: ['rtmp:'],
+        hosts: ['vps.klpq.men'],
+        paths: ['/live/'],
+        name: 2
+    },
     'twitch': {
         protocols: ['https:', 'http:'],
         hosts: ['www.twitch.tv', 'twitch.tv'],

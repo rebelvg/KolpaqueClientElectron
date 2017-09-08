@@ -68,7 +68,26 @@ function isOffline(channelObj) {
 }
 
 function getKlpqStats(channelObj, printBalloon) {
-    let url = "http://stats.klpq.men/channel/" + channelObj.name;
+    let url = "http://stats.main.klpq.men/channel/" + channelObj.name;
+
+    request({url: url, json: true}, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            try {
+                if (body.isLive) {
+                    isOnline(channelObj, printBalloon);
+                } else {
+                    isOffline(channelObj);
+                }
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+    });
+}
+
+function getKlpqVpsStats(channelObj, printBalloon) {
+    let url = "http://stats.vps.klpq.men/channel/" + channelObj.name;
 
     request({url: url, json: true}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
@@ -176,6 +195,9 @@ function getStats5(channelObj, printBalloon = true) {
         case 'klpq-main':
             getKlpqStats(channelObj, printBalloon);
             break;
+        case 'klpq-vps':
+            getKlpqVpsStats(channelObj, printBalloon);
+            break;
     }
 }
 
@@ -264,14 +286,14 @@ async function twitchImport(twitchChannel) {
 }
 
 function autoKlpqImport() {
-    let url = 'http://stats.klpq.men/channels';
+    let url = 'http://stats.vps.klpq.men/channels';
 
     request.get({url: url, json: true}, function (error, res, body) {
         if (!error) {
             lodash.forEach(body.result, function (channel) {
-                let protocol = SettingsFile.registeredServices['klpq-main'].protocols[0];
-                let host = SettingsFile.registeredServices['klpq-main'].hosts[0];
-                let pathname = SettingsFile.registeredServices['klpq-main'].paths[0] + `${channel}`;
+                let protocol = SettingsFile.registeredServices['klpq-vps'].protocols[0];
+                let host = SettingsFile.registeredServices['klpq-vps'].hosts[0];
+                let pathname = SettingsFile.registeredServices['klpq-vps'].paths[0] + `${channel}`;
 
                 let channelUrl = protocol + "//" + host + pathname;
 
