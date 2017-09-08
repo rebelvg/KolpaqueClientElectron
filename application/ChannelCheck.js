@@ -4,13 +4,13 @@
 
 const {ipcMain, dialog, shell} = require('electron');
 const request = require('request');
-const request_async = require('async-request');
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
 const moment = require('moment');
 const lodash = require('lodash');
 const {URL} = require('url');
+const util = require('util');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = {};
@@ -239,23 +239,25 @@ async function twitchImportBase(twitchChannel) {
     if (twitchChannel.length === 0)
         return null;
 
+    let requestGet = util.promisify(request.get);
+
     try {
         let url = "https://api.twitch.tv/kraken/users/" + twitchChannel + "/follows/channels?direction=ASC&limit=100&sortby=created_at&user=" + twitchChannel + "&client_id=" + twitchApiKey;
 
-        let response = await request_async(url);
-        response = JSON.parse(response.body);
-        let channels = response.follows;
+        let response = await requestGet({url: url, json: true});
+        let body = response.body;
+        let channels = body.follows;
 
         if (!channels || channels.length === 0)
-            return null;
+            return 0;
 
         let i = 0;
         i = twitchImportChannels(channels, i);
 
         while (channels.length !== 0) {
-            response = await request_async(response._links.next + "&client_id=" + twitchApiKey);
-            response = JSON.parse(response.body);
-            channels = response.follows;
+            response = await requestGet({url: body._links.next + "&client_id=" + twitchApiKey, json: true});
+            body = response.body;
+            channels = body.follows;
 
             i = twitchImportChannels(channels, i);
         }
@@ -315,7 +317,7 @@ function autoTwitchImport() {
 
 let buildsLink = "ftp://main.klpq.men:359/KolpaqueClientElectron/";
 
-let newClientVersion = require('../package.json').version;
+let clientVersion = require('../package.json').version;
 
 ipcMain.on('get-update', (event, data) => {
     console.log('get-update');
@@ -323,30 +325,29 @@ ipcMain.on('get-update', (event, data) => {
     shell.openExternal(buildsLink);
 });
 
-async function checkNewVersion() {
-    try {
-        let url = "https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases";
+function checkNewVersion() {
+    let url = "https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases";
 
-        let response = await request_async(url, {headers: {'user-agent': "KolpaqueClientElectron"}});
-        response = JSON.parse(response.body);
-
-        if (!response[0])
+    request.get({url: url, json: true, headers: {'user-agent': "KolpaqueClientElectron"}}, function (err, res, body) {
+        if (err) {
             return;
+        }
 
-        if (response[0].tag_name !== newClientVersion) {
+        if (!body[0].tag_name) {
+            return;
+        }
+
+        if (body[0].tag_name !== clientVersion) {
             Notifications.printNotification("New Version Available", buildsLink);
 
-            newClientVersion = response[0].tag_name;
+            clientVersion = body[0].tag_name;
 
             mainWindow.webContents.send('check-update', {text: 'Update Available'});
         }
-    }
-    catch (e) {
-        console.log(e);
-    }
+    });
 }
 
-async function checkLoop(mainWindowRef) {
+function checkLoop(mainWindowRef) {
     let settingsJson = SettingsFile.returnSettings();
     mainWindow = mainWindowRef;
 
