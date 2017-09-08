@@ -13,7 +13,7 @@ const {URL} = require('url');
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 let settingsJson = {};
 
-const preInstalledChannels = ['rtmp://main.klpq.men/live/main'];
+const preInstalledChannels = ['rtmp://vps.klpq.men/live/main'];
 
 const allowedProtocols = ['rtmp:', 'http:', 'https:'];
 const registeredServices = {
