@@ -28,7 +28,7 @@ let options = {
 };
 
 if (platformRl === 'all') {
-    options.platform = 'all';
+    options.platform = 'win32,darwin,linux';
 }
 
 if (!fs.existsSync(outPathRl)) {
