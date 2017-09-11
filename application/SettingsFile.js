@@ -77,7 +77,6 @@ ipcMain.on('remove-channel', (event, channel) => {
 let defaultSettings = {
     channels: {},
     settings: {
-        livestreamerPath: "C:\\Program Files (x86)\\Streamlink\\bin\\streamlink.exe",
         LQ: false,
         showNotifications: true,
         autoPlay: false,

@@ -66,7 +66,11 @@ function onBalloonClick(title, content) {
         ChannelPlay.launchPlayerLink(content);
     }
 
-    if (title.indexOf('New Version Available') === 0) {
+    if (title.indexOf('Client Update Available') === 0) {
+        shell.openExternal(content);
+    }
+
+    if (title.indexOf('Streamlink Update Available') === 0) {
         shell.openExternal(content);
     }
 }

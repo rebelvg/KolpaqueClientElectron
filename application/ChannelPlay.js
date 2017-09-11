@@ -4,10 +4,12 @@
 
 const {ipcMain, dialog} = require('electron');
 const fs = require('fs');
+const child = require('child_process').execFile;
 const SettingsFile = require('./SettingsFile');
 const Notifications = require('./Notifications');
 const ChannelCheck = require('./ChannelCheck');
 const _ = require('lodash');
+const commandExistsSync = require('command-exists').sync;
 
 let lastClosed = null;
 
@@ -64,14 +66,10 @@ function launchPlayerLink(channelLink, LQ = null, untilOffline = false) {
         }
     }
 
-    let path = settingsJson.settings.livestreamerPath;
-
-    if (fs.existsSync(path)) {
-        let child = require('child_process').execFile;
-
+    if (commandExistsSync('streamlink')) {
         console.log('launching player for ' + channelLink);
 
-        child(path, [channelLink, 'best', '--twitch-disable-hosting'].concat(quality), function (err, data, stderr) {
+        child('streamlink', [channelLink, 'best', '--twitch-disable-hosting'].concat(quality), function (err, data, stderr) {
             console.log(err);
             console.log(data);
             console.log('streamlink exited.');
@@ -96,7 +94,7 @@ function launchPlayerLink(channelLink, LQ = null, untilOffline = false) {
     } else {
         dialog.showMessageBox({
             type: 'error',
-            message: path + ' not found.'
+            message: 'Streamlink not found.'
         });
     }
 }

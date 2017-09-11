@@ -11,6 +11,7 @@ const moment = require('moment');
 const lodash = require('lodash');
 const {URL} = require('url');
 const util = require('util');
+const child = require('child_process').execFile;
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = {};
@@ -338,11 +339,25 @@ function checkNewVersion() {
         }
 
         if (body[0].tag_name !== clientVersion) {
-            Notifications.printNotification("New Version Available", buildsLink);
+            Notifications.printNotification('Client Update Available', buildsLink);
 
             clientVersion = body[0].tag_name;
 
-            mainWindow.webContents.send('check-update', {text: 'Update Available'});
+            mainWindow.webContents.send('check-update', {text: 'Client Update Available'});
+        }
+    });
+}
+
+function streamlinkVersionCheck() {
+    child('streamlink', ['--version-check'], function (err, data, stderr) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        if (!data.includes('is up to date!')) {
+            console.log(data);
+            Notifications.printNotification('Streamlink Update Available', `https://github.com/streamlink/streamlink/releases`);
         }
     });
 }
@@ -358,6 +373,7 @@ function checkLoop(mainWindowRef) {
     });
 
     checkNewVersion();
+    streamlinkVersionCheck();
     autoKlpqImport();
     autoTwitchImport();
 

@@ -65,40 +65,32 @@
     </footer>
 </div>
 <div id="settings-page" class="page">
-
-    <div class="form-group">
-        <label>Streamlink Path</label>
-        <input type="file" class="d-none" id="livestreamer_input" value="C:\Program Files (x86)\Streamlink\bin\">
-        <div class="file-input-group">
-            <input disabled class="form-control" name="livestreamer_path" id="livestreamer_path"
-                   value="{{settings.livestreamerPath}}">
-            <div class="btn file-input-addon">...</div>
-        </div>
-
-    </div>
     <div class="form-group">
         <label>
-
             <input id="LQ" class="settings" data-settings="LQ" {{#if settings.LQ}}checked{{/if}}
                    type="checkbox"> Low Quality </label>
     </div>
+
     <div class="form-group">
         <label>
             <input id="notification" class="settings" data-settings="showNotifications"
                    {{#if settings.showNotifications}}checked{{/if}}
                    type="checkbox"> Show Notifications </label>
     </div>
+
     <div class="form-group">
         <label>
             <input id="notification" class="settings" data-settings="autoPlay" {{#if settings.autoPlay}}checked{{/if}}
                    type="checkbox"> Auto-Play </label>
     </div>
+
     <div class="form-group">
         <label>
             <input id="notification" class="settings" data-settings="minimizeAtStart"
                    {{#if settings.minimizeAtStart}}checked{{/if}}
                    type="checkbox"> Minimize at Start </label>
     </div>
+
     <div class="form-group">
         <label>
             <input id="notification" class="settings" data-settings="launchOnBalloonClick"
@@ -111,6 +103,7 @@
             <input id="notification" class="settings" {{#if settings.enableLog}}checked{{/if}} data-settings="enableLog"
                    type="checkbox"> Write Logs </label>
     </div>
+
     <div class="form-group">
         <label>
             Theme
@@ -120,11 +113,13 @@
             <option data-theme="dark" value="dark">Dark</option>
         </select>
     </div>
+
     <div class="form-group">
         <label>Twitch Import</label>
         <input class="form-control" id="twitch-nickname" placeholder="Enter Nickname">
         <div class="btn twitch-import">Import</div>
     </div>
+
     <div class="settings-footer">
         <div class="go-back">
             <a href="#" class="change-page" data-page="channels"> Back </a>
