@@ -28,18 +28,35 @@ let template = [
     }
 ];
 
-
 let menu = new Menu();
 
 menu.append(new MenuItem({
-    label: 'Play Original', click: function () {
-        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: false});
+    label: 'Play', click: function () {
+        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: false, untilOffline: false});
     }
 }));
 
 menu.append(new MenuItem({
-    label: 'Play Low Quality', click: function () {
-        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: true});
+    label: 'Play (Until Offline)', click: function () {
+        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: false, untilOffline: true});
+    }
+}));
+
+menu.append(new MenuItem({
+    label: 'Play LQ', click: function () {
+        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: true, untilOffline: false});
+    }
+}));
+
+menu.append(new MenuItem({
+    label: 'Play LQ (Until Offline)', click: function () {
+        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: true, untilOffline: true});
+    }
+}));
+
+menu.append(new MenuItem({
+    label: 'Disable Until Offline Play', click: function () {
+        ipcRenderer.send('disable-until-offline-play', {link: current_context.data('id')});
     }
 }));
 

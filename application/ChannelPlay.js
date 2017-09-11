@@ -6,11 +6,29 @@ const {ipcMain, dialog} = require('electron');
 const fs = require('fs');
 const SettingsFile = require('./SettingsFile');
 const Notifications = require('./Notifications');
+const ChannelCheck = require('./ChannelCheck');
+const _ = require('lodash');
 
 let lastClosed = null;
 
+let playUntilOffline = [];
+
 ipcMain.on('channel-play', (event, channel) => {
-    launchPlayerLink(channel.link, channel.LQ);
+    if (channel.untilOffline) {
+        playUntilOffline.push(channel.link);
+
+        console.log('until offline play enabled', channel.link);
+    }
+
+    launchPlayerLink(channel.link, channel.LQ, channel.untilOffline);
+});
+
+ipcMain.on('disable-until-offline-play', (event, channel) => {
+    _.remove(playUntilOffline, function (n) {
+        return n === channel.link;
+    });
+
+    console.log('until offline play disabled', channel.link);
 });
 
 function launchPlayer(channelObj, LQ = null) {
@@ -19,7 +37,7 @@ function launchPlayer(channelObj, LQ = null) {
     launchPlayerLink(channelLink, LQ);
 }
 
-function launchPlayerLink(channelLink, LQ = null) {
+function launchPlayerLink(channelLink, LQ = null, untilOffline = false) {
     let channelObj = SettingsFile.buildChannelObj(channelLink);
 
     if (channelObj === false) {
@@ -68,7 +86,12 @@ function launchPlayerLink(channelLink, LQ = null) {
                 Notifications.printNotification('Error', error[1]);
             }
 
-            lastClosed = {link: channelLink, LQ: LQ};
+            lastClosed = {link: channelObj.link, LQ: LQ};
+
+            if (untilOffline && playUntilOffline.includes(channelObj.link) && ChannelCheck.onlineChannels.hasOwnProperty(channelObj.link)) {
+                console.log('restarting player.');
+                launchPlayerLink(channelObj.link, LQ, untilOffline);
+            }
         });
     } else {
         dialog.showMessageBox({
