@@ -24,7 +24,8 @@ let options = {
     asar: {
         unpackDir: 'node_modules/node-notifier/vendor/**'
     },
-    prune: false
+    packageManager: 'yarn',
+    prune: true
 };
 
 if (platformRl === 'all') {
