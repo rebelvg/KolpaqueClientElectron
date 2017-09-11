@@ -13,5 +13,10 @@ yarn run start-react-dev
 yarn run start-client-dev
 ```
 
+Build.
+```
+yarn run build
+```
+
 Builds.
 ftp://main.klpq.men:359/KolpaqueClientElectron/

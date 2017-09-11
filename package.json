@@ -7,8 +7,9 @@
     "start": "electron .",
     "start-client-dev": "cross-env NODE_ENV=dev electron .",
     "start-react-dev": "./node_modules/.bin/webpack-dev-server",
-    "dev": "npm run start-client-dev | npm run start-react-dev",
-    "build": "./node_modules/.bin/webpack --config webpack.config.production"
+    "start-dev": "npm run start-client-dev | npm run start-react-dev",
+    "react-build": "./node_modules/.bin/webpack --config webpack.config.production",
+    "build": "node build.js"
   },
   "repository": {},
   "keywords": [],
@@ -25,9 +26,11 @@
     "css-loader": "^0.28.7",
     "devtron": "^1.4.0",
     "electron": "^1.8.0",
+    "electron-packager": "^9.0.1",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.1.0",
+    "readline-sync": "^1.4.7",
     "webpack-cli": "^1.3.3",
     "webpack-dev-server": "^2.6.1"
   },
