@@ -2,7 +2,7 @@
  * Created by rebel on 22/03/2017.
  */
 
-const {ipcMain, dialog} = require('electron');
+const {ipcMain, dialog, shell} = require('electron');
 const fs = require('fs');
 const child = require('child_process').execFile;
 const SettingsFile = require('./SettingsFile');
@@ -96,6 +96,8 @@ function launchPlayerLink(channelLink, LQ = null, untilOffline = false) {
             type: 'error',
             message: 'Streamlink not found.'
         });
+
+        shell.openExternal(`https://github.com/streamlink/streamlink/releases`);
     }
 }
 
