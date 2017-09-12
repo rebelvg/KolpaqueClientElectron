@@ -3,7 +3,7 @@ const rl = require('readline-sync');
 const fs = require('fs');
 const path = require('path');
 
-let platformRl = rl.question('select platform. all - for all platforms, anything else for current.\n');
+let platformRl = rl.question('select platform. all - for all platforms.\n');
 let outPathRl = rl.question('select output folder.\n');
 
 let options = {
@@ -30,6 +30,8 @@ let options = {
 
 if (platformRl === 'all') {
     options.platform = 'win32,darwin,linux';
+} else {
+    options.platform = platformRl;
 }
 
 if (!fs.existsSync(outPathRl)) {

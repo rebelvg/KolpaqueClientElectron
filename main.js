@@ -5,6 +5,7 @@ const ChannelCheck = require('./application/ChannelCheck');
 const ChannelPlay = require('./application/ChannelPlay');
 const Notifications = require('./application/Notifications');
 const _ = require('lodash');
+const fixPath = require('fix-path');
 
 const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);
@@ -45,6 +46,8 @@ ipcMain.on('open-chat', (event, channel) => {
 
 ipcMain.once('client-ready', () => {
     console.log('client ready.');
+
+    fixPath();
 
     ChannelCheck.checkLoop(mainWindow);
 
