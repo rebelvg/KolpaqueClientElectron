@@ -8,7 +8,7 @@ Works on Windows, Mac, Linux.
 Run from source.
 ```
 git clone
-yarn i
+yarn install
 yarn run start-react-dev
 yarn run start-client-dev
 ```
