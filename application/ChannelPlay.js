@@ -9,7 +9,6 @@ const SettingsFile = require('./SettingsFile');
 const Notifications = require('./Notifications');
 const ChannelCheck = require('./ChannelCheck');
 const _ = require('lodash');
-const commandExistsSync = require('command-exists').sync;
 
 let lastClosed = null;
 
@@ -66,39 +65,41 @@ function launchPlayerLink(channelLink, LQ = null, untilOffline = false) {
         }
     }
 
-    if (commandExistsSync('streamlink')) {
-        console.log('launching player for ' + channelLink);
+    console.log('launching player for ' + channelLink);
 
-        child('streamlink', [channelLink, 'best', '--twitch-disable-hosting'].concat(quality), function (err, data, stderr) {
-            console.log(err);
-            console.log(data);
-            console.log('streamlink exited.');
+    child('streamlink', [channelLink, 'best', '--twitch-disable-hosting'].concat(quality), function (err, data, stderr) {
+        console.log(err);
+        console.log(data);
+        console.log('streamlink exited.');
 
-            if (err) {
+        if (err) {
+            if (err.code === 'ENOENT') {
+                dialog.showMessageBox({
+                    type: 'error',
+                    message: 'Streamlink not found.'
+                });
+
+                shell.openExternal(`https://github.com/streamlink/streamlink/releases`);
+
+                return;
+            } else {
                 Notifications.printNotification('Error', err.message);
             }
+        }
 
-            if (data.indexOf('error: ') >= 0) {
-                let error = data.split('error: ');
+        if (data.indexOf('error: ') >= 0) {
+            let error = data.split('error: ');
 
-                Notifications.printNotification('Error', error[1]);
-            }
+            Notifications.printNotification('Error', error[1]);
+        }
 
-            lastClosed = {link: channelObj.link, LQ: LQ};
+        lastClosed = {link: channelObj.link, LQ: LQ};
 
-            if (untilOffline && playUntilOffline.includes(channelObj.link) && ChannelCheck.onlineChannels.hasOwnProperty(channelObj.link)) {
-                console.log('restarting player.');
-                launchPlayerLink(channelObj.link, LQ, untilOffline);
-            }
-        });
-    } else {
-        dialog.showMessageBox({
-            type: 'error',
-            message: 'Streamlink not found.'
-        });
-
-        shell.openExternal(`https://github.com/streamlink/streamlink/releases`);
-    }
+        if (untilOffline && playUntilOffline.includes(channelObj.link) && ChannelCheck.onlineChannels.hasOwnProperty(channelObj.link)) {
+            console.log('restarting player.');
+            launchPlayerLink(channelObj.link, LQ, untilOffline);
+        }
+    });
 }
 
 function launchLastClosed() {
