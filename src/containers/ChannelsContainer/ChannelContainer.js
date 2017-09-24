@@ -32,11 +32,14 @@ export class ChannelContainer extends Component {
         return (
             <StyledContainerWrapper>
                 <Tabs>
-                    <TabList className="tabs">
-                        <Tab className='tab' selectedClassName="active">Online ({online.length})</Tab>
-                        <Tab className='tab' selectedClassName="active">Offline ({offline.length})</Tab>
-                    </TabList>
-                    <Channel pinned={true} channel={{name: 'Nozlar One Love'}}/>
+                    <TabWrapper>
+                        <TabList className="tabs">
+                            <Tab className='tab' selectedClassName="active">Online ({online.length})</Tab>
+                            <Tab className='tab' selectedClassName="active">Offline ({offline.length})</Tab>
+
+                        </TabList>
+                        <SettingsIcon to="/about"><Ionicon icon="ion-gear-b" color="black"/></SettingsIcon>
+                    </TabWrapper>
                     <TabPanel className='tab-panel'>
                         <ChannelWrapper channels={online}/>
                     </TabPanel>
@@ -47,29 +50,36 @@ export class ChannelContainer extends Component {
 
                 <StyledFooter className="fixed-bottom">
                     <ChannelForm/>
-                    <SettingsIcon to="/about"><Ionicon icon="ion-ios-cog" color="white"/></SettingsIcon>
                 </StyledFooter>
             </StyledContainerWrapper>
         );
     }
 }
 const StyledFooter = styled.div`
-    background-color: #262626;
+    background-color: #D7D7D7;
     color: white;
 `;
 const SettingsIcon = styled(Link)`
     display: flex;
-    padding: 2px;
+    justify-content: center;
+        padding-bottom: 30px;
 `;
 const StyledContainerWrapper = styled.div`
-  
+  display: flex;
+    width: 100%;
 `
 
 const StyledChannel = styled(Channel)`
 background-color: yellow
 color: white;
 `
-
+const TabWrapper = styled.div`
+    height:100%;
+     background-color: #D7D7D7;
+     display:flex;
+     justify-content: space-between;
+     flex-direction: column;
+`
 export default connect(
     (state) => ({
         online: getOnline(state),

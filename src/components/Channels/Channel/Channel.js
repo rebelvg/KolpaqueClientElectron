@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 const renderIcon = (service) => {
     if (service === 'twitch') {
-        return <Ionicon fontSize="24px" icon="ion-social-twitch-outline"/>
+        return <Ionicon fontSize="24px" color="#6441a5" icon="ion-social-twitch-outline"/>
     }
     else {
         return <Ionicon icon="ion-eye" color="dark-green"/>
@@ -24,6 +24,10 @@ const StyledChannelWrap = styled.div`
     display: flex;
     background-color: ${props => props.pinned ? 'yellow' : 'transparent'};
     align-items: center;
+    padding: 2px 0px;
+    font-weight: bold;
+    font-size: 14px;
+    border-top: 1px solid #969696;
 `;
 
 const StyledIcon = styled.div`

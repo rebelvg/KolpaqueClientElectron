@@ -4,20 +4,29 @@
     margin: 0;
     display: flex;
     border-bottom: 1px solid lightgray;
+    flex-direction: column;
+
+    width: 30px;
 }
 
 .tab {
     display: flex;
-    flex-basis: 50%;
-
     justify-content: center;
-
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    padding: 10px 0px;
+    border-right: 5px solid transparent;
+    font-size: 14px;
+    background-color: white;
+    height: 105px;
+    outline: 1px solid #969696;
+    width: 30px;
+    cursor: pointer;
 }
 
 .tab.active {
-    background-color: darkgreen;
-    color: white;
 
+    border-right: 5px solid #B6B6B6;
 }
 
 .pinned-channel {
@@ -27,9 +36,26 @@
 
 body {
     overflow: hidden;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+#app {
+    height: 100%;
 }
 
 .tab-panel {
     overflow-y: auto;
     max-height: 100vh;
+}
+
+.react-tabs {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.react-tabs__tab-panel--selected {
+    width: 100%;
 }

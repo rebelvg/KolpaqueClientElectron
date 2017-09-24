@@ -6,7 +6,7 @@ import styled from 'styled-components'
 const ChannelForm = ({channel}) => (
     <div>
         <StyledChannelFormWrap>
-            <StyledInput type="text"/>
+            <StyledInput placeholder="Add Channel" type="text"/>
             <StyledIcon fontSize="24px" icon="ion-plus"/>
         </StyledChannelFormWrap>
     </div>
@@ -15,6 +15,8 @@ const ChannelForm = ({channel}) => (
 const StyledChannelFormWrap = styled.div`
     display: flex;
     align-items: center;
+    padding: 2px;
+    
 `;
 
 const StyledInput = styled.input`
@@ -29,6 +31,8 @@ const StyledInput = styled.input`
    border-top: 1px solid lightgray;
    box-shadow: none;
    box-sizing: border-box;
+       font-size: 14px;
+    padding-left: 10px;
 `;
 
 const StyledIcon = styled(Ionicon)`
