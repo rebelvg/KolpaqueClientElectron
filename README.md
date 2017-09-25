@@ -9,6 +9,11 @@ Run from source.
 ```
 git clone
 yarn install
+yarn run start
+```
+
+Run React.
+```
 yarn run start-react-dev
 yarn run start-client-dev
 ```
