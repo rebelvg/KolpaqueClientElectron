@@ -13,19 +13,19 @@ const {URL} = require('url');
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 let settingsJson = {};
 
-const preInstalledChannels = ['rtmp://vps.klpq.men/live/main'];
+const preInstalledChannels = ['rtmp://vps.klpq.men/live/main', 'rtmp://main.klpq.men/live/main'];
 
 const allowedProtocols = ['rtmp:', 'http:', 'https:'];
 const registeredServices = {
-    'klpq-main': {
+    'klpq-vps': {
         protocols: ['rtmp:'],
-        hosts: ['main.klpq.men', 'stream.klpq.men'],
+        hosts: ['vps.klpq.men', 'stream.klpq.men'],
         paths: ['/live/'],
         name: 2
     },
-    'klpq-vps': {
+    'klpq-main': {
         protocols: ['rtmp:'],
-        hosts: ['vps.klpq.men'],
+        hosts: ['main.klpq.men'],
         paths: ['/live/'],
         name: 2
     },
@@ -46,6 +46,12 @@ const registeredServices = {
         hosts: ['www.youtube.com', 'youtube.com'],
         paths: ['/channel/'],
         name: 2
+    },
+    'custom': {
+        protocols: [],
+        hosts: [],
+        paths: [],
+        name: 0
     }
 };
 
@@ -100,12 +106,24 @@ function readFile() {
         settingsJson.channels = {};
         settingsJson.settings = defaultSettings.settings;
 
+        let serviceSorting = {};
+
+        _.forEach(registeredServices, function (serviceObj, serviceName) {
+            serviceSorting[serviceName] = [];
+        });
+
         _.forEach(parseJson.channels, function (channelObj, channelLink) {
             channelObj = buildChannelObj(channelLink);
 
             if (channelObj !== false) {
-                settingsJson.channels[channelObj.link] = channelObj;
+                serviceSorting[channelObj.service].push(channelObj);
             }
+        });
+
+        _.forEach(serviceSorting, function (channels) {
+            _.forEach(channels, function (channelObj) {
+                settingsJson.channels[channelObj.link] = channelObj;
+            });
         });
 
         _.forEach(defaultSettings.settings, function (value, key) {

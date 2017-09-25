@@ -289,24 +289,35 @@ async function twitchImport(twitchChannel) {
 }
 
 function autoKlpqImport() {
-    let url = 'http://stats.vps.klpq.men/channels';
-
-    request.get({url: url, json: true}, function (error, res, body) {
-        if (!error) {
-            lodash.forEach(body.result, function (channel) {
-                let protocol = SettingsFile.registeredServices['klpq-vps'].protocols[0];
-                let host = SettingsFile.registeredServices['klpq-vps'].hosts[0];
-                let pathname = SettingsFile.registeredServices['klpq-vps'].paths[0] + `${channel}`;
-
-                let channelUrl = protocol + "//" + host + pathname;
-
-                let channelObj = SettingsFile.addChannel(channelUrl, false);
-
-                if (channelObj !== false) {
-                    mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
-                }
-            });
+    lodash.forEach([
+        {
+            url: 'http://stats.vps.klpq.men/channels',
+            service: 'klpq-vps'
+        }, {
+            url: 'http://stats.main.klpq.men/channels',
+            service: 'klpq-main'
         }
+    ], function (importObj) {
+        let url = importObj.url;
+        let service = importObj.service;
+
+        request.get({url: url, json: true}, function (error, res, body) {
+            if (!error) {
+                lodash.forEach(body.result, function (channel) {
+                    let protocol = SettingsFile.registeredServices[service].protocols[0];
+                    let host = SettingsFile.registeredServices[service].hosts[0];
+                    let pathname = SettingsFile.registeredServices[service].paths[0] + `${channel}`;
+
+                    let channelUrl = protocol + "//" + host + pathname;
+
+                    let channelObj = SettingsFile.addChannel(channelUrl, false);
+
+                    if (channelObj !== false) {
+                        mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
+                    }
+                });
+            }
+        });
     });
 }
 
