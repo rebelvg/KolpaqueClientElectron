@@ -27,6 +27,10 @@ export class ChannelContainer extends Component {
 		ipcRenderer.send('channel-play', {link: channel.link, LQ: false, untilOffline: false});
 	}
 
+	addChannel = ({channel}) => {
+		ipcRenderer.send('add-channel', {link: channel});
+	}
+
 	deleteChannel = (channel) => {
 		this.props.deleteChannel(channel.link)
 	}
@@ -84,7 +88,7 @@ export class ChannelContainer extends Component {
 				</Tabs>
 
 				<StyledFooter className="fixed-bottom">
-					<ChannelForm/>
+					<ChannelForm onSubmit={this.addChannel}/>
 				</StyledFooter>
 			</StyledContainerWrapper>
 		);
