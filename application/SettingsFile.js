@@ -5,55 +5,14 @@
 const {app, ipcMain, dialog} = require('electron');
 const path = require('path');
 const fs = require('fs');
-const _ = require('underscore');
-const lodash = require('lodash');
+const _ = require('lodash');
 const Notifications = require('./Notifications');
-const {URL} = require('url');
+const {allowedProtocols, registeredServices, Channel} = require('./ChannelClass');
 
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 let settingsJson = {};
 
 const preInstalledChannels = ['rtmp://vps.klpq.men/live/main', 'rtmp://main.klpq.men/live/main'];
-
-const allowedProtocols = ['rtmp:', 'http:', 'https:'];
-const registeredServices = {
-    'klpq-vps': {
-        protocols: ['rtmp:'],
-        hosts: ['vps.klpq.men', 'stream.klpq.men'],
-        paths: ['/live/'],
-        name: 2
-    },
-    'klpq-main': {
-        protocols: ['rtmp:'],
-        hosts: ['main.klpq.men'],
-        paths: ['/live/'],
-        name: 2
-    },
-    'twitch': {
-        protocols: ['https:', 'http:'],
-        hosts: ['www.twitch.tv', 'twitch.tv'],
-        paths: ['/'],
-        name: 1
-    },
-    'youtube-user': {
-        protocols: ['https:', 'http:'],
-        hosts: ['www.youtube.com', 'youtube.com'],
-        paths: ['/user/'],
-        name: 2
-    },
-    'youtube-channel': {
-        protocols: ['https:', 'http:'],
-        hosts: ['www.youtube.com', 'youtube.com'],
-        paths: ['/channel/'],
-        name: 2
-    },
-    'custom': {
-        protocols: [],
-        hosts: [],
-        paths: [],
-        name: 0
-    }
-};
 
 ipcMain.on('change-setting', (event, setting) => {
     changeSetting(setting.name, setting.value);
@@ -157,59 +116,13 @@ function saveFile() {
 }
 
 function buildChannelObj(channelLink) {
-    let channelObj = {
-        service: 'custom',
-        name: null,
-        link: channelLink,
-        protocol: null,
-        isLive: false,
-        isPinned: false
-    };
-
     try {
-        let channelURL = new URL(channelLink);
-
-        if (!allowedProtocols.includes(channelURL.protocol)) {
-            throw Error(`Only [${allowedProtocols}] are allowed.`);
-        }
-
-        channelObj.protocol = channelURL.protocol;
-
-        if (channelURL.host.length < 1) {
-            throw Error(`Hostname can't be empty.`);
-        }
-
-        if (channelURL.pathname.length < 2) {
-            throw Error(`Pathname can't be empty.`);
-        }
-
-        lodash.forEach(registeredServices, function (serviceObj, serviceName) {
-            if (serviceObj.protocols.includes(channelURL.protocol.toLowerCase()) && serviceObj.hosts.includes(channelURL.host.toLowerCase())) {
-                let nameArray = lodash.split(channelURL.pathname, '/');
-
-                if (nameArray[serviceObj.name]) {
-                    lodash.forEach(serviceObj.paths, function (path) {
-                        if (channelURL.pathname.toLowerCase().indexOf(path) === 0) {
-                            channelObj.service = serviceName;
-                            channelObj.name = nameArray[serviceObj.name];
-
-                            channelURL.protocol = serviceObj.protocols[0];
-                            channelURL.host = serviceObj.hosts[0];
-                            channelURL.path = serviceObj.paths[0] + nameArray[serviceObj.name];
-
-                            channelObj.link = channelURL.href;
-                        }
-                    });
-                }
-            }
-        });
+        return new Channel(channelLink);
     }
     catch (e) {
         console.log(e.message);
         return false;
     }
-
-    return channelObj;
 }
 
 function addChannel(channelLink, printError = true) {

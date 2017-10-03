@@ -8,8 +8,7 @@ const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
 const moment = require('moment');
-const lodash = require('lodash');
-const {URL} = require('url');
+const _ = require('lodash');
 const util = require('util');
 const child = require('child_process').execFile;
 
@@ -289,7 +288,7 @@ async function twitchImport(twitchChannel) {
 }
 
 function autoKlpqImport() {
-    lodash.forEach([
+    _.forEach([
         {
             url: 'http://stats.vps.klpq.men/channels',
             service: 'klpq-vps'
@@ -303,7 +302,7 @@ function autoKlpqImport() {
 
         request.get({url: url, json: true}, function (error, res, body) {
             if (!error) {
-                lodash.forEach(body.result, function (channel) {
+                _.forEach(body.result, function (channel) {
                     let protocol = SettingsFile.registeredServices[service].protocols[0];
                     let host = SettingsFile.registeredServices[service].hosts[0];
                     let pathname = SettingsFile.registeredServices[service].paths[0] + `${channel}`;
@@ -322,7 +321,7 @@ function autoKlpqImport() {
 }
 
 function autoTwitchImport() {
-    lodash.forEach(SettingsFile.settingsJson.settings.twitchImport, async function (value) {
+    _.forEach(SettingsFile.settingsJson.settings.twitchImport, async function (value) {
         await twitchImportBase(value);
     });
 }
@@ -377,7 +376,7 @@ function checkLoop(mainWindowRef) {
     let settingsJson = SettingsFile.returnSettings();
     mainWindow = mainWindowRef;
 
-    lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
+    _.forEach(settingsJson.channels, function (channelObj, channelLink) {
         getStats5(channelObj, false);
         getStats30(channelObj, false);
         getStats120(channelObj, false);
@@ -389,19 +388,19 @@ function checkLoop(mainWindowRef) {
     autoTwitchImport();
 
     setInterval(function () {
-        lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
+        _.forEach(settingsJson.channels, function (channelObj, channelLink) {
             getStats5(channelObj);
         });
     }, 5 * 1000);
 
     setInterval(function () {
-        lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
+        _.forEach(settingsJson.channels, function (channelObj, channelLink) {
             getStats30(channelObj);
         });
     }, 30 * 1000);
 
     setInterval(function () {
-        lodash.forEach(settingsJson.channels, function (channelObj, channelLink) {
+        _.forEach(settingsJson.channels, function (channelObj, channelLink) {
             getStats120(channelObj);
         });
     }, 2 * 60 * 1000);
