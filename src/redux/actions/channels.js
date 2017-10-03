@@ -3,7 +3,7 @@ const {ipcRenderer} = window.require('electron');
 
 
 export const GET_CHANNELS = 'GET_CHANNELS';
-export const GET_CHANNELS_SUCCESS = 'GET_CHANNELS_SUCCESS';
+export const ADD_CHANNEL = 'ADD_CHANNEL';
 export const DELETE_CHANNEL = 'DELETE_CHANNEL';
 export const CHANGE_STATUS = 'CHANGE_STATUS';
 
@@ -26,7 +26,12 @@ export function deleteChannel(channel) {
 		data: channel
 	}
 }
-
+export function addChannel(channel) {
+	return {
+		type: ADD_CHANNEL,
+		data: channel
+	}
+}
 export function changeStatus(channel) {
 	return {
 		type: CHANGE_STATUS,

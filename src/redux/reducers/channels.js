@@ -1,4 +1,4 @@
-import {GET_CHANNELS, CHANGE_STATUS, DELETE_CHANNEL} from '../actions/channels'
+import {GET_CHANNELS, CHANGE_STATUS, DELETE_CHANNEL, ADD_CHANNEL} from '../actions/channels'
 
 
 const initialState = {
@@ -25,6 +25,11 @@ export default function (state = initialState, action = {}) {
 				offline: state.offline.filter(item => action.data !== item.link),
 				online: state.online.filter(item => action.data !== item.link)
 			}
+		case ADD_CHANNEL:
+			return {
+				...state,
+				offline: [...state.offline, {link: action.data, name: action.data}]
+			};
 		default:
 			return state
 	}
