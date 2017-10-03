@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import {initChannels, changeStatus, deleteChannel} from '../../redux/actions/channels'
+import {initChannels, changeStatus, deleteChannel, addChannel} from '../../redux/actions/channels'
 import {getOffline, getOnline} from '../../redux/reducers/channels'
 import './style.css';
 import ChannelWrapper from '../../components/Channels/ChannelWrapper/ChannelWrapper'
@@ -25,6 +25,11 @@ export class ChannelContainer extends Component {
 
 	playChannel = (channel) => {
 		ipcRenderer.send('channel-play', {link: channel.link, LQ: false, untilOffline: false});
+	}
+
+	addChannel = ({channel}) => {
+		ipcRenderer.send('add-channel', {link: channel, name: channel});
+		this.props.addChannel(channel)
 	}
 
 	deleteChannel = (channel) => {
@@ -84,7 +89,7 @@ export class ChannelContainer extends Component {
 				</Tabs>
 
 				<StyledFooter className="fixed-bottom">
-					<ChannelForm/>
+					<ChannelForm onSubmit={this.addChannel}/>
 				</StyledFooter>
 			</StyledContainerWrapper>
 		);
@@ -124,6 +129,7 @@ export default connect(
 		initChannels,
 		changeStatus,
 		deleteChannel,
+		addChannel
 	}, dispatch)
 )(ChannelContainer);
 

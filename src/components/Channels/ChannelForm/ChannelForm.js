@@ -1,25 +1,37 @@
 import React from 'react';
 import Ionicon from 'react-ionicons'
 import styled from 'styled-components'
+import {Field, reduxForm} from 'redux-form'
 
-
-const ChannelForm = ({channel}) => (
-    <div>
-        <StyledChannelFormWrap>
-            <StyledInput placeholder="Add Channel" type="text"/>
-            <StyledIcon fontSize="24px" icon="ion-plus"/>
-        </StyledChannelFormWrap>
-    </div>
-);
+let ChannelForm = (props) => {
+	const {handleSubmit} = props
+	return (
+		<form onSubmit={ handleSubmit }>
+			<StyledChannelFormWrap>
+				<StyledInput component="input" name="channel" placeholder="Add Channel" type="text"/>
+				<button type="submit">
+					<StyledIcon fontSize="24px" icon="ion-plus"/>
+				</button>
+			</StyledChannelFormWrap>
+		</form>
+	)
+};
 
 const StyledChannelFormWrap = styled.div`
     display: flex;
     align-items: center;
     padding: 2px;
+    & button {
+		-webkit-appearance: none;
+		border:none;
+		padding: 0;
+		margin: 0;
+		cursor: pointer
+    }
     
 `;
 
-const StyledInput = styled.input`
+const StyledInput = styled(Field)`
     flex-grow:2;
     width: 100%;
     display: flex;
@@ -45,5 +57,9 @@ const StyledIcon = styled(Ionicon)`
   font-size:24px;
 `;
 
+ChannelForm = reduxForm({
+	// a unique name for the form
+	form: 'addChannel'
+})(ChannelForm)
 
 export default ChannelForm;
