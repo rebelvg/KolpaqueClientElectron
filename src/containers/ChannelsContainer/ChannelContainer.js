@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import {initChannels, changeStatus} from '../../redux/actions/channels'
+import {initChannels, changeStatus, deleteChannel} from '../../redux/actions/channels'
 import {getOffline, getOnline} from '../../redux/reducers/channels'
 import './style.css';
 import ChannelWrapper from '../../components/Channels/ChannelWrapper/ChannelWrapper'
@@ -23,9 +23,17 @@ export class ChannelContainer extends Component {
 		}
 	}
 
+	playChannel = (channel) => {
+		ipcRenderer.send('channel-play', {link: channel.link, LQ: false, untilOffline: false});
+	}
+
+	deleteChannel = (channel) => {
+		this.props.deleteChannel(channel.link)
+	}
+
 	openMenu = (channel) => {
 		const menu = new Menu();
-		const template = menuTemplate(channel);
+		const template = menuTemplate(channel, this.deleteChannel);
 		template.map((item) => menu.append(item))
 		menu.popup(remote.getCurrentWindow())
 	}
@@ -57,16 +65,19 @@ export class ChannelContainer extends Component {
 						<SettingsIcon to="/about"><Ionicon icon="ion-gear-b" color="black"/></SettingsIcon>
 					</TabWrapper>
 					<TabPanel className='tab-panel'>
-						<ChannelWrapper selected={selected}
-										selectChannel={this.selectChannel}
-										handleClick={this.openMenu}
-										channels={online}
+						<ChannelWrapper
+							selected={selected}
+							selectChannel={this.selectChannel}
+							playChannel={this.playChannel}
+							handleClick={this.openMenu}
+							channels={online}
 						/>
 					</TabPanel>
 					<TabPanel className='tab-panel'>
 						<ChannelWrapper
 							selected={selected}
 							selectChannel={this.selectChannel}
+							playChannel={this.playChannel}
 							handleClick={this.openMenu}
 							channels={offline}/>
 					</TabPanel>
@@ -112,6 +123,7 @@ export default connect(
 	(dispatch) => bindActionCreators({
 		initChannels,
 		changeStatus,
+		deleteChannel,
 	}, dispatch)
 )(ChannelContainer);
 

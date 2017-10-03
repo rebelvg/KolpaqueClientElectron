@@ -1,7 +1,7 @@
 const {remote, ipcRenderer} = window.require('electron');
 const {app, Menu, shell, BrowserWindow, MenuItem} = remote;
 
-const menuTemplate = (channel) => [
+const menuTemplate = (channel, deleteFunction) => [
 	new MenuItem({
 		label: 'Play',
 		click() {
@@ -35,6 +35,7 @@ const menuTemplate = (channel) => [
 	}),
 	new MenuItem({
 		label: 'Remove Channel', click: function () {
+			deleteFunction(channel)
 			ipcRenderer.send('remove-channel', channel.link);
 		}
 	})

@@ -11,11 +11,13 @@ const renderIcon = (service) => {
 	}
 };
 
-const Channel = ({channel, pinned, handleClick, selected, selectChannel}) => (
-	<StyledChannelWrap onMouseDown={() => selectChannel(channel)}
-					   selected={selected}
-					   onContextMenu={() => handleClick(channel)}
-					   pinned={pinned}>
+const Channel = ({channel, pinned, handleClick, selected, selectChannel, playChannel}) => (
+	<StyledChannelWrap
+		onDoubleClick={() => playChannel(channel)}
+		onMouseDown={() => selectChannel(channel)}
+		selected={selected}
+		onContextMenu={() => handleClick(channel)}
+		pinned={pinned}>
 		<StyledIcon > {renderIcon(channel.service)} </StyledIcon>
 
 		<StyledName>{channel.name || channel.link} </StyledName>
@@ -25,6 +27,7 @@ const Channel = ({channel, pinned, handleClick, selected, selectChannel}) => (
 
 const StyledChannelWrap = styled.div`
     display: flex;
+    user-select: none;
     background-color: ${props => props.selected ? '#e8e8e8' : 'transparent'};
     cursor:pointer;
     align-items: center;
