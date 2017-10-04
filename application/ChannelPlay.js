@@ -13,7 +13,6 @@ const ChannelCheck = require('./ChannelCheck');
 const Globals = require('./Globals');
 
 let lastClosed = null;
-
 let playUntilOffline = [];
 
 ipcMain.on('channel-play', (event, channel) => {

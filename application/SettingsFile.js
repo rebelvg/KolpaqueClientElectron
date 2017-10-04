@@ -35,6 +35,10 @@ ipcMain.on('remove-channel', (event, channelLink) => {
     return event.sender.send('remove-channel-response', {status: res, channelLink: channelLink});
 });
 
+ipcMain.on('getChannels', (event) => (event.returnValue = returnChannels()));
+
+ipcMain.on('getSettings', (event) => (event.returnValue = config.settings));
+
 function saveFile() {
     return config.saveFile();
 }

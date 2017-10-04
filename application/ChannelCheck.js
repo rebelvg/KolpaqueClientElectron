@@ -17,9 +17,11 @@ const Globals = require('./Globals');
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = {};
 let mainWindow = null;
+let buildsLink = "ftp://main.klpq.men:359/KolpaqueClientElectron/";
+let clientVersion = require('../package.json').version;
 
-ipcMain.on('twitch-import', (event, channel) => {
-    twitchImport(channel);
+ipcMain.on('twitch-import', async (event, channelName) => {
+    return await twitchImport(channelName);
 });
 
 function isOnline(channelObj, printBalloon) {
@@ -235,16 +237,16 @@ function twitchImportChannels(channels, i) {
     return i;
 }
 
-async function twitchImportBase(twitchChannel) {
-    twitchChannel = twitchChannel.replace(/\s+/g, '').toLowerCase();
+async function twitchImportBase(channelName) {
+    channelName = channelName.trim().toLowerCase();
 
-    if (twitchChannel.length === 0)
+    if (channelName.length === 0)
         return null;
 
     let requestGet = util.promisify(request.get);
 
     try {
-        let url = "https://api.twitch.tv/kraken/users/" + twitchChannel + "/follows/channels?direction=ASC&limit=100&sortby=created_at&user=" + twitchChannel + "&client_id=" + twitchApiKey;
+        let url = "https://api.twitch.tv/kraken/users/" + channelName + "/follows/channels?direction=ASC&limit=100&sortby=created_at&user=" + channelName + "&client_id=" + twitchApiKey;
 
         let response = await requestGet({url: url, json: true});
         let body = response.body;
@@ -273,19 +275,23 @@ async function twitchImportBase(twitchChannel) {
     }
 }
 
-async function twitchImport(twitchChannel) {
-    let res = await twitchImportBase(twitchChannel);
+async function twitchImport(channelName) {
+    let res = await twitchImportBase(channelName);
 
     if (res !== null) {
         dialog.showMessageBox({
             type: 'info',
             message: 'Import done. ' + res + ' channels added.'
         });
+
+        return true;
     } else {
         dialog.showMessageBox({
             type: 'error',
             message: 'Import error.'
         });
+
+        return false;
     }
 }
 
@@ -323,14 +329,10 @@ function autoKlpqImport() {
 }
 
 function autoTwitchImport() {
-    _.forEach(SettingsFile.settingsJson.settings.twitchImport, async function (value) {
-        await twitchImportBase(value);
+    _.forEach(SettingsFile.settingsJson.settings.twitchImport, async function (channelName) {
+        await twitchImportBase(channelName);
     });
 }
-
-let buildsLink = "ftp://main.klpq.men:359/KolpaqueClientElectron/";
-
-let clientVersion = require('../package.json').version;
 
 ipcMain.on('get-update', (event, data) => {
     console.log('get-update');

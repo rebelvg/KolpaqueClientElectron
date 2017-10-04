@@ -1,9 +1,68 @@
+const {ipcMain, shell, clipboard} = require('electron');
 const {URL} = require('url');
 const _ = require('lodash');
 
 const {allowedProtocols, registeredServices} = require('./Globals');
+const SettingsFile = require('./SettingsFile');
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
+
+ipcMain.on('open-page', (event, channelLink) => {
+    let channelObj = SettingsFile.settingsJson.findChannelByLink(channelLink);
+
+    if (channelObj === null) {
+        return false;
+    }
+
+    if (channelObj.protocol === 'rtmp:') {
+        switch (channelObj.service) {
+            case 'klpq-vps': {
+                shell.openExternal('http://stream.klpq.men/' + channelObj.name);
+                break;
+            }
+        }
+    }
+
+    if (['http:', 'https:'].includes(channelObj.protocol)) {
+        shell.openExternal(channelObj.link);
+    }
+
+    return true;
+});
+
+ipcMain.on('open-chat', (event, channelLink) => {
+    let channelObj = SettingsFile.settingsJson.findChannelByLink(channelLink);
+
+    if (channelObj === null) {
+        return false;
+    }
+
+    if (channelObj.protocol === 'rtmp:') {
+        switch (channelObj.service) {
+            case 'klpq-vps': {
+                shell.openExternal(`http://stream.klpq.men/chat`);
+                break;
+            }
+        }
+    }
+
+    if (['http:', 'https:'].includes(channelObj.protocol)) {
+        switch (channelObj.service) {
+            case 'twitch': {
+                shell.openExternal(`${channelObj.link}/chat`);
+                break;
+            }
+        }
+    }
+
+    return true;
+});
+
+ipcMain.on('copy-clipboard', (event, channelLink) => {
+    clipboard.writeText(channelLink);
+
+    return true;
+});
 
 class Channel {
     constructor(channelLink) {

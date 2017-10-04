@@ -7,8 +7,7 @@ const EventEmitter = require('events');
 const {allowedProtocols, registeredServices, preInstalledChannels, buildChannelObj} = require('./Globals');
 const Channel = require('./ChannelClass');
 
-let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient_dev.json'));
-
+const settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient_dev.json'));
 const channelSave = ['link', 'visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
 function readFile(config) {
@@ -34,12 +33,16 @@ function readFile(config) {
     catch (e) {
         console.log(e.stack);
 
-        preInstalledChannels.forEach(config.addChannelLink);
+        _.forEach(preInstalledChannels, (channelLink) => {
+            config.addChannelLink(channelLink);
+        });
     }
 }
 
 function saveLoop(config) {
-    setInterval(config.saveFile, 5 * 60 * 1000);
+    setInterval(() => {
+        config.saveFile();
+    }, 5 * 60 * 1000);
 }
 
 function addChannel(config, channelObj) {

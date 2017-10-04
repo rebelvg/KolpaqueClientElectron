@@ -1,5 +1,5 @@
 const electron = require('electron');
-const {clipboard, shell, globalShortcut} = require('electron');
+const {app, BrowserWindow, clipboard, shell, globalShortcut, ipcMain, Menu, Tray, nativeImage} = require('electron');
 const _ = require('lodash');
 const fixPath = require('fix-path');
 
@@ -16,6 +16,7 @@ console.log('isDev', isDev);
 
 let settingsJson = SettingsFile.settingsJson;
 let forceQuit = false;
+let appIcon = null;
 
 let legacyChannels = SettingsFile.returnChannelsLegacy();
 
@@ -26,30 +27,6 @@ require('electron-handlebars')({
     version: require('./package.json').version
 });
 
-let ipcMain = electron.ipcMain;
-
-ipcMain.on('open-page', (event, channel) => {
-    if (channel.startsWith('rtmp') && channel.includes('klpq.men')) {
-        let name = channel.split('/');
-
-        shell.openExternal('http://stream.klpq.men/' + _.last(name));
-    }
-
-    if (channel.startsWith('http')) {
-        shell.openExternal(channel);
-    }
-});
-
-ipcMain.on('open-chat', (event, channel) => {
-    if (channel.startsWith('rtmp') && channel.includes('klpq.men')) {
-        shell.openExternal('http://stream.klpq.men/chat/');
-    }
-
-    if (channel.startsWith('http')) {
-        shell.openExternal(channel + '/chat');
-    }
-});
-
 ipcMain.once('client-ready', () => {
     console.log('client ready.');
 
@@ -57,18 +34,6 @@ ipcMain.once('client-ready', () => {
 
     ChannelCheck.checkLoop(mainWindow);
 });
-
-ipcMain.on('copy-clipboard', (event, channel) => {
-    clipboard.writeText(channel);
-});
-
-ipcMain.on('getChannels', (event) => (event.returnValue = SettingsFile.returnChannels()));
-
-ipcMain.on('getSettings', (event) => (event.returnValue = settingsJson.settings));
-
-const app = electron.app;
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
 
 const path = require('path');
 const URL = require('url');
@@ -146,7 +111,7 @@ function createWindow() {
         let width = size[0];
         let height = size[1];
 
-        let settingsJson = SettingsFile.settingsJson;
+        //let settingsJson = SettingsFile.settingsJson;
         settingsJson.settings.width = width;
         settingsJson.settings.height = height;
     });
@@ -191,9 +156,6 @@ app.on('ready', function () {
     mainWindow.hide();
 });
 
-const {Menu, Tray, nativeImage} = require('electron');
-
-let appIcon = null;
 let contextMenuTemplate = [
     {
         label: 'Toggle Client', type: 'normal', visible: process.platform === 'linux', click: () => {
