@@ -3,6 +3,8 @@ const _ = require('lodash');
 
 const {allowedProtocols, registeredServices} = require('./Globals');
 
+const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
+
 class Channel {
     constructor(channelLink) {
         channelLink = channelLink.trim();
@@ -59,6 +61,14 @@ class Channel {
         if (this.service === 'custom') {
             this.visibleName = this.link;
         }
+    }
+
+    update(channelConfig) {
+        _.forEach(channelConfig, (settingValue, settingName) => {
+            if (channelValidate.includes(settingName)) {
+                this[settingName] = settingValue;
+            }
+        });
     }
 }
 

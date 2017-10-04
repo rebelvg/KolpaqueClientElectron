@@ -9,6 +9,8 @@ const Channel = require('./ChannelClass');
 
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient_dev.json'));
 
+const channelSave = ['link', 'visibleName', 'isPinned', 'autoStart', 'autoRestart'];
+
 function readFile(config) {
     try {
         let file = fs.readFileSync(settingsPath, 'utf8');
@@ -16,7 +18,11 @@ function readFile(config) {
         let parseJson = JSON.parse(file);
 
         _.forEach(parseJson.channels, (channelObj) => {
-            config.addChannelLink(channelObj.link);
+            let channel = config.addChannelLink(channelObj.link);
+
+            if (channel !== false) {
+                channel.update(channelObj);
+            }
         });
 
         _.forEach(config.settings, (settingValue, settingName) => {
@@ -124,7 +130,23 @@ class Config extends EventEmitter {
 
     saveFile() {
         try {
-            fs.writeFileSync(settingsPath, JSON.stringify(this, null, 4));
+            let saveConfig = {};
+
+            saveConfig.channels = _.map(this.channels, (channelObj) => {
+                let channel = {};
+
+                _.forEach(channelSave, (settingName) => {
+                    if (channelObj.hasOwnProperty(settingName)) {
+                        channel[settingName] = channelObj[settingName];
+                    }
+                });
+
+                return channel;
+            });
+
+            saveConfig.settings = this.settings;
+
+            fs.writeFileSync(settingsPath, JSON.stringify(saveConfig, null, 4));
 
             console.log('settings saved.');
 
