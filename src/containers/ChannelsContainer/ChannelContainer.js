@@ -29,11 +29,11 @@ export class ChannelContainer extends Component {
 
 	addChannel = ({channel}) => {
 		ipcRenderer.send('add-channel', {link: channel, name: channel});
-		this.props.addChannel(channel)
+
 	}
 
 	deleteChannel = (channel) => {
-		this.props.deleteChannel(channel.link)
+		ipcRenderer.send('remove-channel', channel);
 	}
 
 	openMenu = (channel) => {
@@ -53,6 +53,19 @@ export class ChannelContainer extends Component {
 
 	componentDidMount() {
 		ipcRenderer.on('channel-went-online', (event, channel) => this.props.changeStatus(channel.link));
+		ipcRenderer.on('add-channel-response', (event, response) => {
+			if (response.status) {
+				const {channel} = response;
+				this.props.addChannel(channel)
+			}
+		})
+		ipcRenderer.on('remove-channel-response', (event, response) => {
+			console.log(response)
+			if (response.status) {
+				const {channel} = response;
+				this.props.deleteChannel(channel.link)
+			}
+		});
 	}
 
 	render() {
