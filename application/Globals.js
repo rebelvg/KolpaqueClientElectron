@@ -41,6 +41,20 @@ const registeredServices = {
 
 const preInstalledChannels = ['rtmp://vps.klpq.men/live/main', 'rtmp://main.klpq.men/live/main'];
 
+function buildChannelObj(channelLink) {
+    try {
+        const Channel = require('./ChannelClass');
+
+        return new Channel(channelLink);
+    }
+    catch (e) {
+        console.log(e.stack);
+
+        return false;
+    }
+}
+
 module.exports.allowedProtocols = allowedProtocols;
 module.exports.registeredServices = registeredServices;
 module.exports.preInstalledChannels = preInstalledChannels;
+module.exports.buildChannelObj = buildChannelObj;

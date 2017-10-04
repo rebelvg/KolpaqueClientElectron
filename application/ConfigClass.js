@@ -4,9 +4,8 @@ const path = require('path');
 const _ = require('lodash');
 const EventEmitter = require('events');
 
-const {allowedProtocols, registeredServices, preInstalledChannels} = require('./Globals');
+const {allowedProtocols, registeredServices, preInstalledChannels, buildChannelObj} = require('./Globals');
 const Channel = require('./ChannelClass');
-const {buildChannelObj} = require('./SettingsFile');
 
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient_dev.json'));
 
@@ -27,7 +26,7 @@ function readFile(config) {
         });
     }
     catch (e) {
-        console.log(e.message);
+        console.log(e.stack);
 
         preInstalledChannels.forEach(config.addChannelLink);
     }
@@ -40,11 +39,7 @@ function saveLoop(config) {
 function addChannel(config, channelObj) {
     config.channels.push(channelObj);
 
-    console.log('added channel.', channelObj.link);
-
     config.emit('channel_added', channelObj);
-
-    return channelObj;
 }
 
 class Config extends EventEmitter {
@@ -61,7 +56,7 @@ class Config extends EventEmitter {
             enableLog: false,
             theme: "light",
             width: 400,
-            height: 700,
+            height: 900,
             youtubeApiKey: null,
             twitchImport: []
         };
@@ -78,9 +73,9 @@ class Config extends EventEmitter {
             return false;
         }
 
-        channelObj = this.findChannelByLink(channelObj.link);
+        let res = this.findChannelByLink(channelObj.link);
 
-        if (channelObj !== null) {
+        if (res !== null) {
             return false;
         }
 
@@ -89,7 +84,9 @@ class Config extends EventEmitter {
         return channelObj;
     }
 
-    removeChannel(channelObj) {
+    removeChannelLink(channelLink) {
+        let channelObj = this.findChannelByLink(channelLink);
+
         if (!this.channels.includes(channelObj)) {
             return true;
         }

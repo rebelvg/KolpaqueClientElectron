@@ -378,7 +378,7 @@ function checkLoop(mainWindowRef) {
     let settingsJson = SettingsFile.settingsJson;
     mainWindow = mainWindowRef;
 
-    _.forEach(settingsJson.channels, function (channelObj, channelLink) {
+    _.forEach(settingsJson.channels, function (channelObj) {
         getStats5(channelObj, false);
         getStats30(channelObj, false);
         getStats120(channelObj, false);
@@ -390,19 +390,19 @@ function checkLoop(mainWindowRef) {
     autoTwitchImport();
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, function (channelObj, channelLink) {
+        _.forEach(settingsJson.channels, function (channelObj) {
             getStats5(channelObj);
         });
     }, 5 * 1000);
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, function (channelObj, channelLink) {
+        _.forEach(settingsJson.channels, function (channelObj) {
             getStats30(channelObj);
         });
     }, 30 * 1000);
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, function (channelObj, channelLink) {
+        _.forEach(settingsJson.channels, function (channelObj) {
             getStats120(channelObj);
         });
     }, 2 * 60 * 1000);

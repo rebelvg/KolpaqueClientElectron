@@ -8,189 +8,70 @@ const fs = require('fs');
 const _ = require('lodash');
 
 const Notifications = require('./Notifications');
-const {allowedProtocols, registeredServices, preInstalledChannels} = require('./Globals');
+const {allowedProtocols, registeredServices, preInstalledChannels, buildChannelObj} = require('./Globals');
 const Channel = require('./ChannelClass');
+const Config = require('./ConfigClass');
+const ChannelCheck = require('./ChannelCheck');
 
-let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
-
-let settingsJson = {};
+let config = new Config();
 
 ipcMain.on('change-setting', (event, setting) => {
-    changeSetting(setting.name, setting.value);
+    return config.changeSetting(setting.name, setting.value);
 });
 
 ipcMain.on('add-channel', (event, channel) => {
-    let channelObj = addChannel(channel.link);
+    let channelObj = config.addChannelLink(channel.link);
 
     if (channelObj === false) {
-        event.sender.send('add-channel-response', {status: false});
-        return;
-    }
-
-    event.sender.send('add-channel-response', {status: true, channel: channelObj});
-});
-
-ipcMain.on('remove-channel', (event, channel) => {
-    let result = removeChannel(channel);
-
-    event.sender.send('remove-channel-response', {status: result, channelLink: channel});
-});
-
-let defaultSettings = {
-    channels: {},
-    settings: {
-        LQ: false,
-        showNotifications: true,
-        autoPlay: false,
-        minimizeAtStart: false,
-        launchOnBalloonClick: true,
-        enableLog: false,
-        theme: "light",
-        width: 400,
-        height: 700,
-        youtubeApiKey: null,
-        twitchImport: []
-    }
-};
-
-function readFile() {
-    try {
-        let file = fs.readFileSync(settingsPath, 'utf8');
-
-        let parseJson = JSON.parse(file);
-
-        settingsJson.channels = {};
-        settingsJson.settings = defaultSettings.settings;
-
-        let serviceSorting = {};
-
-        _.forEach(registeredServices, function (serviceObj, serviceName) {
-            serviceSorting[serviceName] = [];
-        });
-
-        _.forEach(parseJson.channels, function (channelObj, channelLink) {
-            channelObj = buildChannelObj(channelLink);
-
-            if (channelObj !== false) {
-                serviceSorting[channelObj.service].push(channelObj);
-            }
-        });
-
-        _.forEach(serviceSorting, function (channels) {
-            _.forEach(channels, function (channelObj) {
-                settingsJson.channels[channelObj.link] = channelObj;
-            });
-        });
-
-        _.forEach(defaultSettings.settings, function (value, key) {
-            if (parseJson.settings.hasOwnProperty(key)) {
-                settingsJson.settings[key] = parseJson.settings[key];
-            }
-        });
-    }
-    catch (e) {
-        console.log(e.message);
-
-        settingsJson.channels = {};
-        settingsJson.settings = defaultSettings.settings;
-
-        preInstalledChannels.forEach(addChannel);
-    }
-}
-
-function saveFile() {
-    try {
-        fs.writeFileSync(settingsPath, JSON.stringify(settingsJson, null, 4));
-        console.log('settings saved.');
-    }
-    catch (e) {
-        console.log(e.message);
-    }
-}
-
-function buildChannelObj(channelLink) {
-    try {
-        return new Channel(channelLink);
-    }
-    catch (e) {
-        console.log(e.message);
-
         return false;
     }
+
+    return event.sender.send('add-channel-response', {status: true, channel: channelObj});
+});
+
+ipcMain.on('remove-channel', (event, channelLink) => {
+    let res = config.removeChannelLink(channelLink);
+
+    return event.sender.send('remove-channel-response', {status: res, channelLink: channelLink});
+});
+
+function saveFile() {
+    return config.saveFile();
 }
 
 function addChannel(channelLink, printError = true) {
-    channelLink = channelLink.replace(/\s+/g, '');
-
-    try {
-        let channelObj = buildChannelObj(channelLink);
-
-        if (channelObj === false) {
-            throw Error('Error adding channel.');
-        }
-
-        if (settingsJson.channels.hasOwnProperty(channelObj.link))
-            return false;
-
-        let channels = {};
-
-        channels[channelObj.link] = channelObj;
-
-        _.extend(settingsJson.channels, channels);
-
-        console.log('added channel.', channelObj);
-
-        return channelObj;
-    }
-    catch (e) {
-        if (printError) {
-            dialog.showMessageBox({
-                type: 'error',
-                message: e.message
-            });
-        }
-
-        return false;
-    }
+    return config.addChannelLink(channelLink);
 }
 
-function removeChannel(channelLink) {
-    if (!settingsJson.channels.hasOwnProperty(channelLink))
-        return true;
+config.on('channel_removed', (channelObj) => {
+    let onlineChannels = ChannelCheck.onlineChannels;
 
-    delete settingsJson.channels[channelLink];
-
-    let {onlineChannels} = require('./ChannelCheck');
-
-    delete onlineChannels[channelLink];
+    delete onlineChannels[channelObj.link];
 
     Notifications.rebuildIconMenu(Object.keys(onlineChannels));
+});
 
-    return true;
-}
-
-function changeSetting(settingName, settingValue) {
-    settingsJson.settings[settingName] = settingValue;
+function removeChannel(channelLink) {
+    return config.removeChannelLink(channelLink);
 }
 
 function returnChannels() {
-    return _.map(settingsJson.channels, function (channelObj, channelLink) {
-        return channelObj;
-    })
+    return config.channels;
 }
 
 function returnChannelsLegacy() {
-    return settingsJson.channels;
+    let legacyChannels = {};
+
+    _.forEach(config.channels, (channelObj) => {
+        legacyChannels[channelObj.link] = channelObj;
+    });
+
+    return legacyChannels;
 }
-
-readFile();
-
-setInterval(saveFile, 5 * 60 * 1000);
 
 exports.saveFile = saveFile;
 exports.addChannel = addChannel;
 exports.removeChannel = removeChannel;
 exports.returnChannels = returnChannels;
 exports.returnChannelsLegacy = returnChannelsLegacy;
-exports.settingsJson = settingsJson;
-exports.buildChannelObj = buildChannelObj;
+exports.settingsJson = config;

@@ -10,6 +10,7 @@ const _ = require('lodash');
 const SettingsFile = require('./SettingsFile');
 const Notifications = require('./Notifications');
 const ChannelCheck = require('./ChannelCheck');
+const Globals = require('./Globals');
 
 let lastClosed = null;
 
@@ -40,7 +41,7 @@ function launchPlayer(channelObj, LQ = null) {
 }
 
 function launchPlayerLink(channelLink, LQ = null, untilOffline = false) {
-    let channelObj = SettingsFile.buildChannelObj(channelLink);
+    let channelObj = Globals.buildChannelObj(channelLink);
 
     if (channelObj === false) {
         return false;

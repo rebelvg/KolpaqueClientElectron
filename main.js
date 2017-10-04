@@ -3,10 +3,13 @@ const {clipboard, shell, globalShortcut} = require('electron');
 const _ = require('lodash');
 const fixPath = require('fix-path');
 
-const SettingsFile = require('./application/SettingsFile');
 const ChannelCheck = require('./application/ChannelCheck');
+const ChannelClass = require('./application/ChannelClass');
 const ChannelPlay = require('./application/ChannelPlay');
+const ConfigClass = require('./application/ConfigClass');
+const Globals = require('./application/Globals');
 const Notifications = require('./application/Notifications');
+const SettingsFile = require('./application/SettingsFile');
 
 const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);
