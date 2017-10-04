@@ -4,13 +4,11 @@ const path = require('path');
 const _ = require('lodash');
 const EventEmitter = require('events');
 
-const {allowedProtocols, registeredServices} = require('./Globals');
+const {allowedProtocols, registeredServices, preInstalledChannels} = require('./Globals');
 const Channel = require('./ChannelClass');
 const {buildChannelObj} = require('./SettingsFile');
 
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient_dev.json'));
-
-const preInstalledChannels = ['rtmp://vps.klpq.men/live/main', 'rtmp://main.klpq.men/live/main'];
 
 function readFile(config) {
     try {

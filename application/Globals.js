@@ -1,4 +1,5 @@
 const allowedProtocols = ['rtmp:', 'http:', 'https:'];
+
 const registeredServices = {
     'klpq-vps': {
         protocols: ['rtmp:'],
@@ -38,5 +39,8 @@ const registeredServices = {
     }
 };
 
+const preInstalledChannels = ['rtmp://vps.klpq.men/live/main', 'rtmp://main.klpq.men/live/main'];
+
 module.exports.allowedProtocols = allowedProtocols;
 module.exports.registeredServices = registeredServices;
+module.exports.preInstalledChannels = preInstalledChannels;

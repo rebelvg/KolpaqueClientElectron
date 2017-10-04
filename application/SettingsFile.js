@@ -8,14 +8,12 @@ const fs = require('fs');
 const _ = require('lodash');
 
 const Notifications = require('./Notifications');
-const {allowedProtocols, registeredServices} = require('./Globals');
+const {allowedProtocols, registeredServices, preInstalledChannels} = require('./Globals');
 const Channel = require('./ChannelClass');
 
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 
 let settingsJson = {};
-
-const preInstalledChannels = ['rtmp://vps.klpq.men/live/main', 'rtmp://main.klpq.men/live/main'];
 
 ipcMain.on('change-setting', (event, setting) => {
     changeSetting(setting.name, setting.value);
