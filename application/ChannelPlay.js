@@ -5,10 +5,11 @@
 const {ipcMain, dialog, shell} = require('electron');
 const fs = require('fs');
 const child = require('child_process').execFile;
+const _ = require('lodash');
+
 const SettingsFile = require('./SettingsFile');
 const Notifications = require('./Notifications');
 const ChannelCheck = require('./ChannelCheck');
-const _ = require('lodash');
 
 let lastClosed = null;
 

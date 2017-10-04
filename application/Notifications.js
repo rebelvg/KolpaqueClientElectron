@@ -5,9 +5,10 @@
 const {app, shell, Menu} = require('electron');
 const path = require('path');
 const request = require('request');
+const notifier = require('node-notifier');
+
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
-const notifier = require('node-notifier');
 
 let appIcon = null;
 let contextMenuTemplate = [];

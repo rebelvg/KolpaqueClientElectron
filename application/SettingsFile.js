@@ -6,8 +6,10 @@ const {app, ipcMain, dialog} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
+
 const Notifications = require('./Notifications');
-const {allowedProtocols, registeredServices, Channel} = require('./ChannelClass');
+const {allowedProtocols, registeredServices} = require('./Globals');
+const Channel = require('./ChannelClass');
 
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 let settingsJson = {};
@@ -16,8 +18,6 @@ const preInstalledChannels = ['rtmp://vps.klpq.men/live/main', 'rtmp://main.klpq
 
 ipcMain.on('change-setting', (event, setting) => {
     changeSetting(setting.name, setting.value);
-
-    console.log('setting ' + setting.name + ' changed to ' + setting.value);
 });
 
 ipcMain.on('add-channel', (event, channel) => {
@@ -27,8 +27,6 @@ ipcMain.on('add-channel', (event, channel) => {
         event.sender.send('add-channel-response', {status: false});
         return;
     }
-
-    console.log('channel ' + channelObj.name + ' was added');
 
     event.sender.send('add-channel-response', {status: true, channel: channelObj});
 });

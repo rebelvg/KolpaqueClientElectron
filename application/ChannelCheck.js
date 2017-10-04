@@ -4,13 +4,14 @@
 
 const {ipcMain, dialog, shell} = require('electron');
 const request = require('request');
-const SettingsFile = require('./SettingsFile');
-const ChannelPlay = require('./ChannelPlay');
-const Notifications = require('./Notifications');
 const moment = require('moment');
 const _ = require('lodash');
 const util = require('util');
 const child = require('child_process').execFile;
+
+const SettingsFile = require('./SettingsFile');
+const ChannelPlay = require('./ChannelPlay');
+const Notifications = require('./Notifications');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = {};

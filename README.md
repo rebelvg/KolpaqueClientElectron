@@ -14,7 +14,8 @@ yarn run start
 
 Run React.
 ```
-yarn run start-dev
+yarn run start-react-dev
+yarn run start-client-dev
 ```
 
 Build.
