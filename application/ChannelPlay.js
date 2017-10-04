@@ -46,7 +46,7 @@ function launchPlayerLink(channelLink, LQ = null, untilOffline = false) {
         return false;
     }
 
-    let settingsJson = SettingsFile.returnSettings();
+    let settingsJson = SettingsFile.settingsJson;
 
     if (LQ === null) {
         LQ = settingsJson.settings.LQ;

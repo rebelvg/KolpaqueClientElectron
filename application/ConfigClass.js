@@ -6,20 +6,11 @@ const EventEmitter = require('events');
 
 const {allowedProtocols, registeredServices} = require('./Globals');
 const Channel = require('./ChannelClass');
+const {buildChannelObj} = require('./SettingsFile');
 
-let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
+let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient_dev.json'));
 
 const preInstalledChannels = ['rtmp://vps.klpq.men/live/main', 'rtmp://main.klpq.men/live/main'];
-
-function buildChannelObj(channelLink) {
-    try {
-        return new Channel(channelLink);
-    }
-    catch (e) {
-        console.log(e.message);
-        return false;
-    }
-}
 
 function readFile(config) {
     try {

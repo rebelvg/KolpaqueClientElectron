@@ -19,7 +19,7 @@ function takeRef(appIconRef, contextMenuTemplateRef) {
 }
 
 function printNotification(title, content) {
-    let settingsJson = SettingsFile.returnSettings();
+    let settingsJson = SettingsFile.settingsJson;
 
     if (!settingsJson.settings.showNotifications)
         return;
@@ -56,7 +56,7 @@ function printNotificationMac(title, content) {
 }
 
 function onBalloonClick(title, content) {
-    let settingsJson = SettingsFile.returnSettings();
+    let settingsJson = SettingsFile.settingsJson;
 
     console.log('balloon was clicked.');
 

@@ -12,6 +12,7 @@ const child = require('child_process').execFile;
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
+const Globals = require('./Globals');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = {};
@@ -22,7 +23,7 @@ ipcMain.on('twitch-import', (event, channel) => {
 });
 
 function isOnline(channelObj, printBalloon) {
-    let settingsJson = SettingsFile.returnSettings();
+    let settingsJson = SettingsFile.settingsJson;
 
     let channelLink = channelObj.link;
 
@@ -304,9 +305,9 @@ function autoKlpqImport() {
         request.get({url: url, json: true}, function (error, res, body) {
             if (!error) {
                 _.forEach(body.result, function (channel) {
-                    let protocol = SettingsFile.registeredServices[service].protocols[0];
-                    let host = SettingsFile.registeredServices[service].hosts[0];
-                    let pathname = SettingsFile.registeredServices[service].paths[0] + `${channel}`;
+                    let protocol = Globals.registeredServices[service].protocols[0];
+                    let host = Globals.registeredServices[service].hosts[0];
+                    let pathname = Globals.registeredServices[service].paths[0] + `${channel}`;
 
                     let channelUrl = protocol + "//" + host + pathname;
 
@@ -374,7 +375,7 @@ function streamlinkVersionCheck() {
 }
 
 function checkLoop(mainWindowRef) {
-    let settingsJson = SettingsFile.returnSettings();
+    let settingsJson = SettingsFile.settingsJson;
     mainWindow = mainWindowRef;
 
     _.forEach(settingsJson.channels, function (channelObj, channelLink) {

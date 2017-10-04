@@ -5,16 +5,18 @@ const {allowedProtocols, registeredServices} = require('./Globals');
 
 class Channel {
     constructor(channelLink) {
-        this.service = null;
+        channelLink = channelLink.trim();
+
+        this.service = 'custom';
         this.name = null;
-        this.link = null;
+        this.link = channelLink;
         this.protocol = null;
         this.isLive = false;
+
+        this.visibleName = null;
         this.isPinned = false;
         this.autoStart = false;
         this.autoRestart = false;
-
-        channelLink = channelLink.trim();
 
         let channelURL = new URL(channelLink);
 
@@ -41,6 +43,7 @@ class Channel {
                         if (channelURL.pathname.toLowerCase().indexOf(path) === 0) {
                             this.service = serviceName;
                             this.name = nameArray[serviceObj.name];
+                            this.visibleName = this.name;
 
                             channelURL.protocol = serviceObj.protocols[0];
                             channelURL.host = serviceObj.hosts[0];
@@ -52,6 +55,10 @@ class Channel {
                 }
             }
         });
+
+        if (this.service === 'custom') {
+            this.visibleName = this.link;
+        }
     }
 }
 

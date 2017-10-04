@@ -12,6 +12,7 @@ const {allowedProtocols, registeredServices} = require('./Globals');
 const Channel = require('./ChannelClass');
 
 let settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
+
 let settingsJson = {};
 
 const preInstalledChannels = ['rtmp://vps.klpq.men/live/main', 'rtmp://main.klpq.men/live/main'];
@@ -88,8 +89,6 @@ function readFile() {
                 settingsJson.settings[key] = parseJson.settings[key];
             }
         });
-
-        return settingsJson;
     }
     catch (e) {
         console.log(e.message);
@@ -98,8 +97,6 @@ function readFile() {
         settingsJson.settings = defaultSettings.settings;
 
         preInstalledChannels.forEach(addChannel);
-
-        return settingsJson;
     }
 }
 
@@ -119,6 +116,7 @@ function buildChannelObj(channelLink) {
     }
     catch (e) {
         console.log(e.message);
+
         return false;
     }
 }
@@ -173,10 +171,6 @@ function removeChannel(channelLink) {
     return true;
 }
 
-function saveLoop() {
-    setInterval(saveFile, 5 * 60 * 1000);
-}
-
 function changeSetting(settingName, settingValue) {
     settingsJson.settings[settingName] = settingValue;
 }
@@ -187,18 +181,18 @@ function returnChannels() {
     })
 }
 
-function returnSettings() {
-    return settingsJson;
+function returnChannelsLegacy() {
+    return settingsJson.channels;
 }
 
-exports.readFile = readFile;
+readFile();
+
+setInterval(saveFile, 5 * 60 * 1000);
+
 exports.saveFile = saveFile;
 exports.addChannel = addChannel;
 exports.removeChannel = removeChannel;
-exports.changeSetting = changeSetting;
 exports.returnChannels = returnChannels;
-exports.returnSettings = returnSettings;
-exports.saveLoop = saveLoop;
+exports.returnChannelsLegacy = returnChannelsLegacy;
 exports.settingsJson = settingsJson;
 exports.buildChannelObj = buildChannelObj;
-exports.registeredServices = registeredServices;

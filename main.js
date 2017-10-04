@@ -11,12 +11,14 @@ const Notifications = require('./application/Notifications');
 const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);
 
-let settingsJson = SettingsFile.readFile();
+let settingsJson = SettingsFile.settingsJson;
 let forceQuit = false;
 
+let legacyChannels = SettingsFile.returnChannelsLegacy();
+
 require('electron-handlebars')({
-    channels: settingsJson.channels,
-    channels_count: Object.keys(settingsJson.channels).length,
+    channels: legacyChannels,
+    channels_count: Object.keys(legacyChannels).length,
     settings: settingsJson.settings,
     version: require('./package.json').version
 });
@@ -51,15 +53,13 @@ ipcMain.once('client-ready', () => {
     fixPath();
 
     ChannelCheck.checkLoop(mainWindow);
-
-    SettingsFile.saveLoop();
 });
 
 ipcMain.on('copy-clipboard', (event, channel) => {
     clipboard.writeText(channel);
 });
 
-ipcMain.on('getChannels', (event) => (event.returnValue = settingsJson.channels));
+ipcMain.on('getChannels', (event) => (event.returnValue = SettingsFile.returnChannels()));
 
 ipcMain.on('getSettings', (event) => (event.returnValue = settingsJson.settings));
 
@@ -68,7 +68,7 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
 const path = require('path');
-const url = require('url');
+const URL = require('url');
 
 let iconPath = path.normalize(path.join(__dirname, 'icon.png'));
 let iconPathTray = path.normalize(path.join(__dirname, 'icon32.png'));
@@ -77,6 +77,7 @@ let iconPathBalloon = path.normalize(path.join(__dirname, 'icon.png'));
 if (process.platform === 'darwin') {
     app.dock.setIcon(iconPath);
     app.dock.hide();
+
     iconPathTray = path.normalize(path.join(__dirname, 'iconTemplate.png'));
 }
 
@@ -103,7 +104,7 @@ function createWindow() {
 
     // and load the index.html of the app.
     if (!isDev) {
-        mainWindow.loadURL(url.format({
+        mainWindow.loadURL(URL.format({
             pathname: path.join(__dirname, 'index.hbs'),
             protocol: 'file:',
             slashes: true
