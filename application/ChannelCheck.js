@@ -53,7 +53,7 @@ function isOnline(channelObj, printBalloon) {
     }
 
     if (settingsJson.settings.autoPlay) {
-        ChannelPlay.launchPlayer(channelObj);
+        ChannelPlay.launchPlayerObj(channelObj);
     }
 
     Notifications.rebuildIconMenu();

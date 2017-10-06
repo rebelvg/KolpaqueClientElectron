@@ -168,7 +168,7 @@ let contextMenuTemplate = [
         label: 'Online Channels', type: 'submenu', submenu: []
     },
     {
-        label: 'Play / Last Closed', type: 'normal', click: () => {
+        label: 'Play / Last Closed', type: 'normal', visible: false, click: () => {
         ChannelPlay.launchLastClosed();
     }
     },
