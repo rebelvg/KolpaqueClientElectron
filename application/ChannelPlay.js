@@ -12,8 +12,6 @@ const Notifications = require('./Notifications');
 const ChannelCheck = require('./ChannelCheck');
 const Globals = require('./Globals');
 
-let lastClosed = null;
-
 ipcMain.on('channel_play', (event, channelLink, LQ = null, autoRestart = false) => {
     let channelObj = SettingsFile.settingsJson.findChannelByLink(channelLink);
 
