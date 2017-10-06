@@ -4,33 +4,33 @@ const {app, Menu, shell, BrowserWindow, MenuItem} = remote;
 const menuTemplate = (channel, deleteFunction) => [
     new MenuItem({
         label: 'Play', click: function () {
-            ipcRenderer.send('channel-play', {link: channel.link, LQ: false});
+            ipcRenderer.send('channel_play', channel.link, false);
         }
     }),
     new MenuItem({
         label: 'Play LQ', click: function () {
-            ipcRenderer.send('channel-play', {link: channel.link, LQ: true});
+            ipcRenderer.send('channel_play', channel.link, true);
         }
     }),
     new MenuItem({
         label: 'Open Page', click: function () {
-            ipcRenderer.send('open-page', channel.link);
+            ipcRenderer.send('channel_openPage', channel.link);
         }
     }),
     new MenuItem({
         label: 'Open Chat', click: function () {
-            ipcRenderer.send('open-chat', channel.link);
+            ipcRenderer.send('channel_openChat', channel.link);
         }
     }),
     new MenuItem({
         label: 'Copy to Clipboard', click: function () {
-            ipcRenderer.send('copy-clipboard', channel.link);
+            ipcRenderer.send('channel_copyClipboard', channel.link);
         }
     }),
     new MenuItem({
         label: 'Remove Channel', click: function () {
             deleteFunction(channel);
-            ipcRenderer.send('remove-channel', channel.link);
+            ipcRenderer.send('channel_remove', channel.link);
         }
     })
 ];

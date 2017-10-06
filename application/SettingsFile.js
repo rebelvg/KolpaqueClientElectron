@@ -15,24 +15,24 @@ const ChannelCheck = require('./ChannelCheck');
 
 let config = new Config();
 
-ipcMain.on('change-setting', (event, setting) => {
+ipcMain.on('config_changeSetting', (event, setting) => {
     return config.changeSetting(setting.name, setting.value);
 });
 
-ipcMain.on('add-channel', (event, channel) => {
+ipcMain.on('channel_add', (event, channel) => {
     let channelObj = config.addChannelLink(channel.link);
 
     if (channelObj === false) {
         return false;
     }
 
-    return event.sender.send('add-channel-response', {status: true, channel: channelObj});
+    return event.sender.send('channel_add', {status: true, channel: channelObj});
 });
 
-ipcMain.on('remove-channel', (event, channelLink) => {
+ipcMain.on('channel_remove', (event, channelLink) => {
     let res = config.removeChannelLink(channelLink);
 
-    return event.sender.send('remove-channel-response', {status: res, link: channelLink});
+    return event.sender.send('channel_remove', {status: res, link: channelLink});
 });
 
 ipcMain.once('getChannels', (event) => (event.returnValue = returnChannels()));

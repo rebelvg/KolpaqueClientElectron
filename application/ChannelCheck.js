@@ -239,7 +239,7 @@ function twitchImportChannels(channels, i) {
         let channelObj = SettingsFile.addChannel(channel.channel.url, false);
 
         if (channelObj !== false) {
-            mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
+            mainWindow.webContents.send('channel_add', {status: true, channel: channelObj});
             i++;
         }
     });
@@ -330,7 +330,7 @@ function autoKlpqImport() {
                     let channelObj = SettingsFile.addChannel(channelUrl, false);
 
                     if (channelObj !== false) {
-                        mainWindow.webContents.send('add-channel-response', {status: true, channel: channelObj});
+                        mainWindow.webContents.send('channel_add', {status: true, channel: channelObj});
                     }
                 });
             }

@@ -25,15 +25,15 @@ export class ChannelContainer extends Component {
     }
 
     playChannel = (channel) => {
-        ipcRenderer.send('channel-play', {link: channel.link, LQ: false});
+        ipcRenderer.send('channel_play', channel.link);
     }
 
     addChannel = ({channel}) => {
-        ipcRenderer.send('add-channel', {link: channel, name: channel});
+        ipcRenderer.send('channel_add', {link: channel, name: channel});
     }
 
     deleteChannel = (channel) => {
-        ipcRenderer.send('remove-channel', channel);
+        ipcRenderer.send('channel_remove', channel);
     }
 
     openMenu = (channel) => {
@@ -53,13 +53,13 @@ export class ChannelContainer extends Component {
 
     componentDidMount() {
         ipcRenderer.on('channel-went-online', (event, channel) => this.props.changeStatus(channel.link));
-        ipcRenderer.on('add-channel-response', (event, response) => {
+        ipcRenderer.on('channel_add', (event, response) => {
             if (response.status) {
                 const {channel} = response;
                 this.props.addChannel(channel)
             }
         })
-        ipcRenderer.on('remove-channel-response', (event, response) => {
+        ipcRenderer.on('channel_remove', (event, response) => {
             console.log(response)
             if (response.status) {
                 this.props.deleteChannel(response.link)

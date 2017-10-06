@@ -15,22 +15,26 @@ const Globals = require('./Globals');
 let lastClosed = null;
 let playUntilOffline = [];
 
-ipcMain.on('channel-play', (event, channel) => {
-    if (channel.untilOffline) {
-        playUntilOffline.push(channel.link);
+ipcMain.on('channel_play', (event, channelLink, LQ = null, autoRestart = false) => {
+    let channelObj = SettingsFile.settingsJson.findChannelByLink(channelLink);
 
-        console.log('until offline play enabled', channel.link);
+    if (!channelObj) {
+        return false;
     }
 
-    launchPlayerLink(channel.link, channel.LQ, channel.untilOffline);
+    channelObj.autoRestart = autoRestart;
+
+    launchPlayerLink(channelLink, LQ);
 });
 
-ipcMain.on('disable-until-offline-play', (event, channel) => {
-    _.remove(playUntilOffline, function (n) {
-        return n === channel.link;
-    });
+ipcMain.on('channel_disable_autoRestart', (event, channelLink) => {
+    let channelObj = SettingsFile.settingsJson.findChannelByLink(channelLink);
 
-    console.log('until offline play disabled', channel.link);
+    if (!channelObj) {
+        return false;
+    }
+
+    channelObj.autoRestart = false;
 });
 
 function launchPlayer(channelObj, LQ = null) {

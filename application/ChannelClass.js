@@ -8,7 +8,7 @@ const SettingsFile = require('./SettingsFile');
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
-ipcMain.on('open-page', (event, channelLink) => {
+ipcMain.on('channel_openPage', (event, channelLink) => {
     let channelObj = SettingsFile.settingsJson.findChannelByLink(channelLink);
 
     if (channelObj === null) {
@@ -31,7 +31,7 @@ ipcMain.on('open-page', (event, channelLink) => {
     return true;
 });
 
-ipcMain.on('open-chat', (event, channelLink) => {
+ipcMain.on('channel_openChat', (event, channelLink) => {
     let channelObj = SettingsFile.settingsJson.findChannelByLink(channelLink);
 
     if (channelObj === null) {
@@ -59,7 +59,7 @@ ipcMain.on('open-chat', (event, channelLink) => {
     return true;
 });
 
-ipcMain.on('copy-clipboard', (event, channelLink) => {
+ipcMain.on('channel_copyClipboard', (event, channelLink) => {
     clipboard.writeText(channelLink);
 
     return true;

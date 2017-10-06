@@ -33,55 +33,55 @@ let menu = new Menu();
 
 menu.append(new MenuItem({
     label: 'Play', click: function () {
-        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: false, untilOffline: false});
+        ipcRenderer.send('channel_play', current_context.data('id'), false);
     }
 }));
 
 menu.append(new MenuItem({
-    label: 'Play (Until Offline)', click: function () {
-        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: false, untilOffline: true});
+    label: 'Play (Auto-Restart)', click: function () {
+        ipcRenderer.send('channel_play', current_context.data('id'), false, true);
     }
 }));
 
 menu.append(new MenuItem({
     label: 'Play LQ', click: function () {
-        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: true, untilOffline: false});
+        ipcRenderer.send('channel_play', current_context.data('id'), true);
     }
 }));
 
 menu.append(new MenuItem({
-    label: 'Play LQ (Until Offline)', click: function () {
-        ipcRenderer.send('channel-play', {link: current_context.data('id'), LQ: true, untilOffline: true});
+    label: 'Play LQ (Auto-Restart)', click: function () {
+        ipcRenderer.send('channel_play', current_context.data('id'), true, true);
     }
 }));
 
 menu.append(new MenuItem({
-    label: 'Disable Until Offline Play', click: function () {
-        ipcRenderer.send('disable-until-offline-play', {link: current_context.data('id')});
+    label: 'Disable Auto-Restart', click: function () {
+        ipcRenderer.send('channel_disable_autoRestart', current_context.data('id'));
     }
 }));
 
 menu.append(new MenuItem({
     label: 'Open Page', click: function () {
-        ipcRenderer.send('open-page', current_context.data('id'));
+        ipcRenderer.send('channel_openPage', current_context.data('id'));
     }
 }));
 
 menu.append(new MenuItem({
     label: 'Open Chat', click: function () {
-        ipcRenderer.send('open-chat', current_context.data('id'));
+        ipcRenderer.send('channel_openChat', current_context.data('id'));
     }
 }));
 
 menu.append(new MenuItem({
     label: 'Copy to Clipboard', click: function () {
-        ipcRenderer.send('copy-clipboard', current_context.data('id'));
+        ipcRenderer.send('channel_copyClipboard', current_context.data('id'));
     }
 }));
 
 menu.append(new MenuItem({
     label: 'Remove Channel', click: function () {
-        ipcRenderer.send('remove-channel', current_context.data('id'));
+        ipcRenderer.send('channel_remove', current_context.data('id'));
     }
 }));
 
@@ -98,15 +98,17 @@ $(document).on('mousedown', '.item', function (e) {
         $(this).addClass('selected');
     }
 });
+
 $(document).on('dblclick', '.item', function (e) {
-    let isLQ = $('#LQ').prop('checked');
-    ipcRenderer.send('channel-play', {link: $(this).data('id'), LQ: isLQ});
+    ipcRenderer.send('channel_play', $(this).data('id'));
 });
+
 $(document).on('mouseup', '.item', function (e) {
     if (event.which == 3) {
         $('.item.selected').removeClass('selected');
     }
 });
+
 $('#add-channel').on('contextmenu', function (e) {
     e.preventDefault();
     var macMenu = Menu.buildFromTemplate(template);
@@ -118,7 +120,7 @@ const setNewCount = () => {
     "use strict";
     $('.online-count').html(online_count);
     $('.offline-count').html(offline_count);
-}
+};
 
 $('document').ready(function () {
     offline_count = $('.offline-count').html();
@@ -186,15 +188,14 @@ $('document').ready(function () {
     });
 
     $('#add-channel-btn').on('click', function () {
-        let channel = $('#add-channel').val();
-        if (channel.length > 0) {
-            let channelToSend = {'name': channel, 'link': channel};
-            ipcRenderer.send('add-channel', channelToSend);
-
+        let channelLink = $('#add-channel').val();
+        if (channelLink.length > 0) {
+            let data = {'link': channelLink, 'name': channelLink};
+            ipcRenderer.send('channel_add', data);
         }
     });
 
-    ipcRenderer.on('remove-channel-response', function (event, output) {
+    ipcRenderer.on('channel_remove', function (event, output) {
         if (output.status) {
             $('.item[data-id="' + output.link + '"]').remove();
             offline_count = $('#offline > .item').length;
@@ -205,7 +206,7 @@ $('document').ready(function () {
         $('#add-channel').val('');
     });
 
-    ipcRenderer.on('add-channel-response', function (event, output) {
+    ipcRenderer.on('channel_add', function (event, output) {
         if (output.status) {
             let channel_form = '<div class="item" data-id="' + output.channel.link + '">' +
                 '<span class="item-icon fa-twitch fa"></span>' +
@@ -222,7 +223,7 @@ $('document').ready(function () {
     $('#theme').on('change', function () {
         $selected = $(this).find(':selected').data('theme');
         $('#theme-css').attr('href', "./assets/css/" + $selected + '.css');
-        ipcRenderer.send('change-setting', {name: 'theme', value: $selected});
+        ipcRenderer.send('config_changeSetting', {name: 'theme', value: $selected});
     });
     $('#update').on('click', function () {
         "use strict";
@@ -232,7 +233,7 @@ $('document').ready(function () {
         if ($(this).get(0).files.length != 0) {
             let path = this.files[0].path;
             $('#livestreamer_path').val(path);
-            ipcRenderer.send('change-setting', {name: "livestreamerPath", value: path});
+            ipcRenderer.send('config_changeSetting', {name: "livestreamerPath", value: path});
         }
     });
 
@@ -244,6 +245,6 @@ $('document').ready(function () {
         settingsName = $(this).data('settings');
         settingsValue = $(this).prop('checked');
         let settingsToChange = {name: settingsName, value: settingsValue};
-        ipcRenderer.send('change-setting', settingsToChange);
+        ipcRenderer.send('config_changeSetting', settingsToChange);
     });
 });
