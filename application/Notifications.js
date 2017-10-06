@@ -9,6 +9,7 @@ const notifier = require('node-notifier');
 
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
+const ChannelCheck = require('./ChannelCheck');
 
 let appIcon = null;
 let contextMenuTemplate = [];
@@ -76,7 +77,9 @@ function onBalloonClick(title, content) {
     }
 }
 
-function rebuildIconMenu(onlineChannels = []) {
+function rebuildIconMenu() {
+    let onlineChannels = Object.keys(ChannelCheck.onlineChannels);
+
     contextMenuTemplate[1].submenu = onlineChannels.map(function (channelLink) {
         return {
             label: channelLink, type: 'normal', click: (menuItem) => {

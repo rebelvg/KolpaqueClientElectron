@@ -32,11 +32,13 @@ ipcMain.once('client-ready', () => {
 
     fixPath();
 
-    ChannelCheck.checkLoop(mainWindow);
+    ChannelCheck.setWindowRef(mainWindow);
+
+    ChannelCheck.checkLoop();
 });
 
 const path = require('path');
-const URL = require('url');
+const url = require('url');
 
 let iconPath = path.normalize(path.join(__dirname, 'icon.png'));
 let iconPathTray = path.normalize(path.join(__dirname, 'icon32.png'));
@@ -72,7 +74,7 @@ function createWindow() {
 
     // and load the index.html of the app.
     if (!isDev) {
-        mainWindow.loadURL(URL.format({
+        mainWindow.loadURL(url.format({
             pathname: path.join(__dirname, 'index.hbs'),
             protocol: 'file:',
             slashes: true

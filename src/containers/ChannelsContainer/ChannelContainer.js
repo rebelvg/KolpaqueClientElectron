@@ -11,103 +11,103 @@ import ChannelWrapper from '../../components/Channels/ChannelWrapper/ChannelWrap
 import Channel from '../../components/Channels/Channel/Channel'
 import ChannelForm from '../../components/Channels/ChannelForm/ChannelForm'
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
+
 const {remote, ipcRenderer} = window.require('electron');
 const {Menu, MenuItem} = remote;
 import menuTemplate from '../../helper/menu'
 
 export class ChannelContainer extends Component {
-	constructor() {
-		super()
-		this.state = {
-			selected: null,
-		}
-	}
+    constructor() {
+        super()
+        this.state = {
+            selected: null,
+        }
+    }
 
-	playChannel = (channel) => {
-		ipcRenderer.send('channel-play', {link: channel.link, LQ: false, untilOffline: false});
-	}
+    playChannel = (channel) => {
+        ipcRenderer.send('channel-play', {link: channel.link, LQ: false});
+    }
 
-	addChannel = ({channel}) => {
-		ipcRenderer.send('add-channel', {link: channel, name: channel});
+    addChannel = ({channel}) => {
+        ipcRenderer.send('add-channel', {link: channel, name: channel});
+    }
 
-	}
+    deleteChannel = (channel) => {
+        ipcRenderer.send('remove-channel', channel);
+    }
 
-	deleteChannel = (channel) => {
-		ipcRenderer.send('remove-channel', channel);
-	}
+    openMenu = (channel) => {
+        const menu = new Menu();
+        const template = menuTemplate(channel, this.deleteChannel);
+        template.map((item) => menu.append(item))
+        menu.popup(remote.getCurrentWindow())
+    }
 
-	openMenu = (channel) => {
-		const menu = new Menu();
-		const template = menuTemplate(channel, this.deleteChannel);
-		template.map((item) => menu.append(item))
-		menu.popup(remote.getCurrentWindow())
-	}
+    selectChannel = (channel) => {
+        this.setState({selected: channel})
+    }
 
-	selectChannel = (channel) => {
-		this.setState({selected: channel})
-	}
+    componentWillMount() {
+        this.props.initChannels()
+    }
 
-	componentWillMount() {
-		this.props.initChannels()
-	}
+    componentDidMount() {
+        ipcRenderer.on('channel-went-online', (event, channel) => this.props.changeStatus(channel.link));
+        ipcRenderer.on('add-channel-response', (event, response) => {
+            if (response.status) {
+                const {channel} = response;
+                this.props.addChannel(channel)
+            }
+        })
+        ipcRenderer.on('remove-channel-response', (event, response) => {
+            console.log(response)
+            if (response.status) {
+                this.props.deleteChannel(response.link)
+            }
+        });
+    }
 
-	componentDidMount() {
-		ipcRenderer.on('channel-went-online', (event, channel) => this.props.changeStatus(channel.link));
-		ipcRenderer.on('add-channel-response', (event, response) => {
-			if (response.status) {
-				const {channel} = response;
-				this.props.addChannel(channel)
-			}
-		})
-		ipcRenderer.on('remove-channel-response', (event, response) => {
-			console.log(response)
-			if (response.status) {
-				const {channel} = response;
-				this.props.deleteChannel(channel.link)
-			}
-		});
-	}
+    render() {
+        const {online, offline} = this.props;
+        const {selected} = this.state;
+        return (
+            <StyledContainerWrapper>
+                <Tabs>
+                    <TabWrapper>
+                        <TabList className="tabs">
+                            <Tab className='tab' selectedClassName="active">Online ({online.length})</Tab>
+                            <Tab className='tab' selectedClassName="active">Offline ({offline.length})</Tab>
 
-	render() {
-		const {online, offline} = this.props;
-		const {selected} = this.state;
-		return (
-			<StyledContainerWrapper>
-				<Tabs>
-					<TabWrapper>
-						<TabList className="tabs">
-							<Tab className='tab' selectedClassName="active">Online ({online.length})</Tab>
-							<Tab className='tab' selectedClassName="active">Offline ({offline.length})</Tab>
+                        </TabList>
+                        <SettingsIcon to="/about"><Ionicon icon="ion-gear-b" color="black"/></SettingsIcon>
+                    </TabWrapper>
+                    <TabPanel className='tab-panel'>
+                        <ChannelWrapper
+                            selected={selected}
+                            selectChannel={this.selectChannel}
+                            playChannel={this.playChannel}
+                            handleClick={this.openMenu}
+                            channels={online}
+                        />
+                    </TabPanel>
+                    <TabPanel className='tab-panel'>
+                        <ChannelWrapper
+                            selected={selected}
+                            selectChannel={this.selectChannel}
+                            playChannel={this.playChannel}
+                            handleClick={this.openMenu}
+                            channels={offline}/>
+                    </TabPanel>
+                </Tabs>
 
-						</TabList>
-						<SettingsIcon to="/about"><Ionicon icon="ion-gear-b" color="black"/></SettingsIcon>
-					</TabWrapper>
-					<TabPanel className='tab-panel'>
-						<ChannelWrapper
-							selected={selected}
-							selectChannel={this.selectChannel}
-							playChannel={this.playChannel}
-							handleClick={this.openMenu}
-							channels={online}
-						/>
-					</TabPanel>
-					<TabPanel className='tab-panel'>
-						<ChannelWrapper
-							selected={selected}
-							selectChannel={this.selectChannel}
-							playChannel={this.playChannel}
-							handleClick={this.openMenu}
-							channels={offline}/>
-					</TabPanel>
-				</Tabs>
-
-				<StyledFooter className="fixed-bottom">
-					<ChannelForm onSubmit={this.addChannel}/>
-				</StyledFooter>
-			</StyledContainerWrapper>
-		);
-	}
+                <StyledFooter className="fixed-bottom">
+                    <ChannelForm onSubmit={this.addChannel}/>
+                </StyledFooter>
+            </StyledContainerWrapper>
+        );
+    }
 }
+
 const StyledFooter = styled.div`
     background-color: #D7D7D7;
     color: white;
@@ -134,15 +134,14 @@ const TabWrapper = styled.div`
      flex-direction: column;
 `
 export default connect(
-	(state) => ({
-		online: getOnline(state),
-		offline: getOffline(state)
-	}),
-	(dispatch) => bindActionCreators({
-		initChannels,
-		changeStatus,
-		deleteChannel,
-		addChannel
-	}, dispatch)
+    (state) => ({
+        online: getOnline(state),
+        offline: getOffline(state)
+    }),
+    (dispatch) => bindActionCreators({
+        initChannels,
+        changeStatus,
+        deleteChannel,
+        addChannel
+    }, dispatch)
 )(ChannelContainer);
-

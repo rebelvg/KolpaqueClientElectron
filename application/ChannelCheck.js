@@ -24,6 +24,12 @@ ipcMain.on('twitch-import', async (event, channelName) => {
     return await twitchImport(channelName);
 });
 
+SettingsFile.settingsJson.on('channel_removed', (channelObj) => {
+    delete onlineChannels[channelObj.link];
+
+    Notifications.rebuildIconMenu();
+});
+
 function isOnline(channelObj, printBalloon) {
     let settingsJson = SettingsFile.settingsJson;
 
@@ -35,6 +41,8 @@ function isOnline(channelObj, printBalloon) {
     }
 
     console.log(channelLink + " went online.");
+
+    channelObj.changeSetting('isLive', true);
 
     onlineChannels[channelLink] = 0;
 
@@ -48,7 +56,7 @@ function isOnline(channelObj, printBalloon) {
         ChannelPlay.launchPlayer(channelObj);
     }
 
-    Notifications.rebuildIconMenu(Object.keys(onlineChannels));
+    Notifications.rebuildIconMenu();
 }
 
 function isOffline(channelObj) {
@@ -64,11 +72,13 @@ function isOffline(channelObj) {
 
     console.log(channelLink + " went offline.");
 
+    channelObj.changeSetting('isLive', false);
+
     delete onlineChannels[channelLink];
 
     mainWindow.webContents.send('channel-went-offline', channelObj);
 
-    Notifications.rebuildIconMenu(Object.keys(onlineChannels));
+    Notifications.rebuildIconMenu();
 }
 
 function getKlpqStats(channelObj, printBalloon) {
@@ -196,11 +206,11 @@ function getYoutubeStatsChannel(channelObj, printBalloon) {
 
 function getStats5(channelObj, printBalloon = true) {
     switch (channelObj.service) {
-        case 'klpq-main':
-            getKlpqStats(channelObj, printBalloon);
-            break;
         case 'klpq-vps':
             getKlpqVpsStats(channelObj, printBalloon);
+            break;
+        case 'klpq-main':
+            getKlpqStats(channelObj, printBalloon);
             break;
     }
 }
@@ -376,11 +386,14 @@ function streamlinkVersionCheck() {
     });
 }
 
-function checkLoop(mainWindowRef) {
-    let settingsJson = SettingsFile.settingsJson;
+function setWindowRef(mainWindowRef) {
     mainWindow = mainWindowRef;
+}
 
-    _.forEach(settingsJson.channels, function (channelObj) {
+function checkLoop() {
+    let settingsJson = SettingsFile.settingsJson;
+
+    _.forEach(settingsJson.channels, (channelObj) => {
         getStats5(channelObj, false);
         getStats30(channelObj, false);
         getStats120(channelObj, false);
@@ -392,21 +405,15 @@ function checkLoop(mainWindowRef) {
     autoTwitchImport();
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, function (channelObj) {
-            getStats5(channelObj);
-        });
+        _.forEach(settingsJson.channels, getStats5);
     }, 5 * 1000);
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, function (channelObj) {
-            getStats30(channelObj);
-        });
+        _.forEach(settingsJson.channels, getStats30);
     }, 30 * 1000);
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, function (channelObj) {
-            getStats120(channelObj);
-        });
+        _.forEach(settingsJson.channels, getStats120);
     }, 2 * 60 * 1000);
 
     setInterval(checkNewVersion, 10 * 60 * 1000);
@@ -415,5 +422,6 @@ function checkLoop(mainWindowRef) {
 }
 
 exports.twitchImport = twitchImport;
+exports.setWindowRef = setWindowRef;
 exports.checkLoop = checkLoop;
 exports.onlineChannels = onlineChannels;

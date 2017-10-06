@@ -32,12 +32,12 @@ ipcMain.on('add-channel', (event, channel) => {
 ipcMain.on('remove-channel', (event, channelLink) => {
     let res = config.removeChannelLink(channelLink);
 
-    return event.sender.send('remove-channel-response', {status: res, channelLink: channelLink});
+    return event.sender.send('remove-channel-response', {status: res, link: channelLink});
 });
 
-ipcMain.on('getChannels', (event) => (event.returnValue = returnChannels()));
+ipcMain.once('getChannels', (event) => (event.returnValue = returnChannels()));
 
-ipcMain.on('getSettings', (event) => (event.returnValue = config.settings));
+ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
 
 function saveFile() {
     return config.saveFile();
@@ -46,14 +46,6 @@ function saveFile() {
 function addChannel(channelLink, printError = true) {
     return config.addChannelLink(channelLink);
 }
-
-config.on('channel_removed', (channelObj) => {
-    let onlineChannels = ChannelCheck.onlineChannels;
-
-    delete onlineChannels[channelObj.link];
-
-    Notifications.rebuildIconMenu(Object.keys(onlineChannels));
-});
 
 function removeChannel(channelLink) {
     return config.removeChannelLink(channelLink);

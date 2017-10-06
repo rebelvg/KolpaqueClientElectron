@@ -2,6 +2,7 @@ const remote = require('electron').remote;
 const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;
 const {ipcRenderer} = require('electron');
+
 let current_context = "";
 let online_count = 0;
 let offline_count = 0;
@@ -195,7 +196,7 @@ $('document').ready(function () {
 
     ipcRenderer.on('remove-channel-response', function (event, output) {
         if (output.status) {
-            $('.item[data-id="' + output.channelLink + '"]').remove();
+            $('.item[data-id="' + output.link + '"]').remove();
             offline_count = $('#offline > .item').length;
             online_count = $('#online > .item').length;
             setNewCount();
@@ -245,5 +246,4 @@ $('document').ready(function () {
         let settingsToChange = {name: settingsName, value: settingsValue};
         ipcRenderer.send('change-setting', settingsToChange);
     });
-
 });

@@ -1,6 +1,7 @@
 const {ipcMain, shell, clipboard} = require('electron');
 const {URL} = require('url');
 const _ = require('lodash');
+const EventEmitter = require('events');
 
 const {allowedProtocols, registeredServices} = require('./Globals');
 const SettingsFile = require('./SettingsFile');
@@ -64,8 +65,10 @@ ipcMain.on('copy-clipboard', (event, channelLink) => {
     return true;
 });
 
-class Channel {
+class Channel extends EventEmitter {
     constructor(channelLink) {
+        super();
+
         channelLink = channelLink.trim();
 
         this.service = 'custom';
@@ -128,6 +131,18 @@ class Channel {
                 this[settingName] = settingValue;
             }
         });
+    }
+
+    changeSetting(settingName, settingValue) {
+        if (!this.hasOwnProperty(settingName)) {
+            return false;
+        }
+
+        this[settingName] = settingValue;
+
+        this.emit('setting_changed', settingName, settingValue);
+
+        return true;
     }
 }
 
