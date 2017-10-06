@@ -10,7 +10,7 @@ export const CHANGE_STATUS = 'CHANGE_STATUS';
 export function initChannels() {
     let data = ipcRenderer.sendSync('getChannels');
 
-    ipcRenderer.send('client-ready');
+    ipcRenderer.send('client_ready');
 
     return {
         type: GET_CHANNELS,

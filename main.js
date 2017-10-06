@@ -27,7 +27,7 @@ require('electron-handlebars')({
     version: require('./package.json').version
 });
 
-ipcMain.once('client-ready', () => {
+ipcMain.once('client_ready', () => {
     console.log('client ready.');
 
     fixPath();

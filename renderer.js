@@ -126,10 +126,10 @@ $('document').ready(function () {
     offline_count = $('.offline-count').html();
     console.log(offline_count);
     setNewCount();
-    ipcRenderer.send('client-ready', true);
+    ipcRenderer.send('client_ready');
 
     $('.twitch-import').on('click', function () {
-        ipcRenderer.send('twitch-import', $('#twitch-nickname').val());
+        ipcRenderer.send('config_twitchImport', $('#twitch-nickname').val());
         $('#twitch-nickname').val('');
     });
 
@@ -162,7 +162,7 @@ $('document').ready(function () {
         }
     });
 
-    ipcRenderer.on('channel-went-online', function (event, channel) {
+    ipcRenderer.on('channel_wentOnline', function (event, channel) {
         online_count++;
         offline_count--;
         $item = $('.item[data-id="' + channel.link + '"]');
@@ -172,7 +172,7 @@ $('document').ready(function () {
         setNewCount();
     });
 
-    ipcRenderer.on('channel-went-offline', function (event, channel) {
+    ipcRenderer.on('channel_wentOffline', function (event, channel) {
         offline_count++;
         online_count--;
 
@@ -227,7 +227,7 @@ $('document').ready(function () {
     });
     $('#update').on('click', function () {
         "use strict";
-        ipcRenderer.send('get-update');
+        ipcRenderer.send('config_getUpdate');
     })
     $('#livestreamer_input').on('change', function () {
         if ($(this).get(0).files.length != 0) {

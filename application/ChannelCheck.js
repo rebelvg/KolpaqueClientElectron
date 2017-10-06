@@ -20,7 +20,7 @@ let mainWindow = null;
 let buildsLink = "ftp://main.klpq.men:359/KolpaqueClientElectron/";
 let clientVersion = require('../package.json').version;
 
-ipcMain.on('twitch-import', async (event, channelName) => {
+ipcMain.on('config_twitchImport', async (event, channelName) => {
     return await twitchImport(channelName);
 });
 
@@ -46,7 +46,7 @@ function isOnline(channelObj, printBalloon) {
 
     onlineChannels[channelLink] = 0;
 
-    mainWindow.webContents.send('channel-went-online', channelObj);
+    mainWindow.webContents.send('channel_wentOnline', channelObj);
 
     if (printBalloon) {
         Notifications.printNotification('Stream is Live (' + moment().format('D/MMM, H:mm') + ')', channelObj.link);
@@ -76,7 +76,7 @@ function isOffline(channelObj) {
 
     delete onlineChannels[channelLink];
 
-    mainWindow.webContents.send('channel-went-offline', channelObj);
+    mainWindow.webContents.send('channel_wentOffline', channelObj);
 
     Notifications.rebuildIconMenu();
 }
@@ -344,10 +344,8 @@ function autoTwitchImport() {
     });
 }
 
-ipcMain.on('get-update', (event, data) => {
-    console.log('get-update');
-
-    shell.openExternal(buildsLink);
+ipcMain.on('config_getUpdate', (event, data) => {
+    return shell.openExternal(buildsLink);
 });
 
 function checkNewVersion() {

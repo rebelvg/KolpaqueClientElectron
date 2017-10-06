@@ -52,7 +52,7 @@ export class ChannelContainer extends Component {
     }
 
     componentDidMount() {
-        ipcRenderer.on('channel-went-online', (event, channel) => this.props.changeStatus(channel.link));
+        ipcRenderer.on('channel_wentOnline', (event, channel) => this.props.changeStatus(channel.link));
         ipcRenderer.on('channel_add', (event, response) => {
             if (response.status) {
                 const {channel} = response;
