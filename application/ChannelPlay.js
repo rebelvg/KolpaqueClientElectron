@@ -70,6 +70,8 @@ function launchPlayerObj(channelObj, LQ = null) {
 }
 
 function launchStreamLink(playLink, params, channelObj) {
+    console.log(playLink, params);
+
     child('streamlink', [playLink, 'best', '--twitch-disable-hosting'].concat(params), function (err, data, stderr) {
         console.log(err);
         console.log(data);

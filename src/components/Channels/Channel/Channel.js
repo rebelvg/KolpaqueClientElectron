@@ -3,26 +3,26 @@ import Ionicon from 'react-ionicons'
 import styled from 'styled-components'
 
 const renderIcon = (service) => {
-	if (service === 'twitch') {
-		return <Ionicon fontSize="24px" color="#6441a5" icon="ion-social-twitch-outline"/>
-	}
-	else {
-		return <Ionicon icon="ion-eye" color="dark-green"/>
-	}
+    if (service === 'twitch') {
+        return <Ionicon fontSize="24px" color="#6441a5" icon="ion-social-twitch-outline"/>
+    }
+    else {
+        return <Ionicon icon="ion-eye" color="dark-green"/>
+    }
 };
 
 const Channel = ({channel, pinned, handleClick, selected, selectChannel, playChannel}) => (
-	<StyledChannelWrap
-		onDoubleClick={() => playChannel(channel)}
-		onMouseDown={() => selectChannel(channel)}
-		selected={selected}
-		onContextMenu={() => handleClick(channel)}
-		pinned={pinned}>
-		<StyledIcon > {renderIcon(channel.service)} </StyledIcon>
+    <StyledChannelWrap
+        onDoubleClick={() => playChannel(channel)}
+        onMouseDown={() => selectChannel(channel)}
+        selected={selected}
+        onContextMenu={() => handleClick(channel)}
+        pinned={pinned}>
+        <StyledIcon> {renderIcon(channel.service)} </StyledIcon>
 
-		<StyledName>{channel.name || channel.link} </StyledName>
+        <StyledName>{channel.visibleName || channel.link} </StyledName>
 
-	</StyledChannelWrap>
+    </StyledChannelWrap>
 );
 
 const StyledChannelWrap = styled.div`
