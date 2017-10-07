@@ -7,21 +7,14 @@ const request = require('request');
 const moment = require('moment');
 const _ = require('lodash');
 const util = require('util');
-const child = require('child_process').execFile;
 
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
 const Globals = require('./Globals');
 
-let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
+let twitchApiKey = Globals.twitchApiKey;
 let onlineChannels = {};
-let buildsLink = "ftp://main.klpq.men:359/KolpaqueClientElectron/";
-let clientVersion = require('../package.json').version;
-
-ipcMain.on('config_twitchImport', async (event, channelName) => {
-    return await twitchImport(channelName);
-});
 
 SettingsFile.settingsJson.on('channel_removed', (channelObj) => {
     delete onlineChannels[channelObj.link];
@@ -76,9 +69,7 @@ function isOffline(channelObj) {
     Notifications.rebuildIconMenu();
 }
 
-function getKlpqStats(channelObj, printBalloon) {
-    let url = "http://stats.main.klpq.men/channel/" + channelObj.name;
-
+function getKlpqStatsBase(url, channelObj, printBalloon) {
     request({url: url, json: true}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             try {
@@ -98,10 +89,22 @@ function getKlpqStats(channelObj, printBalloon) {
 function getKlpqVpsStats(channelObj, printBalloon) {
     let url = "http://stats.vps.klpq.men/channel/" + channelObj.name;
 
+    getKlpqStatsBase(url, channelObj, printBalloon);
+}
+
+function getKlpqMainStats(channelObj, printBalloon) {
+    let url = "http://stats.main.klpq.men/channel/" + channelObj.name;
+
+    getKlpqStatsBase(url, channelObj, printBalloon);
+}
+
+function getTwitchStats(channelObj, printBalloon) {
+    let url = "https://api.twitch.tv/kraken/streams?channel=" + channelObj.name + "&client_id=" + twitchApiKey;
+
     request({url: url, json: true}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             try {
-                if (body.isLive) {
+                if (body.streams.length > 0) {
                     isOnline(channelObj, printBalloon);
                 } else {
                     isOffline(channelObj);
@@ -114,13 +117,11 @@ function getKlpqVpsStats(channelObj, printBalloon) {
     });
 }
 
-function getTwitchStats(channelObj, printBalloon) {
-    let url = "https://api.twitch.tv/kraken/streams?channel=" + channelObj.name + "&client_id=" + twitchApiKey;
-
+function getYoutubeStatsBase(url, channelObj, printBalloon) {
     request({url: url, json: true}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             try {
-                if (body.streams.length > 0) {
+                if (body.items.length > 0) {
                     isOnline(channelObj, printBalloon);
                 } else {
                     isOffline(channelObj);
@@ -149,20 +150,7 @@ function getYoutubeStatsUser(channelObj, printBalloon) {
                     let channelId = body.items[0].id;
                     let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&eventType=live&key=${apiKey}`;
 
-                    request({url: url, json: true}, function (error, response, body) {
-                        if (!error && response.statusCode === 200) {
-                            try {
-                                if (body.items.length > 0) {
-                                    isOnline(channelObj, printBalloon);
-                                } else {
-                                    isOffline(channelObj);
-                                }
-                            }
-                            catch (e) {
-                                console.log(e);
-                            }
-                        }
-                    });
+                    getYoutubeStatsBase(url, channelObj, printBalloon);
                 } else {
                     console.log('youtube user id not found.');
                 }
@@ -183,20 +171,7 @@ function getYoutubeStatsChannel(channelObj, printBalloon) {
 
     let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelObj.name}&type=video&eventType=live&key=${apiKey}`;
 
-    request({url: url, json: true}, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            try {
-                if (body.items.length > 0) {
-                    isOnline(channelObj, printBalloon);
-                } else {
-                    isOffline(channelObj);
-                }
-            }
-            catch (e) {
-                console.log(e);
-            }
-        }
-    });
+    getYoutubeStatsBase(url, channelObj, printBalloon);
 }
 
 function getStats5(channelObj, printBalloon = true) {
@@ -205,7 +180,7 @@ function getStats5(channelObj, printBalloon = true) {
             getKlpqVpsStats(channelObj, printBalloon);
             break;
         case 'klpq-main':
-            getKlpqStats(channelObj, printBalloon);
+            getKlpqMainStats(channelObj, printBalloon);
             break;
     }
 }
@@ -229,149 +204,18 @@ function getStats120(channelObj, printBalloon = true) {
     }
 }
 
-function twitchImportChannels(channels, i) {
-    channels.forEach(function (channel) {
-        let channelObj = SettingsFile.addChannel(channel.channel.url, false);
+const services = {
+    'klpq-vps': getKlpqVpsStats,
+    'klpq-main': getKlpqMainStats,
+    'twitch': getTwitchStats,
+    'youtube-user': getYoutubeStatsUser,
+    'youtube-channel': getYoutubeStatsChannel
+};
 
-        if (channelObj !== false) {
-            i++;
-        }
-    });
-
-    return i;
-}
-
-async function twitchImportBase(channelName) {
-    channelName = channelName.trim().toLowerCase();
-
-    if (channelName.length === 0)
-        return null;
-
-    let requestGet = util.promisify(request.get);
-
-    try {
-        let url = "https://api.twitch.tv/kraken/users/" + channelName + "/follows/channels?direction=ASC&limit=100&sortby=created_at&user=" + channelName + "&client_id=" + twitchApiKey;
-
-        let response = await requestGet({url: url, json: true});
-        let body = response.body;
-        let channels = body.follows;
-
-        if (!channels || channels.length === 0)
-            return 0;
-
-        let i = 0;
-        i = twitchImportChannels(channels, i);
-
-        while (channels.length !== 0) {
-            response = await requestGet({url: body._links.next + "&client_id=" + twitchApiKey, json: true});
-            body = response.body;
-            channels = body.follows;
-
-            i = twitchImportChannels(channels, i);
-        }
-
-        return i;
+function checkChannel(channelObj) {
+    if (services.hasOwnProperty(channelObj.service)) {
+        services[channelObj.service](channelObj, false);
     }
-    catch (e) {
-        console.log(e);
-
-        return null;
-    }
-}
-
-async function twitchImport(channelName) {
-    let res = await twitchImportBase(channelName);
-
-    if (res !== null) {
-        dialog.showMessageBox({
-            type: 'info',
-            message: 'Import done. ' + res + ' channels added.'
-        });
-
-        return true;
-    } else {
-        dialog.showMessageBox({
-            type: 'error',
-            message: 'Import error.'
-        });
-
-        return false;
-    }
-}
-
-function autoKlpqImport() {
-    _.forEach([
-        {
-            url: 'http://stats.vps.klpq.men/channels',
-            service: 'klpq-vps'
-        }, {
-            url: 'http://stats.main.klpq.men/channels',
-            service: 'klpq-main'
-        }
-    ], function (importObj) {
-        let url = importObj.url;
-        let service = importObj.service;
-
-        request.get({url: url, json: true}, function (error, res, body) {
-            if (!error) {
-                _.forEach(body.result, function (channel) {
-                    let protocol = Globals.registeredServices[service].protocols[0];
-                    let host = Globals.registeredServices[service].hosts[0];
-                    let pathname = Globals.registeredServices[service].paths[0] + `${channel}`;
-
-                    let channelUrl = protocol + "//" + host + pathname;
-
-                    let channelObj = SettingsFile.addChannel(channelUrl, false);
-                });
-            }
-        });
-    });
-}
-
-function autoTwitchImport() {
-    _.forEach(SettingsFile.settingsJson.settings.twitchImport, async function (channelName) {
-        await twitchImportBase(channelName);
-    });
-}
-
-ipcMain.on('config_getUpdate', (event) => {
-    return shell.openExternal(buildsLink);
-});
-
-function checkNewVersion() {
-    let url = "https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases";
-
-    request.get({url: url, json: true, headers: {'user-agent': "KolpaqueClientElectron"}}, function (err, res, body) {
-        if (err) {
-            return;
-        }
-
-        if (!body[0] || !body[0].tag_name) {
-            return;
-        }
-
-        if (body[0].tag_name !== clientVersion) {
-            Notifications.printNotification('Client Update Available', buildsLink);
-
-            clientVersion = body[0].tag_name;
-
-            app.mainWindow.webContents.send('client_showUpdate', 'Client Update Available');
-        }
-    });
-}
-
-function streamlinkVersionCheck() {
-    child('streamlink', ['--version-check'], function (err, data, stderr) {
-        if (err) {
-            console.log(err);
-            return;
-        }
-
-        if (!data.includes('is up to date!')) {
-            console.log(data);
-            Notifications.printNotification('Streamlink Update Available', `https://github.com/streamlink/streamlink/releases`);
-        }
-    });
 }
 
 function checkLoop() {
@@ -382,11 +226,6 @@ function checkLoop() {
         getStats30(channelObj, false);
         getStats120(channelObj, false);
     });
-
-    checkNewVersion();
-    streamlinkVersionCheck();
-    autoKlpqImport();
-    autoTwitchImport();
 
     setInterval(function () {
         _.forEach(settingsJson.channels, getStats5);
@@ -399,12 +238,8 @@ function checkLoop() {
     setInterval(function () {
         _.forEach(settingsJson.channels, getStats120);
     }, 2 * 60 * 1000);
-
-    setInterval(checkNewVersion, 10 * 60 * 1000);
-    setInterval(autoKlpqImport, 10 * 60 * 1000);
-    setInterval(autoTwitchImport, 10 * 60 * 1000);
 }
 
-exports.twitchImport = twitchImport;
+exports.checkChannel = checkChannel;
 exports.checkLoop = checkLoop;
 exports.onlineChannels = onlineChannels;

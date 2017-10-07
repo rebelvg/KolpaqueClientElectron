@@ -56,10 +56,10 @@ function launchPlayerObj(channelObj, LQ = null) {
         }
     }
 
-    launchStreamLink(playLink, params, channelObj);
+    launchStreamlink(playLink, params, channelObj);
 }
 
-function launchStreamLink(playLink, params, channelObj) {
+function launchStreamlink(playLink, params, channelObj) {
     console.log(playLink, params);
 
     child('streamlink', [playLink, 'best', '--twitch-disable-hosting'].concat(params), function (err, data, stderr) {
@@ -87,7 +87,7 @@ function launchStreamLink(playLink, params, channelObj) {
         }
 
         if (channelObj.isLive && channelObj.autoRestart) {
-            launchStreamLink(playLink, params, channelObj);
+            launchStreamlink(playLink, params, channelObj);
         }
     });
 }

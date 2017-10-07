@@ -6,6 +6,7 @@ const EventEmitter = require('events');
 
 const {allowedProtocols, registeredServices, preInstalledChannels, buildChannelObj} = require('./Globals');
 const Channel = require('./ChannelClass');
+const ChannelCheck = require('./ChannelCheck');
 
 const settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient_dev.json'));
 const channelSave = ['link', 'visibleName', 'isPinned', 'autoStart', 'autoRestart'];
@@ -70,6 +71,8 @@ class Config extends EventEmitter {
 
         this.on('channel_added', (channelObj) => {
             app.mainWindow.webContents.send('channel_add', channelObj);
+
+            ChannelCheck.checkChannel(channelObj);
         });
 
         this.on('channel_removed', (channelObj) => {

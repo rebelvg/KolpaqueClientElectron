@@ -54,7 +54,10 @@ function buildChannelObj(channelLink) {
     }
 }
 
+let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
+
 module.exports.allowedProtocols = allowedProtocols;
 module.exports.registeredServices = registeredServices;
 module.exports.preInstalledChannels = preInstalledChannels;
 module.exports.buildChannelObj = buildChannelObj;
+module.exports.twitchApiKey = twitchApiKey;
