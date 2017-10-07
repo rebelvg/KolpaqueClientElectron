@@ -7,10 +7,10 @@ import Counter from './Shared/Counter';
 import ChannelContainer from '../containers/ChannelsContainer/ChannelContainer';
 
 const RouterRoutes = () => (
-	<RouterWrapper>
-		<Route exact path="/" component={ChannelContainer}/>
-		<Route path="/about" component={About}/>
-	</RouterWrapper>
+    <RouterWrapper>
+        <Route exact path="/" component={ChannelContainer}/>
+        <Route path="/about" component={About}/>
+    </RouterWrapper>
 );
 
 export default RouterRoutes;

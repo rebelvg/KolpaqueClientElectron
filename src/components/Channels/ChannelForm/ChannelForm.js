@@ -4,17 +4,17 @@ import styled from 'styled-components'
 import {Field, reduxForm} from 'redux-form'
 
 let ChannelForm = (props) => {
-	const {handleSubmit} = props
-	return (
-		<form onSubmit={ handleSubmit }>
-			<StyledChannelFormWrap>
-				<StyledInput component="input" name="channel" placeholder="Add Channel" type="text"/>
-				<button type="submit">
-					<StyledIcon fontSize="24px" icon="ion-plus"/>
-				</button>
-			</StyledChannelFormWrap>
-		</form>
-	)
+    const {handleSubmit} = props
+    return (
+        <form onSubmit={ handleSubmit }>
+            <StyledChannelFormWrap>
+                <StyledInput component="input" name="channel" placeholder="Add Channel" type="text"/>
+                <button type="submit">
+                    <StyledIcon fontSize="24px" icon="ion-plus"/>
+                </button>
+            </StyledChannelFormWrap>
+        </form>
+    )
 };
 
 const StyledChannelFormWrap = styled.div`
@@ -58,8 +58,8 @@ const StyledIcon = styled(Ionicon)`
 `;
 
 ChannelForm = reduxForm({
-	// a unique name for the form
-	form: 'addChannel'
+    // a unique name for the form
+    form: 'addChannel'
 })(ChannelForm)
 
 export default ChannelForm;

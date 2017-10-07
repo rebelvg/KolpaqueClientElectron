@@ -17,85 +17,88 @@ const {Menu, MenuItem} = remote;
 import menuTemplate from '../../helper/menu'
 
 export class ChannelContainer extends Component {
-	constructor() {
-		super()
-		this.state = {
-			selected: null,
-		}
-	}
+    constructor() {
+        super()
+        this.state = {
+            selected: null,
+        }
+    }
 
-	playChannel = (channel) => {
-		ipcRenderer.send('channel_play', channel.link);
-	}
+    playChannel = (channel) => {
+        ipcRenderer.send('channel_play', channel.link);
+    }
 
-	addChannel = ({channel}) => {
-		ipcRenderer.send('channel_add', {link: channel, name: channel});
-	}
+    addChannel = ({channel}) => {
+        ipcRenderer.send('channel_add', {link: channel, name: channel});
+    }
 
-	deleteChannel = (channel) => {
-		ipcRenderer.send('channel_remove', channel);
-	}
+    deleteChannel = (channel) => {
+        ipcRenderer.send('channel_remove', channel);
+    }
 
-	openMenu = (channel) => {
-		const menu = new Menu();
-		const template = menuTemplate(channel, this.deleteChannel);
-		template.map((item) => menu.append(item))
-		menu.popup(remote.getCurrentWindow())
-	}
+    openMenu = (channel) => {
+        const menu = new Menu();
+        const template = menuTemplate(channel, this.deleteChannel);
+        template.map((item) => menu.append(item))
+        menu.popup(remote.getCurrentWindow())
+    }
 
-	selectChannel = (channel) => {
-		this.setState({selected: channel})
-	}
+    selectChannel = (channel) => {
+        this.setState({selected: channel})
+    }
 
-	componentWillMount() {
+    componentWillMount() {
 
-	}
+    }
 
-	componentDidMount() {
+    componentDidMount() {
 
-	}
+    }
 
-	render() {
-		const {online, offline} = this.props;
-		const {selected} = this.state;
-		return (
-			<StyledContainerWrapper>
-				<Tabs>
-					<TabWrapper>
-						<TabList className="tabs">
-							<Tab className='tab' selectedClassName="active">Online ({online.length})</Tab>
-							<Tab className='tab' selectedClassName="active">Offline ({offline.length})</Tab>
+    render() {
+        const {online, offline} = this.props;
+        const {selected} = this.state;
+        return (
+            <StyledContainerWrapper>
+                <Tabs>
+                    <TabWrapper>
+                        <TabList className="tabs">
+                            <Tab className='tab' selectedClassName="active">
+                                Online ({online.length})
+                            </Tab>
+                            <Tab className='tab' selectedClassName="active">
+                                Offline ({offline.length})
+                            </Tab>
+                        </TabList>
+                        <SettingsIcon onClick={() => {console.log('click')}} to="/about">
+                            <Ionicon icon="ion-gear-b" color="black"/>
+                        </SettingsIcon>
+                    </TabWrapper>
+                    <TabPanel className='tab-panel'>
+                        <ChannelWrapper
+                            selected={selected}
+                            selectChannel={this.selectChannel}
+                            playChannel={this.playChannel}
+                            handleClick={this.openMenu}
+                            channels={online}
+                        />
+                    </TabPanel>
+                    <TabPanel className='tab-panel'>
+                        <ChannelWrapper
+                            selected={selected}
+                            selectChannel={this.selectChannel}
+                            playChannel={this.playChannel}
+                            handleClick={this.openMenu}
+                            channels={offline}/>
+                    </TabPanel>
+                </Tabs>
 
-						</TabList>
-						<SettingsIcon onClick={() => {
-							console.log('click')
-						}} to="/about"><Ionicon icon="ion-gear-b" color="black"/></SettingsIcon>
-					</TabWrapper>
-					<TabPanel className='tab-panel'>
-						<ChannelWrapper
-							selected={selected}
-							selectChannel={this.selectChannel}
-							playChannel={this.playChannel}
-							handleClick={this.openMenu}
-							channels={online}
-						/>
-					</TabPanel>
-					<TabPanel className='tab-panel'>
-						<ChannelWrapper
-							selected={selected}
-							selectChannel={this.selectChannel}
-							playChannel={this.playChannel}
-							handleClick={this.openMenu}
-							channels={offline}/>
-					</TabPanel>
-				</Tabs>
-
-				<StyledFooter className="fixed-bottom">
-					<ChannelForm onSubmit={this.addChannel}/>
-				</StyledFooter>
-			</StyledContainerWrapper>
-		);
-	}
+                <StyledFooter className="fixed-bottom">
+                    <ChannelForm onSubmit={this.addChannel}/>
+                </StyledFooter>
+            </StyledContainerWrapper>
+        );
+    }
 }
 
 const StyledFooter = styled.div`
@@ -124,9 +127,9 @@ const TabWrapper = styled.div`
      flex-direction: column;
 `
 export default connect(
-	(state) => ({
-		online: getOnline(state),
-		offline: getOffline(state)
-	}),
-	(dispatch) => bindActionCreators({}, dispatch)
+    (state) => ({
+        online: getOnline(state),
+        offline: getOffline(state)
+    }),
+    (dispatch) => bindActionCreators({}, dispatch)
 )(ChannelContainer);

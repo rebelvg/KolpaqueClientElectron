@@ -8,19 +8,19 @@ import styled from 'styled-components';
 
 export default class AppContainer extends Component {
 
-	constructor() {
-		super()
-	}
+    constructor() {
+        super()
+    }
 
 
-	render() {
-		return (
-			<Container>
-				<RouterRoutes/>
-				<EventListener/>
-			</Container>
-		);
-	}
+    render() {
+        return (
+            <Container>
+                <RouterRoutes/>
+                <EventListener/>
+            </Container>
+        );
+    }
 }
 
 const Container = styled.div`
