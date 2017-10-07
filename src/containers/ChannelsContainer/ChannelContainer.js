@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import {initChannels, changeStatus, deleteChannel, addChannel} from '../../redux/actions/channels'
+
 import {getOffline, getOnline} from '../../redux/reducers/channels'
 import './style.css';
 import ChannelWrapper from '../../components/Channels/ChannelWrapper/ChannelWrapper'
@@ -17,95 +17,85 @@ const {Menu, MenuItem} = remote;
 import menuTemplate from '../../helper/menu'
 
 export class ChannelContainer extends Component {
-    constructor() {
-        super()
-        this.state = {
-            selected: null,
-        }
-    }
+	constructor() {
+		super()
+		this.state = {
+			selected: null,
+		}
+	}
 
-    playChannel = (channel) => {
-        ipcRenderer.send('channel_play', channel.link);
-    }
+	playChannel = (channel) => {
+		ipcRenderer.send('channel_play', channel.link);
+	}
 
-    addChannel = ({channel}) => {
-        ipcRenderer.send('channel_add', {link: channel, name: channel});
-    }
+	addChannel = ({channel}) => {
+		ipcRenderer.send('channel_add', {link: channel, name: channel});
+	}
 
-    deleteChannel = (channel) => {
-        ipcRenderer.send('channel_remove', channel);
-    }
+	deleteChannel = (channel) => {
+		ipcRenderer.send('channel_remove', channel);
+	}
 
-    openMenu = (channel) => {
-        const menu = new Menu();
-        const template = menuTemplate(channel, this.deleteChannel);
-        template.map((item) => menu.append(item))
-        menu.popup(remote.getCurrentWindow())
-    }
+	openMenu = (channel) => {
+		const menu = new Menu();
+		const template = menuTemplate(channel, this.deleteChannel);
+		template.map((item) => menu.append(item))
+		menu.popup(remote.getCurrentWindow())
+	}
 
-    selectChannel = (channel) => {
-        this.setState({selected: channel})
-    }
+	selectChannel = (channel) => {
+		this.setState({selected: channel})
+	}
 
-    componentWillMount() {
-        this.props.initChannels()
-    }
+	componentWillMount() {
 
-    componentDidMount() {
-        ipcRenderer.on('channel_wentOnline', (event, channel) => this.props.changeStatus(channel.link));
-        ipcRenderer.on('channel_add', (event, response) => {
-            if (response.status) {
-                const {channel} = response;
-                this.props.addChannel(channel)
-            }
-        })
-        ipcRenderer.on('channel_remove', (event, response) => {
-            console.log(response)
-            if (response.status) {
-                this.props.deleteChannel(response.link)
-            }
-        });
-    }
+	}
 
-    render() {
-        const {online, offline} = this.props;
-        const {selected} = this.state;
-        return (
-            <StyledContainerWrapper>
-                <Tabs>
-                    <TabWrapper>
-                        <TabList className="tabs">
-                            <Tab className='tab' selectedClassName="active">Online ({online.length})</Tab>
-                            <Tab className='tab' selectedClassName="active">Offline ({offline.length})</Tab>
+	componentDidMount() {
 
-                        </TabList>
-                        <SettingsIcon to="/about"><Ionicon icon="ion-gear-b" color="black"/></SettingsIcon>
-                    </TabWrapper>
-                    <TabPanel className='tab-panel'>
-                        <ChannelWrapper
-                            selected={selected}
-                            selectChannel={this.selectChannel}
-                            playChannel={this.playChannel}
-                            handleClick={this.openMenu}
-                            channels={online}
-                        />
-                    </TabPanel>
-                    <TabPanel className='tab-panel'>
-                        <ChannelWrapper
-                            selected={selected}
-                            selectChannel={this.selectChannel}
-                            playChannel={this.playChannel}
-                            handleClick={this.openMenu}
-                            channels={offline}/>
-                    </TabPanel>
-                </Tabs>
+	}
 
-                <StyledFooter className="fixed-bottom">
-                    <ChannelForm onSubmit={this.addChannel}/>
-                </StyledFooter>
-            </StyledContainerWrapper>
-        );
-    }
+	render() {
+		const {online, offline} = this.props;
+		const {selected} = this.state;
+		return (
+			<StyledContainerWrapper>
+				<Tabs>
+					<TabWrapper>
+						<TabList className="tabs">
+							<Tab className='tab' selectedClassName="active">Online ({online.length})</Tab>
+							<Tab className='tab' selectedClassName="active">Offline ({offline.length})</Tab>
+
+						</TabList>
+						<SettingsIcon onClick={() => {
+							console.log('click')
+						}} to="/about"><Ionicon icon="ion-gear-b" color="black"/></SettingsIcon>
+					</TabWrapper>
+					<TabPanel className='tab-panel'>
+						<ChannelWrapper
+							selected={selected}
+							selectChannel={this.selectChannel}
+							playChannel={this.playChannel}
+							handleClick={this.openMenu}
+							channels={online}
+						/>
+					</TabPanel>
+					<TabPanel className='tab-panel'>
+						<ChannelWrapper
+							selected={selected}
+							selectChannel={this.selectChannel}
+							playChannel={this.playChannel}
+							handleClick={this.openMenu}
+							channels={offline}/>
+					</TabPanel>
+				</Tabs>
+
+				<StyledFooter className="fixed-bottom">
+					<ChannelForm onSubmit={this.addChannel}/>
+				</StyledFooter>
+			</StyledContainerWrapper>
+		);
+	}
 }
 
 const StyledFooter = styled.div`
@@ -134,14 +124,9 @@ const TabWrapper = styled.div`
      flex-direction: column;
 `
 export default connect(
-    (state) => ({
-        online: getOnline(state),
-        offline: getOffline(state)
-    }),
-    (dispatch) => bindActionCreators({
-        initChannels,
-        changeStatus,
-        deleteChannel,
-        addChannel
-    }, dispatch)
+	(state) => ({
+		online: getOnline(state),
+		offline: getOffline(state)
+	}),
+	(dispatch) => bindActionCreators({}, dispatch)
 )(ChannelContainer);

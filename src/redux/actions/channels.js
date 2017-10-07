@@ -8,33 +8,34 @@ export const DELETE_CHANNEL = 'DELETE_CHANNEL';
 export const CHANGE_STATUS = 'CHANGE_STATUS';
 
 export function initChannels() {
-    let data = ipcRenderer.sendSync('getChannels');
+	let data = ipcRenderer.sendSync('getChannels');
 
-    ipcRenderer.send('client_ready');
+	ipcRenderer.send('client_ready');
 
-    return {
-        type: GET_CHANNELS,
-        data: data
-    };
+	return {
+		type: GET_CHANNELS,
+		data: data
+	};
 }
 
 export function deleteChannel(channel) {
-    return {
-        type: DELETE_CHANNEL,
-        data: channel
-    }
+	return {
+		type: DELETE_CHANNEL,
+		data: channel
+	}
 }
 
 export function addChannel(channel) {
-    return {
-        type: ADD_CHANNEL,
-        data: channel
-    }
+	return {
+		type: ADD_CHANNEL,
+		data: channel
+	}
 }
 
 export function changeStatus(channel) {
-    return {
-        type: CHANGE_STATUS,
-        data: channel
-    };
+	console.log(channel);
+	return {
+		type: CHANGE_STATUS,
+		channel: channel
+	};
 }

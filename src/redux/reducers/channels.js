@@ -3,7 +3,8 @@ import {GET_CHANNELS, CHANGE_STATUS, DELETE_CHANNEL, ADD_CHANNEL} from '../actio
 
 const initialState = {
 	online: [],
-	offline: []
+	offline: [],
+	channels: [],
 };
 
 export default function (state = initialState, action = {}) {
@@ -11,13 +12,17 @@ export default function (state = initialState, action = {}) {
 		case GET_CHANNELS:
 			return {
 				...state,
+				channels: action.data,
 				offline: action.data
 			};
 		case CHANGE_STATUS:
+			const channels = [...state.channels.filter((channel) => channel.link !== action.channel.link), action.channel];
+			console.log(channels);
+			const offline = channels.filter((channel) => !channel.isLive)
+			const online = channels.filter((channel) => channel.isLive)
 			return {
 				...state,
-				offline: state.offline.filter(item => action.data !== item.link),
-				online: [...state.online, state.offline.find(item => action.data === item.link)]
+				channels, online, offline
 			}
 		case DELETE_CHANNEL:
 			return {

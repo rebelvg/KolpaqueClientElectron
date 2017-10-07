@@ -2,25 +2,28 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import RouterRoutes from '../../components/RouterRoutes';
-import {Link} from 'react-router-dom';
+import EventListener from '../../components/Shared/EventListener/EventListener'
+
+import styled from 'styled-components';
 
 export default class AppContainer extends Component {
 
-    constructor() {
-        super()
-    }
+	constructor() {
+		super()
+	}
 
-    render() {
-        return (
-            <RouterRoutes/>
-        );
-    }
+
+	render() {
+		return (
+			<Container>
+				<RouterRoutes/>
+				<EventListener/>
+			</Container>
+		);
+	}
 }
 
-const pickState = ({counter}) => ({});
+const Container = styled.div`
+	height: 100%
+`
 
-const mapDispatch = dispatch => ({});
-
-const ConnectedApp = connect(pickState, mapDispatch)(AppContainer);
-
-//export default ConnectedApp;
