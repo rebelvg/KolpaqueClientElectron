@@ -17,17 +17,6 @@ const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);
 
 let settingsJson = SettingsFile.settingsJson;
-let forceQuit = false;
-let appIcon = null;
-
-let legacyChannels = SettingsFile.returnChannelsLegacy();
-
-require('electron-handlebars')({
-    channels: legacyChannels,
-    channels_count: Object.keys(legacyChannels).length,
-    settings: settingsJson.settings,
-    version: require('./package.json').version
-});
 
 ipcMain.once('client_ready', () => {
     console.log('client ready.');
@@ -114,7 +103,6 @@ function createWindow() {
         let width = size[0];
         let height = size[1];
 
-        //let settingsJson = SettingsFile.settingsJson;
         settingsJson.settings.width = width;
         settingsJson.settings.height = height;
     });
@@ -188,6 +176,7 @@ let contextMenuTemplate = [
 
 app.contextMenuTemplate = contextMenuTemplate;
 
+let appIcon;
 app.on('ready', () => {
     appIcon = new Tray(nativeImage.createFromPath(iconPathTray));
     appIcon.setToolTip('Kolpaque Client');
