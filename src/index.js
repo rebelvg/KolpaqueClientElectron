@@ -14,14 +14,14 @@ appElement.setAttribute('id', 'app');
 document.body.appendChild(appElement);
 
 ReactDOM.render(
-	<Provider store={store}>
-		<BrowserRouter basename='/'>
-			<AppContainer/>
-		</BrowserRouter>
-	</Provider>,
-	document.getElementById('app'),
+    <Provider store={store}>
+        <BrowserRouter basename='/'>
+            <AppContainer/>
+        </BrowserRouter>
+    </Provider>,
+    document.getElementById('app'),
 );
 
 if (module.hot) {
-	module.hot.accept()
+    module.hot.accept()
 }
