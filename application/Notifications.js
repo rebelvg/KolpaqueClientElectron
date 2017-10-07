@@ -9,7 +9,6 @@ const notifier = require('node-notifier');
 
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
-const ChannelCheck = require('./ChannelCheck');
 
 function printNotification(title, content) {
     let settingsJson = SettingsFile.settingsJson;
@@ -70,12 +69,14 @@ function onBalloonClick(title, content) {
 }
 
 function rebuildIconMenu() {
-    let onlineChannels = Object.keys(ChannelCheck.onlineChannels);
+    let onlineChannels = SettingsFile.settingsJson.channels.filter((channelObj) => {
+        return channelObj.isLive;
+    });
 
-    app.contextMenuTemplate[1].submenu = onlineChannels.map(function (channelLink) {
+    app.contextMenuTemplate[1].submenu = onlineChannels.map(function (channelObj) {
         return {
-            label: channelLink, type: 'normal', click: (menuItem) => {
-                ChannelPlay.launchPlayerLink(menuItem.label);
+            label: channelObj.visibleName, type: 'normal', click: (menuItem) => {
+                ChannelPlay.launchPlayerObj(channelObj);
             }
         }
     });
