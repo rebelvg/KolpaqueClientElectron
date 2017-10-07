@@ -15,24 +15,42 @@ const ChannelCheck = require('./ChannelCheck');
 
 let config = new Config();
 
-ipcMain.on('config_changeSetting', (event, setting) => {
-    return config.changeSetting(setting.name, setting.value);
+ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
+    return config.changeSetting(settingName, settingValue);
 });
 
-ipcMain.on('channel_add', (event, channel) => {
-    let channelObj = config.addChannelLink(channel.link);
+ipcMain.on('channel_add', (event, channelLink) => {
+    let channelObj = config.addChannelLink(channelLink);
 
     if (channelObj === false) {
         return false;
     }
 
-    return event.sender.send('channel_add', {status: true, channel: channelObj});
+    return event.sender.send('channel_add', channelObj);
 });
 
-ipcMain.on('channel_remove', (event, channelLink) => {
-    let res = config.removeChannelLink(channelLink);
+ipcMain.on('channel_remove', (event, id) => {
+    let res = config.removeChannelById(id);
 
-    return event.sender.send('channel_remove', {status: res, link: channelLink});
+    console.log(id, res);
+
+    if (res) {
+        return event.sender.send('channel_remove', id);
+    }
+});
+
+ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
+    let channelObj = config.findById(id);
+
+    if (!channelObj) {
+        return false;
+    }
+
+    let res = channelObj.changeSetting(settingName, settingValue);
+
+    if (res) {
+        return event.sender.send('channel_changeSetting', id, settingName, settingValue);
+    }
 });
 
 ipcMain.once('getChannels', (event) => (event.returnValue = returnChannels()));
@@ -43,12 +61,8 @@ function saveFile() {
     return config.saveFile();
 }
 
-function addChannel(channelLink, printError = true) {
+function addChannel(channelLink) {
     return config.addChannelLink(channelLink);
-}
-
-function removeChannel(channelLink) {
-    return config.removeChannelLink(channelLink);
 }
 
 function returnChannels() {
@@ -67,7 +81,5 @@ function returnChannelsLegacy() {
 
 exports.saveFile = saveFile;
 exports.addChannel = addChannel;
-exports.removeChannel = removeChannel;
-exports.returnChannels = returnChannels;
 exports.returnChannelsLegacy = returnChannelsLegacy;
 exports.settingsJson = config;

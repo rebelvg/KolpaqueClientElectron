@@ -2,14 +2,15 @@ const {ipcMain, shell, clipboard} = require('electron');
 const {URL} = require('url');
 const _ = require('lodash');
 const EventEmitter = require('events');
+const md5 = require('md5');
 
 const {allowedProtocols, registeredServices} = require('./Globals');
 const SettingsFile = require('./SettingsFile');
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
-ipcMain.on('channel_openPage', (event, channelLink) => {
-    let channelObj = SettingsFile.settingsJson.findChannelByLink(channelLink);
+ipcMain.on('channel_openPage', (event, id) => {
+    let channelObj = SettingsFile.settingsJson.findById(id);
 
     if (channelObj === null) {
         return false;
@@ -31,8 +32,8 @@ ipcMain.on('channel_openPage', (event, channelLink) => {
     return true;
 });
 
-ipcMain.on('channel_openChat', (event, channelLink) => {
-    let channelObj = SettingsFile.settingsJson.findChannelByLink(channelLink);
+ipcMain.on('channel_openChat', (event, id) => {
+    let channelObj = SettingsFile.settingsJson.findById(id);
 
     if (channelObj === null) {
         return false;
@@ -71,6 +72,7 @@ class Channel extends EventEmitter {
 
         channelLink = channelLink.trim();
 
+        this.id = null;
         this.service = 'custom';
         this.name = null;
         this.link = channelLink;
@@ -123,6 +125,8 @@ class Channel extends EventEmitter {
         if (this.service === 'custom') {
             this.visibleName = this.link;
         }
+
+        this.id = md5(this.link);
     }
 
     update(channelConfig) {

@@ -32,8 +32,6 @@ ipcMain.once('client_ready', () => {
 
     fixPath();
 
-    ChannelCheck.setWindowRef(mainWindow);
-
     ChannelCheck.checkLoop();
 });
 
@@ -70,19 +68,16 @@ function createWindow() {
         icon: iconPath
     });
 
+    app.mainWindow = mainWindow;
+
     mainWindow.setMenu(null);
 
     // and load the index.html of the app.
-    if (!isDev) {
-        mainWindow.loadURL(url.format({
-            pathname: path.join(__dirname, 'index.hbs'),
-            protocol: 'file:',
-            slashes: true
-        }));
-    } else {
-        mainWindow.loadURL(
-            'http://localhost:3000'
-        );
+    mainWindow.loadURL(
+        'http://localhost:3000'
+    );
+
+    if (isDev) {
         // Open the DevTools.
         mainWindow.webContents.openDevTools();
     }
@@ -185,6 +180,8 @@ let contextMenuTemplate = [
     }
 ];
 
+app.contextMenuTemplate = contextMenuTemplate;
+
 app.on('ready', () => {
     appIcon = new Tray(nativeImage.createFromPath(iconPathTray));
     appIcon.setToolTip('Kolpaque Client');
@@ -204,7 +201,7 @@ app.on('ready', () => {
         Notifications.onBalloonClick(appIcon.title, appIcon.content);
     });
 
-    Notifications.takeRef(appIcon, contextMenuTemplate);
+    app.appIcon = appIcon;
 
     Notifications.rebuildIconMenu();
 });

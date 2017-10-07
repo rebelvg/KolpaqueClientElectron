@@ -11,22 +11,14 @@ const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const ChannelCheck = require('./ChannelCheck');
 
-let appIcon = null;
-let contextMenuTemplate = [];
-
-function takeRef(appIconRef, contextMenuTemplateRef) {
-    appIcon = appIconRef;
-    contextMenuTemplate = contextMenuTemplateRef;
-}
-
 function printNotification(title, content) {
     let settingsJson = SettingsFile.settingsJson;
 
     if (!settingsJson.settings.showNotifications)
         return;
 
-    appIcon.title = title;
-    appIcon.content = content;
+    app.appIcon.title = title;
+    app.appIcon.content = content;
 
     if (process.platform === 'win32') {
         printNotificationWin(title, content);
@@ -36,8 +28,8 @@ function printNotification(title, content) {
 }
 
 function printNotificationWin(title, content) {
-    appIcon.displayBalloon({
-        icon: appIcon.iconPathBalloon,
+    app.appIcon.displayBalloon({
+        icon: app.appIcon.iconPathBalloon,
         title: title,
         content: content
     });
@@ -45,7 +37,7 @@ function printNotificationWin(title, content) {
 
 function printNotificationMac(title, content) {
     notifier.notify({
-        icon: appIcon.iconPathBalloon,
+        icon: app.appIcon.iconPathBalloon,
         title: title,
         message: content,
         sound: false,
@@ -80,7 +72,7 @@ function onBalloonClick(title, content) {
 function rebuildIconMenu() {
     let onlineChannels = Object.keys(ChannelCheck.onlineChannels);
 
-    contextMenuTemplate[1].submenu = onlineChannels.map(function (channelLink) {
+    app.contextMenuTemplate[1].submenu = onlineChannels.map(function (channelLink) {
         return {
             label: channelLink, type: 'normal', click: (menuItem) => {
                 ChannelPlay.launchPlayerLink(menuItem.label);
@@ -88,12 +80,11 @@ function rebuildIconMenu() {
         }
     });
 
-    let contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
+    let contextMenu = Menu.buildFromTemplate(app.contextMenuTemplate);
 
-    appIcon.setContextMenu(contextMenu);
+    app.appIcon.setContextMenu(contextMenu);
 }
 
-exports.takeRef = takeRef;
 exports.printNotification = printNotification;
 exports.onBalloonClick = onBalloonClick;
 exports.rebuildIconMenu = rebuildIconMenu;

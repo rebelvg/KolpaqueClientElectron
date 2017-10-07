@@ -2,7 +2,7 @@
  * Created by rebel on 21/03/2017.
  */
 
-const {ipcMain, dialog, shell} = require('electron');
+const {app, ipcMain, dialog, shell} = require('electron');
 const request = require('request');
 const moment = require('moment');
 const _ = require('lodash');
@@ -16,7 +16,6 @@ const Globals = require('./Globals');
 
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 let onlineChannels = {};
-let mainWindow = null;
 let buildsLink = "ftp://main.klpq.men:359/KolpaqueClientElectron/";
 let clientVersion = require('../package.json').version;
 
@@ -46,8 +45,6 @@ function isOnline(channelObj, printBalloon) {
 
     onlineChannels[channelLink] = 0;
 
-    mainWindow.webContents.send('channel_wentOnline', channelObj);
-
     if (printBalloon) {
         Notifications.printNotification('Stream is Live (' + moment().format('D/MMM, H:mm') + ')', channelObj.link);
     }
@@ -75,8 +72,6 @@ function isOffline(channelObj) {
     channelObj.changeSetting('isLive', false);
 
     delete onlineChannels[channelLink];
-
-    mainWindow.webContents.send('channel_wentOffline', channelObj);
 
     Notifications.rebuildIconMenu();
 }
@@ -239,7 +234,7 @@ function twitchImportChannels(channels, i) {
         let channelObj = SettingsFile.addChannel(channel.channel.url, false);
 
         if (channelObj !== false) {
-            mainWindow.webContents.send('channel_add', {status: true, channel: channelObj});
+            app.mainWindow.webContents.send('channel_add', channelObj);
             i++;
         }
     });
@@ -330,7 +325,7 @@ function autoKlpqImport() {
                     let channelObj = SettingsFile.addChannel(channelUrl, false);
 
                     if (channelObj !== false) {
-                        mainWindow.webContents.send('channel_add', {status: true, channel: channelObj});
+                        app.mainWindow.webContents.send('channel_add', channelObj);
                     }
                 });
             }
@@ -344,7 +339,7 @@ function autoTwitchImport() {
     });
 }
 
-ipcMain.on('config_getUpdate', (event, data) => {
+ipcMain.on('config_getUpdate', (event) => {
     return shell.openExternal(buildsLink);
 });
 
@@ -365,7 +360,7 @@ function checkNewVersion() {
 
             clientVersion = body[0].tag_name;
 
-            mainWindow.webContents.send('check-update', {text: 'Client Update Available'});
+            app.mainWindow.webContents.send('check-update', {text: 'Client Update Available'});
         }
     });
 }
@@ -382,10 +377,6 @@ function streamlinkVersionCheck() {
             Notifications.printNotification('Streamlink Update Available', `https://github.com/streamlink/streamlink/releases`);
         }
     });
-}
-
-function setWindowRef(mainWindowRef) {
-    mainWindow = mainWindowRef;
 }
 
 function checkLoop() {
@@ -420,6 +411,5 @@ function checkLoop() {
 }
 
 exports.twitchImport = twitchImport;
-exports.setWindowRef = setWindowRef;
 exports.checkLoop = checkLoop;
 exports.onlineChannels = onlineChannels;

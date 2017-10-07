@@ -93,8 +93,8 @@ class Config extends EventEmitter {
         return channelObj;
     }
 
-    removeChannelLink(channelLink) {
-        let channelObj = this.findChannelByLink(channelLink);
+    removeChannelById(id) {
+        let channelObj = this.findById(id);
 
         if (!this.channels.includes(channelObj)) {
             return true;
@@ -117,6 +117,18 @@ class Config extends EventEmitter {
         this.emit('setting_changed', settingName, settingValue);
 
         return true;
+    }
+
+    findById(id) {
+        let channel = this.channels.find((channel) => {
+            return channel.id === id;
+        });
+
+        if (!channel) {
+            return null;
+        }
+
+        return channel;
     }
 
     findChannelByLink(channelLink) {

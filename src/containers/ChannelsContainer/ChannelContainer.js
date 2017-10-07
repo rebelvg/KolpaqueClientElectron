@@ -24,15 +24,15 @@ export class ChannelContainer extends Component {
     }
 
     playChannel = (channel) => {
-        ipcRenderer.send('channel_play', channel.link);
+        ipcRenderer.send('channel_play', channel.id);
     }
 
-    addChannel = ({channel}) => {
-        ipcRenderer.send('channel_add', {link: channel, name: channel});
+    addChannel = ({channelLink}) => {
+        ipcRenderer.send('channel_add', channelLink);
     }
 
-    deleteChannel = (channel) => {
-        ipcRenderer.send('channel_remove', channel);
+    deleteChannel = (channelObj) => {
+        ipcRenderer.send('channel_remove', channelObj.id);
     }
 
     openMenu = (channel) => {

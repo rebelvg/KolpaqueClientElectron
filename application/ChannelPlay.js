@@ -12,8 +12,8 @@ const Notifications = require('./Notifications');
 const ChannelCheck = require('./ChannelCheck');
 const Globals = require('./Globals');
 
-ipcMain.on('channel_play', (event, channelLink, LQ = null, autoRestart = false) => {
-    let channelObj = SettingsFile.settingsJson.findChannelByLink(channelLink);
+ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = false) => {
+    let channelObj = SettingsFile.settingsJson.findById(id);
 
     if (!channelObj) {
         return false;
@@ -22,16 +22,6 @@ ipcMain.on('channel_play', (event, channelLink, LQ = null, autoRestart = false) 
     channelObj.autoRestart = autoRestart;
 
     launchPlayerObj(channelObj, LQ);
-});
-
-ipcMain.on('channel_disable_autoRestart', (event, channelLink) => {
-    let channelObj = SettingsFile.settingsJson.findChannelByLink(channelLink);
-
-    if (!channelObj) {
-        return false;
-    }
-
-    channelObj.autoRestart = false;
 });
 
 function launchPlayerLink(channelLink, LQ = null) {
