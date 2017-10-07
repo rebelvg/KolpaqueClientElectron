@@ -4,17 +4,16 @@ import {bindActionCreators} from 'redux';
 import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-
 import {getOffline, getOnline} from '../../redux/reducers/channels'
 import './style.css';
 import ChannelWrapper from '../../components/Channels/ChannelWrapper/ChannelWrapper'
 import Channel from '../../components/Channels/Channel/Channel'
 import ChannelForm from '../../components/Channels/ChannelForm/ChannelForm'
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
+import menuTemplate from '../../helper/menu'
 
 const {remote, ipcRenderer} = window.require('electron');
 const {Menu, MenuItem} = remote;
-import menuTemplate from '../../helper/menu'
 
 export class ChannelContainer extends Component {
     constructor() {
@@ -70,7 +69,9 @@ export class ChannelContainer extends Component {
                                 Offline ({offline.length})
                             </Tab>
                         </TabList>
-                        <SettingsIcon onClick={() => {console.log('click')}} to="/about">
+                        <SettingsIcon onClick={() => {
+                            console.log('click')
+                        }} to="/about">
                             <Ionicon icon="ion-gear-b" color="black"/>
                         </SettingsIcon>
                     </TabWrapper>
@@ -104,12 +105,14 @@ export class ChannelContainer extends Component {
 const StyledFooter = styled.div`
     background-color: #D7D7D7;
     color: white;
-`;
+`
+
 const SettingsIcon = styled(Link)`
     display: flex;
     justify-content: center;
     padding-bottom: 30px;
-`;
+`
+
 const StyledContainerWrapper = styled.div`
     display: flex;
     width: 100%;
@@ -119,6 +122,7 @@ const StyledChannel = styled(Channel)`
     background-color: yellow
     color: white;
 `
+
 const TabWrapper = styled.div`
      height:100%;
      background-color: #D7D7D7;
@@ -126,6 +130,7 @@ const TabWrapper = styled.div`
      justify-content: space-between;
      flex-direction: column;
 `
+
 export default connect(
     (state) => ({
         online: getOnline(state),

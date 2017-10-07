@@ -11,6 +11,15 @@ const renderIcon = (service) => {
     }
 };
 
+const renderAutoRestart = ({autoRestart, isLive}) => (
+    <Ionicon icon="ion-ios-loop-strong" color="#242424"
+    />
+)
+
+const renderAutoStart = ({autoStart}) => (
+    <Ionicon icon="ion-eye" color="dark-green"/>
+)
+
 const Channel = ({channel, pinned, handleClick, selected, selectChannel, playChannel}) => (
     <StyledChannelWrap
         onDoubleClick={() => playChannel(channel)}
@@ -20,6 +29,8 @@ const Channel = ({channel, pinned, handleClick, selected, selectChannel, playCha
         pinned={pinned}>
         <StyledIcon> {renderIcon(!!channel.service && channel.service)} </StyledIcon>
         <StyledName>{channel.visibleName || channel.link} </StyledName>
+        {renderAutoRestart(channel)}
+        {renderAutoStart(channel)}
     </StyledChannelWrap>
 );
 

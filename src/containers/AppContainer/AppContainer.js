@@ -19,7 +19,7 @@ export default class AppContainer extends Component {
                 <RouterRoutes/>
                 <EventListener/>
             </Container>
-        );
+        )
     }
 }
 

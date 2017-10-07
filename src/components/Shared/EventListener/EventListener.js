@@ -15,8 +15,7 @@ class EventListener extends Component {
 
     componentWillMount() {
         this.props.initChannels()
-        ipcRenderer.on('channel_wentOnline', (event, channel) => this.props.changeStatus(channel));
-        ipcRenderer.on('channel_wentOffline', (event, channel) => this.props.changeStatus(channel));
+        ipcRenderer.on('channel_changeSetting', (event, id, settingName, settingValue) => this.props.changeStatus(id, settingName, settingValue));
         ipcRenderer.on('channel_add', (event, response) => {
             if (response.status) {
                 const {channel} = response;

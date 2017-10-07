@@ -1,50 +1,52 @@
 import {GET_CHANNELS, CHANGE_STATUS, DELETE_CHANNEL, ADD_CHANNEL} from '../actions/channels'
 
-
 const initialState = {
-	online: [],
-	offline: [],
-	channels: [],
+    channels: [],
 };
 
 export default function (state = initialState, action = {}) {
-	switch (action.type) {
-		case GET_CHANNELS:
-			return {
-				...state,
-				channels: action.data,
-				offline: action.data
-			};
-		case CHANGE_STATUS:
-			const channels = [...state.channels.filter((channel) => channel.link !== action.channel.link), action.channel];
-			console.log(channels);
-			const offline = channels.filter((channel) => !channel.isLive)
-			const online = channels.filter((channel) => channel.isLive)
-			return {
-				...state,
-				channels, online, offline
-			}
-		case DELETE_CHANNEL:
-			return {
-				...state,
-				offline: state.offline.filter(item => action.data !== item.link),
-				online: state.online.filter(item => action.data !== item.link)
-			}
-		case ADD_CHANNEL:
-			return {
-				...state,
-				offline: [...state.offline, {link: action.data, name: action.data}]
-			};
-		default:
-			return state
-	}
+    switch (action.type) {
+        case GET_CHANNELS:
+            return {
+                ...state,
+                channels: action.data,
+            };
+
+        case CHANGE_STATUS:
+            let channel = state.channels.find(({id}) => id === action.id);
+
+            if (channel) {
+                channel[action.settingName] = action.settingValue;
+            }
+
+            return {
+                ...state,
+            }
+
+        case DELETE_CHANNEL:
+            return {
+                ...state,
+                channels: state.channels.filter(item => action.id !== item.id),
+            }
+
+        case ADD_CHANNEL:
+            return {
+                ...state,
+                channels: [...state.channels, action.channel]
+            };
+        default:
+            return state
+    }
 }
 // Selectors
+
+export const getChannels = (state) => state.channel && state.channel.channels
+
 export const getOffline = (state) =>
-state.channel && state.channel.offline;
+state.channel && state.channel.channels.filter((channel) => !channel.isLive);
 
 export const getOnline = (state) =>
-state.channel && state.channel.online;
+state.channel && state.channel.channels.filter((channel) => channel.isLive);
 
 
 
