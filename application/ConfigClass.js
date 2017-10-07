@@ -71,6 +71,10 @@ class Config extends EventEmitter {
         this.on('channel_added', (channelObj) => {
             app.mainWindow.webContents.send('channel_add', channelObj);
         });
+
+        this.on('channel_removed', (channelObj) => {
+            app.mainWindow.webContents.send('channel_remove', channelObj.id);
+        });
     }
 
     addChannelLink(channelLink) {
@@ -101,8 +105,6 @@ class Config extends EventEmitter {
         }
 
         _.pull(this.channels, channelObj);
-
-        app.mainWindow.webContents.send('channel_remove', this.id);
 
         this.emit('channel_removed', channelObj);
 

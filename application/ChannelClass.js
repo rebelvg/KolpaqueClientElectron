@@ -127,6 +127,10 @@ class Channel extends EventEmitter {
         }
 
         this.id = md5(this.link);
+
+        this.on('setting_changed', (settingName, settingValue) => {
+            app.mainWindow.webContents.send('channel_changeSetting', this.id, settingName, settingValue);
+        });
     }
 
     update(channelConfig) {
@@ -143,8 +147,6 @@ class Channel extends EventEmitter {
         }
 
         this[settingName] = settingValue;
-
-        app.mainWindow.webContents.send('channel_changeSetting', this.id, settingName, settingValue);
 
         this.emit('setting_changed', settingName, settingValue);
 
