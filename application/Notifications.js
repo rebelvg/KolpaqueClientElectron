@@ -41,7 +41,11 @@ function onBalloonClick(title, content) {
         return;
 
     if (title.indexOf('Stream is Live') === 0) {
-        ChannelPlay.launchPlayerLink(content);
+        let channelObj = settingsJson.findChannelByLink(content);
+
+        if (channelObj) {
+            ChannelPlay.launchPlayerObj(channelObj);
+        }
     }
 
     if (title.indexOf('Client Update Available') === 0) {
@@ -72,6 +76,5 @@ function rebuildIconMenu() {
 }
 
 exports.printNotification = printNotification;
-exports.printNewNotification = printNewNotification;
 exports.onBalloonClick = onBalloonClick;
 exports.rebuildIconMenu = rebuildIconMenu;
