@@ -37,7 +37,7 @@ export class ChannelContainer extends Component {
 
     openMenu = (channel) => {
         const menu = new Menu();
-        const template = menuTemplate(channel, this.deleteChannel);
+        const template = menuTemplate(channel);
         template.map((item) => menu.append(item))
         menu.popup(remote.getCurrentWindow())
     }

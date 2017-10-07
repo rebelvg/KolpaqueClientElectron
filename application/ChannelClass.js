@@ -78,6 +78,7 @@ class Channel extends EventEmitter {
         this.link = channelLink;
         this.protocol = null;
         this.isLive = false;
+        this.onAutoRestart = false;
 
         this.visibleName = null;
         this.isPinned = false;

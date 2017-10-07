@@ -12,16 +12,14 @@ const Notifications = require('./Notifications');
 const ChannelCheck = require('./ChannelCheck');
 const Globals = require('./Globals');
 
-ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = false) => {
+ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
     let channelObj = SettingsFile.settingsJson.findById(id);
 
     if (!channelObj) {
         return false;
     }
 
-    channelObj.autoRestart = autoRestart;
-
-    launchPlayerObj(channelObj, LQ);
+    launchPlayerObj(channelObj, LQ, autoRestart);
 });
 
 function launchPlayerLink(channelLink, LQ = null) {
@@ -34,11 +32,17 @@ function launchPlayerLink(channelLink, LQ = null) {
     launchPlayerObj(channelObj, LQ);
 }
 
-function launchPlayerObj(channelObj, LQ = null) {
+function launchPlayerObj(channelObj, LQ = null, autoRestart = null) {
     let config = SettingsFile.settingsJson;
 
     if (LQ === null) {
         LQ = config.settings.LQ;
+    }
+
+    if (autoRestart === null) {
+        channelObj.changeSetting('onAutoRestart', channelObj.autoRestart);
+    } else {
+        channelObj.changeSetting('onAutoRestart', autoRestart);
     }
 
     let playLink = channelObj.link;
@@ -86,8 +90,10 @@ function launchStreamlink(playLink, params, channelObj) {
             Notifications.printNotification('Error', error[1]);
         }
 
-        if (channelObj.isLive && channelObj.autoRestart) {
+        if (channelObj.isLive && channelObj.onAutoRestart) {
             launchStreamlink(playLink, params, channelObj);
+        } else {
+            channelObj.changeSetting('onAutoRestart', false);
         }
     });
 }
