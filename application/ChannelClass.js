@@ -1,4 +1,4 @@
-const {ipcMain, shell, clipboard} = require('electron');
+const {app, ipcMain, shell, clipboard} = require('electron');
 const {URL} = require('url');
 const _ = require('lodash');
 const EventEmitter = require('events');
@@ -143,6 +143,8 @@ class Channel extends EventEmitter {
         }
 
         this[settingName] = settingValue;
+
+        app.mainWindow.webContents.send('channel_changeSetting', this.id, settingName, settingValue);
 
         this.emit('setting_changed', settingName, settingValue);
 
