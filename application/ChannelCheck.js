@@ -234,7 +234,6 @@ function twitchImportChannels(channels, i) {
         let channelObj = SettingsFile.addChannel(channel.channel.url, false);
 
         if (channelObj !== false) {
-            app.mainWindow.webContents.send('channel_add', channelObj);
             i++;
         }
     });
@@ -323,10 +322,6 @@ function autoKlpqImport() {
                     let channelUrl = protocol + "//" + host + pathname;
 
                     let channelObj = SettingsFile.addChannel(channelUrl, false);
-
-                    if (channelObj !== false) {
-                        app.mainWindow.webContents.send('channel_add', channelObj);
-                    }
                 });
             }
         });
@@ -360,7 +355,7 @@ function checkNewVersion() {
 
             clientVersion = body[0].tag_name;
 
-            app.mainWindow.webContents.send('check-update', {text: 'Client Update Available'});
+            app.mainWindow.webContents.send('client_showUpdate', 'Client Update Available');
         }
     });
 }

@@ -45,12 +45,6 @@ function saveLoop(config) {
     }, 5 * 60 * 1000);
 }
 
-function addChannel(config, channelObj) {
-    config.channels.push(channelObj);
-
-    config.emit('channel_added', channelObj);
-}
-
 class Config extends EventEmitter {
     constructor() {
         super();
@@ -73,6 +67,10 @@ class Config extends EventEmitter {
         readFile(this);
 
         saveLoop(this);
+
+        this.on('channel_added', (channelObj) => {
+            app.mainWindow.webContents.send('channel_add', channelObj);
+        });
     }
 
     addChannelLink(channelLink) {
@@ -88,7 +86,9 @@ class Config extends EventEmitter {
             return false;
         }
 
-        addChannel(this, channelObj);
+        this.channels.push(channelObj);
+
+        this.emit('channel_added', channelObj);
 
         return channelObj;
     }
@@ -101,6 +101,8 @@ class Config extends EventEmitter {
         }
 
         _.pull(this.channels, channelObj);
+
+        app.mainWindow.webContents.send('channel_remove', this.id);
 
         this.emit('channel_removed', channelObj);
 

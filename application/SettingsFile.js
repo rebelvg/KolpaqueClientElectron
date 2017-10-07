@@ -20,23 +20,11 @@ ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
 });
 
 ipcMain.on('channel_add', (event, channelLink) => {
-    let channelObj = config.addChannelLink(channelLink);
-
-    if (channelObj === false) {
-        return false;
-    }
-
-    return event.sender.send('channel_add', channelObj);
+    return config.addChannelLink(channelLink);
 });
 
 ipcMain.on('channel_remove', (event, id) => {
-    let res = config.removeChannelById(id);
-
-    console.log(id, res);
-
-    if (res) {
-        return event.sender.send('channel_remove', id);
-    }
+    return config.removeChannelById(id);
 });
 
 ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
@@ -46,11 +34,7 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
         return false;
     }
 
-    let res = channelObj.changeSetting(settingName, settingValue);
-
-    if (res) {
-        return event.sender.send('channel_changeSetting', id, settingName, settingValue);
-    }
+    channelObj.changeSetting(settingName, settingValue);
 });
 
 ipcMain.once('getChannels', (event) => (event.returnValue = returnChannels()));
