@@ -1,6 +1,8 @@
 const electron = require('electron');
 const {app, BrowserWindow, clipboard, shell, globalShortcut, ipcMain, Menu, Tray, nativeImage} = require('electron');
 const _ = require('lodash');
+const path = require('path');
+const url = require('url');
 const fixPath = require('fix-path');
 
 const ChannelCheck = require('./application/ChannelCheck');
@@ -17,6 +19,7 @@ const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);
 
 let settingsJson = SettingsFile.settingsJson;
+let forceQuit = false;
 
 ipcMain.once('client_ready', () => {
     console.log('client ready.');
@@ -29,9 +32,6 @@ ipcMain.once('client_ready', () => {
 
     VersionCheck.checkLoop();
 });
-
-const path = require('path');
-const url = require('url');
 
 let iconPath = path.normalize(path.join(__dirname, 'icon.png'));
 let iconPathTray = path.normalize(path.join(__dirname, 'icon32.png'));
