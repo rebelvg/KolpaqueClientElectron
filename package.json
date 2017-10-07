@@ -54,7 +54,6 @@
     "lodash": "^4.17.4",
     "md5": "^2.2.1",
     "moment": "^2.18.1",
-    "node-notifier": "^5.1.2",
     "normalize.css": "^7.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",

@@ -203,10 +203,6 @@ app.on('ready', () => {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     });
 
-    appIcon.on('balloon-click', function (balloon) {
-        Notifications.onBalloonClick(appIcon.title, appIcon.content);
-    });
-
     app.appIcon = appIcon;
 
     Notifications.rebuildIconMenu();

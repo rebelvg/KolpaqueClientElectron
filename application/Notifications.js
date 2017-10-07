@@ -5,7 +5,6 @@
 const {app, shell, Menu, Notification} = require('electron');
 const path = require('path');
 const request = require('request');
-const notifier = require('node-notifier');
 
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
@@ -16,22 +15,12 @@ function printNotification(title, content) {
     if (!settingsJson.settings.showNotifications)
         return;
 
-    app.appIcon.title = title;
-    app.appIcon.content = content;
-
-    if (settingsJson.settings.useLegacyNotifications) {
-        if (process.platform === 'win32') {
-            printNotificationWin(title, content);
-        } else {
-            printNotificationMac(title, content);
-        }
-    } else {
-        printNewNotification(title, content);
-    }
+    printNewNotification(title, content);
 }
 
 function printNewNotification(title, content) {
     let notification = new Notification({
+        icon: app.appIcon.iconPathBalloon,
         title: title,
         body: content
     });
@@ -41,27 +30,6 @@ function printNewNotification(title, content) {
     });
 
     notification.show();
-}
-
-function printNotificationWin(title, content) {
-    app.appIcon.displayBalloon({
-        icon: app.appIcon.iconPathBalloon,
-        title: title,
-        content: content
-    });
-}
-
-function printNotificationMac(title, content) {
-    notifier.notify({
-        icon: app.appIcon.iconPathBalloon,
-        title: title,
-        message: content,
-        sound: false,
-        wait: true
-    }, function (err, response) {
-        if (response === 'activate')
-            onBalloonClick(title, content);
-    });
 }
 
 function onBalloonClick(title, content) {
