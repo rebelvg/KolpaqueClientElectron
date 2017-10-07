@@ -27,8 +27,8 @@ export class ChannelContainer extends Component {
         ipcRenderer.send('channel_play', channelObj.id);
     }
 
-    addChannel = ({channelLink}) => {
-        ipcRenderer.send('channel_add', channelLink);
+    addChannel = ({channel}) => {
+        ipcRenderer.send('channel_add', channel);
     }
 
     deleteChannel = (channelObj) => {

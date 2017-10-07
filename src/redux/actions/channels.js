@@ -21,7 +21,7 @@ export function initChannels() {
 export function deleteChannel(id) {
     return {
         type: DELETE_CHANNEL,
-        data: id
+        id
     }
 }
 
