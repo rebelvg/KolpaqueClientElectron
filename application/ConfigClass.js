@@ -62,7 +62,8 @@ class Config extends EventEmitter {
             width: 400,
             height: 900,
             youtubeApiKey: null,
-            twitchImport: []
+            twitchImport: [],
+            useLegacyNotifications: false
         };
 
         readFile(this);

@@ -2,7 +2,7 @@
  * Created by rebel on 27/03/2017.
  */
 
-const {app, shell, Menu} = require('electron');
+const {app, shell, Menu, Notification} = require('electron');
 const path = require('path');
 const request = require('request');
 const notifier = require('node-notifier');
@@ -19,11 +19,28 @@ function printNotification(title, content) {
     app.appIcon.title = title;
     app.appIcon.content = content;
 
-    if (process.platform === 'win32') {
-        printNotificationWin(title, content);
+    if (settingsJson.settings.useLegacyNotifications) {
+        if (process.platform === 'win32') {
+            printNotificationWin(title, content);
+        } else {
+            printNotificationMac(title, content);
+        }
     } else {
-        printNotificationMac(title, content);
+        printNewNotification(title, content);
     }
+}
+
+function printNewNotification(title, content) {
+    let notification = new Notification({
+        title: title,
+        body: content
+    });
+
+    notification.on('click', function (event) {
+        onBalloonClick(title, content);
+    });
+
+    notification.show();
 }
 
 function printNotificationWin(title, content) {
@@ -87,5 +104,6 @@ function rebuildIconMenu() {
 }
 
 exports.printNotification = printNotification;
+exports.printNewNotification = printNewNotification;
 exports.onBalloonClick = onBalloonClick;
 exports.rebuildIconMenu = rebuildIconMenu;
