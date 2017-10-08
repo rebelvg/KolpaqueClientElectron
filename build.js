@@ -43,7 +43,7 @@ options.out = path.join(outPathRl, 'KolpaqueClientElectron');
 
 console.log(options);
 
-packager(options, function done_callback(err, appPaths) {
+packager(options, function (err, appPaths) {
     if (err) {
         console.log(err);
     }
