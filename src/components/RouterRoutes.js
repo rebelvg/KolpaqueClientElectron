@@ -1,15 +1,15 @@
 import React from 'react';
 import {Route} from 'react-router-dom';
 import styled from 'styled-components'
-import About from './Shared/About';
-import Counter from './Shared/Counter';
+
 
 import ChannelContainer from '../containers/ChannelsContainer/ChannelContainer';
+import SettingsContainer from '../containers/SettingsContainer/SettingsContainer';
 
 const RouterRoutes = () => (
     <RouterWrapper>
         <Route exact path="/" component={ChannelContainer}/>
-        <Route path="/about" component={About}/>
+        <Route path="/about" component={SettingsContainer}/>
     </RouterWrapper>
 );
 

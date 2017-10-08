@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {initChannels, changeStatus, deleteChannel, addChannel} from '../../../redux/actions/channels'
+import {initSettings} from '../../../redux/actions/settings'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -14,6 +15,7 @@ class EventListener extends Component {
 
     componentWillMount() {
         this.props.initChannels();
+        this.props.initSettings();
         ipcRenderer.on('channel_changeSetting', (event, id, settingName, settingValue) => this.props.changeStatus(id, settingName, settingValue));
         ipcRenderer.on('channel_add', (event, channelObj) => {
             this.props.addChannel(channelObj);
@@ -37,6 +39,7 @@ const EventContainer = styled.div`
 export default connect(
     (state) => ({}),
     (dispatch) => bindActionCreators({
+        initSettings,
         initChannels,
         changeStatus,
         deleteChannel,

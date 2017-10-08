@@ -14,10 +14,11 @@ export default function (state = initialState, action = {}) {
 
         case CHANGE_STATUS:
             let channel = state.channels.find(({id}) => id === action.id);
-
+            console.log(channel);
             if (channel) {
                 channel[action.settingName] = action.settingValue;
             }
+            console.log(channel);
 
             return {
                 ...state,

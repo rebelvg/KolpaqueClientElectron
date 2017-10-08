@@ -9,7 +9,7 @@ import './style.css';
 import ChannelWrapper from '../../components/Channels/ChannelWrapper/ChannelWrapper'
 import Channel from '../../components/Channels/Channel/Channel'
 import ChannelForm from '../../components/Channels/ChannelForm/ChannelForm'
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
+//import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import menuTemplate from '../../helper/menu'
 
 const {remote, ipcRenderer} = window.require('electron');
@@ -20,6 +20,7 @@ export class ChannelContainer extends Component {
         super()
         this.state = {
             selected: null,
+            tab: 'online'
         }
     }
 
@@ -35,6 +36,11 @@ export class ChannelContainer extends Component {
         ipcRenderer.send('channel_remove', channelObj.id);
     }
 
+    changeSetting = (id, settingName, settingValue) => {
+        console.log('nigga')
+        ipcRenderer.send('channel_changeSetting', id, settingName, settingValue)
+    }
+
     openMenu = (channel) => {
         const menu = new Menu();
         const template = menuTemplate(channel);
@@ -46,53 +52,51 @@ export class ChannelContainer extends Component {
         this.setState({selected: channel})
     }
 
-    componentWillMount() {
-
-    }
-
-    componentDidMount() {
-
+    changeTab = (tab) => {
+        this.setState({tab: tab})
     }
 
     render() {
         const {online, offline} = this.props;
-        const {selected} = this.state;
+        const {selected, tab} = this.state;
         return (
             <StyledContainerWrapper>
-                <Tabs>
-                    <TabWrapper>
-                        <TabList className="tabs">
-                            <Tab className='tab' selectedClassName="active">
-                                Online ({online.length})
-                            </Tab>
-                            <Tab className='tab' selectedClassName="active">
-                                Offline ({offline.length})
-                            </Tab>
-                        </TabList>
-                        <SettingsIcon onClick={() => {
-                            console.log('click')
-                        }} to="/about">
-                            <Ionicon icon="ion-gear-b" color="black"/>
-                        </SettingsIcon>
-                    </TabWrapper>
-                    <TabPanel className='tab-panel'>
-                        <ChannelWrapper
-                            selected={selected}
-                            selectChannel={this.selectChannel}
-                            playChannel={this.playChannel}
-                            handleClick={this.openMenu}
-                            channels={online}
-                        />
-                    </TabPanel>
-                    <TabPanel className='tab-panel'>
-                        <ChannelWrapper
-                            selected={selected}
-                            selectChannel={this.selectChannel}
-                            playChannel={this.playChannel}
-                            handleClick={this.openMenu}
-                            channels={offline}/>
-                    </TabPanel>
-                </Tabs>
+
+                <TabWrapper>
+                    <TabList>
+                        <Tab active={tab === 'online'} onClick={() => this.changeTab('online')}>
+                            Online ({online.length})
+                        </Tab>
+                        <Tab active={tab === 'offline'} onClick={() => this.changeTab('offline')}>
+                            Offline ({offline.length})
+                        </Tab>
+                    </TabList>
+                    <SettingsIcon onClick={() => {
+                        console.log('click')
+                    }} to="/about">
+                        <Ionicon icon="ion-gear-b" color="black"/>
+                    </SettingsIcon>
+                </TabWrapper>
+                <TabPanel active={tab === 'online'}>
+                    <ChannelWrapper
+                        selected={selected}
+                        selectChannel={this.selectChannel}
+                        playChannel={this.playChannel}
+                        changeSetting={this.changeSetting}
+                        handleClick={this.openMenu}
+                        channels={online}
+                    />
+                </TabPanel>
+                <TabPanel active={tab === 'offline'}>
+                    <ChannelWrapper
+                        selected={selected}
+                        selectChannel={this.selectChannel}
+                        changeSetting={this.changeSetting}
+                        playChannel={this.playChannel}
+                        handleClick={this.openMenu}
+                        channels={offline}/>
+                </TabPanel>
+
 
                 <StyledFooter className="fixed-bottom">
                     <ChannelForm onSubmit={this.addChannel}/>
@@ -101,6 +105,42 @@ export class ChannelContainer extends Component {
         );
     }
 }
+
+const TabList = styled.div`
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    border-bottom: 1px solid lightgray;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 24px;
+`
+
+const Tab = styled.div`
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 12px;
+    background-color: white;
+    height: 105px;
+    outline: 1px solid #969696;
+    width: 21px;
+    cursor: pointer;
+    align-items: center;
+    box-sizing: content-box;
+    ${props => props.active && ("box-shadow: inset -1px 0px 0px 0px #119400; border-right: 2px solid #119400;")}
+`
+
+const TabPanel = styled.div`
+    overflow-y: auto;
+    width: 100%;
+    display: ${props => props.active ? 'initial' : 'none'};
+    max-height: 100vh;
+`
+
 
 const StyledFooter = styled.div`
     background-color: #D7D7D7;

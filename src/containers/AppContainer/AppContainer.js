@@ -12,7 +12,6 @@ export default class AppContainer extends Component {
         super()
     }
 
-
     render() {
         return (
             <Container>
