@@ -5,8 +5,8 @@
     display: flex;
     border-bottom: 1px solid lightgray;
     flex-direction: column;
-
-    width: 30px;
+    align-items: flex-end;
+    width: 24px;
 }
 
 .tab {
@@ -14,19 +14,20 @@
     justify-content: center;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    padding: 10px 0px;
-    border-right: 5px solid transparent;
-    font-size: 14px;
+    font-size: 12px;
     background-color: white;
     height: 105px;
     outline: 1px solid #969696;
-    width: 30px;
+    width: 21px;
     cursor: pointer;
+    align-items: center;
+    box-sizing: content-box;
 }
 
 .tab.active {
 
-    border-right: 5px solid #B6B6B6;
+    box-shadow: inset -1px 0px 0px 0px #119400;
+    border-right: 2px solid #119400;
 }
 
 .pinned-channel {
