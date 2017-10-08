@@ -54,11 +54,8 @@ class Config extends EventEmitter {
         this.settings = {
             LQ: false,
             showNotifications: true,
-            autoPlay: false,
             minimizeAtStart: false,
             launchOnBalloonClick: true,
-            enableLog: false,
-            theme: "light",
             width: 400,
             height: 900,
             youtubeApiKey: null,

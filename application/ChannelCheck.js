@@ -42,7 +42,7 @@ function isOnline(channelObj, printBalloon) {
         Notifications.printNotification('Stream is Live (' + moment().format('D/MMM, H:mm') + ')', channelObj.link);
     }
 
-    if (settingsJson.settings.autoPlay) {
+    if (channelObj.autoStart) {
         ChannelPlay.launchPlayerObj(channelObj);
     }
 
