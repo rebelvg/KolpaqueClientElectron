@@ -68,13 +68,21 @@ function createWindow() {
     mainWindow.setMenu(null);
 
     // and load the index.html of the app.
-    mainWindow.loadURL(
-        'http://localhost:3000'
-    );
+
 
     if (isDev) {
+        mainWindow.loadURL(
+            'http://localhost:3000'
+        );
         // Open the DevTools.
         mainWindow.webContents.openDevTools();
+    }
+    else {
+        mainWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'dist/index.html'),
+            protocol: 'file:',
+            slashes: true
+        }));
     }
 
     mainWindow.on('minimize', function () {

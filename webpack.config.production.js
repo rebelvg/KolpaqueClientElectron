@@ -8,54 +8,41 @@ module.exports = {
         rules: [
             {
                 test: /.js/,
-                exclude: /(node_modules|bower_components)/,
+                exclude: /node_modules/,
                 include: [
                     path.resolve(__dirname, "src"),
                 ],
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['env', 'react', 'es2015', 'es2016', 'es2017'],
+                        presets: ['env', 'stage-0', 'react', 'es2015', 'es2016', 'es2017'],
                         plugins: [
                             'transform-class-properties',
-                        ],
-                    }
-                },
-            },
-            {
-                exclude: /(node_modules|bower_components)/,
-                include: [
-                    path.resolve(__dirname, "src"),
-                ],
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['env', 'react', 'es2015', 'es2016', 'es2017'],
-                        plugins: [
-                            'transform-class-properties',
+                            'react-html-attrs',
+                            'transform-decorators-legacy'
                         ],
                     }
                 },
             },
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader?modules']
+                loader: 'style-loader!css-loader'
             },
         ],
     },
-    plugins: [
-        new HtmlWebpackPlugin(),
-    ],
-    devtool: 'source-map',
     resolve: {
         alias: {
-            src: path.resolve(__dirname, 'src'),
+            src: path.resolve(__dirname, './src'),
         },
-        extensions: ['css', 'js', 'jsx'],
     },
+    plugins: [
+        new HtmlWebpackPlugin({
+            title: "Kolpaque Client"
+        }),
+    ],
     output: {
         filename: 'bundle.js',
-        publicPath: '/',
+        publicPath: './',
         path: path.resolve(__dirname, 'dist')
     }
 };
