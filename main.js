@@ -68,8 +68,6 @@ function createWindow() {
     mainWindow.setMenu(null);
 
     // and load the index.html of the app.
-
-
     if (isDev) {
         mainWindow.loadURL(
             'http://localhost:3000'
