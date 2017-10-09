@@ -78,6 +78,8 @@ function launchStreamlink(playLink, params, channelObj) {
                     message: 'Streamlink not found.'
                 });
 
+                channelObj.changeSetting('onAutoRestart', false);
+
                 return shell.openExternal(`https://github.com/streamlink/streamlink/releases`);
             } else {
                 Notifications.printNotification('Error', err.message);

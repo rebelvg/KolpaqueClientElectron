@@ -3,14 +3,9 @@ const {app, Menu, shell, BrowserWindow, MenuItem} = remote;
 
 const menuTemplate = (channel) => [
     new MenuItem({
-        label: 'Play', click: function () {
-            ipcRenderer.send('channel_play', channel.id, false);
-        }
-    }),
-    new MenuItem({
-        label: 'Play LQ', click: function () {
-            ipcRenderer.send('channel_play', channel.id, true);
-        }
+        label: 'Play', click: function (menuItem, browserWindow, event) {
+            ipcRenderer.send('channel_play', channel.id, event.ctrlKey);
+        }, sublabel: 'Ctrl for LQ'
     }),
     new MenuItem({
         label: 'Open Page', click: function () {

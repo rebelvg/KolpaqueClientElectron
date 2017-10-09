@@ -37,7 +37,6 @@ export class ChannelContainer extends Component {
     }
 
     changeSetting = (id, settingName, settingValue) => {
-        console.log('nigga')
         ipcRenderer.send('channel_changeSetting', id, settingName, settingValue)
     }
 

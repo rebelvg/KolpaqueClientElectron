@@ -167,6 +167,12 @@ let contextMenuTemplate = [
     }
     },
     {
+        label: 'Notifications', type: 'checkbox', click: (menuItem) => {
+        console.log(menuItem.checked);
+        SettingsFile.settingsJson.settings.showNotifications = menuItem.checked;
+    }, checked: SettingsFile.settingsJson.settings.showNotifications
+    },
+    {
         label: 'Close Client', type: 'normal', click: () => {
         forceQuit = true;
         app.quit();
