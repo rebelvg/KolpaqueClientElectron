@@ -179,7 +179,7 @@ let contextMenuTemplate = [
     }, checked: SettingsFile.settingsJson.settings.showNotifications
     },
     {
-        label: 'Close Client', type: 'normal', click: () => {
+        label: 'Quit Client', type: 'normal', click: () => {
         forceQuit = true;
         app.quit();
     }

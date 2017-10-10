@@ -22,6 +22,18 @@ ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
     launchPlayerObj(channelObj, LQ, autoRestart);
 });
 
+ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
+    let channelObj = SettingsFile.settingsJson.findById(id);
+
+    if (!channelObj) {
+        return false;
+    }
+
+    if (channelObj._processes.length > 0 && settingName === 'autoRestart' && settingValue) {
+        channelObj.changeSetting('onAutoRestart', true);
+    }
+});
+
 function launchPlayerLink(channelLink, LQ = null) {
     let channelObj = Globals.buildChannelObj(channelLink);
 
@@ -66,7 +78,7 @@ function launchPlayerObj(channelObj, LQ = null, autoRestart = null) {
 function launchStreamlink(playLink, params, channelObj) {
     console.log(playLink, params);
 
-    child('streamlink', [playLink, 'best', '--twitch-disable-hosting'].concat(params), function (err, data, stderr) {
+    let childProcess = child('streamlink', [playLink, 'best', '--twitch-disable-hosting'].concat(params), function (err, data, stderr) {
         console.log(err);
         console.log(data);
         console.log('streamlink exited.');
@@ -98,6 +110,14 @@ function launchStreamlink(playLink, params, channelObj) {
             channelObj.changeSetting('onAutoRestart', false);
         }
     });
+
+    channelObj._processes.push(childProcess);
+
+    childProcess.on('exit', () => {
+        _.pull(channelObj._processes, childProcess);
+    });
+
+    return childProcess;
 }
 
 function launchLastClosed() {
