@@ -75,8 +75,7 @@ function createWindow() {
 
         // Open the DevTools.
         mainWindow.webContents.openDevTools();
-    }
-    else {
+    } else {
         mainWindow.loadURL(url.format({
             pathname: path.join(__dirname, 'dist/index.html'),
             protocol: 'file:',
