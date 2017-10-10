@@ -78,7 +78,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}, 
                 <InputField
                     name="youtubeApiKey"
                     component="input"
-                    type="text"
+                    type="password"
                 />
             </InputWrapper>
         </FieldWrapper>
