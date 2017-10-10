@@ -3,12 +3,44 @@ import Ionicon from 'react-ionicons'
 import styled from 'styled-components'
 import {Field, reduxForm} from 'redux-form'
 
+const {remote} = window.require('electron');
+const {Menu} = remote;
+
+
+let template = [
+    {
+        label: 'Cut',
+        accelerator: 'CmdOrCtrl+X',
+        role: 'cut'
+    },
+    {
+        label: 'Copy',
+        accelerator: 'CmdOrCtrl+C',
+        role: 'copy'
+    },
+    {
+        label: 'Paste',
+        accelerator: 'CmdOrCtrl+V',
+        role: 'paste'
+    },
+    {
+        label: 'Select All',
+        accelerator: 'CmdOrCtrl+A',
+        role: 'selectall'
+    }
+];
+
+const openMenu = () => {
+    var macMenu = Menu.buildFromTemplate(template);
+    macMenu.popup(remote.getCurrentWindow());
+}
+
 let ChannelForm = (props) => {
     const {handleSubmit} = props
     return (
         <form onSubmit={ handleSubmit }>
             <StyledChannelFormWrap>
-                <StyledInput component="input" name="channel" placeholder="Add Channel" type="text"/>
+                <StyledInput onContextMenu={() => openMenu()} component="input" name="channel" placeholder="Add Channel" type="text"/>
                 <button type="submit">
                     <StyledIcon fontSize="24px" icon="ion-plus"/>
                 </button>
