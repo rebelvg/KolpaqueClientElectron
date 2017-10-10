@@ -7,8 +7,9 @@ export default class Settings extends Component {
         super();
     }
 
-    onSettingsChange = () => {
-
+    getSetting = (value, name) => {
+        value = value ? value : false;
+        console.log(name + " = " + value);
     }
 
     onSettingsSubmit = (values) => {
@@ -20,7 +21,8 @@ export default class Settings extends Component {
         return (
             <Container>
                 <PageTitle>Settings Page</PageTitle>
-                <SettingsForm initialValues={settings} onSubmit={this.onSettingsSubmit}/>
+                <SettingsForm initialValues={settings} getSettings={this.getSetting}
+                              onSubmit={this.onSettingsSubmit}/>
             </Container>
         )
     }

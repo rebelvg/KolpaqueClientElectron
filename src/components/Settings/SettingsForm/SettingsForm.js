@@ -9,14 +9,18 @@ import styled from 'styled-components'
 
 const renderToggleInput = (field) => (
     <div>
-        <Toggle checked={field.input.value} onChange={field.input.onChange} icons={false}/>
+        <Toggle checked={!!field.input.value} onChange={field.input.onChange} icons={false}/>
     </div>
 );
 /* { "LQ": false, "showNotifications": true, "autoPlay": false, "minimizeAtStart": false, "launchOnBalloonClick": true, "enableLog": false, "theme": "light", "width": 409, "height": 743, "youtubeApiKey": null, "twitchImport": [ "rebelvg" ] }
  */
+let timer = null;
+const changeValue = (e, value, valueOld) => {
+
+}
 
 
-const SettingsForm = ({handleSubmit, pristine, reset, submitting}, initialValues) => (
+const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}, initialValues) => (
     <Form initialValues={initialValues} onSubmit={handleSubmit}>
         <FieldWrapper>
             <Label>LQ</Label>
@@ -25,6 +29,9 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting}, initialValues
                     name="LQ"
                     label="LQ"
                     component={renderToggleInput}
+                    onChange={(e, v,) => {
+                        getSettings(!!v, 'LQ')
+                    }}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -34,6 +41,9 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting}, initialValues
                 <Field
                     name="showNotifications"
                     component={renderToggleInput}
+                    onChange={(e, v,) => {
+                        getSettings(!!v, 'showNotifications')
+                    }}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -43,6 +53,9 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting}, initialValues
                 <Field
                     name="minimizeAtStart"
                     component={renderToggleInput}
+                    onChange={(e, v,) => {
+                        getSettings(!!v, 'minimizeAtStart')
+                    }}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -52,6 +65,9 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting}, initialValues
                 <Field
                     name="launchOnBalloonClick"
                     component={renderToggleInput}
+                    onChange={(e, v,) => {
+                        getSettings(!!v, 'launchOnBalloonClick')
+                    }}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -60,7 +76,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting}, initialValues
             <Label>Youtube Api Key</Label>
             <InputWrapper>
                 <InputField
-                    name="employed"
+                    name="youtubeApiKey"
                     component="input"
                     type="text"
                 />
