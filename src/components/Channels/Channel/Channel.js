@@ -1,5 +1,9 @@
 import React from 'react';
-import Ionicon from 'react-ionicons'
+import Icon from 'react-icons-kit';
+import {refresh} from 'react-icons-kit/fa/refresh';
+import {twitch} from 'react-icons-kit/fa/twitch';
+import {lowVision} from 'react-icons-kit/fa/lowVision';
+import {eye} from 'react-icons-kit/fa/eye';
 import styled from 'styled-components'
 
 const getAutoRestartColor = (autoRestart, onAutoRestart) => {
@@ -11,12 +15,15 @@ const getAutoRestartColor = (autoRestart, onAutoRestart) => {
 }
 
 const renderIcon = (service) => {
-    if (service === 'twitch') {
-        return <Ionicon fontSize="16px" color="#6441a5" icon="ion-social-twitch-outline"/>
+    switch (service) {
+        case 'twitch':
+            return <Twitch fontSize="12px" icon={twitch}/>
+        case 'klpq-vps':
+            return <KLPQ icon={eye} fontSize="12px"/>
+        default:
+            return <KLPQ icon={lowVision} fontSize="12px"/>
     }
-    else {
-        return <Ionicon icon="ion-eye" fontSize="16px" color="dark-green"/>
-    }
+
 };
 
 const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, changeSetting) => (
@@ -28,8 +35,10 @@ const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, changeSetti
             : changeSetting(id, 'autoRestart', !autoRestart)
     }
     }>
-        <Ionicon icon="ion-android-arrow-dropleft-circle" style={{height: "25px"}}
-                 color={getAutoRestartColor(autoRestart, onAutoRestart)}/>
+
+        <IconBase icon={refresh}
+                  style={{color: getAutoRestartColor(autoRestart, onAutoRestart)}}/>
+
     </IconWrapper>
 )
 
@@ -40,8 +49,9 @@ const renderAutoStart = ({autoStart, id}, changeSetting) => (
         changeSetting(id, 'autoStart', !autoStart)
     }
     }>
-        <Ionicon icon="ion-eye" style={{height: "25px"}}
-                 color={autoStart ? "black" : "#979797"}/>
+
+        <img width="12px" height="12px"
+             src={autoStart ? "./static/icons/autostart_on.svg" : "./static/icons/autostart_off.svg" }/>
     </IconWrapper>
 )
 
@@ -86,7 +96,7 @@ const IconWrapper = styled.div`
 const Icons = styled.div`
     display: flex;
     height: 25px;
-    flex-direction: row;
+    flex-direction: row-reverse;
 `
 const ChannelData = styled.div`
     flex-grow: 2;
@@ -94,6 +104,17 @@ const ChannelData = styled.div`
     flex-direction: row;
 `
 
+const IconBase = styled(Icon)`
+    width: 12px;
+    height: 12px
+`
+
+const KLPQ = styled(Icon)`
+    color: darkgreen
+`
+const Twitch = styled(Icon)`
+    color: #6441a5
+`
 const StyledIcon = styled.div`
     margin-right: 5px;
     display: flex;

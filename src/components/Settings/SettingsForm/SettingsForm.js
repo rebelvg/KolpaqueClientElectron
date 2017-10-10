@@ -5,6 +5,7 @@ import React from 'react'
 import {Field, reduxForm} from 'redux-form'
 import Toggle from 'react-toggle';
 import './toggle.css';
+import styled from 'styled-components'
 
 const renderToggleInput = (field) => (
     <div>
@@ -16,63 +17,88 @@ const renderToggleInput = (field) => (
 
 
 const SettingsForm = ({handleSubmit, pristine, reset, submitting}, initialValues) => (
-    <form initialValues={initialValues} onSubmit={handleSubmit}>
-        <div>
-            <label>LQ</label>
-            <div>
+    <Form initialValues={initialValues} onSubmit={handleSubmit}>
+        <FieldWrapper>
+            <Label>LQ</Label>
+            <InputWrapper>
                 <Field
                     name="LQ"
                     label="LQ"
                     component={renderToggleInput}
                 />
-            </div>
-        </div>
-        <div>
-            <label>Show Notifications</label>
-            <div>
+            </InputWrapper>
+        </FieldWrapper>
+        <FieldWrapper>
+            <Label>Show Notifications</Label>
+            <InputWrapper>
                 <Field
                     name="showNotifications"
                     component={renderToggleInput}
                 />
-            </div>
-        </div>
-        <div>
-            <label>Minimize At Start</label>
-            <div>
+            </InputWrapper>
+        </FieldWrapper>
+        <FieldWrapper>
+            <Label>Minimize At Start</Label>
+            <InputWrapper>
                 <Field
                     name="minimizeAtStart"
                     component={renderToggleInput}
                 />
-            </div>
-        </div>
-        <div>
-            <label>Launch On Balloon Click</label>
-            <div>
+            </InputWrapper>
+        </FieldWrapper>
+        <FieldWrapper>
+            <Label>Launch On Balloon Click</Label>
+            <InputWrapper>
                 <Field
                     name="launchOnBalloonClick"
                     component={renderToggleInput}
                 />
-            </div>
-        </div>
-       
-        <div>
-            <label>Youtube Api Key</label>
-            <div>
-                <Field
+            </InputWrapper>
+        </FieldWrapper>
+
+        <FieldWrapper full>
+            <Label>Youtube Api Key</Label>
+            <InputWrapper>
+                <InputField
                     name="employed"
                     component="input"
                     type="text"
                 />
-            </div>
-        </div>
+            </InputWrapper>
+        </FieldWrapper>
 
         <div>
             <button type="submit" disabled={pristine || submitting}>
                 Submit
             </button>
         </div>
-    </form>
+    </Form>
 )
+
+const Form = styled.form`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+`
+
+const FieldWrapper = styled.div`
+    display: flex;
+    flex-direction: ${props => !!props.full ? 'column' : 'row' };
+    justify-content: space-between;
+    margin: 10px 20px;
+`
+
+const Label = styled.label`
+    font-weight: bold;
+`
+
+const InputWrapper = styled.div`
+   
+`
+
+const InputField = styled(Field)`
+    width: 100%;
+`
 
 export default reduxForm({
     form: 'settings' // a unique identifier for this form

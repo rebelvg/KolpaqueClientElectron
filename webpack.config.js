@@ -29,6 +29,10 @@ module.exports = {
                 },
             },
             {
+                test: /\.(jpe?g|gif|png|svg|woff|ttf|wav|mp3)$/,
+                loader: "file"
+            },
+            {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
             },
@@ -58,7 +62,7 @@ module.exports = {
         fs: 'empty'
     },
     output: {
-        filename: 'bundle.js',
+        filename: 'dev_bundle.js',
         publicPath: '/',
         path: path.resolve(__dirname, 'dist')
     }

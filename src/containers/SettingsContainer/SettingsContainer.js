@@ -21,13 +21,23 @@ export class SettingsContainer extends Component {
         const {settings} = this.props;
         const {selected, tab} = this.state;
         return (
-            <div>
+            <Container>
                 <Settings settings={settings}/>
-                <Link to="/">back</Link>
-            </div>
+                <StyledLink to="/">back</StyledLink>
+            </Container>
         );
     }
 }
+
+const Container = styled.div`
+   width: 100%;
+   height: 100%;
+`
+
+const StyledLink = styled(Link)`
+    position: absolute;
+    bottom: 0px;
+`
 
 export default connect(
     (state) => ({

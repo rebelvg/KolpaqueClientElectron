@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js',
@@ -28,17 +29,28 @@ module.exports = {
                 test: /\.css$/,
                 loader: 'style-loader!css-loader'
             },
+            {
+                include: [
+                    path.resolve(__dirname, "static"),
+                ],
+                test: /\.(jpe?g|gif|png|svg|woff|ttf|wav|mp3)$/,
+                loader: "file"
+            }
         ],
     },
     resolve: {
         alias: {
             src: path.resolve(__dirname, './src'),
+            static: path.resolve(__dirname, './static'),
         },
     },
     plugins: [
         new HtmlWebpackPlugin({
             title: "Kolpaque Client"
         }),
+        new CopyWebpackPlugin([
+            {from: 'static', to: 'static'}
+        ]),
     ],
     output: {
         filename: 'bundle.js',
