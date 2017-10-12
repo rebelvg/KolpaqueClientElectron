@@ -2,11 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import {HashRouter} from 'react-router-dom'
-import styled from 'styled-components'
-import AppContainer from './containers/AppContainer/AppContainer'
-import RouterRoutes from './components/RouterRoutes'
+import AppContainer from './App/Containers/AppContainer'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'normalize.css/normalize.css'
+import './style.css'
 import store from './store';
 
 const appElement = document.createElement('div');
