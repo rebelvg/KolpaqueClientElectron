@@ -1,8 +1,14 @@
+@font-face {
+    font-family: "Helvetica";
+    src: url("../static/fonts/helvetica.ttf");
+}
+
 body {
     overflow: hidden;
     height: 100%;
     width: 100%;
     position: absolute;
+    font-family: "Helvetica";
 }
 
 

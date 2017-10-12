@@ -121,14 +121,15 @@ const Tab = styled.div`
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     font-size: 12px;
-    background-color: white;
     height: 105px;
-    outline: 1px solid #969696;
-    width: 21px;
+    outline: 1px solid #979797;
+    
     cursor: pointer;
     align-items: center;
     box-sizing: content-box;
-    ${props => props.active && ("box-shadow: inset -1px 0px 0px 0px #119400; border-right: 2px solid #119400;")}
+    ${props => props.active 
+    ? ("background-color: white;width: 21px;") 
+    : ("background-color: #EDEDED;width: 18px;")}
 `
 
 const TabPanel = styled.div`
@@ -142,6 +143,9 @@ const TabPanel = styled.div`
 const StyledFooter = styled.div`
     background-color: #D7D7D7;
     color: white;
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
 `
 
 const SettingsIcon = styled(Link)`
@@ -162,7 +166,7 @@ const StyledChannel = styled(Channel)`
 
 const TabWrapper = styled.div`
      height:100%;
-     background-color: #D7D7D7;
+     background-color:  #D8D8D8;
      display:flex;
      justify-content: space-between;
      flex-direction: column;

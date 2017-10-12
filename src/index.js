@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import {HashRouter} from 'react-router-dom'
 import AppContainer from './App/Containers/AppContainer'
-import 'bootstrap/dist/css/bootstrap.min.css'
 import 'normalize.css/normalize.css'
 import './style.css'
 import store from './store';
