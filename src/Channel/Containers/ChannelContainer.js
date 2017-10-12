@@ -123,13 +123,13 @@ const Tab = styled.div`
     font-size: 12px;
     height: 105px;
     outline: 1px solid #979797;
-    
+    position: relative;
     cursor: pointer;
     align-items: center;
     box-sizing: content-box;
     ${props => props.active 
-    ? ("background-color: white;width: 21px;") 
-    : ("background-color: #EDEDED;width: 18px;")}
+    ? ("background-color: white;width: 24px; z-index: 200") 
+    : ("background-color: #EDEDED;width: 20px;")}
 `
 
 const TabPanel = styled.div`
@@ -170,6 +170,7 @@ const TabWrapper = styled.div`
      display:flex;
      justify-content: space-between;
      flex-direction: column;
+     border-right: 1px solid #979797;
 `
 
 export default connect(
