@@ -19,9 +19,11 @@ const renderIcon = (service) => {
         case 'twitch':
             return <Twitch fontSize="12px" icon={twitch}/>
         case 'klpq-vps':
-            return <KLPQ icon={eye} fontSize="12px"/>
+            return <img width="16px" height="16px"
+                        src="./static/icons/klpq_vps.svg"/>
         default:
-            return <KLPQ icon={lowVision} fontSize="12px"/>
+            return <img width="16px" height="16px"
+                        src="./static/icons/klpq_main.svg"/>
     }
 
 };
