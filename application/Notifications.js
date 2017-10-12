@@ -65,7 +65,7 @@ function rebuildIconMenu() {
     app.contextMenuTemplate[1].submenu = onlineChannels.map(function (channelObj) {
         return {
             label: channelObj.visibleName, type: 'normal', click: (menuItem, browserWindow, event) => {
-                ChannelPlay.launchPlayerObj(channelObj, event.ctrlKey ? true : null, event.shiftKey ? true : null);
+                ChannelPlay.launchPlayerObj(channelObj, event.ctrlKey, event.shiftKey ? true : null);
             }
         }
     });

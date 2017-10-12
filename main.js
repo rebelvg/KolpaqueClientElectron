@@ -174,8 +174,8 @@ let contextMenuTemplate = [
     },
     {
         label: 'Notifications', type: 'checkbox', click: (menuItem) => {
-        console.log(menuItem.checked);
-        SettingsFile.settingsJson.settings.showNotifications = menuItem.checked;
+        console.log('menuItem.checked', menuItem.checked);
+        SettingsFile.settingsJson.changeSetting('showNotifications', menuItem.checked);
     }, checked: SettingsFile.settingsJson.settings.showNotifications
     },
     {
@@ -209,9 +209,14 @@ app.on('ready', () => {
     Notifications.rebuildIconMenu();
 });
 
+SettingsFile.settingsJson.on('setting_changed', function (settingName, settingValue) {
+    if (settingName === 'showNotifications') {
+        contextMenuTemplate[4].checked = settingValue;
+
+        Notifications.rebuildIconMenu();
+    }
+});
+
 process.on('uncaughtException', function (err) {
     console.log('Caught exception: ' + err.stack);
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
