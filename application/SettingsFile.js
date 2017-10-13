@@ -37,7 +37,7 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
     channelObj.changeSetting(settingName, settingValue);
 });
 
-ipcMain.once('getChannels', (event) => (event.returnValue = returnChannels()));
+ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));
 
 ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
 
@@ -49,21 +49,6 @@ function addChannel(channelLink) {
     return config.addChannelLink(channelLink);
 }
 
-function returnChannels() {
-    return config.channels;
-}
-
-function returnChannelsLegacy() {
-    let legacyChannels = {};
-
-    _.forEach(config.channels, (channelObj) => {
-        legacyChannels[channelObj.link] = channelObj;
-    });
-
-    return legacyChannels;
-}
-
 exports.saveFile = saveFile;
 exports.addChannel = addChannel;
-exports.returnChannelsLegacy = returnChannelsLegacy;
 exports.settingsJson = config;
