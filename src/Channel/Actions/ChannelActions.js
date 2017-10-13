@@ -1,5 +1,5 @@
 import {channelsStateType} from '../Reducers/ChannelReducers';
-
+import {reset} from 'redux-form';
 const {ipcRenderer} = window.require('electron');
 
 export const GET_CHANNELS = 'GET_CHANNELS';
@@ -26,9 +26,12 @@ export function deleteChannel(id) {
 }
 
 export function addChannel(channel) {
-    return {
-        type: ADD_CHANNEL,
-        channel
+    return (dispatch) => {
+        dispatch(reset('addChannel'))
+        return {
+            type: ADD_CHANNEL,
+            channel
+        }
     }
 }
 
