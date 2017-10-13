@@ -60,7 +60,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}, 
             </InputWrapper>
         </FieldWrapper>
         <FieldWrapper>
-            <Label>Launch On Balloon Click</Label>
+            <Label>Play On Balloon Click</Label>
             <InputWrapper>
                 <Field
                     name="launchOnBalloonClick"
