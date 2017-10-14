@@ -232,15 +232,21 @@ function checkLoop() {
     });
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, getStats5);
+        _.forEach(settingsJson.channels, (channelObj) => {
+            getStats5(channelObj);
+        });
     }, 5 * 1000);
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, getStats30);
+        _.forEach(settingsJson.channels, (channelObj) => {
+            getStats30(channelObj);
+        });
     }, 30 * 1000);
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, getStats120);
+        _.forEach(settingsJson.channels, (channelObj) => {
+            getStats120(channelObj);
+        });
     }, 2 * 60 * 1000);
 }
 

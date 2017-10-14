@@ -36,11 +36,7 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
 
     if (settingName === 'visibleName') {
         if (!settingValue) {
-            if (channelObj.name) {
-                settingValue = channelObj.name;
-            } else {
-                settingValue = channelObj.link;
-            }
+            settingValue = channelObj.name;
         }
     }
 

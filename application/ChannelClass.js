@@ -126,7 +126,8 @@ class Channel extends EventEmitter {
         });
 
         if (this.service === 'custom') {
-            this.visibleName = this.link;
+            this.name = this.link;
+            this.visibleName = this.name;
         }
 
         this.id = md5(this.link);
