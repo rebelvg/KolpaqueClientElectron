@@ -113,6 +113,6 @@ const StyledIcon = styled(Icon)`
 const IconWrapper = styled.div`
     display: flex;
     align-items: center;
-    height: 25px;
+    height: 20px;
     margin-right: 4px;
 `

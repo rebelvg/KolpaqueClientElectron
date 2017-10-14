@@ -1,18 +1,23 @@
 import React from 'react';
 import styled from 'styled-components'
 import {renderIcon, renderAutoRestart, renderAutoStart} from '../../Helpers/IconRender'
+import EditForm from '../../Forms/EditForm/EditForm'
 
-
-const Channel = ({channel, pinned, handleClick, selected, selectChannel, playChannel, changeSetting}) => (
+const Channel = ({channel, pinned, handleClick, editMode, selected, renameChannel, selectChannel, playChannel, changeSetting}) => (
     <ChannelWrapper
 
-        onMouseDown={() => selectChannel(channel)}
+        onMouseDown={(e) => selectChannel(e, channel)}
         selected={selected}
+
         onContextMenu={() => handleClick(channel)}
         pinned={pinned}>
         <ChannelData onDoubleClick={() => playChannel(channel)}>
             <StyledIcon> {renderIcon(!!channel.service && channel.service)} </StyledIcon>
-            <StyledName>{channel.visibleName || channel.link} </StyledName>
+            {editMode ? ( <EditForm onSubmit={renameChannel}
+                                    initialValues={channel}
+                                    nameChange={renameChannel}/>
+            ) : (<StyledName>{channel.visibleName || channel.link} </StyledName>)
+            }
         </ChannelData>
         <Icons>
             {renderAutoRestart(channel, changeSetting)}
@@ -38,7 +43,7 @@ const ChannelWrapper = styled.div`
 
 const Icons = styled.div`
     display: flex;
-    height: 25px;
+    height: 20px;
     flex-direction: row-reverse;
 `
 const ChannelData = styled.div`
@@ -53,12 +58,13 @@ const StyledIcon = styled.div`
     display: flex;
     align-items: center;
     margin-left: 5px;
-    height:25px
+    height:20px
 `;
-
+const FormWrapper = styled.div`
+`
 const StyledName = styled.div`
     flex-grow: 2;
-       height:25px;
+       height:20px;
            display: flex;
     align-items: center;
 `;

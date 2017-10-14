@@ -3,12 +3,14 @@ import React, {Component} from 'react';
 import styled from 'styled-components';
 import Channel from '../../../Channel/Components/Channel/Channel'
 
-const ChannelWrapper = ({channels, handleClick,changeSetting,  selectChannel, selected, playChannel}) => (
+const ChannelWrapper = ({channels, editChannel, handleClick, renameChannel, changeSetting, selectChannel, selected, playChannel}) => (
 
     <StyledWrapper>
         {channels.map((channel, index) => (
             <Channel
-                changeSetting = {changeSetting}
+                renameChannel={renameChannel}
+                editMode={editChannel && editChannel.id === channel.id}
+                changeSetting={changeSetting}
                 playChannel={playChannel}
                 selectChannel={selectChannel}
                 selected={selected && selected.link === channel.link}

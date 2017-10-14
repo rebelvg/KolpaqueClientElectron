@@ -1,7 +1,7 @@
 const {remote, ipcRenderer} = window.require('electron');
 const {app, Menu, shell, BrowserWindow, MenuItem} = remote;
 
-const menuTemplate = (channel) => [
+const menuTemplate = (channel, edit) => [
     new MenuItem({
         label: 'Play', click: function (menuItem, browserWindow, event) {
             ipcRenderer.send('channel_play', channel.id, event.ctrlKey, event.shiftKey ? true : null);
@@ -15,6 +15,11 @@ const menuTemplate = (channel) => [
     new MenuItem({
         label: 'Open Chat', click: function () {
             ipcRenderer.send('channel_openChat', channel.id);
+        }
+    }),
+    new MenuItem({
+        label: 'Rename Channel', click: function () {
+            edit(channel)
         }
     }),
     new MenuItem({

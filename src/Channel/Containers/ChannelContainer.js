@@ -19,7 +19,8 @@ export class ChannelContainer extends Component {
         super()
         this.state = {
             selected: null,
-            tab: 'online'
+            tab: 'online',
+            editChannel: null,
         }
     }
 
@@ -39,15 +40,33 @@ export class ChannelContainer extends Component {
         ipcRenderer.send('channel_changeSetting', id, settingName, settingValue)
     }
 
+    editChannel(channel) {
+        this.setState({editChannel: channel})
+    }
+
+    renameChannel = (channel, id) => {
+        if (!channel.id) {
+            this.changeSetting(id, 'visibleName', channel)
+        }
+        else {
+            this.changeSetting(channel.id, 'visibleName', channel.visibleName)
+        }
+        this.setState({editChannel: null})
+    }
+
     openMenu = (channel) => {
         const menu = new Menu();
-        const template = menuTemplate(channel);
+        const template = menuTemplate(channel, () => {
+            this.editChannel(channel)
+        });
         template.map((item) => menu.append(item))
         menu.popup(remote.getCurrentWindow())
     }
 
-    selectChannel = (channel) => {
-        this.setState({selected: channel})
+    selectChannel = (e, channel) => {
+        const click = e.nativeEvent.which;
+        const {selected} = this.state
+        this.setState({selected: selected && channel.id === selected.id && click !== 3 ? '' : channel})
     }
 
     changeTab = (tab) => {
@@ -56,7 +75,7 @@ export class ChannelContainer extends Component {
 
     render() {
         const {online, offline} = this.props;
-        const {selected, tab} = this.state;
+        const {selected, tab, editChannel} = this.state;
         return (
             <StyledContainerWrapper>
 
@@ -77,6 +96,8 @@ export class ChannelContainer extends Component {
                 </TabWrapper>
                 <TabPanel active={tab === 'online'}>
                     <ChannelWrapper
+                        renameChannel={this.renameChannel}
+                        editChannel={editChannel}
                         selected={selected}
                         selectChannel={this.selectChannel}
                         playChannel={this.playChannel}
@@ -87,6 +108,8 @@ export class ChannelContainer extends Component {
                 </TabPanel>
                 <TabPanel active={tab === 'offline'}>
                     <ChannelWrapper
+                        renameChannel={this.renameChannel}
+                        editChannel={editChannel}
                         selected={selected}
                         selectChannel={this.selectChannel}
                         changeSetting={this.changeSetting}
@@ -96,7 +119,7 @@ export class ChannelContainer extends Component {
                 </TabPanel>
 
 
-                <StyledFooter className="fixed-bottom">
+                <StyledFooter>
                     <ChannelForm onSubmit={this.addChannel}/>
                 </StyledFooter>
             </StyledContainerWrapper>
