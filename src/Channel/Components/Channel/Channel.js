@@ -11,7 +11,7 @@ const Channel = ({channel, pinned, handleClick, editMode, selected, renameChanne
 
         onContextMenu={() => handleClick(channel)}
         pinned={pinned}>
-        <ChannelData onDoubleClick={() => playChannel(channel)}>
+        <ChannelData onDoubleClick={() => !editMode && playChannel(channel)}>
             <StyledIcon> {renderIcon(!!channel.service && channel.service)} </StyledIcon>
             {editMode ? ( <EditForm onSubmit={renameChannel}
                                     initialValues={channel}

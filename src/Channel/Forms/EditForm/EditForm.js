@@ -38,10 +38,12 @@ const openMenu = () => {
 let EditForm = ({handleSubmit, nameChange, initialValues}) => {
     return (
         <Form onSubmit={ handleSubmit }>
-            <Field
+            <StyledField
                 name="visibleName"
                 component='input'
                 type="text"
+                onChange={() => {
+                }}
                 onBlur={(e, v) => nameChange(v, initialValues.id)}
             />
 
@@ -50,8 +52,19 @@ let EditForm = ({handleSubmit, nameChange, initialValues}) => {
 };
 
 const Form = styled.form`
+    width: 100%;
+    margin-right: 10px;
+    display: flex;
+    height: 20px;
+    align-items: center;
 `
 
+const StyledField = styled(Field)`
+    width: 100%;
+    height: 18px;
+    padding: 0px;
+    margin: 0px;
+`
 
 export default reduxForm({
     form: 'editForm',
