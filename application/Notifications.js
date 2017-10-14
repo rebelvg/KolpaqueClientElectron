@@ -9,16 +9,16 @@ const request = require('request');
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 
-function printNotification(title, content) {
+function printNotification(title, content, channelObj = {}) {
     let settingsJson = SettingsFile.settingsJson;
 
     if (!settingsJson.settings.showNotifications)
         return;
 
-    printNewNotification(title, content);
+    printNewNotification(title, content, channelObj);
 }
 
-function printNewNotification(title, content) {
+function printNewNotification(title, content, channelObj = {}) {
     let notification = new Notification({
         icon: app.appIcon.iconPathBalloon,
         title: title,
@@ -26,13 +26,13 @@ function printNewNotification(title, content) {
     });
 
     notification.on('click', function (event) {
-        onBalloonClick(title, content);
+        onBalloonClick(title, content, channelObj);
     });
 
     notification.show();
 }
 
-function onBalloonClick(title, content) {
+function onBalloonClick(title, content, channelObj) {
     let settingsJson = SettingsFile.settingsJson;
 
     console.log('balloon was clicked.');
@@ -41,11 +41,7 @@ function onBalloonClick(title, content) {
         return;
 
     if (title.indexOf('Stream is Live') === 0) {
-        let channelObj = settingsJson.findChannelByLink(content);
-
-        if (channelObj) {
-            ChannelPlay.launchPlayerObj(channelObj);
-        }
+        ChannelPlay.launchPlayerObj(channelObj);
     }
 
     if (title.indexOf('Client Update Available') === 0) {

@@ -43,7 +43,7 @@ function isOnline(channelObj, printBalloon) {
     onlineChannels[channelLink] = 0;
 
     if (printBalloon) {
-        Notifications.printNotification('Stream is Live (' + moment().format('D/MMM, H:mm') + ')', channelObj.link);
+        Notifications.printNotification('Stream is Live (' + moment().format('D/MMM, H:mm') + ')', channelObj.visibleName, channelObj);
     }
 
     if (printBalloon && channelObj.autoStart) {

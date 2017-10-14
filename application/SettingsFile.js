@@ -34,7 +34,13 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
         return false;
     }
 
-    channelObj.changeSetting(settingName, settingValue);
+    if (settingName === 'visibleName') {
+        if (!settingValue) {
+            settingValue = channelObj.name;
+        }
+    }
+
+    return channelObj.changeSetting(settingName, settingValue);
 });
 
 ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));

@@ -6,6 +6,7 @@ const md5 = require('md5');
 
 const {allowedProtocols, registeredServices} = require('./Globals');
 const SettingsFile = require('./SettingsFile');
+const Notifications = require('./Notifications');
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
@@ -131,8 +132,8 @@ class Channel extends EventEmitter {
         this.id = md5(this.link);
 
         this.on('setting_changed', (settingName, settingValue) => {
-            if (settingName === 'visibleName' && !settingValue) {
-                return app.mainWindow.webContents.send('channel_changeSetting', this.id, settingName, this.name);
+            if (settingName === 'visibleName') {
+                Notifications.rebuildIconMenu();
             }
 
             return app.mainWindow.webContents.send('channel_changeSetting', this.id, settingName, settingValue);
