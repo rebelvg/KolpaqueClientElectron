@@ -25,12 +25,6 @@ ipcMain.once('client_ready', () => {
     console.log('client ready.');
 
     fixPath();
-
-    ChannelCheck.checkLoop();
-
-    Import.importLoop();
-
-    VersionCheck.checkLoop();
 });
 
 let iconPath = path.normalize(path.join(__dirname, 'icon.png'));

@@ -14,6 +14,10 @@ ipcMain.on('config_twitchImport', async (event, channelName) => {
     return await twitchImport(channelName);
 });
 
+ipcMain.once('client_ready', () => {
+    importLoop();
+});
+
 function twitchImportChannels(channels, i) {
     channels.forEach(function (channel) {
         let channelObj = SettingsFile.addChannel(channel.channel.url, false);
@@ -127,6 +131,3 @@ function importLoop() {
     setInterval(autoKlpqImport, 10 * 60 * 1000);
     setInterval(autoTwitchImport, 10 * 60 * 1000);
 }
-
-exports.twitchImport = twitchImport;
-exports.importLoop = importLoop;

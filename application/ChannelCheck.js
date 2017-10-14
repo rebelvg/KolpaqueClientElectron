@@ -16,6 +16,10 @@ const Globals = require('./Globals');
 let twitchApiKey = Globals.twitchApiKey;
 let onlineChannels = {};
 
+ipcMain.once('client_ready', () => {
+    checkLoop();
+});
+
 SettingsFile.settingsJson.on('channel_removed', (channelObj) => {
     delete onlineChannels[channelObj.link];
 
@@ -241,4 +245,3 @@ function checkLoop() {
 }
 
 exports.checkChannel = checkChannel;
-exports.checkLoop = checkLoop;

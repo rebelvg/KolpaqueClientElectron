@@ -7,8 +7,12 @@ const Notifications = require('./Notifications');
 let buildsLink = 'https://github.com/rebelvg/KolpaqueClientElectron/releases';
 let clientVersion = require('../package.json').version;
 
-ipcMain.on('config_getUpdate', (event) => {
+ipcMain.on('client_getInfo', (event) => {
     return shell.openExternal(buildsLink);
+});
+
+ipcMain.once('client_ready', () => {
+    checkLoop();
 });
 
 function checkNewVersion() {
@@ -28,7 +32,7 @@ function checkNewVersion() {
 
             clientVersion = body[0].tag_name;
 
-            app.mainWindow.webContents.send('client_showUpdate', 'Client Update Available');
+            app.mainWindow.webContents.send('client_showInfo', 'Client Update Available');
         }
     });
 }
@@ -53,5 +57,3 @@ function checkLoop() {
 
     setInterval(checkNewVersion, 10 * 60 * 1000);
 }
-
-exports.checkLoop = checkLoop;
