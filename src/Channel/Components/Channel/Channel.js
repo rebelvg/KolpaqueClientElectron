@@ -31,7 +31,7 @@ const ChannelWrapper = styled.div`
     font-weight: bold;
     flex-direction: row;
     font-size: 14px;
-    height:25px;
+    height: 20px;
     background-color:  ${props => !props.selected ? 'initial' : '#ece8e8'};
     border-top: 1px solid #969696;
 `;

@@ -129,8 +129,8 @@ const Tab = styled.div`
     align-items: center;
     box-sizing: content-box;
     ${props => props.active
-    ? ("background-color: white;width: 24px; z-index: 200")
-    : ("background-color: #EDEDED;width: 20px;")}
+    ? ("background-color: white; width: 24px; z-index: 200")
+    : ("background-color: #EDEDED; width: 21px;")}
 `
 
 const TabPanel = styled.div`
