@@ -242,4 +242,3 @@ function checkLoop() {
 
 exports.checkChannel = checkChannel;
 exports.checkLoop = checkLoop;
-exports.onlineChannels = onlineChannels;
