@@ -5,6 +5,7 @@ import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import {getOffline, getOnline} from '../Reducers/ChannelReducers'
+import {addChannel} from '../Actions/ChannelActions'
 import ChannelWrapper from '../../Channel/Components/ChannelWrapper/ChannelWrapper'
 import Channel from '../../Channel/Components/Channel/Channel'
 import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm'
@@ -27,7 +28,7 @@ export class ChannelContainer extends Component {
     }
 
     addChannel = ({channel}) => {
-        ipcRenderer.send('channel_add', channel);
+        this.props.addChannel(channel);
     }
 
     deleteChannel = (channelObj) => {
@@ -127,8 +128,8 @@ const Tab = styled.div`
     cursor: pointer;
     align-items: center;
     box-sizing: content-box;
-    ${props => props.active 
-    ? ("background-color: white;width: 24px; z-index: 200") 
+    ${props => props.active
+    ? ("background-color: white;width: 24px; z-index: 200")
     : ("background-color: #EDEDED;width: 20px;")}
 `
 
@@ -178,5 +179,7 @@ export default connect(
         online: getOnline(state),
         offline: getOffline(state)
     }),
-    (dispatch) => bindActionCreators({}, dispatch)
+    (dispatch) => bindActionCreators({
+        addChannel
+    }, dispatch)
 )(ChannelContainer);

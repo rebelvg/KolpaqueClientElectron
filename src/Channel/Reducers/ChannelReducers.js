@@ -1,4 +1,4 @@
-import {GET_CHANNELS, CHANGE_STATUS, DELETE_CHANNEL, ADD_CHANNEL} from '../Actions/ChannelActions'
+import {GET_CHANNELS, CHANGE_STATUS, DELETE_CHANNEL, ADD_CHANNEL, ADD_CHANNEL_RESPONSE} from '../Actions/ChannelActions'
 
 const initialState = {
     channels: [],
@@ -29,12 +29,14 @@ export default function (state = initialState, action = {}) {
                 ...state,
                 channels: state.channels.filter(item => action.id !== item.id),
             }
-
-        case ADD_CHANNEL:
+        case ADD_CHANNEL_RESPONSE: {
             return {
                 ...state,
                 channels: [...state.channels, action.channel]
             };
+        }
+        case ADD_CHANNEL:
+            return state
         default:
             return state
     }

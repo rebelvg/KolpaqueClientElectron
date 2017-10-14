@@ -2,20 +2,55 @@ import React from 'react';
 import Icon from 'react-icons-kit';
 import {refresh} from 'react-icons-kit/fa/refresh';
 import {twitch} from 'react-icons-kit/fa/twitch';
+import {eye} from 'react-icons-kit/fa/eye';
+import {youtubePlay} from 'react-icons-kit/fa/youtubePlay';
 import styled from 'styled-components'
 
-export const renderIcon = (service) => {
-    switch (service) {
-        case 'twitch':
-            return <Twitch fontSize="12px" icon={twitch}/>
-        case 'klpq-vps':
-            return <img width="16px" height="16px"
-                        src="./static/icons/klpq_vps.svg"/>
-        default:
-            return <img width="16px" height="16px"
-                        src="./static/icons/klpq_main.svg"/>
+const ICONS = {
+    'twitch': {
+        asset: twitch,
+        type: 'component',
+        color: "#6441a5"
+    },
+    'klpq-vps': {
+        asset: "./static/icons/klpq_vps.svg",
+        type: 'image',
+        color: null
+    },
+    'klpq-main': {
+        asset: "./static/icons/klpq_main.svg",
+        type: 'image',
+        color: null
+    },
+    'youtube-user': {
+        type: 'component',
+        asset: youtubePlay,
+        color: "#E62117"
+    },
+    'youtube-channel': {
+        type: 'component',
+        asset: youtubePlay,
+        color: "#E62117"
+    },
+    'default': {
+        asset: eye,
+        component: 'darkgreen'
     }
+}
 
+
+export const renderIcon = (serviceName) => {
+    const service = ICONS[serviceName] ? ICONS[serviceName] : ICONS['default'];
+    if (service.type === 'image') {
+        return (
+            <IconImage>
+                <img src={service.asset}/>
+            </IconImage>
+        )
+    }
+    else {
+        return <StyledIcon icon={service.asset} color={service.color}/>
+    }
 };
 
 const getAutoRestartColor = (autoRestart, onAutoRestart) => {
@@ -61,8 +96,18 @@ const IconBase = styled(Icon)`
     height: 12px
 `
 
-const Twitch = styled(Icon)`
-    color: #6441a5
+const IconImage = styled.div`
+    width: 16px; 
+    height: 16px;
+    & > img {
+        width: 100%;
+    }
+`
+
+const StyledIcon = styled(Icon)`
+    width: 16px; 
+    height: 16px;
+    color: ${props => !!props.color ? props.color : 'darkgreen'}
 `
 
 const IconWrapper = styled.div`
