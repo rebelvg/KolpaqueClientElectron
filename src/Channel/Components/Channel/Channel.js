@@ -1,61 +1,7 @@
 import React from 'react';
-import Icon from 'react-icons-kit';
-import {refresh} from 'react-icons-kit/fa/refresh';
-import {twitch} from 'react-icons-kit/fa/twitch';
-import {lowVision} from 'react-icons-kit/fa/lowVision';
-import {eye} from 'react-icons-kit/fa/eye';
 import styled from 'styled-components'
+import {renderIcon, renderAutoRestart, renderAutoStart} from '../../Helpers/IconRender'
 
-const getAutoRestartColor = (autoRestart, onAutoRestart) => {
-    if (onAutoRestart) {
-        return '#119400'
-    } else {
-        return autoRestart ? 'black' : '#979797'
-    }
-}
-
-const renderIcon = (service) => {
-    switch (service) {
-        case 'twitch':
-            return <Twitch fontSize="12px" icon={twitch}/>
-        case 'klpq-vps':
-            return <img width="16px" height="16px"
-                        src="./static/icons/klpq_vps.svg"/>
-        default:
-            return <img width="16px" height="16px"
-                        src="./static/icons/klpq_main.svg"/>
-    }
-
-};
-
-const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, changeSetting) => (
-    <IconWrapper onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onAutoRestart
-            ? changeSetting(id, 'onAutoRestart', !onAutoRestart)
-            : changeSetting(id, 'autoRestart', !autoRestart)
-    }
-    }>
-
-        <IconBase icon={refresh}
-                  style={{color: getAutoRestartColor(autoRestart, onAutoRestart)}}/>
-
-    </IconWrapper>
-)
-
-const renderAutoStart = ({autoStart, id}, changeSetting) => (
-    <IconWrapper onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        changeSetting(id, 'autoStart', !autoStart)
-    }
-    }>
-
-        <img width="12px" height="12px"
-             src={autoStart ? "./static/icons/autostart_on.svg" : "./static/icons/autostart_off.svg" }/>
-    </IconWrapper>
-)
 
 const Channel = ({channel, pinned, handleClick, selected, selectChannel, playChannel, changeSetting}) => (
     <ChannelWrapper
@@ -89,12 +35,7 @@ const ChannelWrapper = styled.div`
     background-color:  ${props => !props.selected ? 'initial' : '#ece8e8'};
     border-top: 1px solid #969696;
 `;
-const IconWrapper = styled.div`
-    display: flex;
-    align-items: center;
-    height: 25px;
-    margin-right: 4px;
-`
+
 const Icons = styled.div`
     display: flex;
     height: 25px;
@@ -106,17 +47,7 @@ const ChannelData = styled.div`
     flex-direction: row;
 `
 
-const IconBase = styled(Icon)`
-    width: 12px;
-    height: 12px
-`
 
-const KLPQ = styled(Icon)`
-    color: darkgreen
-`
-const Twitch = styled(Icon)`
-    color: #6441a5
-`
 const StyledIcon = styled.div`
     margin-right: 5px;
     display: flex;
