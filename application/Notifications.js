@@ -72,5 +72,4 @@ function rebuildIconMenu() {
 }
 
 exports.printNotification = printNotification;
-exports.onBalloonClick = onBalloonClick;
 exports.rebuildIconMenu = rebuildIconMenu;
