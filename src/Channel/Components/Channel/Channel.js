@@ -9,7 +9,11 @@ const Channel = ({channel, pinned, handleClick, editMode, selected, renameChanne
         onMouseDown={(e) => selectChannel(e, channel)}
         selected={selected}
 
-        onContextMenu={() => handleClick(channel)}
+        onContextMenu={(e) => {
+            if (!e.target.name) {
+                handleClick(channel)
+            }
+        }}
         pinned={pinned}>
         <ChannelData onDoubleClick={() => !editMode && playChannel(channel)}>
             <StyledIcon> {renderIcon(!!channel.service && channel.service)} </StyledIcon>

@@ -37,7 +37,6 @@ const openMenu = () => {
 }
 
 
-
 export default class EditForm extends Component {
     constructor(props) {
         super(props)
@@ -71,7 +70,9 @@ export default class EditForm extends Component {
                     component='input'
                     type="text"
                     value={value}
-                    onContextMenu={() => openMenu()}
+                    onContextMenu={(e) => {
+                        openMenu()
+                    }}
                     onChange={(e) => this.onChange(e)}
                     onBlur={(e) => this.onBlur(e)}
                 />
@@ -88,6 +89,8 @@ const Form = styled.form`
     display: flex;
     height: 20px;
     align-items: center;
+    position: relative;
+    z-index: 100000
 `
 
 const StyledField = styled.input`
@@ -95,4 +98,6 @@ const StyledField = styled.input`
     height: 18px;
     padding: 0px;
     margin: 0px;
+    position: relative;
+    z-index: 100000
 `
