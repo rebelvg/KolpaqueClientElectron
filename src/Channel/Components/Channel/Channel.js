@@ -14,7 +14,7 @@ const Channel = ({channel, pinned, handleClick, editMode, selected, renameChanne
         <ChannelData onDoubleClick={() => !editMode && playChannel(channel)}>
             <StyledIcon> {renderIcon(!!channel.service && channel.service)} </StyledIcon>
             {editMode ? ( <EditForm onSubmit={renameChannel}
-                                    initialValues={channel}
+                                    channel={channel}
                                     nameChange={renameChannel}/>
             ) : (<StyledName>{channel.visibleName || channel.link} </StyledName>)
             }

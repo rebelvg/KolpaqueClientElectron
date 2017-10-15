@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import Ionicon from 'react-ionicons'
 import styled from 'styled-components'
 import {Field, reduxForm} from 'redux-form'
@@ -30,26 +30,56 @@ let template = [
     }
 ];
 
+
 const openMenu = () => {
     const macMenu = Menu.buildFromTemplate(template);
     macMenu.popup(remote.getCurrentWindow());
 }
 
-let EditForm = ({handleSubmit, nameChange, initialValues}) => {
-    return (
-        <Form onSubmit={ handleSubmit }>
-            <StyledField
-                name="visibleName"
-                component='input'
-                type="text"
-                onChange={() => {
-                }}
-                onBlur={(e, v) => nameChange(v, initialValues.id)}
-            />
 
-        </Form>
-    )
-};
+
+export default class EditForm extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            value: props.channel.visibleName
+        }
+    }
+
+    onChange = (e) => {
+        this.setState({value: e.target.value})
+    }
+
+    onBlur = (e) => {
+        this.props.nameChange(e.target.value, this.props.channel.id)
+    }
+
+    handleSubmit = (e) => {
+        const {value} = this.state;
+        const {channel} = this.props;
+        this.props.nameChange(value, channel.id);
+        e.preventDefault();
+
+    }
+
+    render() {
+        const {value} = this.state;
+        return (
+            <Form onSubmit={this.handleSubmit}>
+                <StyledField
+                    name="visibleName"
+                    component='input'
+                    type="text"
+                    value={value}
+                    onChange={(e) => this.onChange(e)}
+                    onBlur={(e) => this.onBlur(e)}
+                />
+
+            </Form>
+        )
+    }
+}
+
 
 const Form = styled.form`
     width: 100%;
@@ -59,15 +89,9 @@ const Form = styled.form`
     align-items: center;
 `
 
-const StyledField = styled(Field)`
+const StyledField = styled.input`
     width: 100%;
     height: 18px;
     padding: 0px;
     margin: 0px;
 `
-
-export default reduxForm({
-    form: 'editForm',
-    enableReinitialize: true,
-    destroyOnUnmount: false,
-})(EditForm)
