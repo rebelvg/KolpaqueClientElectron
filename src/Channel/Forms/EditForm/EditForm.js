@@ -71,6 +71,7 @@ export default class EditForm extends Component {
                     component='input'
                     type="text"
                     value={value}
+                    onContextMenu={() => openMenu()}
                     onChange={(e) => this.onChange(e)}
                     onBlur={(e) => this.onBlur(e)}
                 />
