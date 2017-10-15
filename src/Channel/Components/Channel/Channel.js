@@ -6,7 +6,11 @@ import EditForm from '../../Forms/EditForm/EditForm'
 const Channel = ({channel, pinned, handleClick, editMode, selected, renameChannel, selectChannel, playChannel, changeSetting}) => (
     <ChannelWrapper
 
-        onMouseDown={(e) => selectChannel(e, channel)}
+        onMouseDown={(e) => {
+            if (!e.target.name) {
+                selectChannel(e, channel)
+            }
+        }}
         selected={selected}
 
         onContextMenu={(e) => {
