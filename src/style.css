@@ -11,8 +11,10 @@ body {
     font-family: "Helvetica";
 }
 
-
-
 #app {
     height: 100%;
+}
+
+.Select-control {
+    border-radius: 0 !important;
 }

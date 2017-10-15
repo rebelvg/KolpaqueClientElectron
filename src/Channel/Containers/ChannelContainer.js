@@ -28,7 +28,7 @@ export class ChannelContainer extends Component {
         ipcRenderer.send('channel_play', channelObj.id);
     }
 
-    addChannel = ({channel}) => {
+    addChannel = (channel) => {
         this.props.addChannel(channel);
     }
 
@@ -120,7 +120,7 @@ export class ChannelContainer extends Component {
 
 
                 <StyledFooter>
-                    <ChannelForm onSubmit={this.addChannel}/>
+                    <ChannelForm addChannel={this.addChannel}/>
                 </StyledFooter>
             </StyledContainerWrapper>
         );

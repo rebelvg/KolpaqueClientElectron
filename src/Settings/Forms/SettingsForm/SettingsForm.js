@@ -101,11 +101,12 @@ const FieldWrapper = styled.div`
     display: flex;
     flex-direction: ${props => !!props.full ? 'column' : 'row' };
     justify-content: space-between;
-    margin: 10px 20px;
+    margin: 2px 20px;
 `
 
 const Label = styled.label`
     font-weight: bold;
+    font-size: 15px;
 `
 
 const InputWrapper = styled.div`
