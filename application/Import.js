@@ -20,7 +20,7 @@ ipcMain.once('client_ready', () => {
 
 function twitchImportChannels(channels, i) {
     channels.forEach(function (channel) {
-        let channelObj = SettingsFile.addChannel(channel.channel.url, false);
+        let channelObj = SettingsFile.addChannel(channel.channel.url);
 
         if (channelObj !== false) {
             i++;
@@ -59,6 +59,8 @@ async function twitchImportBase(channelName) {
 
             i = twitchImportChannels(channels, i);
         }
+
+        SettingsFile.addChannel(`http://www.twitch.tv/${channelName}`);
 
         return i;
     }
@@ -111,7 +113,7 @@ function autoKlpqImport() {
 
                     let channelUrl = protocol + "//" + host + pathname;
 
-                    let channelObj = SettingsFile.addChannel(channelUrl, false);
+                    let channelObj = SettingsFile.addChannel(channelUrl);
                 });
             }
         });
