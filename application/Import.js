@@ -44,13 +44,16 @@ async function twitchImportBase(channelName) {
         return null;
 
     try {
+        let i = 0;
+
         let body = await getTwitchData(`https://api.twitch.tv/kraken/users/${channelName}/follows/channels?direction=ASC&limit=100&sortby=created_at&user=${channelName}`);
         let channels = body.follows;
 
         if (!channels || channels.length === 0)
             return 0;
 
-        let i = 0;
+        SettingsFile.addChannel(`http://www.twitch.tv/${channelName}`);
+
         i = twitchImportChannels(channels, i);
 
         while (channels.length !== 0) {
@@ -59,8 +62,6 @@ async function twitchImportBase(channelName) {
 
             i = twitchImportChannels(channels, i);
         }
-
-        SettingsFile.addChannel(`http://www.twitch.tv/${channelName}`);
 
         return i;
     }
