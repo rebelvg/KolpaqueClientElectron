@@ -6,8 +6,6 @@ const _ = require('lodash');
 const Notifications = require('./Notifications');
 const clientVersion = require('../package.json').version;
 
-let infoArray = [];
-
 const updates = {
     'client': {
         releaseLink: 'https://github.com/rebelvg/KolpaqueClientElectron/releases',
@@ -18,6 +16,8 @@ const updates = {
         interval: null
     }
 };
+
+let infoArray = [];
 
 ipcMain.on('client_getInfo', (event, info) => {
     _.forEach(infoArray, (value) => {
