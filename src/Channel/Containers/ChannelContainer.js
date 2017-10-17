@@ -4,8 +4,8 @@ import {bindActionCreators} from 'redux';
 import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import {getOffline, getOnline} from '../Reducers/ChannelReducers'
-import {addChannel} from '../Actions/ChannelActions'
+import {getOffline, getOnline, getUpdateStatus} from '../Reducers/ChannelReducers'
+import {addChannel, sendInfo} from '../Actions/ChannelActions'
 import ChannelWrapper from '../../Channel/Components/ChannelWrapper/ChannelWrapper'
 import Channel from '../../Channel/Components/Channel/Channel'
 import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm'
@@ -73,8 +73,12 @@ export class ChannelContainer extends Component {
         this.setState({tab: tab})
     }
 
+    sendInfo = (info) => {
+        this.props.sendInfo(info)
+    }
+
     render() {
-        const {online, offline} = this.props;
+        const {online, offline, update} = this.props;
         const {selected, tab, editChannel} = this.state;
         return (
             <StyledContainerWrapper>
@@ -118,7 +122,10 @@ export class ChannelContainer extends Component {
                         channels={offline}/>
                 </TabPanel>
 
-
+                {update &&
+                <UpdateWrapper onClick={() => {this.sendInfo(update)}}>
+                    {update}
+                </UpdateWrapper>}
                 <StyledFooter>
                     <ChannelForm addChannel={this.addChannel}/>
                 </StyledFooter>
@@ -126,6 +133,20 @@ export class ChannelContainer extends Component {
         );
     }
 }
+
+const UpdateWrapper = styled.div`
+    position: fixed;
+    bottom: 28px;
+    width: 100%;
+    font-size: 14px;
+    text-align: center;
+    color: #9f2dff;
+    text-decoration: underline;
+    z-index: 0;
+    padding: 5px 0px;
+    border: 1px solid #979797;
+    cursor: pointer;
+`
 
 const TabList = styled.div`
     list-style-type: none;
@@ -136,6 +157,8 @@ const TabList = styled.div`
     flex-direction: column;
     align-items: flex-end;
     width: 24px;
+    position: relative;
+    z-index: 1000;
 `
 
 const Tab = styled.div`
@@ -170,6 +193,7 @@ const StyledFooter = styled.div`
     position: fixed;
     bottom: 0px;
     width: 100%;
+    z-index: 3;
 `
 
 const SettingsIcon = styled(Link)`
@@ -195,14 +219,18 @@ const TabWrapper = styled.div`
      justify-content: space-between;
      flex-direction: column;
      border-right: 1px solid #979797;
+     position: relative;
+     z-index: 2;
 `
 
 export default connect(
     (state) => ({
         online: getOnline(state),
-        offline: getOffline(state)
+        offline: getOffline(state),
+        update: getUpdateStatus(state)
     }),
     (dispatch) => bindActionCreators({
-        addChannel
+        addChannel,
+        sendInfo
     }, dispatch)
 )(ChannelContainer);

@@ -4,6 +4,8 @@ const {ipcRenderer} = window.require('electron');
 
 export const GET_CHANNELS = 'GET_CHANNELS';
 export const ADD_CHANNEL = 'ADD_CHANNEL';
+export const GET_INFO = 'GET_INFO';
+export const SEND_INFO = 'SEND_INFO'
 export const ADD_CHANNEL_RESPONSE = 'ADD_CHANNEL_RESPONSE';
 export const DELETE_CHANNEL = 'DELETE_CHANNEL';
 export const CHANGE_STATUS = 'CHANGE_STATUS';
@@ -25,6 +27,20 @@ export function deleteChannel(id) {
         id
     }
 }
+
+export function sendInfo(info) {
+    ipcRenderer.send('client_getInfo', info);
+    return {
+        type: SEND_INFO
+    }
+}
+export function getInfo(info) {
+    return {
+        type: GET_INFO,
+        info: info
+    }
+}
+
 export function addChannel(channel) {
     ipcRenderer.send('channel_add', channel);
     return {

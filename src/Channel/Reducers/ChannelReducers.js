@@ -1,7 +1,8 @@
-import {GET_CHANNELS, CHANGE_STATUS, DELETE_CHANNEL, ADD_CHANNEL, ADD_CHANNEL_RESPONSE} from '../Actions/ChannelActions'
+import {GET_CHANNELS, CHANGE_STATUS, DELETE_CHANNEL, ADD_CHANNEL, ADD_CHANNEL_RESPONSE, GET_INFO, SEND_INFO} from '../Actions/ChannelActions'
 
 const initialState = {
     channels: [],
+    update: false
 };
 
 export default function (state = initialState, action = {}) {
@@ -37,6 +38,15 @@ export default function (state = initialState, action = {}) {
         }
         case ADD_CHANNEL:
             return state
+
+        case SEND_INFO:
+            return state
+
+        case GET_INFO:
+            return {
+                ...state,
+                update: action.info
+            }
         default:
             return state
     }
@@ -52,5 +62,4 @@ state.channel && state.channel.channels.filter((channel) => !channel.isLive);
 export const getOnline = (state) =>
 state.channel && state.channel.channels.filter((channel) => channel.isLive);
 
-
-
+export const getUpdateStatus = (state) => state.channel && state.channel.update

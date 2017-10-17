@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {initChannels, changeStatus, deleteChannel, addChannelResponse} from '../../Channel/Actions/ChannelActions'
+import {initChannels, changeStatus, deleteChannel, addChannelResponse, getInfo} from '../../Channel/Actions/ChannelActions'
 import {initSettings} from '../../Settings/Actions/SettingsActions'
 import styled from 'styled-components';
 
@@ -19,6 +19,9 @@ class EventListener extends Component {
         ipcRenderer.on('channel_add', (event, channelObj) => {
             this.props.addChannelResponse(channelObj);
         });
+        ipcRenderer.on('client_showInfo', (event, info) => {
+            this.props.getInfo(info);
+        })
         ipcRenderer.on('channel_remove', (event, id) => {
             this.props.deleteChannel(id);
         });
@@ -42,6 +45,7 @@ export default connect(
         initChannels,
         changeStatus,
         deleteChannel,
-        addChannelResponse
+        addChannelResponse,
+        getInfo
     }, dispatch)
 )(EventListener);
