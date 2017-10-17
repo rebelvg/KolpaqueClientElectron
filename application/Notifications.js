@@ -44,11 +44,7 @@ function onBalloonClick(title, content, channelObj) {
         ChannelPlay.launchPlayerObj(channelObj);
     }
 
-    if (title.indexOf('Client Update Available') === 0) {
-        shell.openExternal(content);
-    }
-
-    if (title.indexOf('Streamlink Update Available') === 0) {
+    if (title.includes('Update Available')) {
         shell.openExternal(content);
     }
 }
