@@ -70,7 +70,6 @@ function streamlinkVersionCheck() {
 
     child('streamlink', ['--version-check'], function (err, data, stderr) {
         if (err) {
-            console.log(err);
             return;
         }
 

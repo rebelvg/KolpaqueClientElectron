@@ -113,6 +113,10 @@ function launchStreamlink(playLink, params, channelObj) {
 
     channelObj._processes.push(childProcess);
 
+    childProcess.on('error', () => {
+        _.pull(channelObj._processes, childProcess);
+    });
+
     childProcess.on('exit', () => {
         _.pull(channelObj._processes, childProcess);
     });
