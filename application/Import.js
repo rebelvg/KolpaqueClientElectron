@@ -31,9 +31,7 @@ function twitchImportChannels(channels, i) {
 }
 
 async function getTwitchData(url) {
-    url = `${url}&client_id=${twitchApiKey}`;
-
-    let response = await requestGet({url: url, json: true});
+    let response = await requestGet({url: url, json: true, headers: {'Client-ID': twitchApiKey}});
     return response.body;
 }
 
