@@ -1,17 +1,42 @@
 /**
  * Created by JackP on 10/8/2017.
  */
-import React from 'react'
-import {Field, reduxForm, FieldArray} from 'redux-form'
-
+import React, {Component} from 'react'
+import Icon from 'react-icons-kit';
 import styled from 'styled-components'
 
+import {close} from 'react-icons-kit/fa/close';
 
-const ImportForm = ({handleSubmit, pristine, reset, submitting, getSettings}, initialValues) => (
-    <Form initialValues={initialValues} onSubmit={handleSubmit}>
 
-    </Form>
+const renderField = ({input, label, type, meta: {touched, error}}) => (
+    <div>
+        <div>
+            <input {...input} type={type} placeholder={label}/>
+        </div>
+    </div>
 )
+
+const renderImport = ({fields, meta: {error, submitFailed}}) => (
+    <ul>
+        {fields.map((member, index) => (
+            <li key={index}>
+                <strong>${member}</strong>
+                <Icon icon={close} onClick={() => fields.remove(index)}/>;
+            </li>
+        ))}
+    </ul>
+)
+
+export default class ImportForm extends Component {
+    constructor() {
+        super()
+    }
+
+    render() {
+        return <div>Test</div>
+
+    }
+}
 
 const Form = styled.form`
     display: flex;
@@ -34,10 +59,6 @@ const InputWrapper = styled.div`
    
 `
 
-const InputField = styled(Field)`
+const InputField = styled.input`
     width: 100%;
 `
-
-export default reduxForm({
-    form: 'settings' // a unique identifier for this form
-})(ImportForm)

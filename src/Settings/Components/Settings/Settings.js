@@ -37,6 +37,7 @@ export default class Settings extends Component {
     render() {
         const {settings} = this.props;
         const {activeKey} = this.state;
+        console.log(settings)
         return (
             <Container>
                 <Select
@@ -51,6 +52,11 @@ export default class Settings extends Component {
                     activeKey === 'general'
                     && <SettingsForm initialValues={settings} getSettings={this.getSetting}
                                      onSubmit={this.onSettingsSubmit}/>
+                }
+                {
+                    activeKey === 'import'
+                    && <ImportForm initialValues={settings} getSettings={this.getSetting}
+                                   onSubmit={this.onSettingsSubmit}/>
                 }
             </Container>
         )

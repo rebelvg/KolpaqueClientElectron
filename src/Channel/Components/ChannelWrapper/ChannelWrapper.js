@@ -3,9 +3,9 @@ import React, {Component} from 'react';
 import styled from 'styled-components';
 import Channel from '../../../Channel/Components/Channel/Channel'
 
-const ChannelWrapper = ({channels, editChannel, handleClick, renameChannel, changeSetting, selectChannel, selected, playChannel}) => (
+const ChannelWrapper = ({channels, editChannel, handleClick, renameChannel, changeSetting, selectChannel, selected, playChannel, update}) => (
 
-    <StyledWrapper>
+    <StyledWrapper isUpdate={!!update}>
         {channels.map((channel, index) => (
             <Channel
                 renameChannel={renameChannel}
@@ -25,7 +25,7 @@ const StyledWrapper = styled.div`
     display: flex;
     color: black;
     flex-direction: column;
-    padding-bottom: 30px;  
+    padding-bottom: ${props => !!props.isUpdate ? 30 : 60}px;  
 `
 
 

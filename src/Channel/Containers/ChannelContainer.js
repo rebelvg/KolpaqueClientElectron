@@ -100,6 +100,7 @@ export class ChannelContainer extends Component {
                 </TabWrapper>
                 <TabPanel active={tab === 'online'}>
                     <ChannelWrapper
+                        isUpdate={!!update}
                         renameChannel={this.renameChannel}
                         editChannel={editChannel}
                         selected={selected}
@@ -112,6 +113,7 @@ export class ChannelContainer extends Component {
                 </TabPanel>
                 <TabPanel active={tab === 'offline'}>
                     <ChannelWrapper
+                        isUpdate={!!update}
                         renameChannel={this.renameChannel}
                         editChannel={editChannel}
                         selected={selected}
@@ -123,7 +125,9 @@ export class ChannelContainer extends Component {
                 </TabPanel>
 
                 {update &&
-                <UpdateWrapper onClick={() => {this.sendInfo(update)}}>
+                <UpdateWrapper onClick={() => {
+                    this.sendInfo(update)
+                }}>
                     {update}
                 </UpdateWrapper>}
                 <StyledFooter>
@@ -146,6 +150,7 @@ const UpdateWrapper = styled.div`
     padding: 5px 0px;
     border: 1px solid #979797;
     cursor: pointer;
+    background-color:white;
 `
 
 const TabList = styled.div`
