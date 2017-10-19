@@ -45,7 +45,7 @@ const colors = {
     },
     channel: {
       color: '#000000',
-      bg: '#dedede'
+      bg: '#fff'
     },
     channelSelected: {
         color: '#000',
