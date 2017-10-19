@@ -43,7 +43,7 @@ function isOnline(channelObj, printBalloon) {
     onlineChannels[channelLink] = 0;
 
     if (printBalloon) {
-        Notifications.printNotification('Stream is Live (' + moment().format('D/MMM, H:mm') + ')', channelObj.visibleName, channelObj);
+        Notifications.printNotification('Stream is Live', channelObj.visibleName, channelObj);
     }
 
     if (printBalloon && channelObj.autoStart) {
@@ -103,9 +103,9 @@ function getKlpqMainStats(channelObj, printBalloon) {
 }
 
 function getTwitchStats(channelObj, printBalloon) {
-    let url = "https://api.twitch.tv/kraken/streams?channel=" + channelObj.name + "&client_id=" + twitchApiKey;
+    let url = "https://api.twitch.tv/kraken/streams?channel=" + channelObj.name;
 
-    request({url: url, json: true}, function (error, response, body) {
+    request({url: url, json: true, headers: {'Client-ID': twitchApiKey}}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             try {
                 if (body.streams.length > 0) {
