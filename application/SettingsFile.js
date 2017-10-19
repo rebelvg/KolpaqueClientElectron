@@ -43,6 +43,14 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
     return channelObj.changeSetting(settingName, settingValue);
 });
 
+ipcMain.on('config_getTheme', (event) => {
+    event.returnValue = config.getTheme();
+});
+
+ipcMain.on('config_setTheme', (event, themeObj) => {
+    event.returnValue = config.setTheme(themeObj);
+});
+
 ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));
 
 ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
