@@ -6,7 +6,6 @@ import Channel from '../../../Channel/Components/Channel/Channel'
 const ChannelWrapper = ({channels, editChannel, handleClick, renameChannel, changeSetting, selectChannel, selected, playChannel, isUpdate}) => (
 
     <StyledWrapper isUpdate={isUpdate}>
-        {JSON.stringify(isUpdate)}
         {channels.map((channel, index) => (
             <Channel
                 renameChannel={renameChannel}
