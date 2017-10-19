@@ -31,6 +31,10 @@ function readFile(config) {
                 config.settings[settingName] = parseJson.settings[settingName];
             }
         });
+
+        if (parseJson.theme) {
+            config.theme = parseJson.theme;
+        }
     }
     catch (e) {
         console.log(e.stack);
@@ -62,6 +66,7 @@ class Config extends EventEmitter {
             youtubeApiKey: null,
             twitchImport: []
         };
+        this.theme = null;
 
         readFile(this);
 
@@ -124,6 +129,16 @@ class Config extends EventEmitter {
         return true;
     }
 
+    getTheme() {
+        return this.theme;
+    }
+
+    setTheme(themeObj) {
+        this.theme = themeObj;
+
+        return true;
+    }
+
     findById(id) {
         let channel = this.channels.find((channel) => {
             return channel.id === id;
@@ -165,6 +180,7 @@ class Config extends EventEmitter {
             });
 
             saveConfig.settings = this.settings;
+            saveConfig.theme = this.theme;
 
             fs.writeFileSync(settingsPath, JSON.stringify(saveConfig, null, 4));
 
