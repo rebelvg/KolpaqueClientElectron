@@ -27,6 +27,10 @@ ipcMain.on('client_getInfo', (event, info) => {
     });
 });
 
+ipcMain.on('client_getVersion', (event) => {
+    event.returnValue = clientVersion;
+});
+
 ipcMain.once('client_ready', () => {
     checkLoop();
 });
