@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import theme from '../../theme'
 import {bindActionCreators} from 'redux';
+import { withTheme } from 'styled-components'
 import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
@@ -80,6 +82,7 @@ export class ChannelContainer extends Component {
     render() {
         const {online, offline, update} = this.props;
         const {selected, tab, editChannel} = this.state;
+        console.log(theme);
         return (
             <StyledContainerWrapper>
 
@@ -95,7 +98,7 @@ export class ChannelContainer extends Component {
                     <SettingsIcon onClick={() => {
                         console.log('click')
                     }} to="/about">
-                        <Ionicon icon="ion-gear-b" color="black"/>
+                        <Ionicon icon="ion-gear-b" color={theme.clientSecondary.color}/>
                     </SettingsIcon>
                 </TabWrapper>
                 <TabPanel active={tab === 'online'}>
@@ -150,7 +153,7 @@ const UpdateWrapper = styled.div`
     padding: 5px 0px;
     border: 1px solid #979797;
     cursor: pointer;
-    background-color:white;
+    background-color:${theme.clientSecondary.bg};
 `
 
 const TabList = styled.div`
@@ -174,14 +177,15 @@ const Tab = styled.div`
     transform: rotate(180deg);
     font-size: 12px;
     height: 105px;
+    color: ${theme.tab.color};
     outline: 1px solid #979797;
     position: relative;
     cursor: pointer;
     align-items: center;
     box-sizing: content-box;
     ${props => props.active
-    ? ("background-color: white; width: 24px; z-index: 200")
-    : ("background-color: #EDEDED; width: 21px;")}
+    ? (`background-color: ${theme.tabSelected.bg}; width: 24px; z-index: 200`)
+    : (`background-color: ${theme.tab.bg}; width: 21px;`)}
 `
 
 const TabPanel = styled.div`
@@ -189,11 +193,12 @@ const TabPanel = styled.div`
     width: 100%;
     display: ${props => props.active ? 'initial' : 'none'};
     max-height: 100vh;
+    background-color: ${theme.clientSecondary.bg}
 `
 
 
 const StyledFooter = styled.div`
-    background-color: #D7D7D7;
+    background-color: ${theme.client.bg};
     color: white;
     position: fixed;
     bottom: 0px;
@@ -219,7 +224,7 @@ const StyledChannel = styled(Channel)`
 
 const TabWrapper = styled.div`
      height:100%;
-     background-color:  #D8D8D8;
+     background-color: ${theme.client.bg};
      display:flex;
      justify-content: space-between;
      flex-direction: column;
@@ -228,7 +233,7 @@ const TabWrapper = styled.div`
      z-index: 2;
 `
 
-export default connect(
+export default withTheme(connect(
     (state) => ({
         online: getOnline(state),
         offline: getOffline(state),
@@ -238,4 +243,4 @@ export default connect(
         addChannel,
         sendInfo
     }, dispatch)
-)(ChannelContainer);
+)(ChannelContainer));

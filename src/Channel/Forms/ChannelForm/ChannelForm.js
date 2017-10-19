@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import Ionicon from 'react-ionicons'
 import styled from 'styled-components'
 import {Field, reduxForm} from 'redux-form'
+import theme from '../../../theme'
+
 
 const {remote} = window.require('electron');
 const {Menu} = remote;
@@ -71,7 +73,7 @@ export default class ChannelForm extends Component {
                                  placeholder="Add Channel"
                                  type="text"/>
                     <button type="submit">
-                        <StyledIcon fontSize="24px" icon="ion-plus"/>
+                        <StyledIcon fontSize="24px" color={theme.addChannelBtn.color} icon="ion-plus"/>
                     </button>
                 </StyledChannelFormWrap>
             </form>
@@ -110,7 +112,7 @@ const StyledInput = styled.input`
 `;
 
 const StyledIcon = styled(Ionicon)`
-  background-color:white;
+  background-color:${theme.addChannelBtn.bg};
   color:white;
   display: flex;
   box-sizing: border-box;

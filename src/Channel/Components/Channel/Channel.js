@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components'
 import {renderIcon, renderAutoRestart, renderAutoStart} from '../../Helpers/IconRender'
 import EditForm from '../../Forms/EditForm/EditForm'
+import theme from '../../../theme'
 
 const Channel = ({channel, pinned, handleClick, editMode, selected, renameChannel, selectChannel, playChannel, changeSetting}) => (
     <ChannelWrapper
@@ -45,7 +46,7 @@ const ChannelWrapper = styled.div`
     flex-direction: row;
     font-size: 14px;
     height: 20px;
-    background-color:  ${props => !props.selected ? 'initial' : '#ece8e8'};
+    background-color:  ${props => !props.selected ? `${theme.channel.bg}` : `${theme.channelSelected.bg}`};
     border-top: 1px solid #969696;
 `;
 
@@ -57,6 +58,7 @@ const Icons = styled.div`
 const ChannelData = styled.div`
     flex-grow: 2;
     display: flex;
+    color: ${theme.channel.color};
     flex-direction: row;
 `
 
@@ -74,6 +76,7 @@ const StyledName = styled.div`
     flex-grow: 2;
        height:20px;
            display: flex;
+           color: ${theme.channel.color};
     align-items: center;
 `;
 
