@@ -7,6 +7,7 @@ const request = require('request');
 const moment = require('moment');
 const _ = require('lodash');
 const util = require('util');
+const {URL, URLSearchParams} = require('url');
 
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
@@ -91,19 +92,19 @@ function getKlpqStatsBase(url, channelObj, printBalloon) {
 }
 
 function getKlpqVpsStats(channelObj, printBalloon) {
-    let url = "http://stats.vps.klpq.men/channel/" + channelObj.name;
+    let url = `http://stats.vps.klpq.men/channel/${channelObj.name}`;
 
     getKlpqStatsBase(url, channelObj, printBalloon);
 }
 
 function getKlpqMainStats(channelObj, printBalloon) {
-    let url = "http://stats.main.klpq.men/channel/" + channelObj.name;
+    let url = `http://stats.main.klpq.men/channel/${channelObj.name}`;
 
     getKlpqStatsBase(url, channelObj, printBalloon);
 }
 
 function getTwitchStats(channelObj, printBalloon) {
-    let url = "https://api.twitch.tv/kraken/streams?channel=" + channelObj.name;
+    let url = `https://api.twitch.tv/kraken/streams?channel=${channelObj.name}`;
 
     request({url: url, json: true, headers: {'Client-ID': twitchApiKey}}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
@@ -121,8 +122,18 @@ function getTwitchStats(channelObj, printBalloon) {
     });
 }
 
-function getYoutubeStatsBase(url, channelObj, printBalloon) {
-    request({url: url, json: true}, function (error, response, body) {
+function getYoutubeStatsBase(channelId, channelObj, printBalloon) {
+    let apiKey = SettingsFile.settingsJson.settings.youtubeApiKey;
+
+    let searchUrl = new URL(`https://www.googleapis.com/youtube/v3/search`);
+
+    searchUrl.searchParams.set('channelId', channelId);
+    searchUrl.searchParams.set('part', 'snippet');
+    searchUrl.searchParams.set('type', 'video');
+    searchUrl.searchParams.set('eventType', 'live');
+    searchUrl.searchParams.set('key', apiKey);
+
+    request({url: searchUrl.href, json: true}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             try {
                 if (body.items.length > 0) {
@@ -145,16 +156,19 @@ function getYoutubeStatsUser(channelObj, printBalloon) {
         return;
     }
 
-    let idUrl = `https://www.googleapis.com/youtube/v3/channels?forUsername=${channelObj.name}&part=id&key=${apiKey}`;
+    let channelsUrl = new URL(`https://www.googleapis.com/youtube/v3/channels`);
 
-    request({url: idUrl, json: true}, function (error, response, body) {
+    channelsUrl.searchParams.set('forUsername', channelObj.name);
+    channelsUrl.searchParams.set('part', 'id');
+    channelsUrl.searchParams.set('key', apiKey);
+
+    request({url: channelsUrl.href, json: true}, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             try {
                 if (body.items.length > 0) {
                     let channelId = body.items[0].id;
-                    let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&eventType=live&key=${apiKey}`;
 
-                    getYoutubeStatsBase(url, channelObj, printBalloon);
+                    getYoutubeStatsBase(channelId, channelObj, printBalloon);
                 } else {
                     console.log('youtube user id not found.');
                 }
@@ -173,9 +187,7 @@ function getYoutubeStatsChannel(channelObj, printBalloon) {
         return;
     }
 
-    let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelObj.name}&type=video&eventType=live&key=${apiKey}`;
-
-    getYoutubeStatsBase(url, channelObj, printBalloon);
+    getYoutubeStatsBase(channelObj.name, channelObj, printBalloon);
 }
 
 function getStats5(channelObj, printBalloon = true) {

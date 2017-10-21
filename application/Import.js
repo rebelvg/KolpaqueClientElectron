@@ -3,6 +3,7 @@ const request = require('request');
 const moment = require('moment');
 const _ = require('lodash');
 const util = require('util');
+const {URL, URLSearchParams} = require('url');
 
 const SettingsFile = require('./SettingsFile');
 const Globals = require('./Globals');
@@ -44,7 +45,13 @@ async function twitchImportBase(channelName) {
     try {
         let i = 0;
 
-        let body = await getTwitchData(`https://api.twitch.tv/kraken/users/${channelName}/follows/channels?sortby=created_at&direction=ASC&limit=100`);
+        let apiUrl = new URL(`https://api.twitch.tv/kraren/users/${channelName}/follows/channels`);
+
+        apiUrl.searchParams.set('sortby', 'created_at');
+        apiUrl.searchParams.set('direction', 'ASC');
+        apiUrl.searchParams.set('limit', '100');
+
+        let body = await getTwitchData(apiUrl.href);
         let channels = body.follows;
 
         if (!channels || channels.length === 0)
