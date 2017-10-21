@@ -81,6 +81,7 @@ class Channel extends EventEmitter {
         this.isLive = false;
         this.onAutoRestart = false;
         this._processes = [];
+        this._icon = null;
 
         this.visibleName = null;
         this.isPinned = false;

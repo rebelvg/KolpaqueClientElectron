@@ -19,8 +19,14 @@ function printNotification(title, content, channelObj = {}) {
 }
 
 function printNewNotification(title, content, channelObj = {}) {
+    let icon = app.appIcon.iconPathBalloon;
+
+    if (channelObj._icon) {
+        icon = channelObj._icon;
+    }
+
     let notification = new Notification({
-        icon: app.appIcon.iconPathBalloon,
+        icon: icon,
         title: title,
         body: content
     });

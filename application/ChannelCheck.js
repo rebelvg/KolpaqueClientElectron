@@ -12,10 +12,17 @@ const {URL, URLSearchParams} = require('url');
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
-const Globals = require('./Globals');
+const {twitchApiKey} = require('./Globals');
 
-let twitchApiKey = Globals.twitchApiKey;
 let onlineChannels = {};
+
+const services = {
+    'klpq-vps': getKlpqVpsStats,
+    'klpq-main': getKlpqMainStats,
+    'twitch': getTwitchStats,
+    'youtube-user': getYoutubeStatsUser,
+    'youtube-channel': getYoutubeStatsChannel
+};
 
 ipcMain.once('client_ready', () => {
     checkLoop();
@@ -219,14 +226,6 @@ function getStats120(channelObj, printBalloon = true) {
             break;
     }
 }
-
-const services = {
-    'klpq-vps': getKlpqVpsStats,
-    'klpq-main': getKlpqMainStats,
-    'twitch': getTwitchStats,
-    'youtube-user': getYoutubeStatsUser,
-    'youtube-channel': getYoutubeStatsChannel
-};
 
 function checkChannel(channelObj) {
     if (services.hasOwnProperty(channelObj.service)) {

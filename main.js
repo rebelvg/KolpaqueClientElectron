@@ -14,6 +14,7 @@ const Import = require('./application/Import');
 const Notifications = require('./application/Notifications');
 const SettingsFile = require('./application/SettingsFile');
 const VersionCheck = require('./application/VersionCheck');
+const ChannelInfo = require('./application/ChannelInfo');
 
 const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);
