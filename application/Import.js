@@ -44,7 +44,7 @@ async function twitchImportBase(channelName) {
     try {
         let i = 0;
 
-        let body = await getTwitchData(`https://api.twitch.tv/kraken/users/${channelName}/follows/channels?direction=ASC&sortby=created_at&limit=100`);
+        let body = await getTwitchData(`https://api.twitch.tv/kraken/users/${channelName}/follows/channels?sortby=created_at&direction=ASC&limit=100`);
         let channels = body.follows;
 
         if (!channels || channels.length === 0)
