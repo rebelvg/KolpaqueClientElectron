@@ -28,6 +28,10 @@ ipcMain.once('client_ready', () => {
     checkLoop();
 });
 
+SettingsFile.settingsJson.on('channel_added', (channelObj) => {
+    checkChannel(channelObj);
+});
+
 SettingsFile.settingsJson.on('channel_removed', (channelObj) => {
     delete onlineChannels[channelObj.link];
 
@@ -260,5 +264,3 @@ function checkLoop() {
         });
     }, 2 * 60 * 1000);
 }
-
-exports.checkChannel = checkChannel;

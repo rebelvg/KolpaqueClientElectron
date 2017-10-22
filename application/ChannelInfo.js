@@ -9,6 +9,10 @@ ipcMain.once('client_ready', () => {
     checkLoop();
 });
 
+SettingsFile.settingsJson.on('channel_added', (channelObj) => {
+    getInfo(channelObj);
+});
+
 const services = {
     'twitch': getTwitchInfo
 };
@@ -34,7 +38,9 @@ function getTwitchInfo(channelObj) {
                 return;
             }
 
-            channelObj.changeSetting('_icon', nativeImage.createFromBuffer(buffer));
+            console.log('icon set for', channelObj.name);
+
+            channelObj._icon = nativeImage.createFromBuffer(buffer);
         });
     });
 }
