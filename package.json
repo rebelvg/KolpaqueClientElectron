@@ -59,7 +59,7 @@
     "normalize.css": "^7.0.0",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
-    "react-hot-loader": "^3.0.0-beta.7",
+    "react-hot-loader": "^3.0.0",
     "react-icons-kit": "^1.0.7",
     "react-ionicons": "^1.5.9",
     "react-redux": "^5.0.5",
