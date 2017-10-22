@@ -9,7 +9,7 @@ const _ = require('lodash');
 const util = require('util');
 const {URL, URLSearchParams} = require('url');
 
-const SettingsFile = require('./SettingsFile');
+const config = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
 const {twitchApiKey} = require('./Globals');
@@ -28,17 +28,15 @@ ipcMain.once('client_ready', () => {
     checkLoop();
 });
 
-SettingsFile.settingsJson.on('channel_added', (channelObj) => {
+config.on('channel_added', (channelObj) => {
     checkChannel(channelObj);
 });
 
-SettingsFile.settingsJson.on('channel_removed', (channelObj) => {
+config.on('channel_removed', (channelObj) => {
     delete onlineChannels[channelObj.link];
 });
 
 function isOnline(channelObj, printBalloon) {
-    let settingsJson = SettingsFile.settingsJson;
-
     let channelLink = channelObj.link;
 
     if (onlineChannels.hasOwnProperty(channelLink)) {
@@ -132,7 +130,7 @@ function getTwitchStats(channelObj, printBalloon) {
 }
 
 function getYoutubeStatsBase(channelId, channelObj, printBalloon) {
-    let apiKey = SettingsFile.settingsJson.settings.youtubeApiKey;
+    let apiKey = config.settings.youtubeApiKey;
 
     let searchUrl = new URL(`https://www.googleapis.com/youtube/v3/search`);
 
@@ -159,7 +157,7 @@ function getYoutubeStatsBase(channelId, channelObj, printBalloon) {
 }
 
 function getYoutubeStatsUser(channelObj, printBalloon) {
-    let apiKey = SettingsFile.settingsJson.settings.youtubeApiKey;
+    let apiKey = config.settings.youtubeApiKey;
 
     if (!apiKey) {
         return;
@@ -190,7 +188,7 @@ function getYoutubeStatsUser(channelObj, printBalloon) {
 }
 
 function getYoutubeStatsChannel(channelObj, printBalloon) {
-    let apiKey = SettingsFile.settingsJson.settings.youtubeApiKey;
+    let apiKey = config.settings.youtubeApiKey;
 
     if (!apiKey) {
         return;
@@ -236,28 +234,26 @@ function checkChannel(channelObj) {
 }
 
 function checkLoop() {
-    let settingsJson = SettingsFile.settingsJson;
-
-    _.forEach(settingsJson.channels, (channelObj) => {
+    _.forEach(config.channels, (channelObj) => {
         getStats5(channelObj, false);
         getStats30(channelObj, false);
         getStats120(channelObj, false);
     });
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, (channelObj) => {
+        _.forEach(config.channels, (channelObj) => {
             getStats5(channelObj);
         });
     }, 5 * 1000);
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, (channelObj) => {
+        _.forEach(config.channels, (channelObj) => {
             getStats30(channelObj);
         });
     }, 30 * 1000);
 
     setInterval(function () {
-        _.forEach(settingsJson.channels, (channelObj) => {
+        _.forEach(config.channels, (channelObj) => {
             getStats120(channelObj);
         });
     }, 2 * 60 * 1000);

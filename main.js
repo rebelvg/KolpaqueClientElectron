@@ -5,7 +5,7 @@ const path = require('path');
 const url = require('url');
 const fixPath = require('fix-path');
 
-const SettingsFile = require('./application/SettingsFile');
+const config = require('./application/SettingsFile');
 
 const ChannelPlay = require('./application/ChannelPlay');
 const Notifications = require('./application/Notifications');
@@ -18,7 +18,6 @@ const VersionCheck = require('./application/VersionCheck');
 const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);
 
-let settingsJson = SettingsFile.settingsJson;
 let forceQuit = false;
 
 ipcMain.once('client_ready', () => {
@@ -50,8 +49,8 @@ function createWindow() {
         title: 'Kolpaque Client',
         minWidth: 200,
         minHeight: 350,
-        width: settingsJson.settings.width,
-        height: settingsJson.settings.height,
+        width: config.settings.width,
+        height: config.settings.height,
         resizable: true,
         fullscreenable: false,
         icon: iconPath
@@ -82,7 +81,7 @@ function createWindow() {
     });
 
     mainWindow.on('close', function () {
-        SettingsFile.settingsJson.saveFile();
+        config.saveFile();
     });
 
     mainWindow.on('close', function (e) {
@@ -103,8 +102,8 @@ function createWindow() {
         let width = size[0];
         let height = size[1];
 
-        settingsJson.settings.width = width;
-        settingsJson.settings.height = height;
+        config.settings.width = width;
+        config.settings.height = height;
     });
 
     // Emitted when the window is closed.
@@ -141,7 +140,7 @@ app.on('activate', function () {
 });
 
 app.on('ready', function () {
-    if (!settingsJson.settings.minimizeAtStart)
+    if (!config.settings.minimizeAtStart)
         return;
 
     mainWindow.hide();
@@ -169,8 +168,8 @@ let contextMenuTemplate = [
     {
         label: 'Notifications', type: 'checkbox', click: (menuItem) => {
         console.log('menuItem.checked', menuItem.checked);
-        SettingsFile.settingsJson.changeSetting('showNotifications', menuItem.checked);
-    }, checked: SettingsFile.settingsJson.settings.showNotifications
+        config.changeSetting('showNotifications', menuItem.checked);
+    }, checked: config.settings.showNotifications
     },
     {
         label: 'Quit Client', type: 'normal', click: () => {

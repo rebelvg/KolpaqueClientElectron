@@ -2,14 +2,14 @@ const {app, ipcMain, dialog, shell, nativeImage} = require('electron');
 const _ = require('lodash');
 const request = require('request');
 
-const SettingsFile = require('./SettingsFile');
+const config = require('./SettingsFile');
 const {twitchApiKey} = require('./Globals');
 
 ipcMain.once('client_ready', () => {
     checkLoop();
 });
 
-SettingsFile.settingsJson.on('channel_added', (channelObj) => {
+config.on('channel_added', (channelObj) => {
     getInfo(channelObj);
 });
 
@@ -50,9 +50,7 @@ function getInfo(channelObj) {
 }
 
 function checkLoop() {
-    let settingsJson = SettingsFile.settingsJson;
-
-    _.forEach(settingsJson.channels, (channelObj) => {
+    _.forEach(config.channels, (channelObj) => {
         getInfo(channelObj);
     });
 }

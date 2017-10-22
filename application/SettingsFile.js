@@ -44,4 +44,4 @@ ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));
 
 ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
 
-exports.settingsJson = config;
+module.exports = config;

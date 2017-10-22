@@ -7,7 +7,7 @@ const path = require('path');
 const request = require('request');
 const _ = require('lodash');
 
-const SettingsFile = require('./SettingsFile');
+const config = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 
 function setChannelEvent(channelObj) {
@@ -18,11 +18,11 @@ function setChannelEvent(channelObj) {
     });
 }
 
-_.forEach(SettingsFile.settingsJson.channels, (channelObj) => {
+_.forEach(config.channels, (channelObj) => {
     setChannelEvent(channelObj);
 });
 
-SettingsFile.settingsJson.on('setting_changed', function (settingName, settingValue) {
+config.on('setting_changed', function (settingName, settingValue) {
     if (settingName === 'showNotifications') {
         app.contextMenuTemplate[4].checked = settingValue;
     }
@@ -32,18 +32,16 @@ SettingsFile.settingsJson.on('setting_changed', function (settingName, settingVa
     }
 });
 
-SettingsFile.settingsJson.on('channel_added', (channelObj) => {
+config.on('channel_added', (channelObj) => {
     setChannelEvent(channelObj);
 });
 
-SettingsFile.settingsJson.on('channel_removed', (channelObj) => {
+config.on('channel_removed', (channelObj) => {
     rebuildIconMenu();
 });
 
 function printNotification(title, content, channelObj = {}) {
-    let settingsJson = SettingsFile.settingsJson;
-
-    if (!settingsJson.settings.showNotifications)
+    if (!config.settings.showNotifications)
         return;
 
     printNewNotification(title, content, channelObj);
@@ -70,11 +68,9 @@ function printNewNotification(title, content, channelObj = {}) {
 }
 
 function onBalloonClick(title, content, channelObj) {
-    let settingsJson = SettingsFile.settingsJson;
-
     console.log('balloon was clicked.');
 
-    if (!settingsJson.settings.launchOnBalloonClick)
+    if (!config.settings.launchOnBalloonClick)
         return;
 
     if (title.indexOf('Stream is Live') === 0) {
@@ -87,7 +83,7 @@ function onBalloonClick(title, content, channelObj) {
 }
 
 function rebuildIconMenu() {
-    let onlineChannels = SettingsFile.settingsJson.channels.filter((channelObj) => {
+    let onlineChannels = config.channels.filter((channelObj) => {
         return channelObj.isLive;
     });
 

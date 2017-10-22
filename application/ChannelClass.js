@@ -5,12 +5,12 @@ const EventEmitter = require('events');
 const md5 = require('md5');
 
 const {allowedProtocols, registeredServices} = require('./Globals');
-const SettingsFile = require('./SettingsFile');
+const config = require('./SettingsFile');
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
 ipcMain.on('channel_openPage', (event, id) => {
-    let channelObj = SettingsFile.settingsJson.findById(id);
+    let channelObj = config.findById(id);
 
     if (channelObj === null) {
         return false;
@@ -33,7 +33,7 @@ ipcMain.on('channel_openPage', (event, id) => {
 });
 
 ipcMain.on('channel_openChat', (event, id) => {
-    let channelObj = SettingsFile.settingsJson.findById(id);
+    let channelObj = config.findById(id);
 
     if (channelObj === null) {
         return false;

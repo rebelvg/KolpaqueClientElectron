@@ -5,7 +5,7 @@ const _ = require('lodash');
 const util = require('util');
 const {URL, URLSearchParams} = require('url');
 
-const SettingsFile = require('./SettingsFile');
+const config = require('./SettingsFile');
 const {twitchApiKey, registeredServices} = require('./Globals');
 
 let requestGet = util.promisify(request.get);
@@ -20,7 +20,7 @@ ipcMain.once('client_ready', () => {
 
 function twitchImportChannels(channels, i) {
     channels.forEach(function (channel) {
-        let channelObj = SettingsFile.settingsJson.addChannelLink(channel.channel.url);
+        let channelObj = config.addChannelLink(channel.channel.url);
 
         if (channelObj !== false) {
             i++;
@@ -56,7 +56,7 @@ async function twitchImportBase(channelName) {
         if (!channels || channels.length === 0)
             return 0;
 
-        SettingsFile.settingsJson.addChannelLink(`http://www.twitch.tv/${channelName}`);
+        config.addChannelLink(`http://www.twitch.tv/${channelName}`);
 
         i = twitchImportChannels(channels, i);
 
@@ -118,7 +118,7 @@ function autoKlpqImport() {
 
                     let channelUrl = protocol + "//" + host + pathname;
 
-                    let channelObj = SettingsFile.settingsJson.addChannelLink(channelUrl);
+                    let channelObj = config.addChannelLink(channelUrl);
                 });
             }
         });
@@ -126,7 +126,7 @@ function autoKlpqImport() {
 }
 
 function autoTwitchImport() {
-    _.forEach(SettingsFile.settingsJson.settings.twitchImport, async function (channelName) {
+    _.forEach(config.settings.twitchImport, async function (channelName) {
         await twitchImportBase(channelName);
     });
 }

@@ -7,12 +7,12 @@ const fs = require('fs');
 const child = require('child_process').execFile;
 const _ = require('lodash');
 
-const SettingsFile = require('./SettingsFile');
+const config = require('./SettingsFile');
 const Notifications = require('./Notifications');
 const Globals = require('./Globals');
 
 ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
-    let channelObj = SettingsFile.settingsJson.findById(id);
+    let channelObj = config.findById(id);
 
     if (!channelObj) {
         return false;
@@ -22,7 +22,7 @@ ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
 });
 
 ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
-    let channelObj = SettingsFile.settingsJson.findById(id);
+    let channelObj = config.findById(id);
 
     if (!channelObj) {
         return false;
@@ -44,8 +44,6 @@ function launchPlayerLink(channelLink, LQ = null) {
 }
 
 function launchPlayerObj(channelObj, LQ = null, autoRestart = null) {
-    let config = SettingsFile.settingsJson;
-
     if (LQ === null) {
         LQ = config.settings.LQ;
     }
