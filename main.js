@@ -154,8 +154,8 @@ let contextMenuTemplate = [
     }
     },
     {
-        label: 'Play / Clipboard', type: 'normal', click: () => {
-        ChannelPlay.launchPlayerLink(clipboard.readText());
+        label: 'Play / Clipboard', type: 'normal', click: (menuItem, browserWindow, event) => {
+        ChannelPlay.launchPlayerLink(clipboard.readText(), event.ctrlKey);
     }
     },
     {

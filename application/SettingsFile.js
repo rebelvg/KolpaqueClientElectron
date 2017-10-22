@@ -7,7 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 
-const {allowedProtocols, registeredServices, preInstalledChannels, buildChannelObj} = require('./Globals');
+const {allowedProtocols, registeredServices, preInstalledChannels} = require('./Globals');
 const Config = require('./ConfigClass');
 
 let config = new Config();

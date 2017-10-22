@@ -8,8 +8,8 @@ const child = require('child_process').execFile;
 const _ = require('lodash');
 
 const config = require('./SettingsFile');
+const Config = require('./ConfigClass');
 const Notifications = require('./Notifications');
-const Globals = require('./Globals');
 
 ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
     let channelObj = config.findById(id);
@@ -34,7 +34,7 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
 });
 
 function launchPlayerLink(channelLink, LQ = null) {
-    let channelObj = Globals.buildChannelObj(channelLink);
+    let channelObj = Config.buildChannelObj(channelLink);
 
     if (channelObj === false) {
         return false;

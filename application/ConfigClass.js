@@ -4,10 +4,10 @@ const path = require('path');
 const _ = require('lodash');
 const EventEmitter = require('events');
 
-const {allowedProtocols, registeredServices, preInstalledChannels, buildChannelObj} = require('./Globals');
+const Channel = require('./ChannelClass');
+const {allowedProtocols, registeredServices, preInstalledChannels} = require('./Globals');
 
 const isDev = process.env.NODE_ENV === 'dev';
-
 const settingsPath = path.normalize(path.join(app.getPath('documents'), isDev ? 'KolpaqueClient_dev.json' : 'KolpaqueClient.json'));
 const channelSave = ['link', 'visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
@@ -80,7 +80,7 @@ class Config extends EventEmitter {
     }
 
     addChannelLink(channelLink) {
-        let channelObj = buildChannelObj(channelLink);
+        let channelObj = Config.buildChannelObj(channelLink);
 
         if (channelObj === false) {
             return false;
@@ -97,6 +97,17 @@ class Config extends EventEmitter {
         this.emit('channel_added', channelObj);
 
         return channelObj;
+    }
+
+    static buildChannelObj(channelLink) {
+        try {
+            return new Channel(channelLink);
+        }
+        catch (e) {
+            console.log(e.stack);
+
+            return false;
+        }
     }
 
     removeChannelById(id) {

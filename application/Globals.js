@@ -41,23 +41,9 @@ const registeredServices = {
 
 const preInstalledChannels = ['rtmp://vps.klpq.men/live/main', 'rtmp://main.klpq.men/live/main'];
 
-function buildChannelObj(channelLink) {
-    try {
-        const Channel = require('./ChannelClass');
-
-        return new Channel(channelLink);
-    }
-    catch (e) {
-        console.log(e.stack);
-
-        return false;
-    }
-}
-
 let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
 
 exports.allowedProtocols = allowedProtocols;
 exports.registeredServices = registeredServices;
 exports.preInstalledChannels = preInstalledChannels;
-exports.buildChannelObj = buildChannelObj;
 exports.twitchApiKey = twitchApiKey;
