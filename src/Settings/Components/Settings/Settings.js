@@ -8,7 +8,6 @@ import 'react-select/dist/react-select.css';
 const options = [
     {value: 'general', label: "General Settings"},
     {value: 'import', label: "Import Settings"},
-    {value: 'theme', label: "Theme Settings"},
 ]
 
 
@@ -40,7 +39,7 @@ export default class Settings extends Component {
         console.log(settings)
         return (
             <Container>
-                <Select
+                <SettingSelect
                     name="form-field-name"
                     value={activeKey}
                     options={options}
@@ -62,6 +61,9 @@ export default class Settings extends Component {
         )
     }
 }
+const SettingSelect = styled(Select)`
+    margin-bottom: 10px;
+`;
 const PageTitle = styled.h4`
     padding: 5px 0px;
     margin: 0px;

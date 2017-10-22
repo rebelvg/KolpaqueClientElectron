@@ -1,9 +1,22 @@
-import {GET_CHANNELS, CHANGE_STATUS, DELETE_CHANNEL, ADD_CHANNEL, ADD_CHANNEL_RESPONSE, GET_INFO, SEND_INFO} from '../Actions/ChannelActions'
+import {
+    GET_CHANNELS,
+    CHANGE_STATUS,
+    DELETE_CHANNEL,
+    ADD_CHANNEL,
+    ADD_CHANNEL_RESPONSE,
+    GET_INFO,
+    SEND_INFO
+} from '../Actions/ChannelActions'
 
 const initialState = {
     channels: [],
-    update: false
+    update: false,
+    sort: 'last'
 };
+
+const sortChannels = (channels, sort) => {
+    return channels;
+}
 
 export default function (state = initialState, action = {}) {
     switch (action.type) {
@@ -54,12 +67,12 @@ export default function (state = initialState, action = {}) {
 
 // Selectors
 
-export const getChannels = (state) => state.channel && state.channel.channels
+export const getChannels = (state) => state.channel && sortChannels(state.channel.channels, state.channel.sort)
 
 export const getOffline = (state) =>
-state.channel && state.channel.channels.filter((channel) => !channel.isLive);
+state.channel && sortChannels(state.channel.channels, state.channel.sort).filter((channel) => !channel.isLive);
 
 export const getOnline = (state) =>
-state.channel && state.channel.channels.filter((channel) => channel.isLive);
+state.channel && sortChannels(state.channel.channels, state.channel.sort).filter((channel) => channel.isLive);
 
 export const getUpdateStatus = (state) => state.channel && state.channel.update

@@ -83,11 +83,11 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}, 
             </InputWrapper>
         </FieldWrapper>
 
-        <div>
-            <button type="submit" disabled={pristine || submitting}>
-                Submit
-            </button>
-        </div>
+        <FieldWrapper>
+            <SaveButton type="submit" disabled={pristine || submitting}>
+                Save
+            </SaveButton>
+        </FieldWrapper>
     </Form>
 )
 
@@ -95,6 +95,13 @@ const Form = styled.form`
     display: flex;
     flex-direction: column;
     height: 100%;
+`
+
+const SaveButton = styled.button`
+    background-color: transparent;
+    border: 1px solid black;
+    color: black;
+    margin-top: 35px;
 `
 
 const FieldWrapper = styled.div`

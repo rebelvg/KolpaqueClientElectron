@@ -6,41 +6,59 @@ import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import {getSettings} from '../../Settings/Reducers/SettingsReducer'
 import Settings from '../Components/Settings/Settings'
-
+import {withTheme} from 'styled-components'
+import theme from '../../theme'
 const {remote, ipcRenderer} = window.require('electron');
 const {Menu, MenuItem} = remote;
 
 export class SettingsContainer extends Component {
     constructor() {
         super()
-        this.state = {}
+        const version = ipcRenderer.sendSync("client_getVersion");
+
+        this.state = {
+            version
+        }
     }
 
     render() {
         const {settings} = this.props;
-        const {selected, tab} = this.state;
+        const {selected, tab, version} = this.state;
+        console.log(this.state);
         return (
             <Container>
                 <Settings settings={settings}/>
-                <StyledLink to="/">back</StyledLink>
+                <StyledFooter>
+                    <StyledLink to="/">Back</StyledLink>
+                    <Version> {version} </Version>
+                </StyledFooter>
             </Container>
         );
     }
 }
-
+const StyledFooter = styled.div`
+    position: absolute;
+    bottom: 0px;
+    display: flex;
+    background-color: ${theme.client.bg};
+    padding: 5px 0px;
+    width:100%;
+    justify-content: space-between;
+`
 const Container = styled.div`
    width: 100%;
    height: 100%;
 `
-
+const Version = styled.div`
+    margin-right: 10px;
+`
 const StyledLink = styled(Link)`
-    position: absolute;
-    bottom: 0px;
+   margin-left: 10px;
 `
 
-export default connect(
+export default withTheme(connect(
     (state) => ({
         settings: getSettings(state)
     }),
     (dispatch) => bindActionCreators({}, dispatch)
-)(SettingsContainer);
+)(SettingsContainer));
