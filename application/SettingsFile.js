@@ -44,14 +44,4 @@ ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));
 
 ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
 
-function saveFile() {
-    return config.saveFile();
-}
-
-function addChannel(channelLink) {
-    return config.addChannelLink(channelLink);
-}
-
-exports.saveFile = saveFile;
-exports.addChannel = addChannel;
 exports.settingsJson = config;

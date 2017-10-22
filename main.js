@@ -82,7 +82,7 @@ function createWindow() {
     });
 
     mainWindow.on('close', function () {
-        SettingsFile.saveFile();
+        SettingsFile.settingsJson.saveFile();
     });
 
     mainWindow.on('close', function (e) {
@@ -201,14 +201,6 @@ app.on('ready', () => {
     app.appIcon = appIcon;
 
     Notifications.rebuildIconMenu();
-});
-
-SettingsFile.settingsJson.on('setting_changed', function (settingName, settingValue) {
-    if (settingName === 'showNotifications') {
-        contextMenuTemplate[4].checked = settingValue;
-
-        Notifications.rebuildIconMenu();
-    }
 });
 
 process.on('uncaughtException', function (err) {

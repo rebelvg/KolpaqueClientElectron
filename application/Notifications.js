@@ -22,6 +22,16 @@ _.forEach(SettingsFile.settingsJson.channels, (channelObj) => {
     setChannelEvent(channelObj);
 });
 
+SettingsFile.settingsJson.on('setting_changed', function (settingName, settingValue) {
+    if (settingName === 'showNotifications') {
+        app.contextMenuTemplate[4].checked = settingValue;
+    }
+
+    if (['showNotifications'].includes(settingName)) {
+        rebuildIconMenu();
+    }
+});
+
 SettingsFile.settingsJson.on('channel_added', (channelObj) => {
     setChannelEvent(channelObj);
 });
