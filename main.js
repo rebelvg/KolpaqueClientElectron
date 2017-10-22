@@ -8,7 +8,7 @@ const fixPath = require('fix-path');
 const config = require('./application/SettingsFile');
 
 const ChannelPlay = require('./application/ChannelPlay');
-const Notifications = require('./application/Notifications');
+const TrayIcon = require('./application/TrayIcon');
 
 const ChannelCheck = require('./application/ChannelCheck');
 const Import = require('./application/Import');
@@ -192,7 +192,7 @@ app.on('ready', () => {
 
     app.appIcon = appIcon;
 
-    Notifications.rebuildIconMenu();
+    TrayIcon.rebuildIconMenu();
 });
 
 process.on('uncaughtException', function (err) {

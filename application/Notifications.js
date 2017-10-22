@@ -3,42 +3,9 @@
  */
 
 const {app, shell, Menu, Notification} = require('electron');
-const path = require('path');
-const request = require('request');
-const _ = require('lodash');
 
 const config = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
-
-function setChannelEvent(channelObj) {
-    channelObj.on('setting_changed', (settingName, settingValue) => {
-        if (['isLive', 'visibleName', '_icon'].includes(settingName)) {
-            rebuildIconMenu();
-        }
-    });
-}
-
-_.forEach(config.channels, (channelObj) => {
-    setChannelEvent(channelObj);
-});
-
-config.on('setting_changed', function (settingName, settingValue) {
-    if (settingName === 'showNotifications') {
-        app.contextMenuTemplate[4].checked = settingValue;
-    }
-
-    if (['showNotifications'].includes(settingName)) {
-        rebuildIconMenu();
-    }
-});
-
-config.on('channel_added', (channelObj) => {
-    setChannelEvent(channelObj);
-});
-
-config.on('channel_removed', (channelObj) => {
-    rebuildIconMenu();
-});
 
 function printNotification(title, content, channelObj = {}) {
     if (!config.settings.showNotifications)
@@ -82,29 +49,4 @@ function onBalloonClick(title, content, channelObj) {
     }
 }
 
-function rebuildIconMenu() {
-    let onlineChannels = config.channels.filter((channelObj) => {
-        return channelObj.isLive;
-    });
-
-    app.contextMenuTemplate[1].submenu = onlineChannels.map(function (channelObj) {
-        let icon;
-
-        if (channelObj._icon) {
-            icon = channelObj._icon.resize({height: 16});
-        }
-
-        return {
-            label: channelObj.visibleName, type: 'normal', click: (menuItem, browserWindow, event) => {
-                ChannelPlay.launchPlayerObj(channelObj, event.ctrlKey, event.shiftKey ? true : null);
-            }, icon: icon
-        }
-    });
-
-    let contextMenu = Menu.buildFromTemplate(app.contextMenuTemplate);
-
-    app.appIcon.setContextMenu(contextMenu);
-}
-
 exports.printNotification = printNotification;
-exports.rebuildIconMenu = rebuildIconMenu;
