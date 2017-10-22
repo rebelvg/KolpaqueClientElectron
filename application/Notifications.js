@@ -12,7 +12,7 @@ const ChannelPlay = require('./ChannelPlay');
 
 function setChannelEvent(channelObj) {
     channelObj.on('setting_changed', (settingName, settingValue) => {
-        if (['visibleName', '_icon'].includes(settingName)) {
+        if (['isLive', 'visibleName', '_icon'].includes(settingName)) {
             rebuildIconMenu();
         }
     });
@@ -24,6 +24,10 @@ _.forEach(SettingsFile.settingsJson.channels, (channelObj) => {
 
 SettingsFile.settingsJson.on('channel_added', (channelObj) => {
     setChannelEvent(channelObj);
+});
+
+SettingsFile.settingsJson.on('channel_removed', (channelObj) => {
+    rebuildIconMenu();
 });
 
 function printNotification(title, content, channelObj = {}) {
