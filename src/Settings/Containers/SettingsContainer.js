@@ -5,7 +5,7 @@ import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import {getSettings} from '../../Settings/Reducers/SettingsReducer'
-import {changeSettings} from '../../Settings/Actions/SettingsActions'
+import {changeSettings, changeSettingsResponse} from '../../Settings/Actions/SettingsActions'
 import Settings from '../Components/Settings/Settings'
 import {withTheme} from 'styled-components'
 import theme from '../../theme'
@@ -22,12 +22,18 @@ export class SettingsContainer extends Component {
         }
     }
 
+    componentWillMount() {
+        ipcRenderer.on('config_changeSetting', (settingName, settingValue) => {
+            this.props.changeSettingsResponse(settingName, settingValue)
+        })
+    }
+
     render() {
         const {settings} = this.props;
         const {selected, tab, version} = this.state;
         return (
             <Container>
-                <Settings changeSettings={changeSettings} settings={settings}/>
+                <Settings changeSettings={this.props.changeSettings} settings={settings}/>
                 <StyledFooter>
                     <StyledLink to="/">Back</StyledLink>
                     <Version> {version} </Version>
@@ -62,5 +68,6 @@ export default withTheme(connect(
     }),
     (dispatch) => bindActionCreators({
         changeSettings,
+        changeSettingsResponse
     }, dispatch)
 )(SettingsContainer));

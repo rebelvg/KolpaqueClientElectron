@@ -1,4 +1,4 @@
-import {GET_SETTINGS, CHANGE_SETTINGS} from '../../Settings/Actions/SettingsActions'
+import {GET_SETTINGS, CHANGE_SETTINGS, CHANGE_SETTINGS_RESPONSE} from '../../Settings/Actions/SettingsActions'
 
 const initialState = {
     list: [],
@@ -11,8 +11,12 @@ export default function (state = initialState, action = {}) {
                 ...state,
                 list: action.data,
             };
-
         case CHANGE_SETTINGS:
+            return {
+                ...state,
+            }
+        case CHANGE_SETTINGS_RESPONSE:
+            state.settings.list[action.settingName] = action.settingValue
             return {
                 ...state,
             }

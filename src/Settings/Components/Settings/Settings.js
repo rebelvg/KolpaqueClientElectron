@@ -25,14 +25,13 @@ export default class Settings extends Component {
         })
     }
     getSetting = (value, name, text = false) => {
-        const changeSettings = this.props;
         if (!text) {
             value = value ? value : false;
         } else {
             value = value ? value : '';
         }
 
-        zchangeSettings(name, value);
+        this.props.changeSettings(name, value);
     }
 
     onSettingsSubmit = (values) => {
