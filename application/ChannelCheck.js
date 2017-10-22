@@ -52,6 +52,8 @@ function isOnline(channelObj, printBalloon) {
 
     channelObj.changeSetting('isLive', true);
 
+    channelObj.changeSetting('lastUpdated', moment().unix());
+
     onlineChannels[channelLink] = 0;
 
     if (printBalloon) {
@@ -79,6 +81,8 @@ function isOffline(channelObj) {
     console.log(channelLink + " went offline.");
 
     channelObj.changeSetting('isLive', false);
+
+    channelObj.changeSetting('lastUpdated', moment().unix());
 
     delete onlineChannels[channelLink];
 

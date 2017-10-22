@@ -7,11 +7,8 @@ const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 
-const Notifications = require('./Notifications');
 const {allowedProtocols, registeredServices, preInstalledChannels, buildChannelObj} = require('./Globals');
-const Channel = require('./ChannelClass');
 const Config = require('./ConfigClass');
-const ChannelCheck = require('./ChannelCheck');
 
 let config = new Config();
 

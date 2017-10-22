@@ -6,9 +6,8 @@ const util = require('util');
 const {URL, URLSearchParams} = require('url');
 
 const SettingsFile = require('./SettingsFile');
-const Globals = require('./Globals');
+const {twitchApiKey, registeredServices} = require('./Globals');
 
-let twitchApiKey = Globals.twitchApiKey;
 let requestGet = util.promisify(request.get);
 
 ipcMain.on('config_twitchImport', async (event, channelName) => {
@@ -45,7 +44,7 @@ async function twitchImportBase(channelName) {
     try {
         let i = 0;
 
-        let apiUrl = new URL(`https://api.twitch.tv/kraren/users/${channelName}/follows/channels`);
+        let apiUrl = new URL(`https://api.twitch.tv/kraken/users/${channelName}/follows/channels`);
 
         apiUrl.searchParams.set('sortby', 'created_at');
         apiUrl.searchParams.set('direction', 'ASC');
@@ -113,9 +112,9 @@ function autoKlpqImport() {
         request.get({url: url, json: true}, function (error, res, body) {
             if (!error) {
                 _.forEach(body.result, function (channel) {
-                    let protocol = Globals.registeredServices[service].protocols[0];
-                    let host = Globals.registeredServices[service].hosts[0];
-                    let pathname = Globals.registeredServices[service].paths[0] + `${channel}`;
+                    let protocol = registeredServices[service].protocols[0];
+                    let host = registeredServices[service].hosts[0];
+                    let pathname = registeredServices[service].paths[0] + `${channel}`;
 
                     let channelUrl = protocol + "//" + host + pathname;
 

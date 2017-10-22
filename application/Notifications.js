@@ -5,9 +5,26 @@
 const {app, shell, Menu, Notification} = require('electron');
 const path = require('path');
 const request = require('request');
+const _ = require('lodash');
 
 const SettingsFile = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
+
+function setChannelEvent(channelObj) {
+    channelObj.on('setting_changed', (settingName, settingValue) => {
+        if (['visibleName', '_icon'].includes(settingName)) {
+            rebuildIconMenu();
+        }
+    });
+}
+
+_.forEach(SettingsFile.settingsJson.channels, (channelObj) => {
+    setChannelEvent(channelObj);
+});
+
+SettingsFile.settingsJson.on('channel_added', (channelObj) => {
+    setChannelEvent(channelObj);
+});
 
 function printNotification(title, content, channelObj = {}) {
     let settingsJson = SettingsFile.settingsJson;

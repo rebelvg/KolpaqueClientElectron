@@ -5,7 +5,6 @@ const _ = require('lodash');
 const EventEmitter = require('events');
 
 const {allowedProtocols, registeredServices, preInstalledChannels, buildChannelObj} = require('./Globals');
-const Channel = require('./ChannelClass');
 
 const isDev = process.env.NODE_ENV === 'dev';
 

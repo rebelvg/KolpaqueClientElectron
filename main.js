@@ -5,16 +5,15 @@ const path = require('path');
 const url = require('url');
 const fixPath = require('fix-path');
 
-const ChannelCheck = require('./application/ChannelCheck');
-const ChannelClass = require('./application/ChannelClass');
-const ChannelPlay = require('./application/ChannelPlay');
-const ConfigClass = require('./application/ConfigClass');
-const Globals = require('./application/Globals');
-const Import = require('./application/Import');
-const Notifications = require('./application/Notifications');
 const SettingsFile = require('./application/SettingsFile');
-const VersionCheck = require('./application/VersionCheck');
+
+const ChannelPlay = require('./application/ChannelPlay');
+const Notifications = require('./application/Notifications');
+
+const ChannelCheck = require('./application/ChannelCheck');
+const Import = require('./application/Import');
 const ChannelInfo = require('./application/ChannelInfo');
+const VersionCheck = require('./application/VersionCheck');
 
 const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);

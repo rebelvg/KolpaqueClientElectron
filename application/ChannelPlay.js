@@ -9,7 +9,6 @@ const _ = require('lodash');
 
 const SettingsFile = require('./SettingsFile');
 const Notifications = require('./Notifications');
-const ChannelCheck = require('./ChannelCheck');
 const Globals = require('./Globals');
 
 ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
