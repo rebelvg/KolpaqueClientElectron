@@ -24,9 +24,15 @@ export default class Settings extends Component {
             activeKey: selected.value
         })
     }
-    getSetting = (value, name) => {
-        value = value ? value : false;
-        console.log(name + " = " + value);
+    getSetting = (value, name, text = false) => {
+        const changeSettings = this.props;
+        if (!text) {
+            value = value ? value : false;
+        } else {
+            value = value ? value : '';
+        }
+
+        zchangeSettings(name, value);
     }
 
     onSettingsSubmit = (values) => {

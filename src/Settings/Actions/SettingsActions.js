@@ -12,10 +12,10 @@ export function initSettings() {
     };
 }
 
-export function changeSettings(id, settingName, settingValue) {
+export function changeSettings(settingName, settingValue) {
+    ipcRenderer.send('config_changeSetting', settingValue, settingName)
     return {
         type: CHANGE_SETTINGS,
-        id,
         settingName,
         settingValue
     };

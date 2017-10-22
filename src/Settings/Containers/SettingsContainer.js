@@ -5,6 +5,7 @@ import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import {getSettings} from '../../Settings/Reducers/SettingsReducer'
+import {changeSettings} from '../../Settings/Actions/SettingsActions'
 import Settings from '../Components/Settings/Settings'
 import {withTheme} from 'styled-components'
 import theme from '../../theme'
@@ -24,10 +25,9 @@ export class SettingsContainer extends Component {
     render() {
         const {settings} = this.props;
         const {selected, tab, version} = this.state;
-        console.log(this.state);
         return (
             <Container>
-                <Settings settings={settings}/>
+                <Settings changeSettings={changeSettings} settings={settings}/>
                 <StyledFooter>
                     <StyledLink to="/">Back</StyledLink>
                     <Version> {version} </Version>
@@ -60,5 +60,7 @@ export default withTheme(connect(
     (state) => ({
         settings: getSettings(state)
     }),
-    (dispatch) => bindActionCreators({}, dispatch)
+    (dispatch) => bindActionCreators({
+        changeSettings,
+    }, dispatch)
 )(SettingsContainer));
