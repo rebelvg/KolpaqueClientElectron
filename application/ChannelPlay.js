@@ -121,9 +121,5 @@ function launchStreamlink(playLink, params, channelObj) {
     return childProcess;
 }
 
-function launchLastClosed() {
-}
-
 exports.launchPlayerLink = launchPlayerLink;
 exports.launchPlayerObj = launchPlayerObj;
-exports.launchLastClosed = launchLastClosed;
