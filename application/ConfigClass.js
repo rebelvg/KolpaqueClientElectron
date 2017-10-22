@@ -56,8 +56,7 @@ class Config extends EventEmitter {
             showNotifications: true,
             minimizeAtStart: false,
             launchOnBalloonClick: true,
-            width: 400,
-            height: 900,
+            size: [400, 800],
             youtubeApiKey: null,
             twitchImport: [],
             nightMode: false

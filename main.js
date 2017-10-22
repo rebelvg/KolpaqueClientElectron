@@ -47,10 +47,10 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         title: 'Kolpaque Client',
-        minWidth: 200,
-        minHeight: 350,
-        width: config.settings.width,
-        height: config.settings.height,
+        minWidth: 300,
+        minHeight: 400,
+        width: config.settings.size[0],
+        height: config.settings.size[1],
         resizable: true,
         fullscreenable: false,
         icon: iconPath
@@ -97,13 +97,7 @@ function createWindow() {
     });
 
     mainWindow.on('resize', function () {
-        let size = mainWindow.getSize();
-
-        let width = size[0];
-        let height = size[1];
-
-        config.settings.width = width;
-        config.settings.height = height;
+        config.settings.size = mainWindow.getSize();
     });
 
     // Emitted when the window is closed.
