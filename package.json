@@ -64,7 +64,7 @@
     "react-ionicons": "^1.5.9",
     "react-redux": "^5.0.5",
     "react-router": "^4.2.0",
-    "react-router-dom": "next",
+    "react-router-dom": "^4.2.2",
     "react-select": "^1.0.0-rc.10",
     "react-tabs": "^2.0.0",
     "react-toggle": "^4.0.2",
