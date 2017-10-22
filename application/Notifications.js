@@ -12,7 +12,7 @@ const ChannelPlay = require('./ChannelPlay');
 
 function setChannelEvent(channelObj) {
     channelObj.on('setting_changed', (settingName, settingValue) => {
-        if (['visibleName', '_icon'].includes(settingName)) {
+        if (['isLive', 'visibleName', '_icon'].includes(settingName)) {
             rebuildIconMenu();
         }
     });
@@ -24,6 +24,10 @@ _.forEach(SettingsFile.settingsJson.channels, (channelObj) => {
 
 SettingsFile.settingsJson.on('channel_added', (channelObj) => {
     setChannelEvent(channelObj);
+});
+
+SettingsFile.settingsJson.on('channel_removed', (channelObj) => {
+    rebuildIconMenu();
 });
 
 function printNotification(title, content, channelObj = {}) {
@@ -78,10 +82,16 @@ function rebuildIconMenu() {
     });
 
     app.contextMenuTemplate[1].submenu = onlineChannels.map(function (channelObj) {
+        let icon;
+
+        if (channelObj._icon) {
+            icon = channelObj._icon.resize({height: 16});
+        }
+
         return {
             label: channelObj.visibleName, type: 'normal', click: (menuItem, browserWindow, event) => {
                 ChannelPlay.launchPlayerObj(channelObj, event.ctrlKey, event.shiftKey ? true : null);
-            }
+            }, icon: icon
         }
     });
 

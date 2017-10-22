@@ -34,8 +34,6 @@ SettingsFile.settingsJson.on('channel_added', (channelObj) => {
 
 SettingsFile.settingsJson.on('channel_removed', (channelObj) => {
     delete onlineChannels[channelObj.link];
-
-    Notifications.rebuildIconMenu();
 });
 
 function isOnline(channelObj, printBalloon) {
@@ -63,8 +61,6 @@ function isOnline(channelObj, printBalloon) {
     if (printBalloon && channelObj.autoStart) {
         ChannelPlay.launchPlayerObj(channelObj);
     }
-
-    Notifications.rebuildIconMenu();
 }
 
 function isOffline(channelObj) {
@@ -85,8 +81,6 @@ function isOffline(channelObj) {
     channelObj.changeSetting('lastUpdated', moment().unix());
 
     delete onlineChannels[channelLink];
-
-    Notifications.rebuildIconMenu();
 }
 
 function getKlpqStatsBase(url, channelObj, printBalloon) {
