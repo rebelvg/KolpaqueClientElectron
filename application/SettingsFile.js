@@ -2,7 +2,7 @@
  * Created by rebel on 21/03/2017.
  */
 
-const {app, ipcMain, dialog} = require('electron');
+const {app, ipcMain, shell, clipboard, dialog} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
@@ -38,6 +38,64 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
     }
 
     return channelObj.changeSetting(settingName, settingValue);
+});
+
+
+ipcMain.on('channel_openPage', (event, id) => {
+    let channelObj = config.findById(id);
+
+    if (channelObj === null) {
+        return false;
+    }
+
+    if (channelObj.protocol === 'rtmp:') {
+        switch (channelObj.service) {
+            case 'klpq-vps': {
+                shell.openExternal('http://stream.klpq.men/' + channelObj.name);
+                break;
+            }
+        }
+    }
+
+    if (['http:', 'https:'].includes(channelObj.protocol)) {
+        shell.openExternal(channelObj.link);
+    }
+
+    return true;
+});
+
+ipcMain.on('channel_openChat', (event, id) => {
+    let channelObj = config.findById(id);
+
+    if (channelObj === null) {
+        return false;
+    }
+
+    if (channelObj.protocol === 'rtmp:') {
+        switch (channelObj.service) {
+            case 'klpq-vps': {
+                shell.openExternal(`http://stream.klpq.men/chat`);
+                break;
+            }
+        }
+    }
+
+    if (['http:', 'https:'].includes(channelObj.protocol)) {
+        switch (channelObj.service) {
+            case 'twitch': {
+                shell.openExternal(`${channelObj.link}/chat`);
+                break;
+            }
+        }
+    }
+
+    return true;
+});
+
+ipcMain.on('channel_copyClipboard', (event, channelLink) => {
+    clipboard.writeText(channelLink);
+
+    return true;
 });
 
 ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));

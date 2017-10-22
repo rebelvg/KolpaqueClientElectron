@@ -5,66 +5,8 @@ const EventEmitter = require('events');
 const md5 = require('md5');
 
 const {allowedProtocols, registeredServices} = require('./Globals');
-const config = require('./SettingsFile');
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
-
-ipcMain.on('channel_openPage', (event, id) => {
-    let channelObj = config.findById(id);
-
-    if (channelObj === null) {
-        return false;
-    }
-
-    if (channelObj.protocol === 'rtmp:') {
-        switch (channelObj.service) {
-            case 'klpq-vps': {
-                shell.openExternal('http://stream.klpq.men/' + channelObj.name);
-                break;
-            }
-        }
-    }
-
-    if (['http:', 'https:'].includes(channelObj.protocol)) {
-        shell.openExternal(channelObj.link);
-    }
-
-    return true;
-});
-
-ipcMain.on('channel_openChat', (event, id) => {
-    let channelObj = config.findById(id);
-
-    if (channelObj === null) {
-        return false;
-    }
-
-    if (channelObj.protocol === 'rtmp:') {
-        switch (channelObj.service) {
-            case 'klpq-vps': {
-                shell.openExternal(`http://stream.klpq.men/chat`);
-                break;
-            }
-        }
-    }
-
-    if (['http:', 'https:'].includes(channelObj.protocol)) {
-        switch (channelObj.service) {
-            case 'twitch': {
-                shell.openExternal(`${channelObj.link}/chat`);
-                break;
-            }
-        }
-    }
-
-    return true;
-});
-
-ipcMain.on('channel_copyClipboard', (event, channelLink) => {
-    clipboard.writeText(channelLink);
-
-    return true;
-});
 
 class Channel extends EventEmitter {
     constructor(channelLink) {
