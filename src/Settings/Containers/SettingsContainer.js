@@ -23,7 +23,8 @@ export class SettingsContainer extends Component {
     }
 
     componentWillMount() {
-        ipcRenderer.on('config_changeSetting', (settingName, settingValue) => {
+        ipcRenderer.on('config_changeSetting', (e, settingName, settingValue) => {
+            console.log(e, settingName, settingValue)
             this.props.changeSettingsResponse(settingName, settingValue)
         })
     }

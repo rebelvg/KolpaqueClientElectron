@@ -1,7 +1,7 @@
 import {GET_SETTINGS, CHANGE_SETTINGS, CHANGE_SETTINGS_RESPONSE} from '../../Settings/Actions/SettingsActions'
 
 const initialState = {
-    list: [],
+    list: {},
 };
 
 export default function (state = initialState, action = {}) {
@@ -16,9 +16,9 @@ export default function (state = initialState, action = {}) {
                 ...state,
             }
         case CHANGE_SETTINGS_RESPONSE:
-            state.settings.list[action.settingName] = action.settingValue
+            state.list[action.settingName] = action.settingValue
             return {
-                ...state,
+                ...state
             }
         default:
             return {
