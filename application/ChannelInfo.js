@@ -38,8 +38,6 @@ function getTwitchInfo(channelObj) {
                 return;
             }
 
-            console.log('icon set for', channelObj.name);
-
             channelObj._icon = nativeImage.createFromBuffer(buffer);
         });
     });
