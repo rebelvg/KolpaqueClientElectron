@@ -133,8 +133,10 @@ class Channel extends EventEmitter {
 
         this.id = md5(this.link);
 
-        this.on('setting_changed', (settingName, settingValue) => {
-            app.mainWindow.webContents.send('channel_changeSetting', this.id, settingName, settingValue);
+        this.on('setting_changed', (settingName, settingValue, send) => {
+            if (send) {
+                app.mainWindow.webContents.send('channel_changeSetting', this.id, settingName, settingValue);
+            }
         });
     }
 
@@ -150,14 +152,14 @@ class Channel extends EventEmitter {
         });
     }
 
-    changeSetting(settingName, settingValue) {
+    changeSetting(settingName, settingValue, send = true) {
         if (!this.hasOwnProperty(settingName)) {
             return false;
         }
 
         this[settingName] = settingValue;
 
-        this.emit('setting_changed', settingName, settingValue);
+        this.emit('setting_changed', settingName, settingValue, send);
 
         return true;
     }

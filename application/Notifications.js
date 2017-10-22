@@ -78,10 +78,16 @@ function rebuildIconMenu() {
     });
 
     app.contextMenuTemplate[1].submenu = onlineChannels.map(function (channelObj) {
+        let icon;
+
+        if (channelObj._icon) {
+            icon = channelObj._icon.resize({height: 16});
+        }
+
         return {
             label: channelObj.visibleName, type: 'normal', click: (menuItem, browserWindow, event) => {
                 ChannelPlay.launchPlayerObj(channelObj, event.ctrlKey, event.shiftKey ? true : null);
-            }
+            }, icon: icon
         }
     });
 

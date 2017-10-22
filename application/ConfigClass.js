@@ -74,6 +74,10 @@ class Config extends EventEmitter {
         this.on('channel_removed', (channelObj) => {
             app.mainWindow.webContents.send('channel_remove', channelObj.id);
         });
+
+        this.on('setting_changed', (settingName, settingValue) => {
+            app.mainWindow.webContents.send('config_changeSetting', settingName, settingValue);
+        });
     }
 
     addChannelLink(channelLink) {
