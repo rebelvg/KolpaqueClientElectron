@@ -22,6 +22,7 @@ function getTwitchInfo(channelObj) {
 
     request.get({url: url, json: true, headers: {'Client-ID': twitchApiKey}}, function (err, res, body) {
         if (err) {
+            console.log(err.message);
             return;
         }
 
