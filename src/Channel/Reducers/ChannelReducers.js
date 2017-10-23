@@ -9,6 +9,7 @@ import {
     SEND_INFO
 } from '../Actions/ChannelActions'
 import SortChannels from '../Helpers/SortChannels'
+import FilterChannels from '../Helpers/FilterChannels'
 
 const initialState = {
     channels: [],
@@ -48,7 +49,7 @@ export default function (state = initialState, action = {}) {
             };
         }
         case SORT_CHANNELS: {
-            const newChannels = SortChannels(state.channels, state.sort, state.reverse)
+            const newChannels = FilterChannels(state.channels, '');
             return {
                 ...state
             }
