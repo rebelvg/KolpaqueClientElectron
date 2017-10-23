@@ -59,7 +59,9 @@ class Config extends EventEmitter {
             size: [400, 800],
             youtubeApiKey: null,
             twitchImport: [],
-            nightMode: false
+            nightMode: false,
+            sortType: 'lastAdded',
+            sortReverse: false
         };
 
         readFile(this);
