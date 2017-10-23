@@ -15,7 +15,8 @@ const initialState = {
     channels: [],
     update: false,
     sort: 'lastAdded',
-    reverse: false
+    reverse: false,
+    filter: ''
 };
 
 export default function (state = initialState, action = {}) {
@@ -49,7 +50,9 @@ export default function (state = initialState, action = {}) {
             };
         }
         case SORT_CHANNELS: {
-            const newChannels = FilterChannels(state.channels, '');
+            const sortedChannels = SortChannels(state.channels, state.sort, state.reverse);
+            const filteredChannels = FilterChannels(state.channels, state.filter);
+
             return {
                 ...state
             }
