@@ -77,7 +77,9 @@ function streamlinkVersionCheck() {
             return;
         }
 
-        if (!data.includes('is up to date!')) {
+        let regExp = new RegExp(/A new version of Streamlink \((.*)\) is available!/gi);
+
+        if (regExp.test(data)) {
             sendInfo('streamlink');
         }
     });
