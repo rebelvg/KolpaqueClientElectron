@@ -10,11 +10,11 @@ import {
 } from '../Actions/ChannelActions'
 import SortChannels from '../Helpers/SortChannels'
 
-
 const initialState = {
     channels: [],
     update: false,
-    sort: 'last'
+    sort: 'lastAdded',
+    reverse: false
 };
 
 export default function (state = initialState, action = {}) {
@@ -48,7 +48,7 @@ export default function (state = initialState, action = {}) {
             };
         }
         case SORT_CHANNELS: {
-            const newChannels = SortChannels(state.channels, state.sort)
+            const newChannels = SortChannels(state.channels, state.sort, state.reverse)
             return {
                 ...state
             }
@@ -74,9 +74,9 @@ export default function (state = initialState, action = {}) {
 export const getChannels = (state) => state.channel && state.channel.channels
 
 export const getOffline = (state) =>
-state.channel && state.channel.channels.filter((channel) => !channel.isLive);
+    state.channel && state.channel.channels.filter((channel) => !channel.isLive);
 
 export const getOnline = (state) =>
-state.channel && state.channel.channels.filter((channel) => channel.isLive);
+    state.channel && state.channel.channels.filter((channel) => channel.isLive);
 
 export const getUpdateStatus = (state) => state.channel && state.channel.update
