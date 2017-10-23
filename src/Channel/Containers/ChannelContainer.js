@@ -7,7 +7,7 @@ import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import {getOffline, getOnline, getUpdateStatus} from '../Reducers/ChannelReducers'
-import {addChannel, sendInfo} from '../Actions/ChannelActions'
+import {addChannel, sendInfo, sortChannels} from '../Actions/ChannelActions'
 import ChannelWrapper from '../../Channel/Components/ChannelWrapper/ChannelWrapper'
 import Channel from '../../Channel/Components/Channel/Channel'
 import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm'
@@ -82,10 +82,8 @@ export class ChannelContainer extends Component {
     render() {
         const {online, offline, update} = this.props;
         const {selected, tab, editChannel} = this.state;
-        console.log(theme);
         return (
             <StyledContainerWrapper>
-
                 <TabWrapper>
                     <TabList>
                         <Tab active={tab === 'online'} onClick={() => this.changeTab('online')}>
@@ -94,9 +92,11 @@ export class ChannelContainer extends Component {
                         <Tab active={tab === 'offline'} onClick={() => this.changeTab('offline')}>
                             Offline ({offline.length})
                         </Tab>
+                        <div onClick={() => this.props.sortChannels()}>
+                        <Ionicon icon="ion-ios-loop-strong"/>
+                        </div>
                     </TabList>
                     <SettingsIcon onClick={() => {
-                        console.log('click')
                     }} to="/about">
                         <Ionicon icon="ion-gear-b" color={theme.clientSecondary.color}/>
                     </SettingsIcon>
@@ -241,6 +241,7 @@ export default withTheme(connect(
     }),
     (dispatch) => bindActionCreators({
         addChannel,
+        sortChannels,
         sendInfo
     }, dispatch)
 )(ChannelContainer));

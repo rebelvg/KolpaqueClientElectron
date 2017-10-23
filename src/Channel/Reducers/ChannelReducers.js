@@ -1,5 +1,6 @@
 import {
     GET_CHANNELS,
+    SORT_CHANNELS,
     CHANGE_STATUS,
     DELETE_CHANNEL,
     ADD_CHANNEL,
@@ -7,16 +8,14 @@ import {
     GET_INFO,
     SEND_INFO
 } from '../Actions/ChannelActions'
+import SortChannels from '../Helpers/SortChannels'
+
 
 const initialState = {
     channels: [],
     update: false,
     sort: 'last'
 };
-
-const sortChannels = (channels, sort) => {
-    return channels;
-}
 
 export default function (state = initialState, action = {}) {
     switch (action.type) {
@@ -28,7 +27,6 @@ export default function (state = initialState, action = {}) {
 
         case CHANGE_STATUS:
             let channel = state.channels.find(({id}) => id === action.id);
-            console.log(channel);
             if (channel) {
                 channel[action.settingName] = action.settingValue;
             }
@@ -49,6 +47,12 @@ export default function (state = initialState, action = {}) {
                 channels: [...state.channels, action.channel]
             };
         }
+        case SORT_CHANNELS: {
+            const newChannels = SortChannels(state.channels, state.sort)
+            return {
+                ...state
+            }
+        }
         case ADD_CHANNEL:
             return state
 
@@ -67,12 +71,12 @@ export default function (state = initialState, action = {}) {
 
 // Selectors
 
-export const getChannels = (state) => state.channel && sortChannels(state.channel.channels, state.channel.sort)
+export const getChannels = (state) => state.channel && state.channel.channels
 
 export const getOffline = (state) =>
-state.channel && sortChannels(state.channel.channels, state.channel.sort).filter((channel) => !channel.isLive);
+state.channel && state.channel.channels.filter((channel) => !channel.isLive);
 
 export const getOnline = (state) =>
-state.channel && sortChannels(state.channel.channels, state.channel.sort).filter((channel) => channel.isLive);
+state.channel && state.channel.channels.filter((channel) => channel.isLive);
 
 export const getUpdateStatus = (state) => state.channel && state.channel.update

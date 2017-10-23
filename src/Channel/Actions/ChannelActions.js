@@ -4,6 +4,7 @@ const {ipcRenderer} = window.require('electron');
 
 export const GET_CHANNELS = 'GET_CHANNELS';
 export const ADD_CHANNEL = 'ADD_CHANNEL';
+export const SORT_CHANNELS = 'SORT_CHANNELS';
 export const GET_INFO = 'GET_INFO';
 export const SEND_INFO = 'SEND_INFO'
 export const ADD_CHANNEL_RESPONSE = 'ADD_CHANNEL_RESPONSE';
@@ -19,6 +20,12 @@ export function initChannels() {
         type: GET_CHANNELS,
         data: data
     };
+}
+
+export function sortChannels () {
+    return {
+        type: SORT_CHANNELS,
+    }
 }
 
 export function deleteChannel(id) {
