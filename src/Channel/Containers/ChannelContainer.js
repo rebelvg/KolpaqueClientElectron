@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import theme from '../../theme'
 import {bindActionCreators} from 'redux';
-import { withTheme } from 'styled-components'
+import {withTheme} from 'styled-components'
 import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
@@ -12,6 +12,7 @@ import ChannelWrapper from '../../Channel/Components/ChannelWrapper/ChannelWrapp
 import Channel from '../../Channel/Components/Channel/Channel'
 import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm'
 import menuTemplate from '../Helpers/menu'
+import FilterChannels from '../Helpers/FilterChannels';
 
 const {remote, ipcRenderer} = window.require('electron');
 const {Menu, MenuItem} = remote;
@@ -23,6 +24,7 @@ export class ChannelContainer extends Component {
             selected: null,
             tab: 'online',
             editChannel: null,
+            filter: '',
         }
     }
 
@@ -79,64 +81,78 @@ export class ChannelContainer extends Component {
         this.props.sendInfo(info)
     }
 
+    setFilter = (e) => {
+        console.log(e.target.value)
+        this.setState({
+            filter: e.target.value
+        })
+    }
+
     render() {
         const {online, offline, update} = this.props;
-        const {selected, tab, editChannel} = this.state;
-        return (
-            <StyledContainerWrapper>
-                <TabWrapper>
-                    <TabList>
-                        <Tab active={tab === 'online'} onClick={() => this.changeTab('online')}>
-                            Online ({online.length})
-                        </Tab>
-                        <Tab active={tab === 'offline'} onClick={() => this.changeTab('offline')}>
-                            Offline ({offline.length})
-                        </Tab>
-                        <div onClick={() => this.props.sortChannels()}>
-                        <Ionicon icon="ion-ios-loop-strong"/>
-                        </div>
-                    </TabList>
-                    <SettingsIcon onClick={() => {
-                    }} to="/about">
-                        <Ionicon icon="ion-gear-b" color={theme.clientSecondary.color}/>
-                    </SettingsIcon>
-                </TabWrapper>
-                <TabPanel active={tab === 'online'}>
-                    <ChannelWrapper
-                        isUpdate={!!update}
-                        renameChannel={this.renameChannel}
-                        editChannel={editChannel}
-                        selected={selected}
-                        selectChannel={this.selectChannel}
-                        playChannel={this.playChannel}
-                        changeSetting={this.changeSetting}
-                        handleClick={this.openMenu}
-                        channels={online}
-                    />
-                </TabPanel>
-                <TabPanel active={tab === 'offline'}>
-                    <ChannelWrapper
-                        isUpdate={!!update}
-                        renameChannel={this.renameChannel}
-                        editChannel={editChannel}
-                        selected={selected}
-                        selectChannel={this.selectChannel}
-                        changeSetting={this.changeSetting}
-                        playChannel={this.playChannel}
-                        handleClick={this.openMenu}
-                        channels={offline}/>
-                </TabPanel>
+        const {selected, tab, editChannel, filter} = this.state;
 
-                {update &&
-                <UpdateWrapper onClick={() => {
-                    this.sendInfo(update)
-                }}>
-                    {update}
-                </UpdateWrapper>}
-                <StyledFooter>
-                    <ChannelForm addChannel={this.addChannel}/>
-                </StyledFooter>
-            </StyledContainerWrapper>
+        return (
+            <Wrapper>
+                <InputWrapper>
+                    <input type="text"/>
+                </InputWrapper>
+
+                <StyledContainerWrapper>
+                    <TabWrapper>
+                        <TabList>
+                            <Tab active={tab === 'online'} onClick={() => this.changeTab('online')}>
+                                Online ({online.length})
+                            </Tab>
+                            <Tab active={tab === 'offline'} onClick={() => this.changeTab('offline')}>
+                                Offline ({offline.length})
+                            </Tab>
+                            <div onClick={() => this.props.sortChannels()}>
+                                <Ionicon icon="ion-ios-loop-strong"/>
+                            </div>
+                        </TabList>
+                        <SettingsIcon onClick={() => {
+                        }} to="/about">
+                            <Ionicon icon="ion-gear-b" color={theme.clientSecondary.color}/>
+                        </SettingsIcon>
+                    </TabWrapper>
+                    <TabPanel active={tab === 'online'}>
+                        <ChannelWrapper
+                            isUpdate={!!update}
+                            renameChannel={this.renameChannel}
+                            editChannel={editChannel}
+                            selected={selected}
+                            selectChannel={this.selectChannel}
+                            playChannel={this.playChannel}
+                            changeSetting={this.changeSetting}
+                            handleClick={this.openMenu}
+                            channels={online}
+                        />
+                    </TabPanel>
+                    <TabPanel active={tab === 'offline'}>
+                        <ChannelWrapper
+                            isUpdate={!!update}
+                            renameChannel={this.renameChannel}
+                            editChannel={editChannel}
+                            selected={selected}
+                            selectChannel={this.selectChannel}
+                            changeSetting={this.changeSetting}
+                            playChannel={this.playChannel}
+                            handleClick={this.openMenu}
+                            channels={offline}/>
+                    </TabPanel>
+
+                    {update &&
+                    <UpdateWrapper onClick={() => {
+                        this.sendInfo(update)
+                    }}>
+                        {update}
+                    </UpdateWrapper>}
+                    <StyledFooter>
+                        <ChannelForm addChannel={this.addChannel}/>
+                    </StyledFooter>
+                </StyledContainerWrapper>
+            </Wrapper>
         );
     }
 }
@@ -156,6 +172,22 @@ const UpdateWrapper = styled.div`
     background-color:${theme.clientSecondary.bg};
 `
 
+const Wrapper = styled.div`
+        width: 100%;
+`
+
+const InputWrapper = styled.div`
+    height:20px;
+    & > input {
+        width: 100%;
+        border: none;
+        height:20px;
+        font-size:12px;  
+        border-top: 1px solid #979797;
+        padding: 0 10px;
+    }
+`
+
 const TabList = styled.div`
     list-style-type: none;
     padding: 0;
@@ -165,6 +197,7 @@ const TabList = styled.div`
     flex-direction: column;
     align-items: flex-end;
     width: 24px;
+    margin-top: 1px;
     position: relative;
     z-index: 1000;
 `
@@ -209,12 +242,13 @@ const StyledFooter = styled.div`
 const SettingsIcon = styled(Link)`
     display: flex;
     justify-content: center;
-    padding-bottom: 30px;
+    padding-bottom: 55px;
 `
 
 const StyledContainerWrapper = styled.div`
     display: flex;
     width: 100%;
+    height: 100%;
 `
 
 const StyledChannel = styled(Channel)`

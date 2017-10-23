@@ -15,7 +15,7 @@ const ChannelWrapper = ({channels, editChannel, handleClick, renameChannel, chan
                 selectChannel={selectChannel}
                 selected={selected && selected.link === channel.link}
                 handleClick={handleClick}
-                key={index} channel={channel}/>
+                key={channel.id} channel={channel}/>
         ))}
     </StyledWrapper>
 )
@@ -25,7 +25,7 @@ const StyledWrapper = styled.div`
     display: flex;
     color: black;
     flex-direction: column;
-    padding-bottom: ${props => props.isUpdate ? 60 : 30}px;  
+    padding-bottom: ${props => props.isUpdate ? 80 : 40}px;  
 `
 
 

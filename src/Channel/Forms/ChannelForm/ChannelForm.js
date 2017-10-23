@@ -117,5 +117,6 @@ const StyledIcon = styled(Ionicon)`
   display: flex;
   box-sizing: border-box;
   border: 1px solid lightgray;
+  border-left: 0px;
   font-size:24px;
 `;
