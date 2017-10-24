@@ -6,13 +6,14 @@ import {withTheme} from 'styled-components'
 import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import {getOffline, getOnline, getUpdateStatus} from '../Reducers/ChannelReducers'
-import {addChannel, sendInfo, sortChannels} from '../Actions/ChannelActions'
+import {getChannels, getUpdateStatus} from '../Reducers/ChannelReducers'
+import {sendInfo, sortChannels} from '../Actions/ChannelActions'
 import ChannelWrapper from '../../Channel/Components/ChannelWrapper/ChannelWrapper'
 import Channel from '../../Channel/Components/Channel/Channel'
 import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm'
 import menuTemplate from '../Helpers/menu'
 import FilterChannels from '../Helpers/FilterChannels';
+import {changeSetting} from '../Helpers/IPCHelpers'
 
 const {remote, ipcRenderer} = window.require('electron');
 const {Menu, MenuItem} = remote;
@@ -27,35 +28,11 @@ export class ChannelContainer extends Component {
             filter: '',
         }
     }
-    filterInput = {value:''}
-    playChannel = (channelObj) => {
-        ipcRenderer.send('channel_play', channelObj.id);
-    }
 
-    addChannel = (channel) => {
-        this.props.addChannel(channel);
-    }
-
-    deleteChannel = (channelObj) => {
-        ipcRenderer.send('channel_remove', channelObj.id);
-    }
-
-    changeSetting = (id, settingName, settingValue) => {
-        ipcRenderer.send('channel_changeSetting', id, settingName, settingValue)
-    }
+    filterInput = {value: ''}
 
     editChannel(channel) {
         this.setState({editChannel: channel})
-    }
-
-    renameChannel = (channel, id) => {
-        if (!channel.id) {
-            this.changeSetting(id, 'visibleName', channel)
-        }
-        else {
-            this.changeSetting(channel.id, 'visibleName', channel.visibleName)
-        }
-        this.setState({editChannel: null})
     }
 
     openMenu = (channel) => {
@@ -63,8 +40,19 @@ export class ChannelContainer extends Component {
         const template = menuTemplate(channel, () => {
             this.editChannel(channel)
         });
+        console.log(channel)
         template.map((item) => menu.append(item))
         menu.popup(remote.getCurrentWindow())
+    }
+
+    renameChannel = (channel, id) => {
+        if (!channel.id) {
+            changeSetting(id, 'visibleName', channel)
+        }
+        else {
+            changeSetting(channel.id, 'visibleName', channel.visibleName)
+        }
+        this.setState({editChannel: null})
     }
 
     selectChannel = (e, channel) => {
@@ -81,6 +69,11 @@ export class ChannelContainer extends Component {
         this.props.sendInfo(info)
     }
 
+    getChannelsByLive = (isLive) => {
+        const {channels} = this.props
+        return channels.filter((channel) => channel.isLive === isLive)
+    }
+
     setFilter = (v) => {
         this.setState({
             filter: v
@@ -88,24 +81,27 @@ export class ChannelContainer extends Component {
     }
 
     render() {
-        const {online, offline, update} = this.props;
+        const {channels, update} = this.props;
         const {selected, tab, editChannel, filter} = this.state;
 
         return (
             <Wrapper>
                 <InputWrapper>
                     <input name="filter" type="text" ref={(ref) => {
-                        this.filterInput = ref}} onChange={() => {console.log(this.filterInput.value)}} />
+                        this.filterInput = ref
+                    }} onChange={(e, v) => {
+                        this.setFilter(v)
+                    }}/>
                 </InputWrapper>
 
                 <StyledContainerWrapper>
                     <TabWrapper>
                         <TabList>
                             <Tab active={tab === 'online'} onClick={() => this.changeTab('online')}>
-                                Online ({FilterChannels(online, this.filterInput.value).length})
+                                Online ({this.getChannelsByLive(true).length})
                             </Tab>
                             <Tab active={tab === 'offline'} onClick={() => this.changeTab('offline')}>
-                                Offline ({FilterChannels(offline, this.filterInput.value).length})
+                                Offline ({this.getChannelsByLive(false).length})
                             </Tab>
                             <div onClick={() => this.props.sortChannels()}>
                                 <Ionicon icon="ion-ios-loop-strong"/>
@@ -119,27 +115,23 @@ export class ChannelContainer extends Component {
                     <TabPanel active={tab === 'online'}>
                         <ChannelWrapper
                             isUpdate={!!update}
-                            renameChannel={this.renameChannel}
                             editChannel={editChannel}
                             selected={selected}
                             selectChannel={this.selectChannel}
-                            playChannel={this.playChannel}
-                            changeSetting={this.changeSetting}
                             handleClick={this.openMenu}
-                            channels={FilterChannels(online, this.filterInput.value)}
+                            renameChannel={this.renameChannel}
+                            channels={channels.filter((channel) => !!channel.isLive)}
                         />
                     </TabPanel>
                     <TabPanel active={tab === 'offline'}>
                         <ChannelWrapper
                             isUpdate={!!update}
-                            renameChannel={this.renameChannel}
                             editChannel={editChannel}
                             selected={selected}
                             selectChannel={this.selectChannel}
-                            changeSetting={this.changeSetting}
-                            playChannel={this.playChannel}
+                            renameChannel={this.renameChannel}
                             handleClick={this.openMenu}
-                            channels={FilterChannels(offline, this.filterInput.value)}/>
+                            channels={channels.filter((channel) => !channel.isLive)}/>
                     </TabPanel>
 
                     {update &&
@@ -149,7 +141,7 @@ export class ChannelContainer extends Component {
                         {update}
                     </UpdateWrapper>}
                     <StyledFooter>
-                        <ChannelForm addChannel={this.addChannel}/>
+                        <ChannelForm/>
                     </StyledFooter>
                 </StyledContainerWrapper>
             </Wrapper>
@@ -269,12 +261,10 @@ const TabWrapper = styled.div`
 
 export default withTheme(connect(
     (state) => ({
-        online: getOnline(state),
-        offline: getOffline(state),
+        channels: getChannels(state),
         update: getUpdateStatus(state)
     }),
     (dispatch) => bindActionCreators({
-        addChannel,
         sortChannels,
         sendInfo
     }, dispatch)

@@ -3,7 +3,7 @@ import Ionicon from 'react-ionicons'
 import styled from 'styled-components'
 import {Field, reduxForm} from 'redux-form'
 import theme from '../../../theme'
-
+import {addChannel} from '../../Helpers/IPCHelpers'
 
 const {remote} = window.require('electron');
 const {Menu} = remote;
@@ -56,7 +56,7 @@ export default class ChannelForm extends Component {
         this.setState({
             value: ''
         })
-        this.props.addChannel(value);
+        addChannel(value)
         e.preventDefault();
     }
 

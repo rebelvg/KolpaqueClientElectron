@@ -10,77 +10,60 @@ import {
 } from '../Actions/ChannelActions'
 import SortChannels from '../Helpers/SortChannels'
 import FilterChannels from '../Helpers/FilterChannels'
+import Immutable, {fromJS, List} from 'immutable';
 
-const initialState = {
-    channels: [],
+const initialState = fromJS({
+    channels: List([]),
     update: false,
     sort: 'lastAdded',
     reverse: false,
     filter: ''
-};
+});
 
 export default function (state = initialState, action = {}) {
     switch (action.type) {
-        case GET_CHANNELS:
-            return {
-                ...state,
-                channels: action.data,
-            };
 
-        case CHANGE_STATUS:
-            let channel = state.channels.find(({id}) => id === action.id);
-            if (channel) {
-                channel[action.settingName] = action.settingValue;
-            }
-            console.log(channel);
+        case GET_CHANNELS: {
+            return state.set('channels', List(action.data))
+        }
 
-            return {
-                ...state,
-            }
+        case CHANGE_STATUS: {
+            const indexToUpdate = state.get('channels').findIndex(({id}) => id === action.id);
+            console.log(state.getIn(['channels', indexToUpdate]))
+            state.updateIn(['channels', indexToUpdate], (channel) => channel[action.settingName] = action.settingValue)
+            return state;
+        }
 
-        case DELETE_CHANNEL:
-            return {
-                ...state,
-                channels: state.channels.filter(item => action.id !== item.id),
-            }
+        case DELETE_CHANNEL: {
+            state = state.updateIn(['channels'], (channels) => channels.filter(c => c.id !== action.id))
+            return state
+        }
+
         case ADD_CHANNEL_RESPONSE: {
-            return {
-                ...state,
-                channels: [...state.channels, action.channel]
-            };
+            state = state.updateIn(['channels'], (channels) => channels.push(action.channel))
+            return state
         }
-        case SORT_CHANNELS: {
-            const sortedChannels = SortChannels(state.channels, state.sort, state.reverse);
-            const filteredChannels = FilterChannels(state.channels, state.filter);
 
-            return {
-                ...state
-            }
+        case ADD_CHANNEL: {
+            return state;
         }
-        case ADD_CHANNEL:
-            return state
 
-        case SEND_INFO:
-            return state
+        case SEND_INFO: {
+            return state;
+        }
 
-        case GET_INFO:
-            return {
-                ...state,
-                update: action.info
-            }
-        default:
+        case GET_INFO: {
+            state.setIn(['update'], action.info)
+        }
+
+        default: {
             return state
+        }
     }
 }
 
 // Selectors
 
-export const getChannels = (state) => state.channel && state.channel.channels
+export const getChannels = (state) => state.channel.get('channels').toJS();
 
-export const getOffline = (state) =>
-    state.channel && state.channel.channels.filter((channel) => !channel.isLive);
-
-export const getOnline = (state) =>
-    state.channel && state.channel.channels.filter((channel) => channel.isLive);
-
-export const getUpdateStatus = (state) => state.channel && state.channel.update
+export const getUpdateStatus = (state) => state.channel.get('update')

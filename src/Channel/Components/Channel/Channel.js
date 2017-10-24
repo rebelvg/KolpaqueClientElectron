@@ -1,10 +1,12 @@
 import React from 'react';
 import styled from 'styled-components'
+import {playChannel} from '../../Helpers/IPCHelpers'
 import {renderIcon, renderAutoRestart, renderAutoStart} from '../../Helpers/IconRender'
 import EditForm from '../../Forms/EditForm/EditForm'
 import theme from '../../../theme'
 
-const Channel = ({channel, pinned, handleClick, editMode, selected, renameChannel, selectChannel, playChannel, changeSetting}) => (
+
+const Channel = ({channel, pinned, handleClick, editMode, selected, renameChannel, selectChannel, changeSetting}) => (
     <ChannelWrapper
 
         onMouseDown={(e) => {
@@ -29,8 +31,8 @@ const Channel = ({channel, pinned, handleClick, editMode, selected, renameChanne
             }
         </ChannelData>
         <Icons>
-            {renderAutoRestart(channel, changeSetting)}
-            {renderAutoStart(channel, changeSetting)}
+            {renderAutoRestart(channel)}
+            {renderAutoStart(channel)}
         </Icons>
     </ChannelWrapper>
 );

@@ -33,6 +33,7 @@ config.on('channel_added', (channelObj) => {
 });
 
 config.on('channel_removed', (channelObj) => {
+    console.log(channelObj)
     delete onlineChannels[channelObj.link];
 });
 

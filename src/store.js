@@ -8,6 +8,6 @@ const logger = createLogger({
     level: "error"
 });
 
-const store = createStore(reducers, applyMiddleware(thunk));
+const store = createStore(reducers, applyMiddleware(logger, thunk));
 
 export default store;
