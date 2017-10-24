@@ -27,7 +27,7 @@ export class ChannelContainer extends Component {
             filter: '',
         }
     }
-
+    filterInput = {value:''}
     playChannel = (channelObj) => {
         ipcRenderer.send('channel_play', channelObj.id);
     }
@@ -81,10 +81,9 @@ export class ChannelContainer extends Component {
         this.props.sendInfo(info)
     }
 
-    setFilter = (e) => {
-        console.log(e.target.value)
+    setFilter = (v) => {
         this.setState({
-            filter: e.target.value
+            filter: v
         })
     }
 
@@ -95,17 +94,18 @@ export class ChannelContainer extends Component {
         return (
             <Wrapper>
                 <InputWrapper>
-                    <input type="text"/>
+                    <input name="filter" type="text" ref={(ref) => {
+                        this.filterInput = ref}} onChange={() => {console.log(this.filterInput.value)}} />
                 </InputWrapper>
 
                 <StyledContainerWrapper>
                     <TabWrapper>
                         <TabList>
                             <Tab active={tab === 'online'} onClick={() => this.changeTab('online')}>
-                                Online ({online.length})
+                                Online ({FilterChannels(online, this.filterInput.value).length})
                             </Tab>
                             <Tab active={tab === 'offline'} onClick={() => this.changeTab('offline')}>
-                                Offline ({offline.length})
+                                Offline ({FilterChannels(offline, this.filterInput.value).length})
                             </Tab>
                             <div onClick={() => this.props.sortChannels()}>
                                 <Ionicon icon="ion-ios-loop-strong"/>
@@ -126,7 +126,7 @@ export class ChannelContainer extends Component {
                             playChannel={this.playChannel}
                             changeSetting={this.changeSetting}
                             handleClick={this.openMenu}
-                            channels={online}
+                            channels={FilterChannels(online, this.filterInput.value)}
                         />
                     </TabPanel>
                     <TabPanel active={tab === 'offline'}>
@@ -139,7 +139,7 @@ export class ChannelContainer extends Component {
                             changeSetting={this.changeSetting}
                             playChannel={this.playChannel}
                             handleClick={this.openMenu}
-                            channels={offline}/>
+                            channels={FilterChannels(offline, this.filterInput.value)}/>
                     </TabPanel>
 
                     {update &&
