@@ -6,12 +6,13 @@ import {withTheme} from 'styled-components'
 import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import {getChannels, getUpdateStatus} from '../Reducers/ChannelReducers'
+import {getChannels, getUpdateStatus, getLoading} from '../Reducers/ChannelReducers'
 import {sendInfo, sortChannels} from '../Actions/ChannelActions'
 import ChannelWrapper from '../../Channel/Components/ChannelWrapper/ChannelWrapper'
-import Channel from '../../Channel/Components/Channel/Channel'
 import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm'
 import menuTemplate from '../Helpers/menu'
+import {TABS} from '../constants';
+import Tabs from '../Components/Tabs/Tabs'
 import FilterChannels from '../Helpers/FilterChannels';
 import {changeSetting} from '../Helpers/IPCHelpers'
 
@@ -23,7 +24,7 @@ export class ChannelContainer extends Component {
         super()
         this.state = {
             selected: null,
-            tab: 'online',
+            activeTab: 'online',
             editChannel: null,
             filter: '',
         }
@@ -31,9 +32,7 @@ export class ChannelContainer extends Component {
 
     filterInput = {value: ''}
 
-    editChannel(channel) {
-        this.setState({editChannel: channel})
-    }
+    editChannel = (channel) => this.setState({editChannel: channel})
 
     openMenu = (channel) => {
         const menu = new Menu();
@@ -61,58 +60,46 @@ export class ChannelContainer extends Component {
         this.setState({selected: selected && channel.id === selected.id && click !== 3 ? '' : channel})
     }
 
-    changeTab = (tab) => {
-        this.setState({tab: tab})
+    changeTab = (tab) => this.setState({activeTab: tab})
+    sendInfo = (info) => this.props.sendInfo(info)
+
+    getChannelsByTab = (tab, count = false) => {
+        const {channels = []} = this.props
+        const activeTab = TABS.find((t) => t.value === tab);
+        const data = channels.filter((channel) => channel[activeTab.filter] === activeTab.filterValue)
+        if (!count) {
+            return data
+        }
+        else {
+            return data.length
+        }
     }
 
-    sendInfo = (info) => {
-        this.props.sendInfo(info)
-    }
+    isTabActive = (active, tab) => active === tab
 
-    getChannelsByLive = (isLive) => {
-        const {channels} = this.props
-        return channels.filter((channel) => channel.isLive === isLive)
-    }
-
-    setFilter = (v) => {
-        this.setState({
-            filter: v
-        })
-    }
+    setFilter = (v) => this.setState({filter: v})
 
     render() {
-        const {channels, update} = this.props;
-        const {selected, tab, editChannel, filter} = this.state;
-
+        const {channels, update, loading} = this.props;
+        const {selected, activeTab, editChannel, filter} = this.state;
         return (
             <Wrapper>
-                <InputWrapper>
-                    <input name="filter" type="text" ref={(ref) => {
-                        this.filterInput = ref
-                    }} onChange={(e, v) => {
-                        this.setFilter(v)
-                    }}/>
-                </InputWrapper>
+
 
                 <StyledContainerWrapper>
                     <TabWrapper>
-                        <TabList>
-                            <Tab active={tab === 'online'} onClick={() => this.changeTab('online')}>
-                                Online ({this.getChannelsByLive(true).length})
-                            </Tab>
-                            <Tab active={tab === 'offline'} onClick={() => this.changeTab('offline')}>
-                                Offline ({this.getChannelsByLive(false).length})
-                            </Tab>
-                            <div onClick={() => this.props.sortChannels()}>
-                                <Ionicon icon="ion-ios-loop-strong"/>
-                            </div>
-                        </TabList>
+                        <Tabs
+                            active={activeTab}
+                            isActive={this.isTabActive}
+                            onChange={this.changeTab}
+                            getCount={this.getChannelsByTab}
+                        />
                         <SettingsIcon onClick={() => {
                         }} to="/about">
                             <Ionicon icon="ion-gear-b" color={theme.clientSecondary.color}/>
                         </SettingsIcon>
                     </TabWrapper>
-                    <TabPanel active={tab === 'online'}>
+                    <TabPanel>
                         <ChannelWrapper
                             isUpdate={!!update}
                             editChannel={editChannel}
@@ -120,20 +107,9 @@ export class ChannelContainer extends Component {
                             selectChannel={this.selectChannel}
                             handleClick={this.openMenu}
                             renameChannel={this.renameChannel}
-                            channels={channels.filter((channel) => !!channel.isLive)}
+                            channels={this.getChannelsByTab(activeTab)}
                         />
                     </TabPanel>
-                    <TabPanel active={tab === 'offline'}>
-                        <ChannelWrapper
-                            isUpdate={!!update}
-                            editChannel={editChannel}
-                            selected={selected}
-                            selectChannel={this.selectChannel}
-                            renameChannel={this.renameChannel}
-                            handleClick={this.openMenu}
-                            channels={channels.filter((channel) => !channel.isLive)}/>
-                    </TabPanel>
-
                     {update &&
                     <UpdateWrapper onClick={() => {
                         this.sendInfo(update)
@@ -180,43 +156,11 @@ const InputWrapper = styled.div`
     }
 `
 
-const TabList = styled.div`
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    border-bottom: 1px solid lightgray;
-    flex-direction: column;
-    align-items: flex-end;
-    width: 24px;
-    margin-top: 1px;
-    position: relative;
-    z-index: 1000;
-`
-
-const Tab = styled.div`
-    user-select: none;
-    display: flex;
-    justify-content: center;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-size: 12px;
-    height: 105px;
-    color: ${theme.tab.color};
-    outline: 1px solid #979797;
-    position: relative;
-    cursor: pointer;
-    align-items: center;
-    box-sizing: content-box;
-    ${props => props.active
-    ? (`background-color: ${theme.tabSelected.bg}; width: 24px; z-index: 200`)
-    : (`background-color: ${theme.tab.bg}; width: 21px;`)}
-`
 
 const TabPanel = styled.div`
     overflow-y: auto;
     width: 100%;
-    display: ${props => props.active ? 'initial' : 'none'};
+    display: block;
     max-height: 100vh;
     background-color: ${theme.clientSecondary.bg}
 `
@@ -243,10 +187,6 @@ const StyledContainerWrapper = styled.div`
     height: 100%;
 `
 
-const StyledChannel = styled(Channel)`
-    background-color: yellow
-    color: white;
-`
 
 const TabWrapper = styled.div`
      height:100%;
@@ -262,7 +202,8 @@ const TabWrapper = styled.div`
 export default withTheme(connect(
     (state) => ({
         channels: getChannels(state),
-        update: getUpdateStatus(state)
+        update: getUpdateStatus(state),
+        loading: getLoading(state)
     }),
     (dispatch) => bindActionCreators({
         sortChannels,

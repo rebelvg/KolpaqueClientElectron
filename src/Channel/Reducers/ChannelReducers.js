@@ -17,14 +17,16 @@ const initialState = fromJS({
     update: false,
     sort: 'lastAdded',
     reverse: false,
-    filter: ''
+    filter: '',
+    loading: true,
 });
 
 export default function (state = initialState, action = {}) {
     switch (action.type) {
 
         case GET_CHANNELS: {
-            return state.set('channels', List(action.data))
+            console.log(state.get('loading'))
+            return state.set('channels', List(action.data)).set('loading', false)
         }
 
         case CHANGE_STATUS: {
@@ -65,5 +67,5 @@ export default function (state = initialState, action = {}) {
 // Selectors
 
 export const getChannels = (state) => state.channel.get('channels').toJS();
-
+export const getLoading = (state) => state.channel.get('loading')
 export const getUpdateStatus = (state) => state.channel.get('update')
