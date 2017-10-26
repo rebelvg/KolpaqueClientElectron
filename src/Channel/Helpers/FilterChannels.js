@@ -20,7 +20,7 @@ const FilterChannel = (channelObj, filter) => {
     filter = filter.trim();
 
     if (!filter) {
-        return false;
+        return true;
     }
 
     let filters = filter.split(/\s+/gi);
