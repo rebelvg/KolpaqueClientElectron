@@ -15,7 +15,7 @@ import SearchForm from '../Forms/SearchForm/SearchForm'
 import {TABS, getTab} from '../constants';
 import Tabs from '../Components/Tabs/Tabs'
 import {changeSetting} from '../Helpers/IPCHelpers'
-import CompareChannels from '../Helpers/CompareChannels'
+import {CompareChannels} from '../Helpers/CompareChannels'
 
 const {remote, ipcRenderer} = window.require('electron');
 const {Menu, MenuItem} = remote;
