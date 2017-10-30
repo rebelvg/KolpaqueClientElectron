@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 import styled from 'styled-components'
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {setFilter} from '../../../Channel/Actions/SearchActions'
 
 const {remote} = window.require('electron');
 const {Menu} = remote;
@@ -35,7 +38,7 @@ const openMenu = () => {
 }
 
 
-export default class SearchForm extends Component {
+class SearchForm extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -44,20 +47,17 @@ export default class SearchForm extends Component {
     }
 
     onChange = (value) => {
+
+        this.props.setFilter(value);
         this.setState({value: value})
     }
 
-    onBlur = (value) => {
-        this.props.nameChange(value, this.props.channel.id)
-    }
 
     handleSubmit = (e) => {
-        const {value} = this.state;
-        const {channel} = this.props;
-        this.props.nameChange(value, channel.id);
-        e.preventDefault();
+        e.preventDefault()
 
     }
+
 
     render() {
         const {value} = this.state;
@@ -66,19 +66,26 @@ export default class SearchForm extends Component {
                 <InputWrapper>
                     <StyledField
                         name="filter"
-                        component='input'
                         type="text"
                         value={value}
-                        onContextMenu={() => {openMenu()}}
-                        onChange={(e, v) => this.onChange(v)}
-                        onBlur={(e, v) => this.onBlur(v)}/>
+                        onContextMenu={() => {
+                            openMenu()
+                        }}
+                        onChange={(e) => this.onChange(e.target.value)}
+                        onBlur={(e) => this.handleSubmit}/>
                 </InputWrapper>
 
             </Form>
         )
     }
 }
-
+export
+default connect(
+    (state) => ({}),
+    (dispatch) => bindActionCreators({
+        setFilter
+    }, dispatch)
+)(SearchForm);
 
 const Form = styled.form`
     width: 100%;
@@ -98,3 +105,17 @@ const StyledField = styled.input`
     position: relative;
     z-index: 100000
 `
+
+const InputWrapper = styled.div`
+    height:20px;
+    width:100%;
+    overflow: hidden;
+    & > input {
+        width: 100%;
+        border: none;
+        height:20px;
+        font-size:12px;
+        border-top: 1px solid #979797;
+        padding: 0 10px;
+    }
+    `

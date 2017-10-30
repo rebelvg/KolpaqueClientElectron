@@ -1,45 +1,55 @@
-import React from 'react';
+import React, {Component} from 'react';
 import styled from 'styled-components'
 import {playChannel} from '../../Helpers/IPCHelpers'
 import {renderIcon, renderAutoRestart, renderAutoStart} from '../../Helpers/IconRender'
 import EditForm from '../../Forms/EditForm/EditForm'
 import theme from '../../../theme'
+import {FilterChannel} from '../../Helpers/FilterChannels';
 
+const getVisible = (isVisible) => {
+    return isVisible ? 'flex' : 'none'
+}
 
-const Channel = ({channel, pinned, handleClick, editMode, selected, renameChannel, selectChannel, changeSetting}) => (
-    <ChannelWrapper
+const isFiltered = (channel, filter) => FilterChannel(channel, filter)
 
-        onMouseDown={(e) => {
-            if (!e.target.name) {
-                selectChannel(e, channel)
-            }
-        }}
-        selected={selected}
+class Channel extends Component {
+    constructor() {
+        super();
+    }
 
-        onContextMenu={(e) => {
-            if (!e.target.name) {
-                handleClick(channel)
-            }
-        }}
-        pinned={pinned}>
-        <ChannelData onDoubleClick={() => !editMode && playChannel(channel)}>
-            <StyledIcon> {renderIcon(!!channel.service && channel.service)} </StyledIcon>
-            {editMode ? ( <EditForm onSubmit={renameChannel}
-                                    channel={channel}
-                                    nameChange={renameChannel}/>
-            ) : (<StyledName>{channel.visibleName || channel.link} </StyledName>)
-            }
-        </ChannelData>
-        <Icons>
-            {renderAutoRestart(channel)}
-            {renderAutoStart(channel)}
-        </Icons>
-    </ChannelWrapper>
-);
+    handleClick = (name, channel) => !name && this.props.handleClick(channel)
+    selectChannel = (name, which, channel) => !name && this.props.selectChannel(which, channel)
+    renameChannel = (value, id) => this.props.renameChannel(value, id)
 
+    render() {
+        const {channel, pinned, editMode, selected, visible, filter} = this.props;
+        return (
+            <ChannelWrapper
+                visible={visible && isFiltered(channel, filter)}
+                onMouseDown={({target: {name, which}}) => this.selectChannel(name, which, channel)}
+                selected={selected}
+                onContextMenu={({target: {name}}) => this.handleClick(name, channel)}
+                pinned={pinned}>
+                <ChannelData onDoubleClick={() => !editMode && playChannel(channel)}>
+                    <StyledIcon> {renderIcon(channel.service)} </StyledIcon>
+                    {editMode ? ( <EditForm onSubmit={this.renameChannel}
+                                            channel={channel}
+                                            nameChange={this.renameChannel}/>
+                    ) : (<StyledName>{channel.visibleName || channel.link} </StyledName>)
+                    }
+                </ChannelData>
+                <Icons>
+                    {renderAutoRestart(channel)}
+                    {renderAutoStart(channel)}
+                </Icons>
+            </ChannelWrapper>
+        )
+    }
+
+}
 
 const ChannelWrapper = styled.div`
-    display: flex;
+    display: ${({visible}) => getVisible(visible)};
     user-select: none;
     cursor:pointer;
     align-items: center;

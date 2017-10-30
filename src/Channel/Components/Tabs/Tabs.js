@@ -4,20 +4,35 @@ import {TABS} from '../../constants';
 import styled from 'styled-components';
 import theme from '../../../theme';
 
-const Tabs = ({getCount, active, onChange, isActive}) =>
-    <TabList>
-        {TABS.map(tab => (
-            <Tab active={isActive(active, tab.value)}
-                 onClick={() => onChange(tab.value)}
-                 key={tab.value}
-            >
-                {tab.name} ({getCount(tab.value, true)})
-            </Tab>
-        ))}
-        <div onClick={() => this.props.sortChannels()}>
-            <Ionicon icon="ion-ios-loop-strong"/>
-        </div>
-    </TabList>
+
+class Tabs extends Component {
+    constructor() {
+        super();
+    }
+
+    isActive = (active, value) => this.props.isActive(active, value)
+    onChange = (value) => this.props.onChange(value)
+    getCount = (value) => this.props.getCount(value)
+
+    render() {
+        const {getCount, active, onChange, isActive} = this.props;
+        return (
+            <TabList>
+                {TABS.map(tab => (
+                    <Tab active={this.isActive(active, tab.value)}
+                         onClick={() => this.onChange(tab.value)}
+                         key={tab.value}
+                    >
+                        {tab.name} ({this.getCount(tab.value)})
+                    </Tab>
+                ))}
+                <div onClick={() => this.props.sortChannels()}>
+                    <Ionicon icon="ion-ios-loop-strong"/>
+                </div>
+            </TabList>
+        )
+    }
+}
 
 const TabList = styled.div`
     list-style-type: none;

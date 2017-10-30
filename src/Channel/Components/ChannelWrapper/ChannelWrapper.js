@@ -3,11 +3,15 @@ import React, {Component} from 'react';
 import styled from 'styled-components';
 import Channel from '../../../Channel/Components/Channel/Channel'
 
-const ChannelWrapper = ({channels, editChannel, handleClick, renameChannel, changeSetting, selectChannel, selected, playChannel, isUpdate}) => (
+
+const ChannelWrapper = ({channels, editChannel, handleClick, renameChannel, changeSetting, selectChannel, selected, playChannel, isUpdate, tab, filter}) => (
 
     <StyledWrapper isUpdate={isUpdate}>
+
         {channels.map((channel, index) => (
             <Channel
+                visible={channel[tab.filter] === tab.filterValue}
+                filter={filter}
                 renameChannel={renameChannel}
                 editMode={editChannel && editChannel.id === channel.id}
                 changeSetting={changeSetting}
@@ -19,7 +23,6 @@ const ChannelWrapper = ({channels, editChannel, handleClick, renameChannel, chan
         ))}
     </StyledWrapper>
 )
-
 
 const StyledWrapper = styled.div`
     display: flex;

@@ -6,7 +6,7 @@ import {
     ADD_CHANNEL,
     ADD_CHANNEL_RESPONSE,
     GET_INFO,
-    SEND_INFO
+    SEND_INFO,
 } from '../Actions/ChannelActions'
 import SortChannels from '../Helpers/SortChannels'
 import FilterChannels from '../Helpers/FilterChannels'
@@ -17,7 +17,6 @@ const initialState = fromJS({
     update: false,
     sort: 'lastAdded',
     reverse: false,
-    filter: '',
     loading: true,
 });
 

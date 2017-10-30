@@ -1,3 +1,8 @@
+
+export const getTab = (tab) => {
+    return TABS.find((t) => t.value === tab);
+}
+
 export const TABS = [
     {
         name: 'Online',

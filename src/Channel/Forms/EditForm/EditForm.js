@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Ionicon from 'react-ionicons'
 import styled from 'styled-components'
-import {Field, reduxForm} from 'redux-form'
 
 const {remote} = window.require('electron');
 const {Menu} = remote;
@@ -45,17 +44,15 @@ export default class EditForm extends Component {
         }
     }
 
-    onChange = (e) => {
-        this.setState({value: e.target.value})
+    onChange = (v) => {
+        this.setState({value: v})
     }
 
-    onBlur = (e) => {
-        this.props.nameChange(e.target.value, this.props.channel.id)
-    }
 
-    handleSubmit = (e) => {
+    renameChannel = (e) => {
         const {value} = this.state;
         const {channel} = this.props;
+        console.log(value);
         this.props.nameChange(value, channel.id);
         e.preventDefault();
 
@@ -64,7 +61,7 @@ export default class EditForm extends Component {
     render() {
         const {value} = this.state;
         return (
-            <Form onSubmit={this.handleSubmit}>
+            <Form onSubmit={this.renameChannel}>
                 <StyledField
                     name="visibleName"
                     component='input'
@@ -73,8 +70,8 @@ export default class EditForm extends Component {
                     onContextMenu={(e) => {
                         openMenu()
                     }}
-                    onChange={(e) => this.onChange(e)}
-                    onBlur={(e) => this.onBlur(e)}
+                    onChange={(e) => this.onChange(e.target.value)}
+                    onBlur={(e, v) => this.renameChannel}
                 />
 
             </Form>

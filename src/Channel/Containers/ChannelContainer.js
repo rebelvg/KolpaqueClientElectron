@@ -11,9 +11,9 @@ import {sendInfo, sortChannels} from '../Actions/ChannelActions'
 import ChannelWrapper from '../../Channel/Components/ChannelWrapper/ChannelWrapper'
 import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm'
 import menuTemplate from '../Helpers/menu'
-import {TABS} from '../constants';
+import SearchForm from '../Forms/SearchForm/SearchForm'
+import {TABS, getTab} from '../constants';
 import Tabs from '../Components/Tabs/Tabs'
-import FilterChannels from '../Helpers/FilterChannels';
 import {changeSetting} from '../Helpers/IPCHelpers'
 
 const {remote, ipcRenderer} = window.require('electron');
@@ -32,6 +32,10 @@ export class ChannelContainer extends Component {
 
     filterInput = {value: ''}
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return true;
+    }
+
     editChannel = (channel) => this.setState({editChannel: channel})
 
     openMenu = (channel) => {
@@ -39,23 +43,18 @@ export class ChannelContainer extends Component {
         const template = menuTemplate(channel, () => {
             this.editChannel(channel)
         });
-        console.log(channel)
         template.map((item) => menu.append(item))
         menu.popup(remote.getCurrentWindow())
     }
 
-    renameChannel = (channel, id) => {
-        if (!channel.id) {
-            changeSetting(id, 'visibleName', channel)
-        }
-        else {
-            changeSetting(channel.id, 'visibleName', channel.visibleName)
-        }
+    renameChannel = (name, id) => {
+        console.log(name, id)
+        changeSetting(id, 'visibleName', name)
         this.setState({editChannel: null})
     }
 
-    selectChannel = (e, channel) => {
-        const click = e.nativeEvent.which;
+    selectChannel = (which, channel) => {
+        const click = which;
         const {selected} = this.state
         this.setState({selected: selected && channel.id === selected.id && click !== 3 ? '' : channel})
     }
@@ -63,36 +62,28 @@ export class ChannelContainer extends Component {
     changeTab = (tab) => this.setState({activeTab: tab})
     sendInfo = (info) => this.props.sendInfo(info)
 
-    getChannelsByTab = (tab, count = false) => {
+    getCount = (tab) => {
         const {channels = []} = this.props
-        const activeTab = TABS.find((t) => t.value === tab);
+        const activeTab = getTab(tab)
         const data = channels.filter((channel) => channel[activeTab.filter] === activeTab.filterValue)
-        if (!count) {
-            return data
-        }
-        else {
-            return data.length
-        }
+        return data.length
     }
 
     isTabActive = (active, tab) => active === tab
-
-    setFilter = (v) => this.setState({filter: v})
 
     render() {
         const {channels, update, loading} = this.props;
         const {selected, activeTab, editChannel, filter} = this.state;
         return (
             <Wrapper>
-
-
+                <SearchForm/>
                 <StyledContainerWrapper>
                     <TabWrapper>
                         <Tabs
                             active={activeTab}
                             isActive={this.isTabActive}
                             onChange={this.changeTab}
-                            getCount={this.getChannelsByTab}
+                            getCount={this.getCount}
                         />
                         <SettingsIcon onClick={() => {
                         }} to="/about">
@@ -107,7 +98,9 @@ export class ChannelContainer extends Component {
                             selectChannel={this.selectChannel}
                             handleClick={this.openMenu}
                             renameChannel={this.renameChannel}
-                            channels={this.getChannelsByTab(activeTab)}
+                            tab={getTab(activeTab)}
+                            filter={this.filterInput.value}
+                            channels={channels}
                         />
                     </TabPanel>
                     {update &&
@@ -138,23 +131,11 @@ const UpdateWrapper = styled.div`
     border: 1px solid #979797;
     cursor: pointer;
     background-color:${theme.clientSecondary.bg};
-`
+    `
 
 const Wrapper = styled.div`
-        width: 100%;
-`
-
-const InputWrapper = styled.div`
-    height:20px;
-    & > input {
-        width: 100%;
-        border: none;
-        height:20px;
-        font-size:12px;  
-        border-top: 1px solid #979797;
-        padding: 0 10px;
-    }
-`
+    width: 100%;
+    `
 
 
 const TabPanel = styled.div`
@@ -163,7 +144,7 @@ const TabPanel = styled.div`
     display: block;
     max-height: 100vh;
     background-color: ${theme.clientSecondary.bg}
-`
+    `
 
 
 const StyledFooter = styled.div`
@@ -173,31 +154,31 @@ const StyledFooter = styled.div`
     bottom: 0px;
     width: 100%;
     z-index: 3;
-`
+    `
 
 const SettingsIcon = styled(Link)`
     display: flex;
     justify-content: center;
     padding-bottom: 55px;
-`
+    `
 
 const StyledContainerWrapper = styled.div`
     display: flex;
     width: 100%;
     height: 100%;
-`
+    `
 
 
 const TabWrapper = styled.div`
-     height:100%;
-     background-color: ${theme.client.bg};
-     display:flex;
-     justify-content: space-between;
-     flex-direction: column;
-     border-right: 1px solid #979797;
-     position: relative;
-     z-index: 2;
-`
+    height:100%;
+    background-color: ${theme.client.bg};
+    display:flex;
+    justify-content: space-between;
+    flex-direction: column;
+    border-right: 1px solid #979797;
+    position: relative;
+    z-index: 2;
+    `
 
 export default withTheme(connect(
     (state) => ({

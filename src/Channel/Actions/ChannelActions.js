@@ -1,4 +1,3 @@
-import {channelsStateType} from '../Reducers/ChannelReducers';
 import {reset} from 'redux-form';
 const {ipcRenderer} = window.require('electron');
 
@@ -22,7 +21,7 @@ export function initChannels() {
     };
 }
 
-export function sortChannels () {
+export function sortChannels() {
     return {
         type: SORT_CHANNELS,
     }

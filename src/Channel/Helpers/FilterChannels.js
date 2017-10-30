@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-const FilterChannels = (channels, filter) => {
+export const FilterChannels = (channels, filter) => {
     filter = filter.trim();
 
     if (!filter) {
@@ -16,7 +16,7 @@ const FilterChannels = (channels, filter) => {
     return filteredChannels;
 };
 
-const FilterChannel = (channelObj, filter) => {
+export const FilterChannel = (channelObj, filter) => {
     filter = filter.trim();
 
     if (!filter) {
@@ -45,4 +45,3 @@ const FilterChannel = (channelObj, filter) => {
     return _.filter(searchFilters, 'found').length === filters.length;
 };
 
-export default FilterChannels
