@@ -27,6 +27,7 @@ export class ChannelContainer extends Component {
             selected: null,
             activeTab: 'online',
             editChannel: null,
+            lastAction: new Date(),
             filter: '',
         }
     }
@@ -34,11 +35,29 @@ export class ChannelContainer extends Component {
     filterInput = {value: ''}
 
     shouldComponentUpdate(nextProps, nextState) {
-        CompareChannels(this.props.channels, nextProps.channels)
-        return true;
+        const {channels, loading, update} = this.props;
+        const {selected, activeTab, editChannel, lastAction} = this.state;
+        let shouldUpdate = false;
+        if (nextProps.loading !== loading || nextProps.update !== update) {
+            shouldUpdate = true;
+        }
+
+        if (lastAction !== nextState.lastAction) {
+            shouldUpdate = true;
+        }
+
+        if (nextState.selected !== selected || nextState.activeTab !== activeTab || nextState.editChannel !== editChannel) {
+            shouldUpdate = true
+        }
+
+        if (!CompareChannels(channels, nextProps.channels)) {
+            shouldUpdate = true
+        }
+        console.log(shouldUpdate);
+        return shouldUpdate;
     }
 
-    editChannel = (channel) => this.setState({editChannel: channel})
+    editChannel = (channel) => this.setState({editChannel: channel, lastAction: `edit${channel.id}${new Date()}`})
 
     openMenu = (channel) => {
         const menu = new Menu();
@@ -49,19 +68,27 @@ export class ChannelContainer extends Component {
         menu.popup(remote.getCurrentWindow())
     }
 
+    logAction = (type, data) => {
+        this.setState({lastAction: `${type}${data}${new Date()}`})
+    }
+
     renameChannel = (name, id) => {
         console.log(name, id)
         changeSetting(id, 'visibleName', name)
-        this.setState({editChannel: null})
+        this.setState({editChannel: null, lastAction: `rename${id}${new Date()}`})
+
     }
 
     selectChannel = (which, channel) => {
         const click = which;
         const {selected} = this.state
-        this.setState({selected: selected && channel.id === selected.id && click !== 3 ? '' : channel})
+        this.setState({
+            selected: selected && channel.id === selected.id && click !== 3 ? '' : channel,
+            lastAction: `select${channel.id}${new Date()}`
+        })
     }
 
-    changeTab = (tab) => this.setState({activeTab: tab})
+    changeTab = (tab) => this.setState({activeTab: tab, lastAction: `changeTab${id}${new Date()}`})
     sendInfo = (info) => this.props.sendInfo(info)
 
     getCount = (tab) => {
@@ -94,6 +121,7 @@ export class ChannelContainer extends Component {
                     </TabWrapper>
                     <TabPanel>
                         <ChannelWrapper
+                            log={this.logAction}
                             isUpdate={!!update}
                             editChannel={editChannel}
                             selected={selected}

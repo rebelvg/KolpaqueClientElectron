@@ -4,12 +4,13 @@ import styled from 'styled-components';
 import Channel from '../../../Channel/Components/Channel/Channel'
 
 
-const ChannelWrapper = ({channels, editChannel, handleClick, renameChannel, changeSetting, selectChannel, selected, playChannel, isUpdate, tab, filter}) => (
+const ChannelWrapper = ({channels, editChannel, handleClick, renameChannel, changeSetting, selectChannel, selected, playChannel, isUpdate, tab, filter, log}) => (
 
     <StyledWrapper isUpdate={isUpdate}>
 
         {channels.map((channel, index) => (
             <Channel
+                log={log}
                 visible={channel[tab.filter] === tab.filterValue}
                 filter={filter}
                 renameChannel={renameChannel}
