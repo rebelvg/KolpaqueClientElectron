@@ -44,4 +44,3 @@ export const FilterChannel = (channelObj, filter) => {
 
     return _.filter(searchFilters, 'found').length === filters.length;
 };
-
