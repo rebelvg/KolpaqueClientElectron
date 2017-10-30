@@ -88,7 +88,7 @@ export class ChannelContainer extends Component {
         })
     }
 
-    changeTab = (tab) => this.setState({activeTab: tab, lastAction: `changeTab${id}${new Date()}`})
+    changeTab = (tab) => this.setState({activeTab: tab, lastAction: `changeTab${tab.value}${new Date()}`})
     sendInfo = (info) => this.props.sendInfo(info)
 
     getCount = (tab) => {
