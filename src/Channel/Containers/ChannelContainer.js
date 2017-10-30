@@ -41,7 +41,7 @@ export class ChannelContainer extends Component {
         if (nextProps.loading !== loading || nextProps.update !== update) {
             shouldUpdate = true;
         }
-
+        
         if (lastAction !== nextState.lastAction) {
             shouldUpdate = true;
         }
@@ -49,7 +49,7 @@ export class ChannelContainer extends Component {
         if (nextState.selected !== selected || nextState.activeTab !== activeTab || nextState.editChannel !== editChannel) {
             shouldUpdate = true
         }
-
+        this.logAction('shouldUpdate', 'test')
         if (!CompareChannels(channels, nextProps.channels)) {
             shouldUpdate = true
         }
@@ -78,6 +78,12 @@ export class ChannelContainer extends Component {
         this.setState({editChannel: null, lastAction: `rename${id}${new Date()}`})
 
     }
+
+    changeSetting = (id, settingName, settingValue) => {
+        this.logAction('changeSettings', id)
+        ipcRenderer.send('channel_changeSetting', id, settingName, settingValue)
+    }
+
 
     selectChannel = (which, channel) => {
         const click = which;
@@ -121,6 +127,7 @@ export class ChannelContainer extends Component {
                     </TabWrapper>
                     <TabPanel>
                         <ChannelWrapper
+                            changeSetting={this.changeSetting}
                             log={this.logAction}
                             isUpdate={!!update}
                             editChannel={editChannel}

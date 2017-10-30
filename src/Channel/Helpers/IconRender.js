@@ -5,7 +5,6 @@ import {twitch} from 'react-icons-kit/fa/twitch';
 import {eye} from 'react-icons-kit/fa/eye';
 import {youtubePlay} from 'react-icons-kit/fa/youtubePlay';
 import styled from 'styled-components'
-import {changeSetting} from './IPCHelpers'
 
 const ICONS = {
     'twitch': {
@@ -62,7 +61,7 @@ const getAutoRestartColor = (autoRestart, onAutoRestart) => {
     }
 }
 
-export const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, log) => (
+export const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, changeSetting, log) => (
     <IconWrapper onClick={(e) => {
         e.preventDefault();
         log('autoRestart', id)
@@ -79,7 +78,7 @@ export const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, log)
     </IconWrapper>
 )
 
-export const renderAutoStart = ({autoStart, id}, log) => (
+export const renderAutoStart = ({autoStart, id}, changeSetting, log) => (
     <IconWrapper onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

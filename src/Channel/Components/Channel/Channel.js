@@ -22,6 +22,7 @@ class Channel extends Component {
         !name && this.props.selectChannel(which, channel)
     }
     renameChannel = (value, id) => this.props.renameChannel(value, id)
+    changeSetting = (id, name, value) => this.props.changeSetting(id, name, value)
 
     render() {
         const {channel, pinned, editMode, selected, visible, filter, log} = this.props;
@@ -41,8 +42,8 @@ class Channel extends Component {
                     }
                 </ChannelData>
                 <Icons>
-                    {renderAutoRestart(channel, log)}
-                    {renderAutoStart(channel, log)}
+                    {renderAutoRestart(channel, this.changeSetting, log)}
+                    {renderAutoStart(channel, this.changeSetting, log)}
                 </Icons>
             </ChannelWrapper>
         )
