@@ -2,8 +2,7 @@ import React, {Component} from 'react';
 import styled from 'styled-components'
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {setFilter} from '../../../Channel/Actions/SearchActions'
-
+import {debounce} from 'lodash'
 const {remote} = window.require('electron');
 const {Menu} = remote;
 
@@ -44,12 +43,14 @@ class SearchForm extends Component {
         this.state = {
             value: ''
         }
+        this.setFilter = debounce(this.props.setFilter, 400)
     }
 
-    onChange = (value) => {
 
-        this.props.setFilter(value);
-        this.setState({value: value})
+    onChange = (value) => {
+        this.setState({value: value}, () => {
+            this.setFilter(value)
+        })
     }
 
 
@@ -79,13 +80,7 @@ class SearchForm extends Component {
         )
     }
 }
-export
-default connect(
-    (state) => ({}),
-    (dispatch) => bindActionCreators({
-        setFilter
-    }, dispatch)
-)(SearchForm);
+export default SearchForm;
 
 const Form = styled.form`
     width: 100%;

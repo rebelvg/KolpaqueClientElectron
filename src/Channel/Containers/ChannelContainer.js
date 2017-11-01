@@ -34,28 +34,28 @@ export class ChannelContainer extends Component {
 
     filterInput = {value: ''}
 
-    shouldComponentUpdate(nextProps, nextState) {
-        const {channels, loading, update} = this.props;
-        const {selected, activeTab, editChannel, lastAction} = this.state;
-        let shouldUpdate = false;
-        if (nextProps.loading !== loading || nextProps.update !== update) {
-            shouldUpdate = true;
-        }
-        
-        if (lastAction !== nextState.lastAction) {
-            shouldUpdate = true;
-        }
-
-        if (nextState.selected !== selected || nextState.activeTab !== activeTab || nextState.editChannel !== editChannel) {
-            shouldUpdate = true
-        }
-        this.logAction('shouldUpdate', 'test')
-        if (!CompareChannels(channels, nextProps.channels)) {
-            shouldUpdate = true
-        }
-        console.log(shouldUpdate);
-        return shouldUpdate;
-    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     const {channels, loading, update} = this.props;
+    //     const {selected, activeTab, editChannel, lastAction} = this.state;
+    //     let shouldUpdate = false;
+    //     if (nextProps.loading !== loading || nextProps.update !== update) {
+    //         shouldUpdate = true;
+    //     }
+    //
+    //     if (lastAction !== nextState.lastAction) {
+    //         shouldUpdate = true;
+    //     }
+    //
+    //     if (nextState.selected !== selected || nextState.activeTab !== activeTab || nextState.editChannel !== editChannel) {
+    //         shouldUpdate = true
+    //     }
+    //     this.logAction('shouldUpdate', 'test')
+    //     if (!CompareChannels(channels, nextProps.channels)) {
+    //         shouldUpdate = true
+    //     }
+    //     console.log(shouldUpdate);
+    //     return shouldUpdate;
+    // }
 
     editChannel = (channel) => this.setState({editChannel: channel, lastAction: `edit${channel.id}${new Date()}`})
 
@@ -105,13 +105,14 @@ export class ChannelContainer extends Component {
     }
 
     isTabActive = (active, tab) => active === tab
+    setFilter = (value) => this.setState({filter: value})
 
     render() {
         const {channels, update, loading} = this.props;
         const {selected, activeTab, editChannel, filter} = this.state;
         return (
             <Wrapper>
-                <SearchForm/>
+                <SearchForm setFilter={this.setFilter}/>
                 <StyledContainerWrapper>
                     <TabWrapper>
                         <Tabs
@@ -136,7 +137,7 @@ export class ChannelContainer extends Component {
                             handleClick={this.openMenu}
                             renameChannel={this.renameChannel}
                             tab={getTab(activeTab)}
-                            filter={this.filterInput.value}
+                            filter={filter}
                             channels={channels}
                         />
                     </TabPanel>
