@@ -10,10 +10,10 @@ const config = require('./application/SettingsFile');
 const ChannelPlay = require('./application/ChannelPlay');
 const TrayIcon = require('./application/TrayIcon');
 
-const ChannelCheck = require('./application/ChannelCheck');
-const Import = require('./application/Import');
-const ChannelInfo = require('./application/ChannelInfo');
-const VersionCheck = require('./application/VersionCheck');
+require('./application/ChannelCheck');
+require('./application/Import');
+require('./application/ChannelInfo');
+require('./application/VersionCheck');
 
 const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);
