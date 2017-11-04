@@ -25,7 +25,7 @@ class Channel extends Component {
     changeSetting = (id, name, value) => this.props.changeSetting(id, name, value)
 
     render() {
-        const {channel, pinned, editMode, selected, visible, filter, log} = this.props;
+        const {channel, pinned, editMode, selected, visible, filter} = this.props;
         return (
             <ChannelWrapper
                 visible={visible && isFiltered(channel, filter)}
@@ -34,7 +34,7 @@ class Channel extends Component {
                 onContextMenu={({target: {name}}) => this.handleClick(name, channel)}
                 pinned={pinned}>
                 <ChannelData onDoubleClick={() => !editMode && playChannel(channel)}>
-                    <StyledIcon> {renderIcon(channel.service, log)} </StyledIcon>
+                    <StyledIcon> {renderIcon(channel.service)} </StyledIcon>
                     {editMode ? ( <EditForm onSubmit={this.renameChannel}
                                             channel={channel}
                                             nameChange={this.renameChannel}/>
@@ -42,8 +42,8 @@ class Channel extends Component {
                     }
                 </ChannelData>
                 <Icons>
-                    {renderAutoRestart(channel, this.changeSetting, log)}
-                    {renderAutoStart(channel, this.changeSetting, log)}
+                    {renderAutoRestart(channel, this.changeSetting)}
+                    {renderAutoStart(channel, this.changeSetting)}
                 </Icons>
             </ChannelWrapper>
         )

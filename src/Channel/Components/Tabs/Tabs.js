@@ -26,9 +26,6 @@ class Tabs extends Component {
                         {tab.name} ({this.getCount(tab.value)})
                     </Tab>
                 ))}
-                <div onClick={() => this.props.sortChannels()}>
-                    <Ionicon icon="ion-ios-loop-strong"/>
-                </div>
             </TabList>
         )
     }

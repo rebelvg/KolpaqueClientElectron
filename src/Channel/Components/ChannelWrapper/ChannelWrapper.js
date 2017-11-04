@@ -10,12 +10,11 @@ class ChannelWrapper extends PureComponent {
     }
 
     render() {
-        const {channels, editChannel, handleClick, renameChannel, changeSetting, selectChannel, selected, playChannel, isUpdate, tab, filter, log} = this.props;
+        const {channels, editChannel, handleClick, renameChannel, changeSetting, selectChannel, selected, playChannel, isUpdate, tab, filter} = this.props;
         return (
             <StyledWrapper isUpdate={isUpdate}>
                 {channels.map((channel, index) => (
                     <Channel
-                        log={log}
                         visible={channel[tab.filter] === tab.filterValue && FilterChannel(channel, filter)}
                         filter={filter}
                         renameChannel={renameChannel}

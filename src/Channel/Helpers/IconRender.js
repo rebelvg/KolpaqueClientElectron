@@ -61,10 +61,9 @@ const getAutoRestartColor = (autoRestart, onAutoRestart) => {
     }
 }
 
-export const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, changeSetting, log) => (
+export const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, changeSetting) => (
     <IconWrapper onClick={(e) => {
         e.preventDefault();
-        log('autoRestart', id)
         e.stopPropagation();
         onAutoRestart
             ? changeSetting(id, 'onAutoRestart', !onAutoRestart)
@@ -78,11 +77,10 @@ export const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, chan
     </IconWrapper>
 )
 
-export const renderAutoStart = ({autoStart, id}, changeSetting, log) => (
+export const renderAutoStart = ({autoStart, id}, changeSetting) => (
     <IconWrapper onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        log('autoStart', id)
         changeSetting(id, 'autoStart', !autoStart)
     }
     }>
