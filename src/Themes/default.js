@@ -1,5 +1,6 @@
-const colors = {
+const defaultColors = {
     klpq: "#119400",
+    outline: "#979797",
     client: {
         color: '#000',
         bg: '#d8d8d8',
@@ -16,10 +17,6 @@ const colors = {
         color: '#000',
         bg: '#ece8e8',
     },
-    footer: {
-        color: '#000',
-        bg: '#d8d8d8'
-    },
     tab: {
         color: '#000',
         bg: '#eae9e9'
@@ -34,4 +31,4 @@ const colors = {
     }
 }
 
-export default colors
+export default defaultColors

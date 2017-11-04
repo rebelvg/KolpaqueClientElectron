@@ -102,4 +102,6 @@ ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));
 
 ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
 
+ipcMain.once('getNightMode', (event) => (event.returnValue = config.settings.nightMode));
+
 module.exports = config;

@@ -5,6 +5,7 @@ import {twitch} from 'react-icons-kit/fa/twitch';
 import {eye} from 'react-icons-kit/fa/eye';
 import {youtubePlay} from 'react-icons-kit/fa/youtubePlay';
 import styled from 'styled-components'
+import theme from '../../theme'
 
 const ICONS = {
     'twitch': {
@@ -57,11 +58,11 @@ const getAutoRestartColor = (autoRestart, onAutoRestart) => {
     if (onAutoRestart) {
         return '#119400'
     } else {
-        return autoRestart ? 'black' : '#979797'
+        return autoRestart ? theme.client.color : '#979797'
     }
 }
 
-export const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, changeSetting) => (
+export const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, changeSetting, nightMode = false) => (
     <IconWrapper onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -77,18 +78,21 @@ export const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, chan
     </IconWrapper>
 )
 
-export const renderAutoStart = ({autoStart, id}, changeSetting) => (
-    <IconWrapper onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        changeSetting(id, 'autoStart', !autoStart)
-    }
-    }>
+export const renderAutoStart = ({autoStart, id}, changeSetting) => {
+    const icon = theme.nightMode ? "./static/icons/autostart_on_invert.svg" : './static/icons/autostart_on.svg'
+    return (
+        <IconWrapper onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            changeSetting(id, 'autoStart', !autoStart)
+        }
+        }>
 
-        <img width="12px" height="12px"
-             src={autoStart ? "./static/icons/autostart_on.svg" : "./static/icons/autostart_off.svg" }/>
-    </IconWrapper>
-)
+            <img width="12px" height="12px"
+                 src={autoStart ? icon : "./static/icons/autostart_off.svg" }/>
+        </IconWrapper>
+    )
+}
 
 
 const IconBase = styled(Icon)`

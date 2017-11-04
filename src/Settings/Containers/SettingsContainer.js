@@ -61,6 +61,9 @@ const Version = styled.div`
 `
 const StyledLink = styled(Link)`
    margin-left: 10px;
+   color: ${theme.client.color};
+   text-decoration: none;
+   cursor: pointer;
 `
 
 export default withTheme(connect(

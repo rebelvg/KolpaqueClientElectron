@@ -36,7 +36,6 @@ const TabList = styled.div`
     padding: 0;
     margin: 0;
     display: flex;
-    border-bottom: 1px solid lightgray;
     flex-direction: column;
     align-items: flex-end;
     width: 24px;
@@ -54,7 +53,7 @@ const Tab = styled.div`
     font-size: 12px;
     height: 105px;
     color: ${theme.tab.color};
-    outline: 1px solid #979797;
+    outline: 1px solid ${theme.outline};
     position: relative;
     cursor: pointer;
     align-items: center;

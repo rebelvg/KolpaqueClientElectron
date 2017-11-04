@@ -4,6 +4,7 @@ import Select from 'react-select';
 import SettingsForm from '../../Forms/SettingsForm/SettingsForm'
 import ImportForm from '../../Forms/ImportForm/ImportForm'
 import 'react-select/dist/react-select.css';
+import theme from '../../../theme'
 
 const options = [
     {value: 'general', label: "General Settings"},
@@ -78,4 +79,5 @@ const PageTitle = styled.h4`
 const Container = styled.div`
     width: 100%;
     height: 100%;
+    background-color: ${theme.channel.bg}
 `

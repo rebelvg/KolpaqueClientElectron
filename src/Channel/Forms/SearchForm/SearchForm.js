@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import styled from 'styled-components'
+import theme from '../../../theme'
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {debounce} from 'lodash'
@@ -68,6 +69,7 @@ class SearchForm extends Component {
                     <StyledField
                         name="filter"
                         type="text"
+                        placeholder="Search..."
                         value={value}
                         onContextMenu={() => {
                             openMenu()
@@ -106,11 +108,13 @@ const InputWrapper = styled.div`
     width:100%;
     overflow: hidden;
     & > input {
+        background-color:${theme.input.bg};
+        color:${theme.input.color};
         width: 100%;
         border: none;
         height:20px;
         font-size:12px;
-        border-top: 1px solid #979797;
+        border-top: 1px solid ${theme.outline};
         padding: 0 10px;
     }
     `

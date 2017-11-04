@@ -73,7 +73,7 @@ export default class ChannelForm extends Component {
                                  placeholder="Add Channel"
                                  type="text"/>
                     <button type="submit">
-                        <StyledIcon fontSize="24px" color={theme.addChannelBtn.color} icon="ion-plus"/>
+                        <StyledIcon fontSize="24px" color={theme.input.color} icon="ion-plus"/>
                     </button>
                 </StyledChannelFormWrap>
             </form>
@@ -99,12 +99,13 @@ const StyledInput = styled.input`
     flex-grow:2;
     width: 100%;
     display: flex;
-    background-color: #fff;
+    background-color: ${theme.input.bg};
+    color: ${theme.input.color};
     background-image: none;
     background-clip: padding-box;
     height: 24px;
     border: none;
-    border-top: 1px solid lightgray;
+    border-top: 1px solid ${theme.outline};
     box-shadow: none;
     box-sizing: border-box;
     font-size: 14px;
@@ -112,11 +113,11 @@ const StyledInput = styled.input`
 `;
 
 const StyledIcon = styled(Ionicon)`
-  background-color:${theme.addChannelBtn.bg};
+  background-color:${theme.input.bg};
   color:white;
   display: flex;
   box-sizing: border-box;
-  border: 1px solid lightgray;
+  border: 1px solid ${theme.outline};
   border-left: 0px;
   font-size:24px;
 `;

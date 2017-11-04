@@ -62,7 +62,7 @@ const ChannelWrapper = styled.div`
     font-size: 14px;
     height: 20px;
     background-color:  ${props => !props.selected ? `${theme.channel.bg}` : `${theme.channelSelected.bg}`};
-    border-top: 1px solid #969696;
+    border-top: 1px solid ${theme.outline};
 `;
 
 const Icons = styled.div`

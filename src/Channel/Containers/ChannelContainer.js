@@ -134,7 +134,7 @@ const UpdateWrapper = styled.div`
     text-decoration: underline;
     z-index: 0;
     padding: 5px 0px;
-    border: 1px solid #979797;
+    border: 1px solid ${theme.outline};
     cursor: pointer;
     background-color:${theme.clientSecondary.bg};
     `
@@ -181,7 +181,7 @@ const TabWrapper = styled.div`
     display:flex;
     justify-content: space-between;
     flex-direction: column;
-    border-right: 1px solid #979797;
+    border-right: 1px solid ${theme.outline};
     position: relative;
     z-index: 2;
     `

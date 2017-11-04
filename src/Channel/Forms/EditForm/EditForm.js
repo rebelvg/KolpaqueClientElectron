@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Ionicon from 'react-ionicons'
 import styled from 'styled-components'
+import theme from '../../../theme'
 
 const {remote} = window.require('electron');
 const {Menu} = remote;
@@ -53,9 +54,8 @@ export default class EditForm extends Component {
         const {value} = this.state;
         const {channel} = this.props;
         console.log(value);
+        console.log('nigga really?')
         this.props.nameChange(value, channel.id);
-        e.preventDefault();
-
     }
 
     render() {
@@ -71,7 +71,7 @@ export default class EditForm extends Component {
                         openMenu()
                     }}
                     onChange={(e) => this.onChange(e.target.value)}
-                    onBlur={(e, v) => this.renameChannel}
+                    onBlur={(e, v) => this.renameChannel()}
                 />
 
             </Form>
@@ -96,5 +96,8 @@ const StyledField = styled.input`
     padding: 0px;
     margin: 0px;
     position: relative;
-    z-index: 100000
+    z-index: 100000;
+    background-color:${theme.input.bg};
+    color:${theme.input.color};
+    border: 1px solid ${theme.outline}
 `

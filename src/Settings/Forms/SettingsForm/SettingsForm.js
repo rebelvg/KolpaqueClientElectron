@@ -68,6 +68,19 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}, 
             </InputWrapper>
         </FieldWrapper>
 
+        <FieldWrapper>
+            <Label>Night Mode (experimental) </Label>
+            <InputWrapper>
+                <Field
+                    name="nightMode"
+                    component={renderToggleInput}
+                    onChange={(e, v,) => {
+                        getSettings(!!v, 'nightMode')
+                    }}
+                />
+            </InputWrapper>
+        </FieldWrapper>
+
         <FieldWrapper full>
             <Label>Youtube Api Key</Label>
             <InputWrapper>
@@ -130,6 +143,8 @@ const FieldWrapper = styled.div`
 const Label = styled.label`
     font-weight: bold;
     font-size: 15px;
+    color: ${theme.client.color};
+    padding-bottom:10px;
 `
 
 const InputWrapper = styled.div`
