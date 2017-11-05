@@ -57,7 +57,9 @@ function isOnline(channelObj, printBalloon) {
     }
 
     if (printBalloon && channelObj.autoStart) {
-        ChannelPlay.launchPlayerObj(channelObj);
+        if (channelObj._processes.length === 0) {
+            ChannelPlay.launchPlayerObj(channelObj);
+        }
     }
 }
 
