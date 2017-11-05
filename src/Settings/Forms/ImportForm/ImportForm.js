@@ -6,7 +6,7 @@ import Icon from 'react-icons-kit';
 import {close} from 'react-icons-kit/fa/close';
 import styled from 'styled-components'
 import theme from '../../../theme'
-
+import {changeSetting} from '../../../Channel/Helpers/IPCHelpers'
 
 export default class ImportForm extends Component {
     constructor(props) {
@@ -17,13 +17,26 @@ export default class ImportForm extends Component {
         }
     }
 
+    submitMembers = () => {
+        const {members} = this.state;
+        this.props.onChange(members);
+    }
+
+    addChannels = () => {
+        const {value} = this.state;
+        this.props.importChannel(value);
+        this.setState({
+            value: ''
+        })
+    }
+
     addMember = (e) => {
         console.log(e.target.value);
         const {members, value} = this.state;
         this.setState({
             members: [...members, value],
             value: ""
-        })
+        }, () => this.submitMembers())
         e.preventDefault();
     }
 
@@ -31,7 +44,7 @@ export default class ImportForm extends Component {
         const {members} = this.state;
         this.setState({
             members: members.filter((member, m_index) => m_index !== index)
-        });
+        }, () => this.submitMembers());
     }
 
 
@@ -40,11 +53,19 @@ export default class ImportForm extends Component {
         return (
             <div>
                 <form onSubmit={(e) => this.addMember(e)}>
-                    <MemberInput value={value} onChange={(e) => this.setState({value: e.target.value})} name="member"
+                    <MemberInput value={value}
+                                 onChange={(e) => this.setState({value: e.target.value})}
+                                 name="member"
                                  type="text"
                                  placeholder="Enter username"/>
-                    <AddBtn type="button">Import channels</AddBtn>
-                    <AddBtn type="submit">Add to auto import</AddBtn>
+
+                    <AddBtn onClick={() => this.addChannels()} type="button">
+                        Import channels
+                    </AddBtn>
+
+                    <AddBtn onClick={() => this.submitMembers()} type="submit">
+                        Add to auto import
+                    </AddBtn>
                 </form>
                 <MemberWrap>
                     <MemberTitle>Auto Import List</MemberTitle>
@@ -65,7 +86,8 @@ const MemberInput = styled.input`
     width: 100%;
     background-color:${theme.input.bg};
     color:${theme.input.color};
-    border: 1px solid ${theme.outline};
+    border:none;
+    outline: 1px solid ${theme.outline};
 `
 
 const AddBtn = styled.button`
@@ -95,6 +117,6 @@ const Member = styled.div`
     color: ${theme.client.color};
     display: flex;
     align-items: center;
-    outline: 1px solid ${theme.outline};
+    border-top: 1px solid ${theme.outline};
     padding: 5px 20px;
 `

@@ -25,6 +25,15 @@ export default class Settings extends Component {
             activeKey: selected.value
         })
     }
+
+    submitImports = (twitchImports) => {
+        this.props.changeSettings('twitchImport', twitchImports)
+    }
+
+    importChannel = (name) => {
+        this.props.importChannel(name)
+    }
+
     getSetting = (value, name, text = false) => {
         if (!text) {
             value = value ? value : false;
@@ -55,12 +64,17 @@ export default class Settings extends Component {
 
                 {
                     activeKey === 'general'
-                    && <SettingsForm initialValues={settings} getSettings={this.getSetting}
+                    && <SettingsForm initialValues={settings}
+                                     enableReinitialize={true}
+                                     getSettings={this.getSetting}
                                      onSubmit={this.onSettingsSubmit}/>
                 }
                 {
                     activeKey === 'import'
-                    && <ImportForm members={settings.twitchImport} getSettings={this.getSetting}
+                    && <ImportForm onChange={this.submitImports}
+                                   members={settings.twitchImport}
+                                   getSettings={this.getSetting}
+                                   importChannel={this.importChannel}
                                    onSubmit={this.onSettingsSubmit}/>
                 }
             </Container>

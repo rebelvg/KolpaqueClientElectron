@@ -10,14 +10,15 @@ import theme from '../../../theme';
 import {withTheme} from 'styled-components'
 const renderToggleInput = (field) => (
     <div>
+        {JSON.stringify(field.input.value)}
         <Toggle checked={!!field.input.value} onChange={field.input.onChange} icons={false}/>
     </div>
 );
 /* { "LQ": false, "showNotifications": true, "autoPlay": false, "minimizeAtStart": false, "launchOnBalloonClick": true, "enableLog": false, "theme": "light", "width": 409, "height": 743, "youtubeApiKey": null, "twitchImport": [ "rebelvg" ] }
  */
 
-const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}, initialValues) => (
-    <Form initialValues={initialValues} onSubmit={handleSubmit}>
+const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}) => (
+    <Form onSubmit={handleSubmit}>
         <FieldWrapper>
             <Label>LQ</Label>
             <InputWrapper>
@@ -37,8 +38,9 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}, 
                 <Field
                     name="showNotifications"
                     component={renderToggleInput}
-                    onChange={(e, v,) => {
-                        getSettings(!!v, 'showNotifications')
+                    onChange={ (e, v,) => {
+                        getSettings(!!v, 'showNotifications');
+                        reset();
                     }}
                 />
             </InputWrapper>
@@ -95,11 +97,6 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}, 
             </InputWrapper>
         </FieldWrapper>
 
-        <SaveWrapper>
-            <SaveButton type="submit" disabled={pristine || submitting}>
-                SAVE
-            </SaveButton>
-        </SaveWrapper>
     </Form>
 )
 
@@ -155,6 +152,7 @@ const InputField = styled(Field)`
     width: 100%;
 `
 
-export default withTheme(reduxForm({
-    form: 'settings' // a unique identifier for this form
-})(SettingsForm))
+export default reduxForm({
+    form: 'settings', // a unique identifier for this form
+    enableReinitialize: true,
+})(SettingsForm)
