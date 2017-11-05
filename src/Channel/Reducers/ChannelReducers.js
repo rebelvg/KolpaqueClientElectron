@@ -54,7 +54,7 @@ export default function (state = initialState, action = {}) {
         }
 
         case GET_INFO: {
-            state.setIn(['update'], action.info)
+            return state.set('update', action.info);
         }
 
         default: {

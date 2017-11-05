@@ -35,7 +35,7 @@ const StyledWrapper = styled.div`
     display: flex;
     color: black;
     flex-direction: column;
-    padding-bottom: ${({isUpdate}) => isUpdate ? 80 : 40}px;  
+    padding-bottom: ${({isUpdate}) => isUpdate ? 80 : 50}px;  
 `
 
 

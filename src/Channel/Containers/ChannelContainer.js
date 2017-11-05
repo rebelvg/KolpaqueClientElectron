@@ -15,7 +15,7 @@ import SearchForm from '../Forms/SearchForm/SearchForm'
 import {TABS, getTab} from '../constants';
 import Tabs from '../Components/Tabs/Tabs'
 import {changeSetting} from '../Helpers/IPCHelpers'
-import {CompareChannels} from '../Helpers/CompareChannels'
+import {FilterChannel} from '../Helpers/FilterChannels'
 
 const {remote, ipcRenderer} = window.require('electron');
 const {Menu, MenuItem} = remote;
@@ -67,9 +67,10 @@ export class ChannelContainer extends Component {
     sendInfo = (info) => this.props.sendInfo(info)
 
     getCount = (tab) => {
+        const {filter} = this.state;
         const {channels = []} = this.props
         const activeTab = getTab(tab)
-        const data = channels.filter((channel) => channel[activeTab.filter] === activeTab.filterValue)
+        const data = channels.filter((channel) => channel[activeTab.filter] === activeTab.filterValue && FilterChannel(channel, filter))
         return data.length
     }
 
@@ -165,7 +166,7 @@ const StyledFooter = styled.div`
 const SettingsIcon = styled(Link)`
     display: flex;
     justify-content: center;
-    padding-bottom: 55px;
+    padding-bottom: 51px;
     `
 
 const StyledContainerWrapper = styled.div`

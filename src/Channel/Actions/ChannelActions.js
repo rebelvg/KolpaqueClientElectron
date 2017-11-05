@@ -35,12 +35,14 @@ export function deleteChannel(id) {
 }
 
 export function sendInfo(info) {
+    console.log(info);
     ipcRenderer.send('client_getInfo', info);
     return {
         type: SEND_INFO
     }
 }
 export function getInfo(info) {
+    console.log(info);
     return {
         type: GET_INFO,
         info: info
