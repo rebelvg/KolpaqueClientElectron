@@ -58,6 +58,7 @@ const Container = styled.div`
 `
 const Version = styled.div`
     margin-right: 10px;
+    color: ${theme.client.color}
 `
 const StyledLink = styled(Link)`
    margin-left: 10px;

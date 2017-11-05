@@ -60,7 +60,7 @@ export default class Settings extends Component {
                 }
                 {
                     activeKey === 'import'
-                    && <ImportForm initialValues={settings} getSettings={this.getSetting}
+                    && <ImportForm members={settings.twitchImport} getSettings={this.getSetting}
                                    onSubmit={this.onSettingsSubmit}/>
                 }
             </Container>
