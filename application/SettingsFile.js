@@ -102,6 +102,12 @@ ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));
 
 ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
 
-ipcMain.once('getNightMode', (event) => (event.returnValue = config.settings.nightMode));
+ipcMain.on('getSettingSync', (event, settingName) => {
+    if (!config.settings.hasOwnProperty(settingName)) {
+        return event.returnValue = null;
+    }
+
+    return event.returnValue = config.settings[settingName];
+});
 
 module.exports = config;
