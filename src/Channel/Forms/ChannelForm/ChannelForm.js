@@ -64,13 +64,13 @@ export default class ChannelForm extends Component {
         const {value} = this.state;
         return (
 
-            <form onSubmit={ this.handleSubmit }>
+            <form onSubmit={this.handleSubmit}>
                 <StyledChannelFormWrap>
                     <StyledInput onContextMenu={() => openMenu()}
                                  component="input" name="channel"
                                  onChange={this.onChange}
                                  value={value}
-                                 placeholder="Add Channel"
+                                 placeholder="Add Channel..."
                                  type="text"/>
                     <button type="submit">
                         <StyledIcon fontSize="24px" color={theme.input.color} icon="ion-plus"/>

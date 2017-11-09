@@ -57,18 +57,18 @@ export default class ImportForm extends Component {
                                  onChange={(e) => this.setState({value: e.target.value})}
                                  name="member"
                                  type="text"
-                                 placeholder="Enter username"/>
+                                 placeholder="Enter Username..."/>
 
                     <AddBtn onClick={() => this.addChannels()} type="button">
-                        Import channels
+                        Import Channels Once
                     </AddBtn>
 
                     <AddBtn onClick={() => this.submitMembers()} type="submit">
-                        Add to auto import
+                        Add to Auto-Import
                     </AddBtn>
                 </form>
                 <MemberWrap>
-                    <MemberTitle>Auto Import List</MemberTitle>
+                    <MemberTitle>Twitch Auto-Import List</MemberTitle>
                     {members.map((member, index) =>
                         <Member key={member + index}>
                             <MemberName> {member} </MemberName>

@@ -15,7 +15,7 @@ const registeredServices = {
     },
     'twitch': {
         protocols: ['https:', 'http:'],
-        hosts: ['www.twitch.tv', 'twitch.tv'],
+        hosts: ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'],
         paths: ['/'],
         name: 1
     },

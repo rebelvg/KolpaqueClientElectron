@@ -8,14 +8,12 @@ import './toggle.css';
 import styled from 'styled-components'
 import theme from '../../../theme';
 import {withTheme} from 'styled-components'
+
 const renderToggleInput = (field) => (
     <div>
-        {JSON.stringify(field.input.value)}
         <Toggle checked={!!field.input.value} onChange={field.input.onChange} icons={false}/>
     </div>
 );
-/* { "LQ": false, "showNotifications": true, "autoPlay": false, "minimizeAtStart": false, "launchOnBalloonClick": true, "enableLog": false, "theme": "light", "width": 409, "height": 743, "youtubeApiKey": null, "twitchImport": [ "rebelvg" ] }
- */
 
 const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}) => (
     <Form onSubmit={handleSubmit}>
@@ -38,7 +36,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}) 
                 <Field
                     name="showNotifications"
                     component={renderToggleInput}
-                    onChange={ (e, v,) => {
+                    onChange={(e, v,) => {
                         getSettings(!!v, 'showNotifications');
                         reset();
                     }}
@@ -71,7 +69,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}) 
         </FieldWrapper>
 
         <FieldWrapper>
-            <Label>Night Mode (experimental) </Label>
+            <Label>Night Mode (experimental, restart required) </Label>
             <InputWrapper>
                 <Field
                     name="nightMode"

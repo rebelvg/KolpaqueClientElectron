@@ -7,8 +7,7 @@ const EventEmitter = require('events');
 const Channel = require('./ChannelClass');
 const {allowedProtocols, registeredServices, preInstalledChannels} = require('./Globals');
 
-const isDev = process.env.NODE_ENV === 'dev';
-const settingsPath = path.normalize(path.join(app.getPath('documents'), isDev ? 'KolpaqueClient_dev.json' : 'KolpaqueClient.json'));
+const settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 const channelSave = ['link', 'visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
 function readFile(config) {

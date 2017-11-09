@@ -125,7 +125,7 @@
 .react-toggle--checked .react-toggle-thumb {
     left: 27px;
     border-color: #19AB27;
-    background-image: url('/icon.png');
+    background-image: url('../../../../static/icons/icon.png');
 }
 
 .react-toggle--focus .react-toggle-thumb {
