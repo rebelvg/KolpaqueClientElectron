@@ -34,4 +34,4 @@ const SortChannels = (channels, sort, reverse = false) => {
     return sortedChannels;
 };
 
-export default SortChannels
+export default SortChannels;
