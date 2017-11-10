@@ -39,7 +39,7 @@ function getTwitchInfo(channelObj) {
                 return;
             }
 
-            channelObj.changeSetting('_icon', nativeImage.createFromBuffer(buffer), false);
+            channelObj.changeSetting('_icon', buffer, false);
         });
     });
 }

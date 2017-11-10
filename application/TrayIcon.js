@@ -1,4 +1,4 @@
-const {app, shell, Menu, Notification} = require('electron');
+const {app, shell, Menu, Notification, nativeImage} = require('electron');
 const _ = require('lodash');
 
 const config = require('./SettingsFile');
@@ -43,7 +43,7 @@ function rebuildIconMenu() {
         return {
             label: channelObj.visibleName, type: 'normal', click: (menuItem, browserWindow, event) => {
                 ChannelPlay.launchPlayerObj(channelObj, event.ctrlKey, event.shiftKey ? true : null);
-            }, icon: channelObj._icon ? channelObj._icon.resize({height: 16}) : null
+            }, icon: channelObj._icon ? nativeImage.createFromBuffer(channelObj._icon).resize({height: 16}) : null
         }
     });
 

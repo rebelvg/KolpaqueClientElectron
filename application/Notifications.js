@@ -2,7 +2,7 @@
  * Created by rebel on 27/03/2017.
  */
 
-const {app, shell, Menu, Notification} = require('electron');
+const {app, shell, Menu, Notification, nativeImage} = require('electron');
 
 const config = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
@@ -18,7 +18,7 @@ function printNewNotification(title, content, channelObj = {}) {
     let icon = app.appIcon.iconPathBalloon;
 
     if (channelObj._icon) {
-        icon = channelObj._icon;
+        icon = nativeImage.createFromBuffer(channelObj._icon);
     }
 
     let notification = new Notification({
