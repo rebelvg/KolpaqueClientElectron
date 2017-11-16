@@ -36,14 +36,19 @@ config.on('channel_removed', (channelObj) => {
 
 function rebuildIconMenu() {
     let onlineChannels = config.channels.filter((channelObj) => {
+        if (!channelObj._icon16 && channelObj._icon) channelObj._icon16 = nativeImage.createFromBuffer(channelObj._icon).resize({height: 16});
+
         return channelObj.isLive;
     });
 
     app.contextMenuTemplate[1].submenu = onlineChannels.map(function (channelObj) {
         return {
-            label: channelObj.visibleName, type: 'normal', click: (menuItem, browserWindow, event) => {
+            label: channelObj.visibleName,
+            type: 'normal',
+            click: (menuItem, browserWindow, event) => {
                 ChannelPlay.launchPlayerObj(channelObj, event.ctrlKey, event.shiftKey ? true : null);
-            }, icon: channelObj._icon ? nativeImage.createFromBuffer(channelObj._icon).resize({height: 16}) : null
+            },
+            icon: channelObj._icon16 || null
         }
     });
 
