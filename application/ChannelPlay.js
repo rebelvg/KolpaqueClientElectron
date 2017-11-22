@@ -72,7 +72,7 @@ function launchPlayerObj(channelObj, LQ = null, autoRestart = null) {
     launchStreamlink(playLink, params, channelObj);
 }
 
-function launchStreamlink(playLink, params, channelObj) {
+function launchStreamlink(playLink, params, channelObj, firstStart = true) {
     console.log(playLink, params);
 
     let childProcess = child('streamlink', [playLink, 'best', '--twitch-disable-hosting'].concat(params), function (err, data, stderr) {
@@ -91,18 +91,18 @@ function launchStreamlink(playLink, params, channelObj) {
 
                 return shell.openExternal(`https://github.com/streamlink/streamlink/releases`);
             } else {
-                Notifications.printNotification('Error', err.message);
+                if (firstStart) Notifications.printNotification('Error', err.message);
             }
         }
 
         if (data.indexOf('error: ') >= 0) {
             let error = data.split('error: ');
 
-            Notifications.printNotification('Error', error[1]);
+            if (firstStart) Notifications.printNotification('Error', error[1]);
         }
 
         if (channelObj.isLive && channelObj.onAutoRestart) {
-            launchStreamlink(playLink, params, channelObj);
+            launchStreamlink(playLink, params, channelObj, false);
         } else {
             channelObj.changeSetting('onAutoRestart', false);
         }
