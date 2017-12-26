@@ -27,6 +27,9 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 ### Requirements
 - [Streamlink](https://github.com/streamlink/streamlink)
 
+### Optionals
+- [Youtube API Key](https://console.developers.google.com/apis/library/youtube.googleapis.com)
+
 ## Builds
 - ftp://main.klpq.men:359/KolpaqueClientElectron/
 
