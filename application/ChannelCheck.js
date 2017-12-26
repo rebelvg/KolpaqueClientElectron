@@ -133,9 +133,7 @@ function getTwitchStats(channelObj, printBalloon) {
     });
 }
 
-function getYoutubeStatsBase(channelId, channelObj, printBalloon) {
-    let apiKey = config.settings.youtubeApiKey;
-
+function getYoutubeStatsBase(channelId, channelObj, printBalloon, apiKey) {
     let searchUrl = new URL(`https://www.googleapis.com/youtube/v3/search`);
 
     searchUrl.searchParams.set('channelId', channelId);
@@ -164,9 +162,7 @@ function getYoutubeStatsBase(channelId, channelObj, printBalloon) {
 function getYoutubeStatsUser(channelObj, printBalloon) {
     let apiKey = config.settings.youtubeApiKey;
 
-    if (!apiKey) {
-        return;
-    }
+    if (!apiKey) return;
 
     let channelsUrl = new URL(`https://www.googleapis.com/youtube/v3/channels`);
 
@@ -182,7 +178,7 @@ function getYoutubeStatsUser(channelObj, printBalloon) {
             if (body.items.length > 0) {
                 let channelId = body.items[0].id;
 
-                getYoutubeStatsBase(channelId, channelObj, printBalloon);
+                getYoutubeStatsBase(channelId, channelObj, printBalloon, apiKey);
             } else {
                 console.log('youtube user id not found.');
             }
@@ -196,11 +192,9 @@ function getYoutubeStatsUser(channelObj, printBalloon) {
 function getYoutubeStatsChannel(channelObj, printBalloon) {
     let apiKey = config.settings.youtubeApiKey;
 
-    if (!apiKey) {
-        return;
-    }
+    if (!apiKey) return;
 
-    getYoutubeStatsBase(channelObj.name, channelObj, printBalloon);
+    getYoutubeStatsBase(channelObj.name, channelObj, printBalloon, apiKey);
 }
 
 function getStats5(channelObj, printBalloon = true) {

@@ -44,44 +44,30 @@ function sendInfo(update) {
 }
 
 function clientVersionCheck() {
-    if (infoArray.includes('client')) {
-        return clearInterval(updates['client'].interval);
-    }
+    if (infoArray.includes('client')) return clearInterval(updates['client'].interval);
 
     let url = "https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases";
 
     request.get({url: url, json: true, headers: {'user-agent': "KolpaqueClientElectron"}}, function (err, res, body) {
-        if (err) {
-            return;
-        }
-
-        if (!body[0] || !body[0].tag_name) {
-            return;
-        }
+        if (err) return;
+        if (res.statusCode !== 200) return;
+        if (!body[0] || !body[0].tag_name) return;
 
         let newVersion = body[0].tag_name;
 
-        if (newVersion !== clientVersion) {
-            sendInfo('client');
-        }
+        if (newVersion !== clientVersion) sendInfo('client');
     });
 }
 
 function streamlinkVersionCheck() {
-    if (infoArray.includes('streamlink')) {
-        return clearInterval(updates['streamlink'].interval);
-    }
+    if (infoArray.includes('streamlink')) return clearInterval(updates['streamlink'].interval);
 
     child('streamlink', ['--version-check'], function (err, data, stderr) {
-        if (err) {
-            return;
-        }
+        if (err) return;
 
         let regExp = new RegExp(/A new version of Streamlink \((.*)\) is available!/gi);
 
-        if (regExp.test(data)) {
-            sendInfo('streamlink');
-        }
+        if (regExp.test(data)) sendInfo('streamlink');
     });
 }
 
