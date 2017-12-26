@@ -14,8 +14,7 @@ const Notifications = require('./Notifications');
 ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
     let channelObj = config.findById(id);
 
-    if (!channelObj)
-        return false;
+    if (!channelObj) return false;
 
     launchPlayerObj(channelObj, LQ, autoRestart);
 });
@@ -23,8 +22,7 @@ ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
 ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
     let channelObj = config.findById(id);
 
-    if (!channelObj)
-        return false;
+    if (!channelObj) return false;
 
     if (channelObj._processes.length > 0 && settingName === 'autoRestart' && settingValue) {
         channelObj.changeSetting('onAutoRestart', true);
@@ -34,8 +32,7 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
 function launchPlayerLink(channelLink, LQ = null) {
     let channelObj = Config.buildChannelObj(channelLink);
 
-    if (channelObj === false)
-        return false;
+    if (channelObj === false) return false;
 
     launchPlayerObj(channelObj, LQ);
 }

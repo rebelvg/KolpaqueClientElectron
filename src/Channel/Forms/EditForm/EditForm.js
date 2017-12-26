@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
-import Ionicon from 'react-ionicons'
-import styled from 'styled-components'
-import theme from '../../../theme'
+import styled from 'styled-components';
+import theme from '../../../theme';
 
 const {remote} = window.require('electron');
 const {Menu} = remote;
-
 
 let template = [
     {
@@ -34,12 +32,11 @@ let template = [
 const openMenu = () => {
     const macMenu = Menu.buildFromTemplate(template);
     macMenu.popup(remote.getCurrentWindow());
-}
-
+};
 
 export default class EditForm extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             value: props.channel.visibleName
         }
@@ -47,16 +44,14 @@ export default class EditForm extends Component {
 
     onChange = (v) => {
         this.setState({value: v})
-    }
-
+    };
 
     renameChannel = (e) => {
         const {value} = this.state;
         const {channel} = this.props;
         console.log(value);
-        console.log('nigga really?')
         this.props.nameChange(value, channel.id);
-    }
+    };
 
     render() {
         const {value} = this.state;
@@ -73,7 +68,6 @@ export default class EditForm extends Component {
                     onChange={(e) => this.onChange(e.target.value)}
                     onBlur={(e, v) => this.renameChannel()}
                 />
-
             </Form>
         )
     }
@@ -88,7 +82,7 @@ const Form = styled.form`
     align-items: center;
     position: relative;
     z-index: 100000
-`
+`;
 
 const StyledField = styled.input`
     width: 100%;
@@ -100,4 +94,4 @@ const StyledField = styled.input`
     background-color:${theme.input.bg};
     color:${theme.input.color};
     border: 1px solid ${theme.outline}
-`
+`;

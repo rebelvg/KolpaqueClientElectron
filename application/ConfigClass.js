@@ -19,9 +19,7 @@ function readFile(config) {
         _.forEach(parseJson.channels, (channelObj) => {
             let channel = config.addChannelLink(channelObj.link);
 
-            if (channel !== false) {
-                channel.update(channelObj);
-            }
+            if (channel !== false) channel.update(channelObj);
         });
 
         _.forEach(config.settings, (settingValue, settingName) => {
@@ -83,15 +81,11 @@ class Config extends EventEmitter {
     addChannelLink(channelLink) {
         let channelObj = Config.buildChannelObj(channelLink);
 
-        if (channelObj === false) {
-            return false;
-        }
+        if (channelObj === false) return false;
 
         let res = this.findChannelByLink(channelObj.link);
 
-        if (res !== null) {
-            return false;
-        }
+        if (res !== null) return false;
 
         this.channels.push(channelObj);
 
@@ -114,9 +108,7 @@ class Config extends EventEmitter {
     removeChannelById(id) {
         let channelObj = this.findById(id);
 
-        if (!this.channels.includes(channelObj)) {
-            return true;
-        }
+        if (!this.channels.includes(channelObj)) return true;
 
         _.pull(this.channels, channelObj);
 
@@ -126,9 +118,7 @@ class Config extends EventEmitter {
     }
 
     changeSetting(settingName, settingValue) {
-        if (!this.settings.hasOwnProperty(settingName)) {
-            return false;
-        }
+        if (!this.settings.hasOwnProperty(settingName)) return false;
 
         this.settings[settingName] = settingValue;
 
@@ -142,9 +132,7 @@ class Config extends EventEmitter {
             return channel.id === id;
         });
 
-        if (!channel) {
-            return null;
-        }
+        if (!channel) return null;
 
         return channel;
     }
@@ -154,9 +142,7 @@ class Config extends EventEmitter {
             return channel.link === channelLink;
         });
 
-        if (!channel) {
-            return null;
-        }
+        if (!channel) return null;
 
         return channel;
     }

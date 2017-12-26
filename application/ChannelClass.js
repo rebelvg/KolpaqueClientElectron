@@ -77,18 +77,14 @@ class Channel extends EventEmitter {
         this.id = md5(this.link);
 
         this.on('setting_changed', (settingName, settingValue, send) => {
-            if (send) {
-                app.mainWindow.webContents.send('channel_changeSetting', this.id, settingName, settingValue);
-            }
+            if (send) app.mainWindow.webContents.send('channel_changeSetting', this.id, settingName, settingValue);
         });
     }
 
     update(channelConfig) {
         _.forEach(channelConfig, (settingValue, settingName) => {
             if (channelValidate.includes(settingName)) {
-                if (settingName === 'visibleName' && !settingValue) {
-                    return;
-                }
+                if (settingName === 'visibleName' && !settingValue) return;
 
                 this[settingName] = settingValue;
             }
@@ -96,9 +92,7 @@ class Channel extends EventEmitter {
     }
 
     changeSetting(settingName, settingValue, send = true) {
-        if (!this.hasOwnProperty(settingName)) {
-            return false;
-        }
+        if (!this.hasOwnProperty(settingName)) return false;
 
         this[settingName] = settingValue;
 

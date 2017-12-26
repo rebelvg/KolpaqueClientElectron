@@ -27,9 +27,7 @@ ipcMain.on('channel_remove', (event, id) => {
 ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
     let channelObj = config.findById(id);
 
-    if (!channelObj) {
-        return false;
-    }
+    if (!channelObj) return false;
 
     if (settingName === 'visibleName') {
         if (!settingValue) {
@@ -44,9 +42,7 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
 ipcMain.on('channel_openPage', (event, id) => {
     let channelObj = config.findById(id);
 
-    if (channelObj === null) {
-        return false;
-    }
+    if (channelObj === null) return false;
 
     if (channelObj.protocol === 'rtmp:') {
         switch (channelObj.service) {
@@ -67,9 +63,7 @@ ipcMain.on('channel_openPage', (event, id) => {
 ipcMain.on('channel_openChat', (event, id) => {
     let channelObj = config.findById(id);
 
-    if (channelObj === null) {
-        return false;
-    }
+    if (channelObj === null) return false;
 
     if (channelObj.protocol === 'rtmp:') {
         switch (channelObj.service) {
@@ -103,9 +97,8 @@ ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));
 ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
 
 ipcMain.on('getSettingSync', (event, settingName) => {
-    if (!config.settings.hasOwnProperty(settingName)) {
+    if (!config.settings.hasOwnProperty(settingName))
         return event.returnValue = null;
-    }
 
     return event.returnValue = config.settings[settingName];
 });

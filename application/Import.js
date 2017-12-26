@@ -22,9 +22,7 @@ function twitchImportChannels(channels, i) {
     channels.forEach(function (channel) {
         let channelObj = config.addChannelLink(channel.channel.url);
 
-        if (channelObj !== false) {
-            i++;
-        }
+        if (channelObj !== false) i++;
     });
 
     return i;
@@ -39,8 +37,7 @@ async function getTwitchData(url) {
 async function twitchImportBase(channelName) {
     channelName = channelName.trim();
 
-    if (channelName.length === 0)
-        return null;
+    if (channelName.length === 0) return null;
 
     try {
         let i = 0;

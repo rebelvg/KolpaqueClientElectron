@@ -4,7 +4,6 @@ import {TABS} from '../../constants';
 import styled from 'styled-components';
 import theme from '../../../theme';
 
-
 class Tabs extends Component {
     constructor() {
         super();

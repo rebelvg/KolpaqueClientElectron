@@ -17,9 +17,8 @@ function printNotification(title, content, channelObj = {}) {
 function printNewNotification(title, content, channelObj = {}) {
     let icon = app.appIcon.iconPathBalloon;
 
-    if (channelObj._icon) {
+    if (channelObj._icon)
         icon = nativeImage.createFromBuffer(channelObj._icon);
-    }
 
     let notification = new Notification({
         icon: icon,

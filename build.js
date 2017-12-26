@@ -34,19 +34,15 @@ if (platformRl === 'all') {
     options.platform = platformRl;
 }
 
-if (!fs.existsSync(outPathRl)) {
-    console.log('bad path.');
-    return;
-}
+if (!fs.existsSync(outPathRl))
+    return console.log('bad path.');
 
 options.out = path.join(outPathRl, 'KolpaqueClientElectron');
 
 console.log(options);
 
 packager(options, function (err, appPaths) {
-    if (err) {
-        console.log(err);
-    }
+    if (err) console.log(err);
 
     console.log(appPaths);
 });

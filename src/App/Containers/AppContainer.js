@@ -5,7 +5,6 @@ import EventListener from '../Components/EventListener'
 import styled from 'styled-components';
 
 export default class AppContainer extends Component {
-
     constructor() {
         super()
     }
@@ -23,4 +22,3 @@ export default class AppContainer extends Component {
 const Container = styled.div`
 	height: 100%
 `
-

@@ -38,5 +38,4 @@ const StyledWrapper = styled.div`
     padding-bottom: ${({isUpdate}) => isUpdate ? 80 : 50}px;  
 `
 
-
 export default ChannelWrapper
