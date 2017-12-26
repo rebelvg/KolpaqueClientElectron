@@ -25,7 +25,7 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 ## Usage User
 
 ### Requirements
-- [Streamlink](https://github.com/streamlink/streamlink) (with RTMP Dump)
+- [Streamlink](https://github.com/streamlink/streamlink) (with RTMPDump)
 
 ### Optionals
 - [Youtube API Key](https://console.developers.google.com/apis/library/youtube.googleapis.com)
