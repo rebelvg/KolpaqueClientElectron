@@ -31,8 +31,9 @@ function twitchImportChannels(channels, i) {
 }
 
 async function getTwitchData(url) {
-    let response = await requestGet({url: url, json: true, headers: {'Client-ID': twitchApiKey}});
-    return response.body;
+    let res = await requestGet({url: url, json: true, headers: {'Client-ID': twitchApiKey}});
+
+    return res.body;
 }
 
 async function twitchImportBase(channelName) {
@@ -109,18 +110,19 @@ function autoKlpqImport() {
         let url = importObj.url;
         let service = importObj.service;
 
-        request.get({url: url, json: true}, function (error, res, body) {
-            if (!error) {
-                _.forEach(body.result, function (channel) {
-                    let protocol = registeredServices[service].protocols[0];
-                    let host = registeredServices[service].hosts[0];
-                    let pathname = registeredServices[service].paths[0] + `${channel}`;
+        request.get({url: url, json: true}, function (err, res, body) {
+            if (err) return;
+            if (res.statusCode !== 200) return;
 
-                    let channelUrl = protocol + "//" + host + pathname;
+            _.forEach(body.result, function (channel) {
+                let protocol = registeredServices[service].protocols[0];
+                let host = registeredServices[service].hosts[0];
+                let pathname = registeredServices[service].paths[0] + `${channel}`;
 
-                    let channelObj = config.addChannelLink(channelUrl);
-                });
-            }
+                let channelUrl = protocol + "//" + host + pathname;
+
+                let channelObj = config.addChannelLink(channelUrl);
+            });
         });
     });
 }

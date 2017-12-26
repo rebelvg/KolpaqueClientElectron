@@ -84,18 +84,19 @@ function isOffline(channelObj) {
 }
 
 function getKlpqStatsBase(url, channelObj, printBalloon) {
-    request({url: url, json: true}, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            try {
-                if (body.isLive) {
-                    isOnline(channelObj, printBalloon);
-                } else {
-                    isOffline(channelObj);
-                }
+    request({url: url, json: true}, function (err, res, body) {
+        if (err) return;
+        if (res.statusCode !== 200) return;
+
+        try {
+            if (body.isLive) {
+                isOnline(channelObj, printBalloon);
+            } else {
+                isOffline(channelObj);
             }
-            catch (e) {
-                console.log(e);
-            }
+        }
+        catch (e) {
+            console.log(e);
         }
     });
 }
@@ -115,18 +116,19 @@ function getKlpqMainStats(channelObj, printBalloon) {
 function getTwitchStats(channelObj, printBalloon) {
     let url = `https://api.twitch.tv/kraken/streams?channel=${channelObj.name}`;
 
-    request({url: url, json: true, headers: {'Client-ID': twitchApiKey}}, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            try {
-                if (body.streams.length > 0) {
-                    isOnline(channelObj, printBalloon);
-                } else {
-                    isOffline(channelObj);
-                }
+    request({url: url, json: true, headers: {'Client-ID': twitchApiKey}}, function (err, res, body) {
+        if (err) return;
+        if (res.statusCode !== 200) return;
+
+        try {
+            if (body.streams.length > 0) {
+                isOnline(channelObj, printBalloon);
+            } else {
+                isOffline(channelObj);
             }
-            catch (e) {
-                console.log(e);
-            }
+        }
+        catch (e) {
+            console.log(e);
         }
     });
 }
@@ -142,18 +144,19 @@ function getYoutubeStatsBase(channelId, channelObj, printBalloon) {
     searchUrl.searchParams.set('eventType', 'live');
     searchUrl.searchParams.set('key', apiKey);
 
-    request({url: searchUrl.href, json: true}, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            try {
-                if (body.items.length > 0) {
-                    isOnline(channelObj, printBalloon);
-                } else {
-                    isOffline(channelObj);
-                }
+    request({url: searchUrl.href, json: true}, function (err, res, body) {
+        if (err) return;
+        if (res.statusCode !== 200) return;
+
+        try {
+            if (body.items.length > 0) {
+                isOnline(channelObj, printBalloon);
+            } else {
+                isOffline(channelObj);
             }
-            catch (e) {
-                console.log(e);
-            }
+        }
+        catch (e) {
+            console.log(e);
         }
     });
 }
@@ -171,20 +174,21 @@ function getYoutubeStatsUser(channelObj, printBalloon) {
     channelsUrl.searchParams.set('part', 'id');
     channelsUrl.searchParams.set('key', apiKey);
 
-    request({url: channelsUrl.href, json: true}, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            try {
-                if (body.items.length > 0) {
-                    let channelId = body.items[0].id;
+    request({url: channelsUrl.href, json: true}, function (err, res, body) {
+        if (err) return;
+        if (res.statusCode !== 200) return;
 
-                    getYoutubeStatsBase(channelId, channelObj, printBalloon);
-                } else {
-                    console.log('youtube user id not found.');
-                }
+        try {
+            if (body.items.length > 0) {
+                let channelId = body.items[0].id;
+
+                getYoutubeStatsBase(channelId, channelObj, printBalloon);
+            } else {
+                console.log('youtube user id not found.');
             }
-            catch (e) {
-                console.log(e);
-            }
+        }
+        catch (e) {
+            console.log(e);
         }
     });
 }
