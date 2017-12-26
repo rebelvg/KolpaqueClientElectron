@@ -12,7 +12,7 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
   - Twitch
   - Youtube (with your own API key)
 - Notifications
-- Auto Import
+- Auto-Import
   - KLPQ Stream Service
   - Twitch
 - Low Quality Playback
