@@ -31,13 +31,13 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 - [Youtube API Key](https://console.developers.google.com/apis/library/youtube.googleapis.com)
 
 ### Builds
-- ftp://main.klpq.men:359/KolpaqueClientElectron/
+> ftp://main.klpq.men:359/KolpaqueClientElectron/
 
 ## Usage Dev
 
 ### Requirements
-- Node.js >= 8.
-- Yarn.
+- Node.js >= 8
+- Yarn
 
 ### Setup
 ```
