@@ -21,6 +21,7 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 - Channel Searching
 - Channel Renaming
 - Play from Clipboard
+- Tray Menu
 
 ## Usage User
 
