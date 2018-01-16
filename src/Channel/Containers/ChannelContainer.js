@@ -1,88 +1,127 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import theme from '../../theme'
-import {bindActionCreators} from 'redux';
-import {withTheme} from 'styled-components'
-import Ionicon from 'react-ionicons'
-import {Link} from 'react-router-dom';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import theme from '../../theme';
+import { withTheme } from 'styled-components';
+import Ionicon from 'react-ionicons';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import {getChannels, getUpdateStatus, getLoading} from '../Reducers/ChannelReducers'
-import {sendInfo, sortChannels} from '../Actions/ChannelActions'
-import ChannelWrapper from '../../Channel/Components/ChannelWrapper/ChannelWrapper'
-import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm'
-import menuTemplate from '../Helpers/menu'
-import SearchForm from '../Forms/SearchForm/SearchForm'
-import {TABS, getTab} from '../constants';
-import Tabs from '../Components/Tabs/Tabs'
-import {changeSetting} from '../Helpers/IPCHelpers'
-import {FilterChannel} from '../Helpers/FilterChannels'
+import {
+    getChannels,
+    getUpdateStatus,
+    getLoading
+} from '../Reducers/ChannelReducers';
+import { sendInfo, sortChannels } from '../Actions/ChannelActions';
+import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm';
+import menuTemplate from '../Helpers/menu';
+import SearchForm from '../Forms/SearchForm/SearchForm';
+import {getTab } from '../constants';
+import Tabs from '../Components/Tabs/Tabs';
+import { changeSetting } from '../Helpers/IPCHelpers';
+import { FilterChannel } from '../Helpers/FilterChannels';
+import Channel from '../../Channel/Components/Channel/Channel';
 
-const {remote, ipcRenderer} = window.require('electron');
-const {Menu, MenuItem} = remote;
+const { remote } = window.require('electron');
+const { Menu } = remote;
 
-export class ChannelContainer extends Component {
+@withTheme
+@connect(
+    state => ({
+        channels: getChannels(state),
+        update: getUpdateStatus(state),
+        loading: getLoading(state)
+    }),
+    {
+        sortChannels,
+        sendInfo
+    }
+)
+class ChannelContainer extends Component {
     constructor() {
-        super()
+        super();
         this.state = {
             selected: null,
             activeTab: 'online',
             editChannel: null,
             lastAction: new Date(),
-            filter: '',
-        }
+            filter: ''
+        };
     }
 
-    editChannel = (channel) => this.setState({editChannel: channel})
+    editChannel = channel => this.setState({ editChannel: channel });
 
-    openMenu = (channel) => {
+    openMenu = channel => {
         const menu = new Menu();
         const template = menuTemplate(channel, () => {
-            this.editChannel(channel)
+            this.editChannel(channel);
         });
-        template.map((item) => menu.append(item))
-        menu.popup(remote.getCurrentWindow())
-    }
+        template.map(item => menu.append(item));
+        menu.popup(remote.getCurrentWindow());
+    };
 
     renameChannel = (name, id) => {
-        console.log(name, id)
-        changeSetting(id, 'visibleName', name)
-        this.setState({editChannel: null})
+        changeSetting(id, 'visibleName', name);
+        this.setState({ editChannel: null });
+    };
 
-    }
+    selectChannel = (button, channel) => {
+        const { selected } = this.state;
+        if (selected && channel.id === selected.id && button === 0) {
+            this.setState({ selected: null });
+        } else {
+            if (button !== 1) {
+                this.setState({ selected: channel });
+            }
+        }
+    };
 
-    changeSetting = (id, settingName, settingValue) => {
-        ipcRenderer.send('channel_changeSetting', id, settingName, settingValue)
-    }
-
-
-    selectChannel = (which, channel) => {
-        const click = which;
-        const {selected} = this.state
+    changeTab = tab =>
         this.setState({
-            selected: selected && channel.id === selected.id && click !== 3 ? '' : channel,
-        })
-    }
+            activeTab: tab,
+            lastAction: `changeTab${tab.value}${new Date()}`
+        });
 
-    changeTab = (tab) => this.setState({activeTab: tab, lastAction: `changeTab${tab.value}${new Date()}`})
-    sendInfo = (info) => this.props.sendInfo(info)
+    sendInfo = info => this.props.sendInfo(info);
 
-    getCount = (tab) => {
-        const {filter} = this.state;
-        const {channels = []} = this.props
-        const activeTab = getTab(tab)
-        const data = channels.filter((channel) => channel[activeTab.filter] === activeTab.filterValue && FilterChannel(channel, filter))
-        return data.length
-    }
+    handleChannelAction = (type, data) => {
+        switch (type) {
+            case 'RENAME': {
+                this.renameChannel(...data);
+                return;
+            }
+            case 'OPEN_MENU': {
+                this.openMenu(...data);
+                return;
+            }
+            case 'SELECT': {
+                this.selectChannel(...data);
+                return;
+            }
+        }
+    };
 
-    isTabActive = (active, tab) => active === tab
-    setFilter = (value) => this.setState({filter: value})
+    getCount = tab => {
+        const { filter } = this.state;
+        const { channels = [] } = this.props;
+        const activeTab = getTab(tab);
+        const data = channels.filter(
+            channel =>
+                channel[activeTab.filter] === activeTab.filterValue &&
+                FilterChannel(channel, filter)
+        );
+        return data.length;
+    };
+
+    isTabActive = (active, tab) => active === tab;
+
+    setFilter = value => this.setState({ filter: value });
 
     render() {
-        const {channels, update, loading} = this.props;
-        const {selected, activeTab, editChannel, filter} = this.state;
+        const { channels, update} = this.props;
+        const { selected, activeTab, editChannel, filter } = this.state;
+        const currentTab = getTab(activeTab);
         return (
             <Wrapper>
-                <SearchForm setFilter={this.setFilter}/>
+                <SearchForm setFilter={this.setFilter} />
                 <StyledContainerWrapper>
                     <TabWrapper>
                         <Tabs
@@ -91,39 +130,65 @@ export class ChannelContainer extends Component {
                             onChange={this.changeTab}
                             getCount={this.getCount}
                         />
-                        <SettingsIcon onClick={() => {
-                        }} to="/about">
-                            <Ionicon icon="ion-gear-b" color={theme.clientSecondary.color}/>
+                        <SettingsIcon onClick={() => {}} to="/about">
+                            <Ionicon
+                                icon="ion-gear-b"
+                                color={theme.clientSecondary.color}
+                            />
                         </SettingsIcon>
                     </TabWrapper>
+
                     <TabPanel>
-                        <ChannelWrapper
-                            changeSetting={this.changeSetting}
-                            isUpdate={!!update}
-                            editChannel={editChannel}
-                            selected={selected}
-                            selectChannel={this.selectChannel}
-                            handleClick={this.openMenu}
-                            renameChannel={this.renameChannel}
-                            tab={getTab(activeTab)}
-                            filter={filter}
-                            channels={channels}
-                        />
+                        <ChannelWrap isUpdate={update}>
+                            {channels.map((channel, index) => (
+                                <Channel
+                                    visible={
+                                        channel[currentTab.filter] ===
+                                            currentTab.filterValue &&
+                                        FilterChannel(channel, filter)
+                                    }
+                                    handleChannelAction={
+                                        this.handleChannelAction
+                                    }
+                                    editMode={
+                                        editChannel &&
+                                        editChannel.id === channel.id
+                                    }
+                                    selected={
+                                        selected &&
+                                        selected.link === channel.link
+                                    }
+                                    key={channel.id}
+                                    channel={channel}
+                                />
+                            ))}
+                        </ChannelWrap>
                     </TabPanel>
-                    {update &&
-                    <UpdateWrapper onClick={() => {
-                        this.sendInfo(update)
-                    }}>
-                        {update}
-                    </UpdateWrapper>}
+
+                    {update && (
+                        <UpdateWrapper
+                            onClick={() => {
+                                this.sendInfo(update);
+                            }}
+                        >
+                            {update}
+                        </UpdateWrapper>
+                    )}
+
                     <StyledFooter>
-                        <ChannelForm/>
+                        <ChannelForm />
                     </StyledFooter>
                 </StyledContainerWrapper>
             </Wrapper>
         );
     }
 }
+const ChannelWrap = styled.div`
+    display: flex;
+    color: black;
+    flex-direction: column;
+    padding-bottom: ${({ isUpdate }) => (isUpdate ? 80 : 50)}px;
+`;
 
 const UpdateWrapper = styled.div`
     position: fixed;
@@ -137,22 +202,20 @@ const UpdateWrapper = styled.div`
     padding: 5px 0px;
     border: 1px solid ${theme.outline};
     cursor: pointer;
-    background-color:${theme.clientSecondary.bg};
-    `
+    background-color: ${theme.clientSecondary.bg};
+`;
 
 const Wrapper = styled.div`
     width: 100%;
-    `
-
+`;
 
 const TabPanel = styled.div`
     overflow-y: auto;
     width: 100%;
     display: block;
     max-height: 100vh;
-    background-color: ${theme.clientSecondary.bg}
-    `
-
+    background-color: ${theme.clientSecondary.bg};
+`;
 
 const StyledFooter = styled.div`
     background-color: ${theme.client.bg};
@@ -161,40 +224,29 @@ const StyledFooter = styled.div`
     bottom: 0px;
     width: 100%;
     z-index: 3;
-    `
+`;
 
 const SettingsIcon = styled(Link)`
     display: flex;
     justify-content: center;
     padding-bottom: 51px;
-    `
+`;
 
 const StyledContainerWrapper = styled.div`
     display: flex;
     width: 100%;
     height: 100%;
-    `
-
+`;
 
 const TabWrapper = styled.div`
-    height:100%;
+    height: 100%;
     background-color: ${theme.client.bg};
-    display:flex;
+    display: flex;
     justify-content: space-between;
     flex-direction: column;
     border-right: 1px solid ${theme.outline};
     position: relative;
     z-index: 2;
-    `
+`;
 
-export default withTheme(connect(
-    (state) => ({
-        channels: getChannels(state),
-        update: getUpdateStatus(state),
-        loading: getLoading(state)
-    }),
-    (dispatch) => bindActionCreators({
-        sortChannels,
-        sendInfo
-    }, dispatch)
-)(ChannelContainer));
+export default ChannelContainer

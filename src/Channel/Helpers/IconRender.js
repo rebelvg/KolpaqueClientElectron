@@ -63,7 +63,7 @@ const getAutoRestartColor = (autoRestart, onAutoRestart) => {
 }
 
 export const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, changeSetting, nightMode = false) => (
-    <IconWrapper onClick={(e) => {
+    <IconWrapper name="auto-restart-btn" onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
         onAutoRestart
@@ -81,7 +81,7 @@ export const renderAutoRestart = ({id, autoRestart, onAutoRestart, isLive}, chan
 export const renderAutoStart = ({autoStart, id}, changeSetting) => {
     const icon = theme.nightMode ? "./static/icons/autostart_on_invert.svg" : './static/icons/autostart_on.svg'
     return (
-        <IconWrapper onClick={(e) => {
+        <IconWrapper name="auto-start-btn" onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             changeSetting(id, 'autoStart', !autoStart)

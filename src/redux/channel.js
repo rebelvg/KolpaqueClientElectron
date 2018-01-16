@@ -1,0 +1,10 @@
+import { createAction , handleActions } from 'redux-actions'
+
+const GET_CHANNELS = 'GET_CHANNELS';
+const ADD_CHANNEL = 'ADD_CHANNEL';
+const SORT_CHANNELS = 'SORT_CHANNELS';
+const GET_INFO = 'GET_INFO';
+const SEND_INFO = 'SEND_INFO'
+const ADD_CHANNEL_RESPONSE = 'ADD_CHANNEL_RESPONSE';
+const DELETE_CHANNEL = 'DELETE_CHANNEL';
+const CHANGE_STATUS = 'CHANGE_STATUS';
