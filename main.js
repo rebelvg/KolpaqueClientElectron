@@ -4,7 +4,7 @@ const _ = require('lodash');
 const path = require('path');
 const url = require('url');
 const fixPath = require('fix-path');
-const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS} = require('electron-devtools-installer');
+const {default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS} = require('electron-devtools-installer');
 
 const config = require('./application/SettingsFile');
 
@@ -70,11 +70,11 @@ function createWindow() {
         // Open the DevTools.
         mainWindow.webContents.openDevTools();
         installExtension(REACT_DEVELOPER_TOOLS)
-        .then((name) => console.log(`Added Extension:  ${name}`))
-        .catch((err) => console.log('An error occurred: ', err));
-      installExtension(REDUX_DEVTOOLS)
-        .then((name) => console.log(`Added Extension:  ${name}`))
-        .catch((err) => console.log('An error occurred: ', err));
+            .then((name) => console.log('Extension added', name))
+            .catch((err) => console.log('An error occurred', err));
+        installExtension(REDUX_DEVTOOLS)
+            .then((name) => console.log('Extension added', name))
+            .catch((err) => console.log('An error occurred', err));
 
     } else {
         mainWindow.loadURL(url.format({
