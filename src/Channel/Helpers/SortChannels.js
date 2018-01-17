@@ -29,8 +29,6 @@ const SortChannels = (channels, sort, reverse = false) => {
         sortedChannels.reverse();
     }
 
-    console.log(sortedChannels);
-
     return sortedChannels;
 };
 

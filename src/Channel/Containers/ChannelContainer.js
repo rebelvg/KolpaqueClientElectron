@@ -5,12 +5,6 @@ import { withTheme } from 'styled-components';
 import Ionicon from 'react-ionicons';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import {
-    getChannels,
-    getUpdateStatus,
-    getLoading
-} from '../Reducers/ChannelReducers';
-import { sendInfo, sortChannels } from '../Actions/ChannelActions';
 import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm';
 import menuTemplate from '../Helpers/menu';
 import SearchForm from '../Forms/SearchForm/SearchForm';
@@ -20,19 +14,24 @@ import { changeSetting } from '../Helpers/IPCHelpers';
 import { FilterChannel } from '../Helpers/FilterChannels';
 import Channel from '../../Channel/Components/Channel/Channel';
 
+import {getCompleteChannels,getFullCount,setSort, getUpdate, setFilter, getLoading, sendInfo} from '../../redux/channel'
+
+
 const { remote } = window.require('electron');
 const { Menu } = remote;
 
 @withTheme
 @connect(
     state => ({
-        channels: getChannels(state),
-        update: getUpdateStatus(state),
-        loading: getLoading(state)
+        channels: getCompleteChannels(state),
+        update: getUpdate(state),
+        loading: getLoading(state),
+        count: getFullCount(state)
     }),
     {
-        sortChannels,
-        sendInfo
+        sendInfo,
+        setSort,
+        setFilter,
     }
 )
 class ChannelContainer extends Component {
@@ -101,24 +100,21 @@ class ChannelContainer extends Component {
 
     getCount = tab => {
         const { filter } = this.state;
-        const { channels = [] } = this.props;
+        const { channels = [], count} = this.props;
         const activeTab = getTab(tab);
-        const data = channels.filter(
-            channel =>
-                channel[activeTab.filter] === activeTab.filterValue &&
-                FilterChannel(channel, filter)
-        );
-        return data.length;
+        return count[activeTab.value] || 0;
     };
 
     isTabActive = (active, tab) => active === tab;
 
-    setFilter = value => this.setState({ filter: value });
+    setFilter = value => this.props.setFilter(value);
+
 
     render() {
-        const { channels, update} = this.props;
+        const { channels, update, setSort} = this.props;
         const { selected, activeTab, editChannel, filter } = this.state;
         const currentTab = getTab(activeTab);
+
         return (
             <Wrapper>
                 <SearchForm setFilter={this.setFilter} />
@@ -144,8 +140,7 @@ class ChannelContainer extends Component {
                                 <Channel
                                     visible={
                                         channel[currentTab.filter] ===
-                                            currentTab.filterValue &&
-                                        FilterChannel(channel, filter)
+                                            currentTab.filterValue
                                     }
                                     handleChannelAction={
                                         this.handleChannelAction
