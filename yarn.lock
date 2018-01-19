@@ -3150,6 +3150,10 @@ fill-range@^2.1.0:
     repeat-element "^1.1.2"
     repeat-string "^1.5.2"
 
+final-form@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/final-form/-/final-form-4.0.3.tgz#1f5a836bc3715e4ce0afca03550c5d57aa4812e2"
+
 finalhandler@~1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/finalhandler/-/finalhandler-1.0.4.tgz#18574f2e7c4b98b8ae3b230c21f201f31bdb3fb7"
@@ -5885,6 +5889,10 @@ react-dom@^15.0.0:
     loose-envify "^1.1.0"
     object-assign "^4.1.0"
     prop-types "^15.5.10"
+
+react-final-form@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/react-final-form/-/react-final-form-3.0.4.tgz#58e4713ab074e0af5f7f24e444be9f129a9d4cee"
 
 react-hot-loader@^3.0.0:
   version "3.1.2"

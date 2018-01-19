@@ -10,10 +10,9 @@ import menuTemplate from '../Helpers/menu';
 import SearchForm from '../Forms/SearchForm/SearchForm';
 import {getTab } from '../constants';
 import Tabs from '../Components/Tabs/Tabs';
-import { changeSetting } from '../Helpers/IPCHelpers';
-import { FilterChannel } from '../Helpers/FilterChannels';
+import { changeSetting, addChannel } from '../Helpers/IPCHelpers';
 import Channel from '../../Channel/Components/Channel/Channel';
-
+import { Form } from 'react-final-form'
 import {getCompleteChannels,getFullCount,setSort, getUpdate, setFilter, getLoading, sendInfo} from '../../redux/channel'
 
 
@@ -98,16 +97,24 @@ class ChannelContainer extends Component {
         }
     };
 
+    addChannelForm = ({channel}) => {
+        if(channel) {
+            addChannel(channel)
+        }
+    }
+
     getCount = tab => {
-        const { filter } = this.state;
-        const { channels = [], count} = this.props;
+        const { count} = this.props;
         const activeTab = getTab(tab);
         return count[activeTab.value] || 0;
     };
 
     isTabActive = (active, tab) => active === tab;
 
-    setFilter = value => this.props.setFilter(value);
+    setFilter = value => {
+        const filter = value.filter ? value.filter : '';
+        this.props.setFilter(filter)
+    }
 
 
     render() {
@@ -117,7 +124,13 @@ class ChannelContainer extends Component {
 
         return (
             <Wrapper>
-                <SearchForm setFilter={this.setFilter} />
+                <ChannelSearchForm
+                    onSubmit={this.setFilter}
+                    save={this.setFilter}
+                    render={props => <SearchForm {...props}/>}
+                    subscription={{}}
+                />
+
                 <StyledContainerWrapper>
                     <TabWrapper>
                         <Tabs
@@ -171,13 +184,22 @@ class ChannelContainer extends Component {
                     )}
 
                     <StyledFooter>
-                        <ChannelForm />
+                        <ChannelAddForm onSubmit={this.addChannelForm}
+                            render={props => <ChannelForm {...props}/>}
+                        />
                     </StyledFooter>
                 </StyledContainerWrapper>
             </Wrapper>
         );
     }
 }
+
+const ChannelAddForm = styled(Form)`
+`
+
+const ChannelSearchForm = styled(Form)`
+`
+
 const ChannelWrap = styled.div`
     display: flex;
     color: black;
