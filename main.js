@@ -10,11 +10,16 @@ const config = require('./application/SettingsFile');
 
 const ChannelPlay = require('./application/ChannelPlay');
 const TrayIcon = require('./application/TrayIcon');
+const Logger = require('./application/Logger');
 
 require('./application/ChannelCheck');
 require('./application/Import');
 require('./application/ChannelInfo');
 require('./application/VersionCheck');
+
+const clientVersion = require('./package.json').version;
+
+Logger(['Client launched', clientVersion]);
 
 const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);
@@ -205,4 +210,6 @@ app.on('ready', () => {
 
 process.on('uncaughtException', function (err) {
     console.log('Caught exception: ' + err.stack);
+
+    Logger([err.stack]);
 });

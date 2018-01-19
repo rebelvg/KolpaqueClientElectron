@@ -10,17 +10,17 @@ import {
 } from '../Actions/ChannelActions';
 import SortChannels from '../Helpers/SortChannels';
 import FilterChannels from '../Helpers/FilterChannels';
-import { fromJS, List } from 'immutable';
+import {fromJS, List} from 'immutable';
 
 const initialState = fromJS({
     channels: List([]),
     update: false,
-    sort: 'lastAdded',
+    sort: 'lastUpdated',
     reverse: false,
     loading: true
 });
 
-export default function(state = initialState, action = {}) {
+export default function (state = initialState, action = {}) {
     switch (action.type) {
         case GET_CHANNELS: {
             console.log(state.get('loading'));
@@ -32,7 +32,7 @@ export default function(state = initialState, action = {}) {
         case CHANGE_STATUS: {
             const indexToUpdate = state
                 .get('channels')
-                .findIndex(({ id }) => id === action.id);
+                .findIndex(({id}) => id === action.id);
             console.log(state.getIn(['channels', indexToUpdate]));
             state.updateIn(
                 ['channels', indexToUpdate],

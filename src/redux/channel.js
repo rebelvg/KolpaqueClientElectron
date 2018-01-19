@@ -1,14 +1,14 @@
-import { createActions, handleActions } from 'redux-actions';
-import { createSelector  } from 'reselect';
+import {createActions, handleActions} from 'redux-actions';
+import {createSelector} from 'reselect';
 import SortChannels from '../Channel/Helpers/SortChannels'
 import {FilterChannels} from '../Channel/Helpers/FilterChannels'
 
-const { ipcRenderer } = window.require('electron');
+const {ipcRenderer} = window.require('electron');
 
 const defaultState = {
     channels: [],
     update: false,
-    sort: 'lastAdded',
+    sort: 'lastUpdated',
     reverse: false,
     filter: '',
     loading: true
@@ -31,21 +31,21 @@ export const {
         const channels = ipcRenderer.sendSync('getChannels');
         console.log(channels)
         ipcRenderer.send('client_ready');
-        return { channels };
+        return {channels};
     },
 
     ADD_CHANNEL: channel => {
         ipcRenderer.send('channel_add', channel);
-        return { channel };
+        return {channel};
     },
 
-    ADD_CHANNEL_RESPONSE: channel => ({ channel }),
+    ADD_CHANNEL_RESPONSE: channel => ({channel}),
 
-    DELETE_CHANNEL: id => ({ id }),
+    DELETE_CHANNEL: id => ({id}),
 
     SEND_INFO: info => {
         ipcRenderer.send('client_getInfo', info);
-        return { info };
+        return {info};
     },
 
     CHANGE_SETTING: (id, settingName, settingValue) => ({
@@ -53,7 +53,7 @@ export const {
         settingName,
         settingValue
     }),
-    GET_INFO: info => ({ info }),
+    GET_INFO: info => ({info}),
     SET_FILTER: filter => ({filter}),
     SET_SORT: sort => ({sort})
 });
@@ -67,7 +67,7 @@ export const reducer = handleActions(
             channels: action.payload.channels
         }),
 
-        ADD_CHANNEL: (state, action) => ({ ...state }),
+        ADD_CHANNEL: (state, action) => ({...state}),
 
         ADD_CHANNEL_RESPONSE: (state, action) => ({
             ...state,
@@ -81,28 +81,27 @@ export const reducer = handleActions(
             )
         }),
 
-        SEND_INFO: (state, action) => ({ ...state }),
+        SEND_INFO: (state, action) => ({...state}),
 
-        CHANGE_SETTING: (
-            state,
-            { payload: { id, settingName, settingValue } }
-        ) => ({
+        CHANGE_SETTING: (state,
+                         {payload: {id, settingName, settingValue}}) => ({
             ...state,
             channels: state.channels.map(
                 channel =>
                     channel.id === id
-                        ? { ...channel, [settingName]: settingValue }
+                        ? {...channel, [settingName]: settingValue}
                         : channel
             )
         }),
 
-        GET_INFO: (state, action) => ({ ...state, update: action.payload.info }),
+        GET_INFO: (state, action) => ({...state, update: action.payload.info}),
 
         SET_FILTER: (state, action) => ({...state, filter: action.payload.filter}),
 
         SET_SORT: (state, action) => {
-          console.log(action.payload)
-          return {...state, sort: action.payload.sort}}
+            console.log(action.payload)
+            return {...state, sort: action.payload.sort}
+        }
     },
     defaultState
 );
@@ -117,21 +116,21 @@ export const getUpdate = (state) => state.channel.update;
 export const getLoading = (state) => state.channel.loading;
 
 export const getOnlineCount = createSelector(
-  [getChannelsList, getFilter],
-  (channels, filter) => FilterChannels(channels, filter).filter(channel => channel.isLive).length
+    [getChannelsList, getFilter],
+    (channels, filter) => FilterChannels(channels, filter).filter(channel => channel.isLive).length
 )
 
 export const getOfflineCount = createSelector(
-  [getChannelsList, getFilter],
-  (channels, filter) => FilterChannels(channels, filter).filter(channel => !channel.isLive).length
+    [getChannelsList, getFilter],
+    (channels, filter) => FilterChannels(channels, filter).filter(channel => !channel.isLive).length
 )
 
 export const getFullCount = createSelector(
-  [getOnlineCount, getOfflineCount],
-  (online, offline) => ({online, offline})
+    [getOnlineCount, getOfflineCount],
+    (online, offline) => ({online, offline})
 )
 
 export const getCompleteChannels = createSelector(
-  [getChannelsList, getSortMode, getFilter],
-  (channels, sort, filter) => SortChannels(FilterChannels(channels, filter), sort)
+    [getChannelsList, getSortMode, getFilter],
+    (channels, sort, filter) => SortChannels(FilterChannels(channels, filter), sort)
 )
