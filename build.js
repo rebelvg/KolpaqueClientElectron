@@ -1,10 +1,10 @@
 const packager = require('electron-packager');
-const rl = require('readline-sync');
+const readlineSync = require('readline-sync');
 const fs = require('fs');
 const path = require('path');
 
-let platformRl = rl.question('select platform. all - for all platforms.\n');
-let outPathRl = rl.question('select output folder.\n');
+let platformOption = readlineSync.question('select platform. all - for all platforms.\n');
+let pathOption = readlineSync.question('select output folder.\n');
 
 let options = {
     dir: './',
@@ -28,16 +28,16 @@ let options = {
     prune: true
 };
 
-if (platformRl === 'all') {
+if (platformOption === 'all') {
     options.platform = 'win32,darwin,linux';
 } else {
-    options.platform = platformRl;
+    options.platform = platformOption;
 }
 
-if (!fs.existsSync(outPathRl))
+if (!fs.existsSync(pathOption))
     return console.log('bad path.');
 
-options.out = path.join(outPathRl, 'KolpaqueClientElectron');
+options.out = path.join(pathOption, 'KolpaqueClientElectron');
 
 console.log(options);
 

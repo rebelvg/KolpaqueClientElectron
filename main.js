@@ -68,9 +68,7 @@ function createWindow() {
 
     // and load the index.html of the app.
     if (isDev) {
-        mainWindow.loadURL(
-            'http://localhost:3000'
-        );
+        mainWindow.loadURL('http://localhost:3000');
 
         // Open the DevTools.
         mainWindow.webContents.openDevTools();
@@ -100,8 +98,7 @@ function createWindow() {
     mainWindow.on('close', function (e) {
         console.log('forceQuit', forceQuit);
 
-        if (forceQuit)
-            return;
+        if (forceQuit) return;
 
         if (process.platform === 'darwin') {
             e.preventDefault();
@@ -119,7 +116,7 @@ function createWindow() {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
 
-        mainWindow = null
+        mainWindow = null;
     });
 }
 
@@ -134,7 +131,7 @@ app.on('window-all-closed', function () {
     // to stay active until the user quits explicitly with Cmd + Q
 
     if (process.platform !== 'darwin') {
-        app.quit()
+        app.quit();
     }
 });
 
@@ -142,46 +139,60 @@ app.on('activate', function () {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (mainWindow === null) {
-        createWindow()
+        createWindow();
     }
 });
 
 app.on('ready', function () {
-    if (!config.settings.minimizeAtStart)
-        return;
+    if (!config.settings.minimizeAtStart) return;
 
     mainWindow.hide();
 });
 
 let contextMenuTemplate = [
     {
-        label: 'Toggle Client', type: 'normal', visible: process.platform === 'linux', click: () => {
-        mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
-    }
+        label: 'Toggle Client',
+        type: 'normal',
+        visible: process.platform === 'linux',
+        click: () => {
+            mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+        }
     },
     {
-        label: 'Online Channels', type: 'submenu', submenu: []
+        label: 'Online Channels',
+        type: 'submenu',
+        submenu: []
     },
     {
-        label: 'Play / Last Closed', type: 'normal', visible: false, click: () => {
-    }
+        label: 'Play / Last Closed',
+        type: 'normal',
+        visible: false,
+        click: () => {
+        }
     },
     {
-        label: 'Play / Clipboard', type: 'normal', click: (menuItem, browserWindow, event) => {
-        ChannelPlay.launchPlayerLink(clipboard.readText(), event.ctrlKey);
-    }
+        label: 'Play / Clipboard',
+        type: 'normal',
+        click: (menuItem, browserWindow, event) => {
+            ChannelPlay.launchPlayerLink(clipboard.readText(), event.ctrlKey);
+        }
     },
     {
-        label: 'Notifications', type: 'checkbox', click: (menuItem) => {
-        console.log('menuItem.checked', menuItem.checked);
-        config.changeSetting('showNotifications', menuItem.checked);
-    }, checked: config.settings.showNotifications
+        label: 'Notifications',
+        type: 'checkbox',
+        click: (menuItem) => {
+            console.log('menuItem.checked', menuItem.checked);
+            config.changeSetting('showNotifications', menuItem.checked);
+        },
+        checked: config.settings.showNotifications
     },
     {
-        label: 'Quit Client', type: 'normal', click: () => {
-        forceQuit = true;
-        app.quit();
-    }
+        label: 'Quit Client',
+        type: 'normal',
+        click: () => {
+            forceQuit = true;
+            app.quit();
+        }
     }
 ];
 
