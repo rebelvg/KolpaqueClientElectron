@@ -32,15 +32,15 @@ ipcMain.once('client_ready', () => {
     fixPath();
 });
 
-let iconPath = path.normalize(path.join(__dirname, 'icon.png'));
-let iconPathTray = path.normalize(path.join(__dirname, 'icon32.png'));
-let iconPathBalloon = path.normalize(path.join(__dirname, 'icon.png'));
+let iconPath = path.normalize(path.join(__dirname, 'icons', 'icon.png'));
+let iconPathTray = path.normalize(path.join(__dirname, 'icons', 'icon32.png'));
+let iconPathBalloon = path.normalize(path.join(__dirname, 'icons', 'icon.png'));
 
 if (process.platform === 'darwin') {
     app.dock.setIcon(iconPath);
     app.dock.hide();
 
-    iconPathTray = path.normalize(path.join(__dirname, 'iconTemplate.png'));
+    iconPathTray = path.normalize(path.join(__dirname, 'icons', 'iconTemplate.png'));
 }
 
 // Keep a global reference of the window object, if you don't, the window will
