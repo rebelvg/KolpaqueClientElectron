@@ -2,17 +2,19 @@ const packager = require('electron-packager');
 const readlineSync = require('readline-sync');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
-let platformOption = readlineSync.question('select platform. all - for all platforms.\n');
-let pathOption = readlineSync.question('select output folder.\n');
+let platformOption = readlineSync.question('select platform. all - for all platforms.' + os.EOL);
+let pathOption = readlineSync.question('select output folder.' + os.EOL);
 
 let options = {
     dir: './',
     tmpdir: false,
-    icon: './icon',
+    icon: './icons/icon',
     arch: 'x64',
     ignore: [
-        '.idea'
+        '.idea',
+        'src'
     ],
     overwrite: true,
     win32metadata: {
@@ -21,9 +23,7 @@ let options = {
         FileDescription: 'KolpaqueClientElectron',
         OriginalFilename: 'KolpaqueClientElectron.exe'
     },
-    asar: {
-        unpackDir: 'node_modules/node-notifier/vendor/**'
-    },
+    asar: true,
     packageManager: 'yarn',
     prune: true
 };
@@ -34,8 +34,7 @@ if (platformOption === 'all') {
     options.platform = platformOption;
 }
 
-if (!fs.existsSync(pathOption))
-    return console.log('bad path.');
+if (!fs.existsSync(pathOption)) return console.log('bad path.');
 
 options.out = path.join(pathOption, 'KolpaqueClientElectron');
 
