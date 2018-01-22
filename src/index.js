@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import {HashRouter} from 'react-router-dom'
 import {ThemeProvider} from 'styled-components'
-import colors from './colors';
+import colors from './Themes/default';
 import AppContainer from './App/Containers/AppContainer'
 import 'normalize.css/normalize.css'
 import './style.css'
