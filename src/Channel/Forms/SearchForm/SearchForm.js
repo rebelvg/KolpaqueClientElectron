@@ -18,7 +18,7 @@ class SearchForm extends Component {
     }
 
     render() {
-        const {handleSubmit,save} = this.props;
+        const {handleSubmit, save} = this.props;
         return (
             <Form >
                 <InputWrapper>
@@ -30,7 +30,7 @@ class SearchForm extends Component {
                         onContextMenu={() => {
                             openMenu()
                         }}
-                        />
+                    />
                 </InputWrapper>
                 <AutoSave save={save} debounce={300}/>
             </Form>

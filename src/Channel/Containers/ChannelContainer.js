@@ -1,23 +1,31 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import theme from '../../theme';
-import { withTheme } from 'styled-components';
+import {withTheme} from 'styled-components';
 import Ionicon from 'react-ionicons';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm';
 import menuTemplate from '../Helpers/menu';
 import SearchForm from '../Forms/SearchForm/SearchForm';
-import {getTab } from '../constants';
+import {getTab} from '../constants';
 import Tabs from '../Components/Tabs/Tabs';
-import { changeSetting, addChannel } from '../Helpers/IPCHelpers';
+import {changeSetting, addChannel} from '../Helpers/IPCHelpers';
 import Channel from '../../Channel/Components/Channel/Channel';
-import { Form } from 'react-final-form'
-import {getCompleteChannels,getFullCount,setSort, getUpdate, setFilter, getLoading, sendInfo} from '../../redux/channel'
+import {Form} from 'react-final-form'
+import {
+    getCompleteChannels,
+    getFullCount,
+    setSort,
+    getUpdate,
+    setFilter,
+    getLoading,
+    sendInfo
+} from '../../redux/channel'
 
 
-const { remote } = window.require('electron');
-const { Menu } = remote;
+const {remote} = window.require('electron');
+const {Menu} = remote;
 
 @withTheme
 @connect(
@@ -45,7 +53,7 @@ class ChannelContainer extends Component {
         };
     }
 
-    editChannel = channel => this.setState({ editChannel: channel });
+    editChannel = channel => this.setState({editChannel: channel});
 
     openMenu = channel => {
         const menu = new Menu();
@@ -58,16 +66,16 @@ class ChannelContainer extends Component {
 
     renameChannel = (name, id) => {
         changeSetting(id, 'visibleName', name);
-        this.setState({ editChannel: null });
+        this.setState({editChannel: null});
     };
 
     selectChannel = (button, channel) => {
-        const { selected } = this.state;
+        const {selected} = this.state;
         if (selected && channel.id === selected.id && button === 0) {
-            this.setState({ selected: null });
+            this.setState({selected: null});
         } else {
             if (button !== 1) {
-                this.setState({ selected: channel });
+                this.setState({selected: channel});
             }
         }
     };
@@ -98,13 +106,13 @@ class ChannelContainer extends Component {
     };
 
     addChannelForm = ({channel}) => {
-        if(channel) {
+        if (channel) {
             addChannel(channel)
         }
     }
 
     getCount = tab => {
-        const { count} = this.props;
+        const {count} = this.props;
         const activeTab = getTab(tab);
         return count[activeTab.value] || 0;
     };
@@ -118,8 +126,8 @@ class ChannelContainer extends Component {
 
 
     render() {
-        const { channels, update, setSort} = this.props;
-        const { selected, activeTab, editChannel, filter } = this.state;
+        const {channels, update, setSort} = this.props;
+        const {selected, activeTab, editChannel, filter} = this.state;
         const currentTab = getTab(activeTab);
 
         return (
@@ -139,7 +147,8 @@ class ChannelContainer extends Component {
                             onChange={this.changeTab}
                             getCount={this.getCount}
                         />
-                        <SettingsIcon onClick={() => {}} to="/about">
+                        <SettingsIcon onClick={() => {
+                        }} to="/about">
                             <Ionicon
                                 icon="ion-gear-b"
                                 color={theme.clientSecondary.color}
@@ -153,7 +162,7 @@ class ChannelContainer extends Component {
                                 <Channel
                                     visible={
                                         channel[currentTab.filter] ===
-                                            currentTab.filterValue
+                                        currentTab.filterValue
                                     }
                                     handleChannelAction={
                                         this.handleChannelAction
@@ -185,7 +194,7 @@ class ChannelContainer extends Component {
 
                     <StyledFooter>
                         <ChannelAddForm onSubmit={this.addChannelForm}
-                            render={props => <ChannelForm {...props}/>}
+                                        render={props => <ChannelForm {...props}/>}
                         />
                     </StyledFooter>
                 </StyledContainerWrapper>
@@ -204,7 +213,7 @@ const ChannelWrap = styled.div`
     display: flex;
     color: black;
     flex-direction: column;
-    padding-bottom: ${({ isUpdate }) => (isUpdate ? 80 : 50)}px;
+    padding-bottom: ${({isUpdate}) => (isUpdate ? 80 : 50)}px;
 `;
 
 const UpdateWrapper = styled.div`

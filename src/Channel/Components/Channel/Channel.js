@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import styled from 'styled-components';
-import { playChannel, changeSetting} from '../../Helpers/IPCHelpers';
+import {playChannel, changeSetting} from '../../Helpers/IPCHelpers';
 import {
     renderIcon,
     renderAutoRestart,
@@ -15,10 +15,10 @@ class Channel extends Component {
     }
 
     contextMenu = (name, channel) =>
-        !name && this.props.handleChannelAction('OPEN_MENU', [channel]);
+    !name && this.props.handleChannelAction('OPEN_MENU', [channel]);
 
     selectChannel = (name, which, channel) =>
-        !name && this.props.handleChannelAction('SELECT', [which, channel]);
+    !name && this.props.handleChannelAction('SELECT', [which, channel]);
 
     renameChannel = (value, id) =>
         this.props.handleChannelAction('RENAME', [value, id]);
@@ -37,10 +37,10 @@ class Channel extends Component {
         return (
             <ChannelWrapper
                 visible={visible}
-                onMouseDown={({ target: { name }, button }) =>
+                onMouseDown={({target: {name}, button}) =>
                     this.selectChannel(name, button, channel)}
                 selected={selected}
-                onContextMenu={({ target: { name } }) =>
+                onContextMenu={({target: {name}}) =>
                     this.contextMenu(name, channel)}
                 pinned={pinned}
             >
@@ -74,7 +74,7 @@ class Channel extends Component {
 }
 
 const ChannelWrapper = styled.div`
-    display: ${({ visible }) => (visible ? 'flex' : 'none')};
+    display: ${({visible}) => (visible ? 'flex' : 'none')};
     user-select: none;
     cursor: pointer;
     align-items: center;
@@ -84,9 +84,9 @@ const ChannelWrapper = styled.div`
     font-size: 14px;
     height: 20px;
     background-color: ${props =>
-        !props.selected
-            ? `${theme.channel.bg}`
-            : `${theme.channelSelected.bg}`};
+    !props.selected
+        ? `${theme.channel.bg}`
+        : `${theme.channelSelected.bg}`};
     border-top: 1px solid ${theme.outline};
 `;
 

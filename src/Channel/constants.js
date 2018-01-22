@@ -1,4 +1,3 @@
-
 export const getTab = (tab) => {
     return TABS.find((t) => t.value === tab);
 }
@@ -20,23 +19,23 @@ export const TABS = [
 
 export const template = [
     {
-      label: 'Cut',
-      accelerator: 'CmdOrCtrl+X',
-      role: 'cut'
+        label: 'Cut',
+        accelerator: 'CmdOrCtrl+X',
+        role: 'cut'
     },
     {
-      label: 'Copy',
-      accelerator: 'CmdOrCtrl+C',
-      role: 'copy'
+        label: 'Copy',
+        accelerator: 'CmdOrCtrl+C',
+        role: 'copy'
     },
     {
-      label: 'Paste',
-      accelerator: 'CmdOrCtrl+V',
-      role: 'paste'
+        label: 'Paste',
+        accelerator: 'CmdOrCtrl+V',
+        role: 'paste'
     },
     {
-      label: 'Select All',
-      accelerator: 'CmdOrCtrl+A',
-      role: 'selectall'
+        label: 'Select All',
+        accelerator: 'CmdOrCtrl+A',
+        role: 'selectall'
     }
 ];
