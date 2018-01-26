@@ -1,9 +1,9 @@
 import _ from 'lodash'
 
-const SortChannels = (channels, sort, reverse = false) => {
+const SortChannels = (channels, sortType, isReversed = false) => {
     let sortedChannels = [];
 
-    switch (sort) {
+    switch (sortType) {
         case 'lastAdded': {
             sortedChannels = channels;
             break;
@@ -25,11 +25,11 @@ const SortChannels = (channels, sort, reverse = false) => {
         }
     }
 
-    if (reverse) {
+    if (isReversed) {
         sortedChannels.reverse();
     }
 
-    console.log(sortedChannels);
+    sortedChannels = _.sortBy(sortedChannels, [(channel) => !channel.isPinned]);
 
     return sortedChannels;
 };

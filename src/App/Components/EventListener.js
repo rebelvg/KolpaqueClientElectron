@@ -1,29 +1,39 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {initChannels, changeStatus, deleteChannel, addChannelResponse, getInfo} from '../../Channel/Actions/ChannelActions'
+import {getChannels, changeSetting, deleteChannel, addChannelResponse, getInfo} from '../../redux/channel'
 import {initSettings} from '../../Settings/Actions/SettingsActions'
 import styled from 'styled-components';
 
 const {ipcRenderer} = window.require('electron');
 
+@connect(
+    state => ({}),
+    {
+        initSettings,
+        getChannels,
+        changeSetting,
+        deleteChannel,
+        addChannelResponse,
+        getInfo
+    }
+)
 class EventListener extends Component {
     constructor() {
         super()
     }
 
     componentWillMount() {
-        this.props.initChannels();
-        this.props.initSettings();
-        ipcRenderer.on('channel_changeSetting', (event, id, settingName, settingValue) => this.props.changeStatus(id, settingName, settingValue));
-        ipcRenderer.on('channel_add', (event, channelObj) => {
-            this.props.addChannelResponse(channelObj);
-        });
-        ipcRenderer.on('client_showInfo', (event, info) => {
-            this.props.getInfo(info);
-        })
+        const {initSettings, getChannels, changeSetting, addChannelResponse, getInfo, deleteChannel} = this.props;
+        console.log('ok');
+        getChannels();
+        initSettings();
+        ipcRenderer.on('channel_changeSetting',
+            (event, id, name, value) => changeSetting(id, name, value));
+        ipcRenderer.on('channel_add',
+            (event, channel) => addChannelResponse(channel));
+        ipcRenderer.on('client_showInfo', (event, info) => getInfo(info));
         ipcRenderer.on('channel_remove', (event, id) => {
-            this.props.deleteChannel(id);
+            deleteChannel(id);
         });
     }
 
@@ -38,14 +48,5 @@ const EventContainer = styled.div`
 	display:none
 `
 
-export default connect(
-    (state) => ({}),
-    (dispatch) => bindActionCreators({
-        initSettings,
-        initChannels,
-        changeStatus,
-        deleteChannel,
-        addChannelResponse,
-        getInfo
-    }, dispatch)
-)(EventListener);
+export default EventListener
+

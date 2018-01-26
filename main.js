@@ -4,16 +4,22 @@ const _ = require('lodash');
 const path = require('path');
 const url = require('url');
 const fixPath = require('fix-path');
+const {default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS} = require('electron-devtools-installer');
 
 const config = require('./application/SettingsFile');
 
 const ChannelPlay = require('./application/ChannelPlay');
 const TrayIcon = require('./application/TrayIcon');
+const Logger = require('./application/Logger');
 
 require('./application/ChannelCheck');
 require('./application/Import');
 require('./application/ChannelInfo');
 require('./application/VersionCheck');
+
+const clientVersion = require('./package.json').version;
+
+Logger(['Client launched', clientVersion]);
 
 const isDev = process.env.NODE_ENV === 'dev';
 console.log('isDev', isDev);
@@ -26,15 +32,15 @@ ipcMain.once('client_ready', () => {
     fixPath();
 });
 
-let iconPath = path.normalize(path.join(__dirname, 'icon.png'));
-let iconPathTray = path.normalize(path.join(__dirname, 'icon32.png'));
-let iconPathBalloon = path.normalize(path.join(__dirname, 'icon.png'));
+let iconPath = path.normalize(path.join(__dirname, 'icons', 'icon.png'));
+let iconPathTray = path.normalize(path.join(__dirname, 'icons', 'icon32.png'));
+let iconPathBalloon = path.normalize(path.join(__dirname, 'icons', 'icon.png'));
 
 if (process.platform === 'darwin') {
     app.dock.setIcon(iconPath);
     app.dock.hide();
 
-    iconPathTray = path.normalize(path.join(__dirname, 'iconTemplate.png'));
+    iconPathTray = path.normalize(path.join(__dirname, 'icons', 'iconTemplate.png'));
 }
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -62,12 +68,17 @@ function createWindow() {
 
     // and load the index.html of the app.
     if (isDev) {
-        mainWindow.loadURL(
-            'http://localhost:3000'
-        );
+        mainWindow.loadURL('http://localhost:3000');
 
         // Open the DevTools.
         mainWindow.webContents.openDevTools();
+        installExtension(REACT_DEVELOPER_TOOLS)
+            .then((name) => console.log('Extension added', name))
+            .catch((err) => console.log('An error occurred', err));
+        installExtension(REDUX_DEVTOOLS)
+            .then((name) => console.log('Extension added', name))
+            .catch((err) => console.log('An error occurred', err));
+
     } else {
         mainWindow.loadURL(url.format({
             pathname: path.join(__dirname, 'dist/index.html'),
@@ -87,8 +98,7 @@ function createWindow() {
     mainWindow.on('close', function (e) {
         console.log('forceQuit', forceQuit);
 
-        if (forceQuit)
-            return;
+        if (forceQuit) return;
 
         if (process.platform === 'darwin') {
             e.preventDefault();
@@ -106,7 +116,7 @@ function createWindow() {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
 
-        mainWindow = null
+        mainWindow = null;
     });
 }
 
@@ -121,7 +131,7 @@ app.on('window-all-closed', function () {
     // to stay active until the user quits explicitly with Cmd + Q
 
     if (process.platform !== 'darwin') {
-        app.quit()
+        app.quit();
     }
 });
 
@@ -129,46 +139,60 @@ app.on('activate', function () {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (mainWindow === null) {
-        createWindow()
+        createWindow();
     }
 });
 
 app.on('ready', function () {
-    if (!config.settings.minimizeAtStart)
-        return;
+    if (!config.settings.minimizeAtStart) return;
 
     mainWindow.hide();
 });
 
 let contextMenuTemplate = [
     {
-        label: 'Toggle Client', type: 'normal', visible: process.platform === 'linux', click: () => {
-        mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
-    }
+        label: 'Toggle Client',
+        type: 'normal',
+        visible: process.platform === 'linux',
+        click: () => {
+            mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+        }
     },
     {
-        label: 'Online Channels', type: 'submenu', submenu: []
+        label: 'Online Channels',
+        type: 'submenu',
+        submenu: []
     },
     {
-        label: 'Play / Last Closed', type: 'normal', visible: false, click: () => {
-    }
+        label: 'Play / Last Closed',
+        type: 'normal',
+        visible: false,
+        click: () => {
+        }
     },
     {
-        label: 'Play / Clipboard', type: 'normal', click: (menuItem, browserWindow, event) => {
-        ChannelPlay.launchPlayerLink(clipboard.readText(), event.ctrlKey);
-    }
+        label: 'Play / Clipboard',
+        type: 'normal',
+        click: (menuItem, browserWindow, event) => {
+            ChannelPlay.launchPlayerLink(clipboard.readText(), event.ctrlKey);
+        }
     },
     {
-        label: 'Notifications', type: 'checkbox', click: (menuItem) => {
-        console.log('menuItem.checked', menuItem.checked);
-        config.changeSetting('showNotifications', menuItem.checked);
-    }, checked: config.settings.showNotifications
+        label: 'Notifications',
+        type: 'checkbox',
+        click: (menuItem) => {
+            console.log('menuItem.checked', menuItem.checked);
+            config.changeSetting('showNotifications', menuItem.checked);
+        },
+        checked: config.settings.showNotifications
     },
     {
-        label: 'Quit Client', type: 'normal', click: () => {
-        forceQuit = true;
-        app.quit();
-    }
+        label: 'Quit Client',
+        type: 'normal',
+        click: () => {
+            forceQuit = true;
+            app.quit();
+        }
     }
 ];
 
@@ -197,4 +221,6 @@ app.on('ready', () => {
 
 process.on('uncaughtException', function (err) {
     console.log('Caught exception: ' + err.stack);
+
+    Logger([err.stack]);
 });

@@ -107,9 +107,11 @@ const MemberTitle = styled.div`
     text-align: center;
     padding: 5px 0px;
 `
+
 const MemberName = styled.div`
-flex-grow:1;
+    flex-grow:1;
 `
+
 const MemberWrap = styled.div`
     margin-top: 10px;
 `

@@ -1,18 +1,20 @@
 const packager = require('electron-packager');
-const rl = require('readline-sync');
+const readlineSync = require('readline-sync');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
-let platformRl = rl.question('select platform. all - for all platforms.\n');
-let outPathRl = rl.question('select output folder.\n');
+let platformOption = readlineSync.question('select platform. all - for all platforms.' + os.EOL);
+let pathOption = readlineSync.question('select output folder.' + os.EOL);
 
 let options = {
     dir: './',
     tmpdir: false,
-    icon: './icon',
+    icon: './icons/icon',
     arch: 'x64',
     ignore: [
-        '.idea'
+        '.idea',
+        'src'
     ],
     overwrite: true,
     win32metadata: {
@@ -21,23 +23,20 @@ let options = {
         FileDescription: 'KolpaqueClientElectron',
         OriginalFilename: 'KolpaqueClientElectron.exe'
     },
-    asar: {
-        unpackDir: 'node_modules/node-notifier/vendor/**'
-    },
+    asar: true,
     packageManager: 'yarn',
     prune: true
 };
 
-if (platformRl === 'all') {
+if (platformOption === 'all') {
     options.platform = 'win32,darwin,linux';
 } else {
-    options.platform = platformRl;
+    options.platform = platformOption;
 }
 
-if (!fs.existsSync(outPathRl))
-    return console.log('bad path.');
+if (!fs.existsSync(pathOption)) return console.log('bad path.');
 
-options.out = path.join(outPathRl, 'KolpaqueClientElectron');
+options.out = path.join(pathOption, 'KolpaqueClientElectron');
 
 console.log(options);
 

@@ -1,36 +1,11 @@
 import React, {Component} from 'react';
 import Ionicon from 'react-ionicons'
 import styled from 'styled-components'
-import {Field, reduxForm} from 'redux-form'
 import theme from '../../../theme'
-import {addChannel} from '../../Helpers/IPCHelpers'
-
+import {template} from '../../constants';
+import {Field} from 'react-final-form'
 const {remote} = window.require('electron');
 const {Menu} = remote;
-
-
-let template = [
-    {
-        label: 'Cut',
-        accelerator: 'CmdOrCtrl+X',
-        role: 'cut'
-    },
-    {
-        label: 'Copy',
-        accelerator: 'CmdOrCtrl+C',
-        role: 'copy'
-    },
-    {
-        label: 'Paste',
-        accelerator: 'CmdOrCtrl+V',
-        role: 'paste'
-    },
-    {
-        label: 'Select All',
-        accelerator: 'CmdOrCtrl+A',
-        role: 'selectall'
-    }
-];
 
 const openMenu = () => {
     var macMenu = Menu.buildFromTemplate(template);
@@ -38,38 +13,19 @@ const openMenu = () => {
 }
 
 export default class ChannelForm extends Component {
-    constructor(props) {
-        super()
-        this.state = {
-            value: ''
-        }
-    }
-
-    onChange = (e) => {
-        this.setState({value: e.target.value})
-    }
-
-
-    handleSubmit = (e) => {
-        const {value} = this.state;
-        console.log(value);
-        this.setState({
-            value: ''
-        })
-        addChannel(value)
-        e.preventDefault();
+    handleSubmit = (data) => {
+        const {handleSubmit, reset} = this.props;
+        handleSubmit(data);
+        reset();
     }
 
     render() {
-        const {value} = this.state;
         return (
-
             <form onSubmit={this.handleSubmit}>
                 <StyledChannelFormWrap>
                     <StyledInput onContextMenu={() => openMenu()}
-                                 component="input" name="channel"
-                                 onChange={this.onChange}
-                                 value={value}
+                                 component="input"
+                                 name="channel"
                                  placeholder="Add Channel..."
                                  type="text"/>
                     <button type="submit">
@@ -95,7 +51,7 @@ const StyledChannelFormWrap = styled.div`
     }
 `;
 
-const StyledInput = styled.input`
+const StyledInput = styled(Field)`
     flex-grow:2;
     width: 100%;
     display: flex;
@@ -113,11 +69,11 @@ const StyledInput = styled.input`
 `;
 
 const StyledIcon = styled(Ionicon)`
-  background-color:${theme.input.bg};
-  color:white;
-  display: flex;
-  box-sizing: border-box;
-  border: 1px solid ${theme.outline};
-  border-left: 0px;
-  font-size:24px;
+    background-color:${theme.input.bg};
+    color:white;
+    display: flex;
+    box-sizing: border-box;
+    border: 1px solid ${theme.outline};
+    border-left: 0px;
+    font-size:24px;
 `;

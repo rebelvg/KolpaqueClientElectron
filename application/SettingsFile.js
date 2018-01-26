@@ -38,7 +38,6 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
     return channelObj.changeSetting(settingName, settingValue);
 });
 
-
 ipcMain.on('channel_openPage', (event, id) => {
     let channelObj = config.findById(id);
 

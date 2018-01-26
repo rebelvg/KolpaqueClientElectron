@@ -6,6 +6,7 @@ const {app, shell, Menu, Notification, nativeImage} = require('electron');
 
 const config = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
+const Logger = require('./Logger');
 
 function printNotification(title, content, channelObj = {}) {
     if (!config.settings.showNotifications)
@@ -17,8 +18,13 @@ function printNotification(title, content, channelObj = {}) {
 function printNewNotification(title, content, channelObj = {}) {
     let icon = app.appIcon.iconPathBalloon;
 
-    if (channelObj._icon)
+    Logger(channelObj._icon ? [title, content, channelObj._icon.length] : [title, content]);
+
+    if (channelObj._icon) {
         icon = nativeImage.createFromBuffer(channelObj._icon);
+
+        Logger([icon.isEmpty(), icon.constructor.name, icon.toPNG().length]);
+    }
 
     let notification = new Notification({
         icon: icon,

@@ -1,90 +1,45 @@
 import React, {Component} from 'react';
 import styled from 'styled-components'
 import theme from '../../../theme'
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {debounce} from 'lodash'
+import {template} from '../../constants';
+import {Field} from 'react-final-form'
+import AutoSave from './AutoSave'
 const {remote} = window.require('electron');
 const {Menu} = remote;
-
-
-let template = [
-    {
-        label: 'Cut',
-        accelerator: 'CmdOrCtrl+X',
-        role: 'cut'
-    },
-    {
-        label: 'Copy',
-        accelerator: 'CmdOrCtrl+C',
-        role: 'copy'
-    },
-    {
-        label: 'Paste',
-        accelerator: 'CmdOrCtrl+V',
-        role: 'paste'
-    },
-    {
-        label: 'Select All',
-        accelerator: 'CmdOrCtrl+A',
-        role: 'selectall'
-    }
-];
-
 
 const openMenu = () => {
     const macMenu = Menu.buildFromTemplate(template);
     macMenu.popup(remote.getCurrentWindow());
 }
 
-
 class SearchForm extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            value: ''
-        }
-        this.setFilter = debounce(this.props.setFilter, 400)
     }
-
-
-    onChange = (value) => {
-        this.setState({value: value}, () => {
-            this.setFilter(value)
-        })
-    }
-
-
-    handleSubmit = (e) => {
-        e.preventDefault()
-
-    }
-
 
     render() {
-        const {value} = this.state;
+        const {handleSubmit, save} = this.props;
         return (
-            <Form onSubmit={this.handleSubmit}>
+            <Form >
                 <InputWrapper>
                     <StyledField
                         name="filter"
                         type="text"
+                        component="input"
                         placeholder="Search..."
-                        value={value}
                         onContextMenu={() => {
                             openMenu()
                         }}
-                        onChange={(e) => this.onChange(e.target.value)}
-                        onBlur={(e) => this.handleSubmit}/>
+                    />
                 </InputWrapper>
-
+                <AutoSave save={save} debounce={300}/>
             </Form>
         )
     }
 }
 export default SearchForm;
 
-const Form = styled.form`
+const Form = styled.div`
     width: 100%;
     margin-right: 10px;
     display: flex;
@@ -94,7 +49,7 @@ const Form = styled.form`
     z-index: 100000
 `
 
-const StyledField = styled.input`
+const StyledField = styled(Field)`
     width: 100%;
     height: 18px;
     padding: 0px;
@@ -117,4 +72,4 @@ const InputWrapper = styled.div`
         border-top: 1px solid ${theme.outline};
         padding: 0 10px;
     }
-    `
+`

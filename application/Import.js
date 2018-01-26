@@ -131,9 +131,9 @@ function autoTwitchImport() {
 }
 
 function importLoop() {
-    autoKlpqImport();
+    //autoKlpqImport();
     autoTwitchImport();
 
-    setInterval(autoKlpqImport, 10 * 60 * 1000);
+    //setInterval(autoKlpqImport, 10 * 60 * 1000);
     setInterval(autoTwitchImport, 10 * 60 * 1000);
 }
