@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
-import styled from 'styled-components';
+import styled, {withTheme} from 'styled-components';
 import {playChannel, changeSetting} from '../../Helpers/IPCHelpers';
-import {
-    renderIcon,
-    renderAutoRestart,
-    renderAutoStart
-} from '../../Helpers/IconRender';
-import EditForm from '../../Forms/EditForm/EditForm';
-import theme from '../../../theme';
+import ServiceIcon from '../../../Shared/ServiceIcon'
+import AutoRestart from '../../../Shared/AutoRestart'
+import AutoStart from '../../../Shared/AutoStart'
 
+import EditForm from '../../Forms/EditForm/EditForm';
+
+@withTheme
 class Channel extends Component {
     constructor() {
         super();
@@ -47,7 +46,7 @@ class Channel extends Component {
                 <ChannelData
                     onDoubleClick={() => !editMode && playChannel(channel)}
                 >
-                    <StyledIcon> {renderIcon(channel.service)} </StyledIcon>
+                    <StyledIcon> <ServiceIcon service={channel.service}/> </StyledIcon>
 
                     {editMode ? (
                         <EditForm
@@ -64,8 +63,8 @@ class Channel extends Component {
                 </ChannelData>
 
                 <Icons>
-                    {renderAutoRestart(channel, this.changeSetting)}
-                    {renderAutoStart(channel, this.changeSetting)}
+                    <AutoRestart toggle={this.changeSetting} channel={channel}/>
+                    <AutoStart toggle={this.changeSetting} channel={channel}/>
                 </Icons>
 
             </ChannelWrapper>
@@ -85,9 +84,9 @@ const ChannelWrapper = styled.div`
     height: 20px;
     background-color: ${props =>
     !props.selected
-        ? `${theme.channel.bg}`
-        : `${theme.channelSelected.bg}`};
-    border-top: 1px solid ${theme.outline};
+        ? `${props.theme.channel.bg}`
+        : `${props.theme.channelSelected.bg}`};
+    border-top: 1px solid ${props => props.theme.outline};
 `;
 
 const Icons = styled.div`
@@ -98,7 +97,7 @@ const Icons = styled.div`
 const ChannelData = styled.div`
     flex-grow: 2;
     display: flex;
-    color: ${theme.channel.color};
+    color: ${props => props.theme.channel.color};
     flex-direction: row;
 `;
 
@@ -114,7 +113,7 @@ const StyledName = styled.div`
     flex-grow: 2;
     height: 20px;
     display: flex;
-    color: ${theme.channel.color};
+    color: ${props => props.theme.channel.color};
     align-items: center;
 `;
 

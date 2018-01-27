@@ -45,13 +45,13 @@ export default class Settings extends Component {
     }
 
     onSettingsSubmit = (values) => {
-        console.log(values)
+
     }
 
     render() {
         const {settings} = this.props;
         const {activeKey} = this.state;
-        console.log(settings)
+
         return (
             <Container>
                 <SettingSelect
@@ -93,5 +93,5 @@ const PageTitle = styled.h4`
 const Container = styled.div`
     width: 100%;
     height: 100%;
-    background-color: ${theme.channel.bg}
+    background-color: ${props => props.theme.channel.bg}
 `

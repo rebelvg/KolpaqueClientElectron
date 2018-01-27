@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {getChannels, changeSetting, deleteChannel, addChannelResponse, getInfo} from '../../redux/channel'
-import {initSettings} from '../../Settings/Actions/SettingsActions'
+import {getChannels, changeSetting, deleteChannel, addChannelResponse, getInfo, getLoaded} from '../../redux/channel'
+import {initSettings} from '../../redux/settings'
 import styled from 'styled-components';
 
 const {ipcRenderer} = window.require('electron');
 
 @connect(
-    state => ({}),
+    state => ({
+        loaded: getLoaded(state)
+    }),
     {
         initSettings,
         getChannels,
@@ -23,18 +25,19 @@ class EventListener extends Component {
     }
 
     componentWillMount() {
-        const {initSettings, getChannels, changeSetting, addChannelResponse, getInfo, deleteChannel} = this.props;
-        console.log('ok');
-        getChannels();
-        initSettings();
-        ipcRenderer.on('channel_changeSetting',
-            (event, id, name, value) => changeSetting(id, name, value));
-        ipcRenderer.on('channel_add',
-            (event, channel) => addChannelResponse(channel));
-        ipcRenderer.on('client_showInfo', (event, info) => getInfo(info));
-        ipcRenderer.on('channel_remove', (event, id) => {
-            deleteChannel(id);
-        });
+        const {initSettings, getChannels, changeSetting, addChannelResponse, getInfo, deleteChannel, loaded} = this.props;
+        if (!loaded) {
+            getChannels();
+            initSettings();
+            ipcRenderer.on('channel_changeSetting',
+                (event, id, name, value) => changeSetting(id, name, value));
+            ipcRenderer.on('channel_add',
+                (event, channel) => addChannelResponse(channel));
+            ipcRenderer.on('client_showInfo', (event, info) => getInfo(info));
+            ipcRenderer.on('channel_remove', (event, id) => {
+                deleteChannel(id);
+            });
+        }
     }
 
     render() {

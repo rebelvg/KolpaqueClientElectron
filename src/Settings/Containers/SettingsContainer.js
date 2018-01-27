@@ -1,18 +1,20 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import Ionicon from 'react-ionicons'
 import {Link} from 'react-router-dom';
-import styled from 'styled-components';
-import {getSettings} from '../../Settings/Reducers/SettingsReducer'
-import {changeSettings, changeSettingsResponse, importChannel} from '../../Settings/Actions/SettingsActions'
+import styled, {withTheme} from 'styled-components';
+import {changeSettings, changeSettingsResponse, importChannel, getSettings} from '../../redux/settings'
 import Settings from '../Components/Settings/Settings'
-import {withTheme} from 'styled-components'
-import theme from '../../theme'
-const {remote, ipcRenderer} = window.require('electron');
-const {Menu, MenuItem} = remote;
 
-export class SettingsContainer extends Component {
+const {remote, ipcRenderer} = window.require('electron');
+
+@withTheme
+@connect(
+    state => ({
+        settings: getSettings(state)
+    }),
+    {changeSettings, changeSettingsResponse, importChannel}
+)
+export default class SettingsContainer extends Component {
     constructor() {
         super()
         const version = ipcRenderer.sendSync("client_getVersion");
@@ -24,14 +26,13 @@ export class SettingsContainer extends Component {
 
     componentWillMount() {
         ipcRenderer.on('config_changeSetting', (e, settingName, settingValue) => {
-            console.log(e, settingName, settingValue)
             this.props.changeSettingsResponse(settingName, settingValue)
         })
     }
 
     render() {
         const {settings} = this.props;
-        const {selected, tab, version} = this.state;
+        const {version} = this.state;
         return (
             <Container>
                 <Settings importChannel={this.props.importChannel}
@@ -49,7 +50,7 @@ const StyledFooter = styled.div`
     position: absolute;
     bottom: 0px;
     display: flex;
-    background-color: ${theme.client.bg};
+    background-color: ${props => props.theme.client.bg};
     padding: 5px 0px;
     width:100%;
     justify-content: space-between;
@@ -60,22 +61,13 @@ const Container = styled.div`
 `
 const Version = styled.div`
     margin-right: 10px;
-    color: ${theme.client.color}
+    color: ${props => props.theme.client.color}
 `
 const StyledLink = styled(Link)`
    margin-left: 10px;
-   color: ${theme.client.color};
+   color: ${props => props.theme.client.color};
    text-decoration: none;
    cursor: pointer;
 `
 
-export default withTheme(connect(
-    (state) => ({
-        settings: getSettings(state)
-    }),
-    (dispatch) => bindActionCreators({
-        changeSettings,
-        changeSettingsResponse,
-        importChannel
-    }, dispatch)
-)(SettingsContainer));
+

@@ -69,7 +69,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}) 
         </FieldWrapper>
 
         <FieldWrapper>
-            <Label>Night Mode (experimental, restart required) </Label>
+            <Label>Night Mode </Label>
             <InputWrapper>
                 <Field
                     name="nightMode"
@@ -115,15 +115,15 @@ const Form = styled.form`
 
 const SaveButton = styled.button`
     background-color: transparent;
-    border: 2px solid ${theme.klpq};;
+    border: 2px solid ${props => props.theme.klpq};;
     margin-right: 10px;
     padding: 2px 10px;
     font-weight: bold;
     transition: all .3s;
-    color: ${theme.klpq};
+    color: ${props => props.theme.klpq};
     &:hover {
         cursor: pointer;
-        background-color: ${theme.klpq};;
+        background-color: ${props => props.theme.klpq};;
         color: white
     }
 `
@@ -138,7 +138,7 @@ const FieldWrapper = styled.div`
 const Label = styled.label`
     font-weight: bold;
     font-size: 15px;
-    color: ${theme.client.color};
+    color: ${props => props.theme.client.color};
     padding-bottom:10px;
 `
 

@@ -11,7 +11,8 @@ const defaultState = {
     sort: 'lastUpdated',
     reverse: false,
     filter: '',
-    loading: true
+    loading: true,
+    loaded: false
 };
 
 //ACTIONS
@@ -29,7 +30,6 @@ export const {
 } = createActions({
     GET_CHANNELS: () => {
         const channels = ipcRenderer.sendSync('getChannels');
-        console.log(channels)
         ipcRenderer.send('client_ready');
         return {channels};
     },
@@ -48,10 +48,10 @@ export const {
         return {info};
     },
 
-    CHANGE_SETTING: (id, settingName, settingValue) => ({
+    CHANGE_SETTING: (id, name, value) => ({
         id,
-        settingName,
-        settingValue
+        name,
+        value
     }),
     GET_INFO: info => ({info}),
     SET_FILTER: filter => ({filter}),
@@ -64,6 +64,7 @@ export const reducer = handleActions(
     {
         GET_CHANNELS: (state, action) => ({
             ...state,
+            loaded: true,
             channels: action.payload.channels
         }),
 
@@ -84,12 +85,12 @@ export const reducer = handleActions(
         SEND_INFO: (state, action) => ({...state}),
 
         CHANGE_SETTING: (state,
-                         {payload: {id, settingName, settingValue}}) => ({
+                         {payload: {id, name, value}}) => ({
             ...state,
             channels: state.channels.map(
                 channel =>
                     channel.id === id
-                        ? {...channel, [settingName]: settingValue}
+                        ? {...channel, [name]: value}
                         : channel
             )
         }),
@@ -114,6 +115,7 @@ const getFilter = (state) => state.channel.filter;
 
 export const getUpdate = (state) => state.channel.update;
 export const getLoading = (state) => state.channel.loading;
+export const getLoaded = (state) => state.channel.loaded;
 
 export const getOnlineCount = createSelector(
     [getChannelsList, getFilter],

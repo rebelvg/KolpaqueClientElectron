@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import theme from '../../theme';
-import {withTheme} from 'styled-components';
 import Ionicon from 'react-ionicons';
 import {Link} from 'react-router-dom';
-import styled from 'styled-components';
+import styled, {withTheme} from 'styled-components';
 import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm';
 import menuTemplate from '../Helpers/menu';
 import SearchForm from '../Forms/SearchForm/SearchForm';
@@ -126,7 +124,7 @@ class ChannelContainer extends Component {
 
 
     render() {
-        const {channels, update, setSort} = this.props;
+        const {channels, update, theme} = this.props;
         const {selected, activeTab, editChannel, filter} = this.state;
         const currentTab = getTab(activeTab);
 
@@ -226,9 +224,9 @@ const UpdateWrapper = styled.div`
     text-decoration: underline;
     z-index: 0;
     padding: 5px 0px;
-    border: 1px solid ${theme.outline};
+    border: 1px solid ${props => props.theme.outline};
     cursor: pointer;
-    background-color: ${theme.clientSecondary.bg};
+    background-color: ${props => props.theme.clientSecondary.bg};
 `;
 
 const Wrapper = styled.div`
@@ -240,11 +238,11 @@ const TabPanel = styled.div`
     width: 100%;
     display: block;
     max-height: 100vh;
-    background-color: ${theme.clientSecondary.bg};
+    background-color: ${props => props.theme.clientSecondary.bg};
 `;
 
 const StyledFooter = styled.div`
-    background-color: ${theme.client.bg};
+    background-color: ${props => props.theme.client.bg};
     color: white;
     position: fixed;
     bottom: 0px;
@@ -266,11 +264,11 @@ const StyledContainerWrapper = styled.div`
 
 const TabWrapper = styled.div`
     height: 100%;
-    background-color: ${theme.client.bg};
+    background-color: ${props => props.theme.client.bg};
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    border-right: 1px solid ${theme.outline};
+    border-right: 1px solid ${props => props.theme.outline};
     position: relative;
     z-index: 2;
 `;

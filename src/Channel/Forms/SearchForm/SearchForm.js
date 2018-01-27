@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import styled from 'styled-components'
-import theme from '../../../theme'
+import styled, {withTheme} from 'styled-components'
 import {template} from '../../constants';
 import {Field} from 'react-final-form'
 import AutoSave from './AutoSave'
@@ -11,7 +10,7 @@ const openMenu = () => {
     const macMenu = Menu.buildFromTemplate(template);
     macMenu.popup(remote.getCurrentWindow());
 }
-
+@withTheme
 class SearchForm extends Component {
     constructor(props) {
         super(props)
@@ -63,13 +62,13 @@ const InputWrapper = styled.div`
     width:100%;
     overflow: hidden;
     & > input {
-        background-color:${theme.input.bg};
-        color:${theme.input.color};
+        background-color:${props => props.theme.input.bg};
+        color:${props => props.theme.input.color};
         width: 100%;
         border: none;
         height:20px;
         font-size:12px;
-        border-top: 1px solid ${theme.outline};
+        border-top: 1px solid ${props => props.theme.outline};
         padding: 0 10px;
     }
 `

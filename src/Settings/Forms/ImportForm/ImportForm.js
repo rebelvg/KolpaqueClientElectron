@@ -84,16 +84,16 @@ export default class ImportForm extends Component {
 
 const MemberInput = styled.input`
     width: 100%;
-    background-color:${theme.input.bg};
-    color:${theme.input.color};
+    background-color:${props => props.theme.input.bg};
+    color:${props => props.theme.input.color};
     border:none;
-    outline: 1px solid ${theme.outline};
+    outline: 1px solid ${props => props.theme.outline};
 `
 
 const AddBtn = styled.button`
     background-color: transparent;
-    border: 1px solid ${theme.klpq};
-    color: ${theme.klpq};
+    border: 1px solid ${props => props.theme.klpq};
+    color: ${props => props.theme.klpq};
     margin: 5px 0px;
     cursor: pointer;
     width: 50%;
@@ -101,7 +101,7 @@ const AddBtn = styled.button`
 `
 
 const MemberTitle = styled.div`
-    color: ${theme.client.color};
+    color: ${props => props.theme.client.color};
     font-size: 18px;
     font-weight: bold;
     text-align: center;
@@ -116,9 +116,9 @@ const MemberWrap = styled.div`
     margin-top: 10px;
 `
 const Member = styled.div`
-    color: ${theme.client.color};
+    color: ${props => props.theme.client.color};
     display: flex;
     align-items: center;
-    border-top: 1px solid ${theme.outline};
+    border-top: 1px solid ${props => props.theme.outline};
     padding: 5px 20px;
 `

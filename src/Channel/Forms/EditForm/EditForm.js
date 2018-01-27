@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import styled from 'styled-components';
-import theme from '../../../theme';
+import styled, {withTheme} from 'styled-components';
 
 const {remote} = window.require('electron');
 const {Menu} = remote;
@@ -33,7 +32,7 @@ const openMenu = () => {
     const macMenu = Menu.buildFromTemplate(template);
     macMenu.popup(remote.getCurrentWindow());
 };
-
+@withTheme
 export default class EditForm extends Component {
     constructor(props) {
         super(props);
@@ -91,7 +90,7 @@ const StyledField = styled.input`
     margin: 0px;
     position: relative;
     z-index: 100000;
-    background-color:${theme.input.bg};
-    color:${theme.input.color};
-    border: 1px solid ${theme.outline}
+    background-color:${props => props.theme.input.bg};
+    color:${props => props.theme.input.color};
+    border: 1px solid ${props => props.theme.outline}
 `;

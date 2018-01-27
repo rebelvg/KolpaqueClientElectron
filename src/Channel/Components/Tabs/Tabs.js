@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
-import Ionicon from 'react-ionicons';
 import {TABS} from '../../constants';
 import styled from 'styled-components';
-import theme from '../../../theme';
 
 class Tabs extends Component {
     constructor() {
@@ -51,15 +49,15 @@ const Tab = styled.div`
     transform: rotate(180deg);
     font-size: 12px;
     height: 105px;
-    color: ${theme.tab.color};
-    outline: 1px solid ${theme.outline};
+    color: ${props => props.theme.tab.color};
+    outline: 1px solid ${props => props.theme.outline};
     position: relative;
     cursor: pointer;
     align-items: center;
     box-sizing: content-box;
     ${props => props.active
-    ? (`background-color: ${theme.tabSelected.bg}; width: 24px; z-index: 200`)
-    : (`background-color: ${theme.tab.bg}; width: 21px;`)}
+    ? (`background-color: ${props.theme.tabSelected.bg}; width: 24px; z-index: 200`)
+    : (`background-color: ${props.theme.tab.bg}; width: 21px;`)}
 `
 
 export default Tabs

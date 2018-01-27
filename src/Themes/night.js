@@ -1,4 +1,5 @@
 const nightMode = {
+    nigthMode: true,
     klpq: "#119400",
     outline: "rgba(86, 78, 78, 0.32)",
     client: {

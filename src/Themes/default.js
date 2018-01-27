@@ -1,4 +1,5 @@
 const defaultColors = {
+    nigthMode: false,
     klpq: "#119400",
     outline: "#979797",
     client: {

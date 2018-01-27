@@ -44,8 +44,12 @@ class ServiceIcon extends Component {
         return Services[serviceName] ? Services[serviceName] : Services['default']
     }
 
-    renderImage = (asset) => (<IconWithImage><img src={asset}/></IconWithImage>)
-    renderSVG = ({asset, color}) => (<IconWithService icon={asset} color={color}/>)
+    renderImage = (asset) =>
+        (<IconWithImage><img src={asset}/></IconWithImage>)
+
+    renderSVG = ({asset, color}) =>
+        (<IconWithService icon={asset} color={color}/>)
+
     renderIcon = (icon) => {
         if (icon.isImage) {
             return this.renderImage(icon.asset)
@@ -55,8 +59,8 @@ class ServiceIcon extends Component {
     }
 
     render() {
-        const {serviceName} = this.props;
-        const icon = this.getIcon(serviceName);
+        const {service} = this.props;
+        const icon = this.getIcon(service);
         return (
             <span> {this.renderIcon(icon)} </span>
         )
