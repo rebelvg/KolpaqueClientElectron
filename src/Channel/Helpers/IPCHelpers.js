@@ -16,3 +16,6 @@ export const playChannel = (channel) => {
     ipcRenderer.send('channel_play', channel.id);
 }
 
+export const getVersion = () => {
+    return ipcRenderer.sendSync("client_getVersion");
+}

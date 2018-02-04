@@ -10,7 +10,7 @@ import menuTemplate from '../Helpers/menu';
 import SearchForm from '../Forms/SearchForm/SearchForm';
 import {getTab} from '../constants';
 import Tabs from '../Components/Tabs/Tabs';
-import {changeSetting, addChannel} from '../Helpers/IPCHelpers';
+import {changeSetting, addChannel, getVersion} from '../Helpers/IPCHelpers';
 import Channel from '../../Channel/Components/Channel/Channel';
 import {Form} from 'react-final-form'
 import {
@@ -46,12 +46,15 @@ const {Menu} = remote;
 class ChannelContainer extends Component {
     constructor() {
         super();
+        const version = getVersion();
+
         this.state = {
             selected: null,
             activeTab: 'online',
             editChannel: null,
             lastAction: new Date(),
-            filter: ''
+            filter: '',
+            version
         };
     }
 
@@ -129,7 +132,7 @@ class ChannelContainer extends Component {
 
     render() {
         const {channels, update, theme, loaded} = this.props;
-        const {selected, activeTab, editChannel} = this.state;
+        const {selected, activeTab, editChannel, version} = this.state;
         const currentTab = getTab(activeTab);
 
         if (!loaded) {
@@ -137,6 +140,7 @@ class ChannelContainer extends Component {
                 <LoadingWrapper>
                     <LoadingIcon icon={loadC}/>
                     <LoadingText> Initializing client </LoadingText>
+                    <Version> Kolpaque Client {version}</Version>
                 </LoadingWrapper>
             )
         }
@@ -262,6 +266,12 @@ const StyledFooter = styled.div`
     width: 100%;
     z-index: 3;
 `;
+
+const Version = styled.div`
+    font-size: 12px;
+    position: absolute;
+    bottom: 20px;
+`
 
 const SettingsIcon = styled(Link)`
     display: flex;
