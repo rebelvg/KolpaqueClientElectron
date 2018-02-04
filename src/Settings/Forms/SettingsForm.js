@@ -127,7 +127,6 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 />
             </InputWrapper>
         </FieldWrapper>
-        <hr/>
         <SelectWrapper>
             <Label>Sort Mode </Label>
             <SelectField
@@ -135,7 +134,6 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 component={ReactSelectAdapter}
                 options={sortTypes}
                 select={changeSetting}
-
             />
         </SelectWrapper>
         <FieldWrapper>
