@@ -41,10 +41,16 @@ const TextField = ({input, changeSetting, ...rest}) => (
 )
 
 const ReactSelectAdapter = ({input, select, ...rest}) => (
-    <Select {...input} {...rest} onChange={(selected) => {
-        input.onChange(selected.value)
-        select(selected.value, input.name)
-    }} searchable/>
+    <Select
+        {...input}
+        {...rest}
+        onChange={(selected) => {
+            input.onChange(selected.value)
+            select(selected.value, input.name)
+        }}
+        clearable={false}
+        searchable={false}
+    />
 )
 
 const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting, values}) => (
@@ -101,10 +107,10 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
             </InputWrapper>
         </FieldWrapper>
         <FieldWrapper>
-            <Label>Show tooltips</Label>
+            <Label>Show Tooltips</Label>
             <InputWrapper>
                 <Field
-                    name="showTooltip"
+                    name="showTooltips"
                     component={ToggleAdapter}
                     toggle={changeSetting}
                 />
