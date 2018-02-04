@@ -132,7 +132,7 @@ class ChannelContainer extends Component {
         const {selected, activeTab, editChannel} = this.state;
         const currentTab = getTab(activeTab);
 
-        if (loaded) {
+        if (!loaded) {
             return (
                 <LoadingWrapper>
                     <LoadingIcon icon={loadC}/>
