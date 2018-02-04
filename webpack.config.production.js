@@ -43,7 +43,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                test: /\.(woff|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 include: [path.resolve(__dirname, 'static')],
                 loader: "file-loader"
             },

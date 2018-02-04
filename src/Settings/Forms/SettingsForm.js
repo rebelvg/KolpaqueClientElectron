@@ -18,7 +18,6 @@ const ToggleAdapter = ({input: {onChange, name, value}, toggle, label, ...rest})
     <Toggle
         value={value}
         onToggle={(value) => {
-            console.log(value);
             toggle(!value, name);
             onChange(!value)
         }}
@@ -29,9 +28,9 @@ const ToggleAdapter = ({input: {onChange, name, value}, toggle, label, ...rest})
 )
 
 const TextField = ({input, changeSetting, ...rest}) => (
-    <input
+    <InputField
         {...input}
-        {...rest}
+        type="password"
         onBlur={(e) => {
             const value = e.target.value;
             const name = input.name
@@ -41,8 +40,11 @@ const TextField = ({input, changeSetting, ...rest}) => (
     />
 )
 
-const ReactSelectAdapter = ({input, ...rest}) => (
-    <Select {...input} {...rest} searchable/>
+const ReactSelectAdapter = ({input, select, ...rest}) => (
+    <Select {...input} {...rest} onChange={(selected) => {
+        input.onChange(selected.value)
+        select(selected.value, input.name)
+    }} searchable/>
 )
 
 const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting, values}) => (
@@ -98,11 +100,20 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 />
             </InputWrapper>
         </FieldWrapper>
-
+        <FieldWrapper>
+            <Label>Show tooltips</Label>
+            <InputWrapper>
+                <Field
+                    name="showTooltip"
+                    component={ToggleAdapter}
+                    toggle={changeSetting}
+                />
+            </InputWrapper>
+        </FieldWrapper>
         <FieldWrapper full>
             <Label>Youtube Api Key</Label>
             <InputWrapper>
-                <InputField
+                <Field
                     name="youtubeApiKey"
                     component={TextField}
                     type="password"
@@ -117,6 +128,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 name="sortType"
                 component={ReactSelectAdapter}
                 options={sortTypes}
+                select={changeSetting}
 
             />
         </SelectWrapper>
@@ -166,7 +178,7 @@ const InputWrapper = styled.div`
    
 `
 
-const InputField = styled(Field)`
+const InputField = styled.input`
     width: 100%;
 `
 

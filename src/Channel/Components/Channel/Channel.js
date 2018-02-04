@@ -4,8 +4,7 @@ import {playChannel, changeSetting} from '../../Helpers/IPCHelpers';
 import ServiceIcon from '../../../Shared/ServiceIcon'
 import AutoRestart from '../../../Shared/AutoRestart'
 import AutoStart from '../../../Shared/AutoStart'
-
-import EditForm from '../../Forms/EditForm/EditForm';
+import EditForm from '../../Forms/EditForm';
 
 @withTheme
 class Channel extends Component {
@@ -55,7 +54,7 @@ class Channel extends Component {
                             nameChange={this.renameChannel}
                         />
                     ) : (
-                        <StyledName>
+                        <StyledName title={`${channel.visibleName} (${channel.link})`}>
                             {channel.visibleName || channel.link}{' '}
                         </StyledName>
                     )}
@@ -118,6 +117,10 @@ const StyledName = styled.div`
     color: ${props => props.theme.channel.color};
     align-items: center;
     font-weight: bold;
+    overflow: hidden;
+    width: 10px;
+    white-space: nowrap;
+    overflow: hidden;
 `;
 
 export default Channel;

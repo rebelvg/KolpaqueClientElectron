@@ -1,6 +1,14 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {getChannels, changeSetting, deleteChannel, addChannelResponse, getInfo, getLoaded} from '../../redux/channel'
+import {
+    getChannels,
+    changeSetting,
+    deleteChannel,
+    addChannelResponse,
+    getInfo,
+    getLoaded,
+    initClient
+} from '../../redux/channel'
 import {initSettings} from '../../redux/settings'
 import styled from 'styled-components';
 
@@ -16,7 +24,8 @@ const {ipcRenderer} = window.require('electron');
         changeSetting,
         deleteChannel,
         addChannelResponse,
-        getInfo
+        getInfo,
+        initClient,
     }
 )
 class EventListener extends Component {
@@ -25,10 +34,13 @@ class EventListener extends Component {
     }
 
     componentWillMount() {
-        const {initSettings, getChannels, changeSetting, addChannelResponse, getInfo, deleteChannel, loaded} = this.props;
+        const {initSettings, initClient, getChannels, changeSetting, addChannelResponse, getInfo, deleteChannel, loaded} = this.props;
         if (!loaded) {
             getChannels();
             initSettings();
+            setTimeout(() => {
+                initClient();
+            }, 3000)
             ipcRenderer.on('channel_changeSetting',
                 (event, id, name, value) => changeSetting(id, name, value));
             ipcRenderer.on('channel_add',

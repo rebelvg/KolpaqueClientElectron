@@ -50,5 +50,7 @@ export const reducer = handleActions({
     })
 }, defaultState)
 
+export const getSortType = (state) => state.settings && state.settings.list.sortType
+export const getReversed = (state) => state.settings && state.settings.list.sortReverse
 export const getSettings = (state) => state.settings && state.settings.list
 export const getTheme = (state) => state.settings && state.settings.list && state.settings.list.nightMode

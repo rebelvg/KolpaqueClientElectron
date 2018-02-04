@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Ionicon from 'react-ionicons';
+import Icon from 'react-icons-kit';
+import {loadC} from 'react-icons-kit/ionicons/loadC';
 import {Link} from 'react-router-dom';
-import styled, {withTheme} from 'styled-components';
-import ChannelForm from '../../Channel/Forms/ChannelForm/ChannelForm';
+import styled, {withTheme, keyframes} from 'styled-components';
+import ChannelForm from '../Forms/ChannelForm';
 import menuTemplate from '../Helpers/menu';
 import SearchForm from '../Forms/SearchForm/SearchForm';
 import {getTab} from '../constants';
@@ -18,6 +20,7 @@ import {
     getUpdate,
     setFilter,
     getLoading,
+    getLoaded,
     sendInfo
 } from '../../redux/channel'
 
@@ -31,6 +34,7 @@ const {Menu} = remote;
         channels: getCompleteChannels(state),
         update: getUpdate(state),
         loading: getLoading(state),
+        loaded: getLoaded(state),
         count: getFullCount(state)
     }),
     {
@@ -124,9 +128,18 @@ class ChannelContainer extends Component {
 
 
     render() {
-        const {channels, update, theme} = this.props;
-        const {selected, activeTab, editChannel, filter} = this.state;
+        const {channels, update, theme, loaded} = this.props;
+        const {selected, activeTab, editChannel} = this.state;
         const currentTab = getTab(activeTab);
+
+        if (loaded) {
+            return (
+                <LoadingWrapper>
+                    <LoadingIcon icon={loadC}/>
+                    <LoadingText> Initializing client </LoadingText>
+                </LoadingWrapper>
+            )
+        }
 
         return (
             <Wrapper>
@@ -211,7 +224,7 @@ const ChannelWrap = styled.div`
     display: flex;
     color: black;
     flex-direction: column;
-    padding-bottom: ${({isUpdate}) => (isUpdate ? 80 : 50)}px;
+    padding-bottom: ${({isUpdate}) => (isUpdate ? 75 : 30)}px;
 `;
 
 const UpdateWrapper = styled.div`
@@ -261,6 +274,33 @@ const StyledContainerWrapper = styled.div`
     width: 100%;
     height: 100%;
 `;
+const LoadingWrapper = styled.div`
+    width: 100%;
+    height: 100vh;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+`
+
+const LoadingText = styled.div`
+    font-weight: bold;
+`
+
+const rotate360 = keyframes`
+	from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+`;
+
+const LoadingIcon = styled(Icon)`
+    color: #347eff;
+    animation: ${rotate360} 2s linear infinite;
+    margin-bottom: 50px;
+    & > svg {
+        width: 60px;
+        height: 60px;
+    }
+`
 
 const TabWrapper = styled.div`
     height: 100%;

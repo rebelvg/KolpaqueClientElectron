@@ -1,5 +1,6 @@
 import {createActions, handleActions} from 'redux-actions';
 import {createSelector} from 'reselect';
+import {getSortType, getReversed} from './settings'
 import SortChannels from '../Channel/Helpers/SortChannels'
 import {FilterChannels} from '../Channel/Helpers/FilterChannels'
 
@@ -8,8 +9,6 @@ const {ipcRenderer} = window.require('electron');
 const defaultState = {
     channels: [],
     update: false,
-    sort: 'lastUpdated',
-    reverse: false,
     filter: '',
     loading: true,
     loaded: false
@@ -18,6 +17,7 @@ const defaultState = {
 //ACTIONS
 
 export const {
+    initClient,
     getChannels,
     addChannel,
     addChannelResponse,
@@ -28,6 +28,9 @@ export const {
     setFilter,
     setSort
 } = createActions({
+    INIT_CLIENT: () => {
+        return {};
+    },
     GET_CHANNELS: () => {
         const channels = ipcRenderer.sendSync('getChannels');
         ipcRenderer.send('client_ready');
@@ -62,9 +65,12 @@ export const {
 
 export const reducer = handleActions(
     {
+        INIT_CLIENT: (state, action) => ({
+            ...state,
+            loaded: true
+        }),
         GET_CHANNELS: (state, action) => ({
             ...state,
-            loaded: true,
             channels: action.payload.channels
         }),
 
@@ -110,7 +116,6 @@ export const reducer = handleActions(
 //SELECTORS
 
 const getChannelsList = (state) => state.channel.channels;
-const getSortMode = (state) => state.channel.sort;
 const getFilter = (state) => state.channel.filter;
 
 export const getUpdate = (state) => state.channel.update;
@@ -133,6 +138,6 @@ export const getFullCount = createSelector(
 )
 
 export const getCompleteChannels = createSelector(
-    [getChannelsList, getSortMode, getFilter],
-    (channels, sort, filter) => SortChannels(FilterChannels(channels, filter), sort)
+    [getChannelsList, getSortType, getReversed, getFilter],
+    (channels, sort, isReversed, filter) => SortChannels(FilterChannels(channels, filter), sort, isReversed)
 )

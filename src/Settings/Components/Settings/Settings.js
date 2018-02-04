@@ -1,16 +1,16 @@
 import React, {Component} from 'react';
 import styled from 'styled-components'
 import Select from 'react-select';
-import SettingsForm from '../../Forms/SettingsForm/SettingsForm'
-import ImportForm from '../../Forms/ImportForm/ImportForm'
+import SettingsForm from '../../Forms/SettingsForm'
+import ImportForm from '../../Forms/ImportForm'
 import 'react-select/dist/react-select.css';
-import theme from '../../../theme'
 import {Form} from 'react-final-form'
 
 const options = [
     {value: 'general', label: "General Settings"},
     {value: 'import', label: "Import Settings"},
 ]
+
 
 export default class Settings extends Component {
     constructor() {
@@ -26,16 +26,14 @@ export default class Settings extends Component {
         })
     }
 
-    submitImports = (twitchImports) => {
-        this.props.changeSettings('twitchImport', twitchImports)
+    submitImports = (members) => {
+        this.props.changeSettings('twitchImport', members)
     }
 
-    importChannel = (name) => {
-        this.props.importChannel(name)
-    }
+    importChannel = (name) => this.props.importChannel(name)
+
 
     changeSetting = (value, name, text = false) => {
-        console.log(value, name)
         if (!text) {
             value = value ? value : false;
         } else {
@@ -45,8 +43,7 @@ export default class Settings extends Component {
         this.props.changeSettings(name, value);
     }
 
-    submit = (values) => {
-    }
+    submit = (values) => values;
 
     render() {
         const {settings} = this.props;
@@ -73,11 +70,13 @@ export default class Settings extends Component {
                 }
                 {
                     activeKey === 'import'
-                    && <ImportForm onChange={this.submitImports}
-                                   members={settings.twitchImport}
-                                   getSettings={this.changeSetting}
-                                   importChannel={this.importChannel}
-                                   onSubmit={this.submit}/>
+                    && <Form
+                        members={settings.twitchImport}
+                        onSubmit={this.submit}
+                        submit={this.submitImports}
+                        importChannel={this.importChannel}
+                        render={(props) => <ImportForm {...props}/>}
+                    />
                 }
             </Container>
         )
@@ -87,12 +86,7 @@ export default class Settings extends Component {
 const SettingSelect = styled(Select)`
     margin-bottom: 10px;
 `;
-const PageTitle = styled.h4`
-    padding: 5px 0px;
-    margin: 0px;
-    background-color: #D7D7D7;
-    text-align: center;
-`
+
 const Container = styled.div`
     width: 100%;
     height: 100%;

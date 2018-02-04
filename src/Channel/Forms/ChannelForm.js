@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Ionicon from 'react-ionicons'
 import styled, {withTheme} from 'styled-components'
-import {template} from '../../constants';
+import {template} from '../constants';
 import {Field} from 'react-final-form'
 const {remote} = window.require('electron');
 const {Menu} = remote;

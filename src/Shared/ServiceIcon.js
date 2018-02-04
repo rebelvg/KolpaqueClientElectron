@@ -49,7 +49,7 @@ class ServiceIcon extends Component {
         (<IconWithImage><img src={asset}/></IconWithImage>)
 
     renderSVG = ({asset, color, padding}) =>
-        (<IconWithService padding={padding || 0} icon={asset} color={color}/>)
+        (<IconWithService style={{paddingTop: padding || 0}} icon={asset} color={color}/>)
 
     renderIcon = (icon) => {
         if (icon.isImage) {
@@ -80,7 +80,6 @@ const IconWithImage = styled.div`
 const IconWithService = styled(Icon)`
     width: 16px; 
     height: 16px;
-    padding-top: ${props => props.padding}px;
     color: ${props => !!props.color ? props.color : 'darkgreen'}
 `
 
