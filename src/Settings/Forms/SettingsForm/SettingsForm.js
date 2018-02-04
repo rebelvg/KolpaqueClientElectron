@@ -2,31 +2,44 @@
  * Created by JackP on 10/8/2017.
  */
 import React from 'react'
-import {Field, reduxForm} from 'redux-form'
-import Toggle from 'react-toggle';
-import './toggle.css';
+import {Field} from 'react-final-form'
+import Toggle from 'react-toggle-button'
 import styled from 'styled-components'
-import theme from '../../../theme';
-import {withTheme} from 'styled-components'
+import Select from 'react-select';
 
-const renderToggleInput = (field) => (
-    <div>
-        <Toggle checked={!!field.input.value} onChange={field.input.onChange} icons={false}/>
-    </div>
-);
+const sortTypes = [
+    {value: 'lastAdded', label: 'Last Added'},
+    {value: 'lastUpdated', label: 'Last Updated'},
+    {value: 'service_visibleName', label: 'By Name and Service'},
+    {value: 'visibleName', label: 'By Name'},
+]
 
-const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}) => (
+const ToggleAdapter = ({input: {onChange, name, value}, toggle, getSettings, label, ...rest}) => (
+    <Toggle
+        value={value}
+        onToggle={(value) => {
+            toggle(!value, name);
+            onChange(!value)
+        }}
+        inactiveLabel={''}
+        activeLabel={''}
+        {...rest}
+    />
+)
+
+const ReactSelectAdapter = ({input, ...rest}) => (
+    <Select {...input} {...rest} searchable/>
+)
+
+const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings, values}) => (
     <Form onSubmit={handleSubmit}>
         <FieldWrapper>
             <Label>LQ</Label>
             <InputWrapper>
                 <Field
                     name="LQ"
-                    label="LQ"
-                    component={renderToggleInput}
-                    onChange={(e, v,) => {
-                        getSettings(!!v, 'LQ')
-                    }}
+                    component={ToggleAdapter}
+                    toggle={getSettings}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -35,11 +48,8 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}) 
             <InputWrapper>
                 <Field
                     name="showNotifications"
-                    component={renderToggleInput}
-                    onChange={(e, v,) => {
-                        getSettings(!!v, 'showNotifications');
-                        reset();
-                    }}
+                    component={ToggleAdapter}
+                    toggle={getSettings}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -48,10 +58,8 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}) 
             <InputWrapper>
                 <Field
                     name="minimizeAtStart"
-                    component={renderToggleInput}
-                    onChange={(e, v,) => {
-                        getSettings(!!v, 'minimizeAtStart')
-                    }}
+                    component={ToggleAdapter}
+                    toggle={getSettings}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -60,10 +68,8 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}) 
             <InputWrapper>
                 <Field
                     name="launchOnBalloonClick"
-                    component={renderToggleInput}
-                    onChange={(e, v,) => {
-                        getSettings(!!v, 'launchOnBalloonClick')
-                    }}
+                    component={ToggleAdapter}
+                    toggle={getSettings}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -73,10 +79,8 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}) 
             <InputWrapper>
                 <Field
                     name="nightMode"
-                    component={renderToggleInput}
-                    onChange={(e, v,) => {
-                        getSettings(!!v, 'nightMode')
-                    }}
+                    component={ToggleAdapter}
+                    toggle={getSettings}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -88,23 +92,31 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings}) 
                     name="youtubeApiKey"
                     component="input"
                     type="password"
-                    onBlur={(e, v,) => {
-                        getSettings(v, 'youtubeApiKey', true)
-                    }}
                 />
             </InputWrapper>
         </FieldWrapper>
+        <hr/>
+        <SelectWrapper>
+            <Label>Sort Mode </Label>
+            <SelectField
+                name="sortType"
+                component={ReactSelectAdapter}
+                options={sortTypes}
 
+            />
+        </SelectWrapper>
+        <FieldWrapper>
+            <Label>Reversed Sort </Label>
+            <InputWrapper>
+                <Field
+                    name="sortReverse"
+                    component={ToggleAdapter}
+                    toggle={getSettings}
+                />
+            </InputWrapper>
+        </FieldWrapper>
     </Form>
 )
-
-const SaveWrapper = styled.div`
-    position:absolute;
-    bottom: 30px;
-    width: 100%;
-    padding: 2px 0px;
-    text-align: right;
-`
 
 const Form = styled.form`
     display: flex;
@@ -113,19 +125,12 @@ const Form = styled.form`
     
 `
 
-const SaveButton = styled.button`
-    background-color: transparent;
-    border: 2px solid ${props => props.theme.klpq};;
-    margin-right: 10px;
-    padding: 2px 10px;
-    font-weight: bold;
-    transition: all .3s;
-    color: ${props => props.theme.klpq};
-    &:hover {
-        cursor: pointer;
-        background-color: ${props => props.theme.klpq};;
-        color: white
-    }
+const SelectWrapper = styled.div`
+    margin: 2px 20px;
+`
+
+const SelectField = styled(Field)`
+    margin-bottom: 20px;
 `
 
 const FieldWrapper = styled.div`
@@ -150,7 +155,4 @@ const InputField = styled(Field)`
     width: 100%;
 `
 
-export default reduxForm({
-    form: 'settings', // a unique identifier for this form
-    enableReinitialize: true,
-})(SettingsForm)
+export default SettingsForm

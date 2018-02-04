@@ -5,6 +5,7 @@ import SettingsForm from '../../Forms/SettingsForm/SettingsForm'
 import ImportForm from '../../Forms/ImportForm/ImportForm'
 import 'react-select/dist/react-select.css';
 import theme from '../../../theme'
+import {Form} from 'react-final-form'
 
 const options = [
     {value: 'general', label: "General Settings"},
@@ -35,6 +36,7 @@ export default class Settings extends Component {
     }
 
     getSetting = (value, name, text = false) => {
+        console.log(value, name)
         if (!text) {
             value = value ? value : false;
         } else {
@@ -44,8 +46,8 @@ export default class Settings extends Component {
         this.props.changeSettings(name, value);
     }
 
-    onSettingsSubmit = (values) => {
-
+    submit = (values) => {
+        
     }
 
     render() {
@@ -64,10 +66,12 @@ export default class Settings extends Component {
 
                 {
                     activeKey === 'general'
-                    && <SettingsForm initialValues={settings}
-                                     enableReinitialize={true}
-                                     getSettings={this.getSetting}
-                                     onSubmit={this.onSettingsSubmit}/>
+                    && <Form
+                        onSubmit={this.submit}
+                        getSettings={this.getSetting}
+                        initialValues={settings}
+                        render={(props) => <SettingsForm {...props}/>}
+                    />
                 }
                 {
                     activeKey === 'import'
@@ -75,7 +79,7 @@ export default class Settings extends Component {
                                    members={settings.twitchImport}
                                    getSettings={this.getSetting}
                                    importChannel={this.importChannel}
-                                   onSubmit={this.onSettingsSubmit}/>
+                                   onSubmit={this.submit}/>
                 }
             </Container>
         )
