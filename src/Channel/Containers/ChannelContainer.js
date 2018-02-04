@@ -139,7 +139,7 @@ class ChannelContainer extends Component {
             return (
                 <LoadingWrapper>
                     <LoadingIcon icon={loadC}/>
-                    <LoadingText> Initializing client </LoadingText>
+                    <LoadingText> Initializing Client </LoadingText>
                     <Version> Kolpaque Client {version}</Version>
                 </LoadingWrapper>
             )
