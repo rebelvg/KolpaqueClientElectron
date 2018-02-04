@@ -12,7 +12,6 @@ const options = [
     {value: 'import', label: "Import Settings"},
 ]
 
-
 export default class Settings extends Component {
     constructor() {
         super();
@@ -47,7 +46,6 @@ export default class Settings extends Component {
     }
 
     submit = (values) => {
-        
     }
 
     render() {
@@ -85,6 +83,7 @@ export default class Settings extends Component {
         )
     }
 }
+
 const SettingSelect = styled(Select)`
     margin-bottom: 10px;
 `;

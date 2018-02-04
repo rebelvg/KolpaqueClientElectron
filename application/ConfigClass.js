@@ -58,7 +58,8 @@ class Config extends EventEmitter {
             twitchImport: [],
             nightMode: false,
             sortType: 'lastAdded',
-            sortReverse: false
+            sortReverse: false,
+            showTooltips: false
         };
 
         readFile(this);
