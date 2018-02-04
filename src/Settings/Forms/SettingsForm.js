@@ -127,8 +127,9 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 />
             </InputWrapper>
         </FieldWrapper>
+        <br/>
         <SelectWrapper>
-            <Label>Sort Mode </Label>
+            <Label>Sort Mode</Label>
             <SelectField
                 name="sortType"
                 component={ReactSelectAdapter}
@@ -137,7 +138,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
             />
         </SelectWrapper>
         <FieldWrapper>
-            <Label>Reversed Sort </Label>
+            <Label>Reversed Sort</Label>
             <InputWrapper>
                 <Field
                     name="sortReverse"
