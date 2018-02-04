@@ -94,6 +94,7 @@ const Icons = styled.div`
     height: 20px;
     flex-direction: row-reverse;
 `;
+
 const ChannelData = styled.div`
     flex-grow: 2;
     display: flex;
@@ -108,13 +109,15 @@ const StyledIcon = styled.div`
     margin-left: 5px;
     height: 20px;
 `;
-const FormWrapper = styled.div``;
+
 const StyledName = styled.div`
     flex-grow: 2;
     height: 20px;
+    font-size: 14px;
     display: flex;
     color: ${props => props.theme.channel.color};
     align-items: center;
+    font-weight: bold;
 `;
 
 export default Channel;

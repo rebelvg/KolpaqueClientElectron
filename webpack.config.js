@@ -35,8 +35,15 @@ module.exports = {
                 }
             },
             {
-                test: /\.(jpe?g|gif|png|svg|woff|ttf|wav|mp3)$/,
-                loader: 'file-loader'
+                test: /\.(jpe?g|gif|png|wav|mp3)$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 8192
+                }
+            },
+            {
+                test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: "file-loader"
             },
             {
                 test: /\.css$/,

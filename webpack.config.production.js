@@ -35,10 +35,18 @@ module.exports = {
                 loader: 'style-loader!css-loader'
             },
             {
+                test: /\.(jpe?g|gif|png|wav|mp3)$/,
                 include: [path.resolve(__dirname, 'static')],
-                test: /\.(jpe?g|gif|png|svg|woff|ttf|wav|mp3)$/,
-                loader: 'file-loader'
-            }
+                loader: 'url-loader',
+                options: {
+                    limit: 8192
+                }
+            },
+            {
+                test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                include: [path.resolve(__dirname, 'static')],
+                loader: "file-loader"
+            },
         ]
     },
     resolve: {
@@ -51,7 +59,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Kolpaque Client'
         }),
-        new CopyWebpackPlugin([{ from: 'static', to: 'static' }])
+        new CopyWebpackPlugin([{from: 'static', to: 'static'}])
     ],
     output: {
         filename: 'bundle.js',

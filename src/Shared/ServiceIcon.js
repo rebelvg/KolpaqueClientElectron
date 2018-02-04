@@ -9,6 +9,7 @@ const Services = {
     'twitch': {
         asset: twitch,
         isImage: false,
+        padding: 1,
         color: "#6441a5"
     },
     'klpq-vps': {
@@ -47,8 +48,8 @@ class ServiceIcon extends Component {
     renderImage = (asset) =>
         (<IconWithImage><img src={asset}/></IconWithImage>)
 
-    renderSVG = ({asset, color}) =>
-        (<IconWithService icon={asset} color={color}/>)
+    renderSVG = ({asset, color, padding}) =>
+        (<IconWithService padding={padding || 0} icon={asset} color={color}/>)
 
     renderIcon = (icon) => {
         if (icon.isImage) {
@@ -61,9 +62,8 @@ class ServiceIcon extends Component {
     render() {
         const {service} = this.props;
         const icon = this.getIcon(service);
-        return (
-            <span> {this.renderIcon(icon)} </span>
-        )
+        return this.renderIcon(icon)
+
     }
 }
 
@@ -80,6 +80,7 @@ const IconWithImage = styled.div`
 const IconWithService = styled(Icon)`
     width: 16px; 
     height: 16px;
+    padding-top: ${props => props.padding}px;
     color: ${props => !!props.color ? props.color : 'darkgreen'}
 `
 

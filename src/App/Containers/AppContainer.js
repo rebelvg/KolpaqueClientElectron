@@ -3,10 +3,13 @@ import Routes from '../Components/Routes';
 import EventListener from '../Components/EventListener'
 import {HashRouter} from 'react-router-dom'
 import {ThemeProvider} from 'styled-components'
-import styled from 'styled-components';
+import styled, {injectGlobal} from 'styled-components';
 import {connect} from 'react-redux';
 import {themes} from '../../Themes'
+import {globalStyle} from '../../globalStyle'
 import {getTheme} from '../../redux/settings'
+
+injectGlobal`${globalStyle}`
 
 @connect(
     state => ({

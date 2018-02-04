@@ -14,10 +14,11 @@ const sortTypes = [
     {value: 'visibleName', label: 'By Name'},
 ]
 
-const ToggleAdapter = ({input: {onChange, name, value}, toggle, getSettings, label, ...rest}) => (
+const ToggleAdapter = ({input: {onChange, name, value}, toggle, label, ...rest}) => (
     <Toggle
         value={value}
         onToggle={(value) => {
+            console.log(value);
             toggle(!value, name);
             onChange(!value)
         }}
@@ -27,11 +28,24 @@ const ToggleAdapter = ({input: {onChange, name, value}, toggle, getSettings, lab
     />
 )
 
+const TextField = ({input, changeSetting, ...rest}) => (
+    <input
+        {...input}
+        {...rest}
+        onBlur={(e) => {
+            const value = e.target.value;
+            const name = input.name
+            input.onBlur(value);
+            changeSetting(value, name)
+        }}
+    />
+)
+
 const ReactSelectAdapter = ({input, ...rest}) => (
     <Select {...input} {...rest} searchable/>
 )
 
-const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings, values}) => (
+const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting, values}) => (
     <Form onSubmit={handleSubmit}>
         <FieldWrapper>
             <Label>LQ</Label>
@@ -39,7 +53,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings, v
                 <Field
                     name="LQ"
                     component={ToggleAdapter}
-                    toggle={getSettings}
+                    toggle={changeSetting}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -49,7 +63,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings, v
                 <Field
                     name="showNotifications"
                     component={ToggleAdapter}
-                    toggle={getSettings}
+                    toggle={changeSetting}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -59,7 +73,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings, v
                 <Field
                     name="minimizeAtStart"
                     component={ToggleAdapter}
-                    toggle={getSettings}
+                    toggle={changeSetting}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -69,7 +83,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings, v
                 <Field
                     name="launchOnBalloonClick"
                     component={ToggleAdapter}
-                    toggle={getSettings}
+                    toggle={changeSetting}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -80,7 +94,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings, v
                 <Field
                     name="nightMode"
                     component={ToggleAdapter}
-                    toggle={getSettings}
+                    toggle={changeSetting}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -90,8 +104,9 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings, v
             <InputWrapper>
                 <InputField
                     name="youtubeApiKey"
-                    component="input"
+                    component={TextField}
                     type="password"
+                    changeSetting={changeSetting}
                 />
             </InputWrapper>
         </FieldWrapper>
@@ -111,7 +126,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, getSettings, v
                 <Field
                     name="sortReverse"
                     component={ToggleAdapter}
-                    toggle={getSettings}
+                    toggle={changeSetting}
                 />
             </InputWrapper>
         </FieldWrapper>
