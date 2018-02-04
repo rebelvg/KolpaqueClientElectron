@@ -10,7 +10,7 @@ import Select from 'react-select';
 const sortTypes = [
     {value: 'lastAdded', label: 'Last Added'},
     {value: 'lastUpdated', label: 'Last Updated'},
-    {value: 'service_visibleName', label: 'By Name and Service'},
+    {value: 'service_visibleName', label: 'By Service and Name'},
     {value: 'visibleName', label: 'By Name'},
 ]
 
