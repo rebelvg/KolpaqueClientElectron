@@ -11,7 +11,7 @@ import {
 } from '../../redux/channel'
 import {initSettings} from '../../redux/settings'
 import styled from 'styled-components';
-
+import {debounce} from 'lodash'
 const {ipcRenderer} = window.require('electron');
 
 @connect(
@@ -25,24 +25,49 @@ const {ipcRenderer} = window.require('electron');
         deleteChannel,
         addChannelResponse,
         getInfo,
-        initClient,
+        initClient
     }
 )
 class EventListener extends Component {
     constructor() {
         super()
+        this.state = {
+            queue: []
+        }
+        this.empty = debounce(this.emptyQueue, 300);
+    }
+
+    buildQueue = ({id, name, value}) => {
+        const {queue} = this.state
+        this.setState({
+            queue: queue[id]
+                ? {...queue, [id]: {...queue[id], [name]: value}}
+                : {...queue, [id]: {[name]: value}}
+        }, () => {
+            this.empty()
+        })
+    }
+
+    emptyQueue = () => {
+        const {queue} = this.state
+        const {initClient, changeSetting, loaded} = this.props;
+        this.setState({
+            queue: []
+        }, () => {
+            changeSetting(queue);
+            if (!loaded) {
+                initClient()
+            }
+        })
     }
 
     componentWillMount() {
-        const {initSettings, initClient, getChannels, changeSetting, addChannelResponse, getInfo, deleteChannel, loaded} = this.props;
+        const {initSettings, getChannels, addChannelResponse, getInfo, deleteChannel, loaded} = this.props;
         if (!loaded) {
             getChannels();
             initSettings();
-            setTimeout(() => {
-                initClient();
-            }, 3000)
             ipcRenderer.on('channel_changeSetting',
-                (event, id, name, value) => changeSetting(id, name, value));
+                (event, id, name, value) => this.buildQueue({id, name, value}));
             ipcRenderer.on('channel_add',
                 (event, channel) => addChannelResponse(channel));
             ipcRenderer.on('client_showInfo', (event, info) => getInfo(info));

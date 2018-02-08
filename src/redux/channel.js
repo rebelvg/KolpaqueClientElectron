@@ -26,7 +26,7 @@ export const {
     changeSetting,
     getInfo,
     setFilter,
-    setSort
+    setSort,
 } = createActions({
     INIT_CLIENT: () => {
         return {};
@@ -51,67 +51,60 @@ export const {
         return {info};
     },
 
-    CHANGE_SETTING: (id, name, value) => ({
-        id,
-        name,
-        value
-    }),
+    CHANGE_SETTING: settings => ({settings}),
     GET_INFO: info => ({info}),
     SET_FILTER: filter => ({filter}),
-    SET_SORT: sort => ({sort})
+    SET_SORT: sort => ({sort}),
 });
 
 //REDUCER
 
-export const reducer = handleActions(
-    {
-        INIT_CLIENT: (state, action) => ({
-            ...state,
-            loaded: true
-        }),
-        GET_CHANNELS: (state, action) => ({
-            ...state,
-            channels: action.payload.channels
-        }),
+export const reducer = handleActions({
+    INIT_CLIENT: (state, action) => ({
+        ...state,
+        loaded: true
+    }),
+    GET_CHANNELS: (state, action) => ({
+        ...state,
+        channels: action.payload.channels
+    }),
 
-        ADD_CHANNEL: (state, action) => ({...state}),
+    ADD_CHANNEL: (state, action) => ({...state}),
 
-        ADD_CHANNEL_RESPONSE: (state, action) => ({
-            ...state,
-            channels: [...state.channels, action.payload.channel]
-        }),
+    ADD_CHANNEL_RESPONSE: (state, action) => ({
+        ...state,
+        channels: [...state.channels, action.payload.channel]
+    }),
 
-        DELETE_CHANNEL: (state, action) => ({
-            ...state,
-            channels: state.channels.filter(
-                channel => channel.id !== action.payload.id
-            )
-        }),
+    DELETE_CHANNEL: (state, action) => ({
+        ...state,
+        channels: state.channels.filter(
+            channel => channel.id !== action.payload.id
+        )
+    }),
 
-        SEND_INFO: (state, action) => ({...state}),
+    SEND_INFO: (state, action) => ({...state}),
 
-        CHANGE_SETTING: (state,
-                         {payload: {id, name, value}}) => ({
-            ...state,
-            channels: state.channels.map(
-                channel =>
-                    channel.id === id
-                        ? {...channel, [name]: value}
-                        : channel
-            )
-        }),
+    CHANGE_SETTING: (state, {payload: {settings}}) => ({
+        ...state,
+        channels: state.channels.map(channel => {
+            return settings[channel.id]
+                ? {
+                    ...channel,
+                    ...settings[channel.id]
+                }
+                : channel
+        })
+    }),
 
-        GET_INFO: (state, action) => ({...state, update: action.payload.info}),
+    GET_INFO: (state, action) => ({...state, update: action.payload.info}),
 
-        SET_FILTER: (state, action) => ({...state, filter: action.payload.filter}),
+    SET_FILTER: (state, action) => ({...state, filter: action.payload.filter}),
 
-        SET_SORT: (state, action) => {
-            console.log(action.payload)
-            return {...state, sort: action.payload.sort}
-        }
+    SET_SORT: (state, action) => {
+        return {...state, sort: action.payload.sort}
     },
-    defaultState
-);
+}, defaultState);
 
 //SELECTORS
 

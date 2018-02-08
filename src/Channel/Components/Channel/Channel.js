@@ -4,6 +4,7 @@ import {playChannel, changeSetting} from '../../Helpers/IPCHelpers';
 import ServiceIcon from '../../../Shared/ServiceIcon'
 import AutoRestart from '../../../Shared/AutoRestart'
 import AutoStart from '../../../Shared/AutoStart'
+import Pinned from '../../../Shared/Pinned'
 import EditForm from '../../Forms/EditForm';
 
 @withTheme
@@ -29,7 +30,8 @@ class Channel extends Component {
             pinned,
             editMode,
             selected,
-            visible
+            visible,
+            showTooltips
         } = this.props;
 
         return (
@@ -54,8 +56,8 @@ class Channel extends Component {
                             nameChange={this.renameChannel}
                         />
                     ) : (
-                        <StyledName title={`${channel.visibleName} (${channel.link})`}>
-                            {channel.visibleName || channel.link}{' '}
+                        <StyledName title={showTooltips ? `${channel.visibleName} (${channel.link})` : ''}>
+                            {channel.isPinned && <Pinned/>}{channel.visibleName || channel.link}{' '}
                         </StyledName>
                     )}
 

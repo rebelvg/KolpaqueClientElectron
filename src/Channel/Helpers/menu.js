@@ -1,6 +1,6 @@
 const {remote, ipcRenderer} = window.require('electron');
 const {app, Menu, shell, BrowserWindow, MenuItem} = remote;
-
+import {changeSetting} from './IPCHelpers'
 const menuTemplate = (channel, edit) => [
     new MenuItem({
         label: 'Play', click: function (menuItem, browserWindow, event) {
@@ -20,6 +20,14 @@ const menuTemplate = (channel, edit) => [
     new MenuItem({
         label: 'Rename Channel', click: function () {
             edit(channel)
+        }
+    }),
+    new MenuItem({
+        label: channel.isPinned
+            ? 'Unpin Channel'
+            : 'Pin Channel',
+        click: function () {
+            changeSetting(channel.id, 'isPinned', !channel.isPinned)
         }
     }),
     new MenuItem({

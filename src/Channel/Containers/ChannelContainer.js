@@ -23,7 +23,7 @@ import {
     getLoaded,
     sendInfo
 } from '../../redux/channel'
-
+import {getShowTooltips} from '../../redux/settings'
 
 const {remote} = window.require('electron');
 const {Menu} = remote;
@@ -35,7 +35,8 @@ const {Menu} = remote;
         update: getUpdate(state),
         loading: getLoading(state),
         loaded: getLoaded(state),
-        count: getFullCount(state)
+        count: getFullCount(state),
+        showTooltips: getShowTooltips(state),
     }),
     {
         sendInfo,
@@ -131,7 +132,7 @@ class ChannelContainer extends Component {
 
 
     render() {
-        const {channels, update, theme, loaded} = this.props;
+        const {channels, update, theme, loaded, showTooltips} = this.props;
         const {selected, activeTab, editChannel, version} = this.state;
         const currentTab = getTab(activeTab);
 
@@ -173,7 +174,7 @@ class ChannelContainer extends Component {
 
                     <TabPanel>
                         <ChannelWrap isUpdate={update}>
-                            {channels.map((channel, index) => (
+                            {channels.map((channel) => (
                                 <Channel
                                     visible={
                                         channel[currentTab.filter] ===
@@ -182,6 +183,7 @@ class ChannelContainer extends Component {
                                     handleChannelAction={
                                         this.handleChannelAction
                                     }
+                                    showTooltips={!!showTooltips}
                                     editMode={
                                         editChannel &&
                                         editChannel.id === channel.id
@@ -228,7 +230,7 @@ const ChannelWrap = styled.div`
     display: flex;
     color: black;
     flex-direction: column;
-    padding-bottom: ${({isUpdate}) => (isUpdate ? 75 : 30)}px;
+    padding-bottom: ${({isUpdate}) => (isUpdate ? 75 : 50)}px;
 `;
 
 const UpdateWrapper = styled.div`
