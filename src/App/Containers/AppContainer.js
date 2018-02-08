@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
-import Routes from '../Components/Routes';
-import EventListener from '../Components/EventListener'
 import {HashRouter} from 'react-router-dom'
 import {ThemeProvider} from 'styled-components'
 import styled from 'styled-components';
 import {connect} from 'react-redux';
-import {themes} from '../../Themes'
-import {getTheme} from '../../redux/settings'
+
+import Routes from 'src/App/Components/Routes';
+import EventListener from 'src/App/Components/EventListener'
+import {themes} from 'src/Themes'
+import {getTheme} from 'src/redux/settings'
 
 
 @connect(

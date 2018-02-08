@@ -2,9 +2,8 @@ import React from 'react';
 import {Route} from 'react-router-dom';
 import styled from 'styled-components'
 
-
-import ChannelContainer from '../../Channel/Containers/ChannelContainer';
-import SettingsContainer from '../../Settings/Containers/SettingsContainer';
+import ChannelContainer from 'src/Channel/Containers/ChannelContainer';
+import SettingsContainer from 'src/Settings/Containers/SettingsContainer';
 
 const Routes = () => (
     <RouterWrapper>

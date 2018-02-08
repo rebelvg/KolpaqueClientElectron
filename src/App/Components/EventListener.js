@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import styled from 'styled-components';
+import {debounce} from 'lodash'
+
 import {
     getChannels,
     changeSetting,
@@ -8,10 +11,9 @@ import {
     getInfo,
     getLoaded,
     initClient
-} from '../../redux/channel'
-import {initSettings} from '../../redux/settings'
-import styled from 'styled-components';
-import {debounce} from 'lodash'
+} from 'src/redux/channel'
+import {initSettings} from 'src/redux/settings'
+
 const {ipcRenderer} = window.require('electron');
 
 @connect(

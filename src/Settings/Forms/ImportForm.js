@@ -5,8 +5,8 @@ import React, {Component} from 'react'
 import Icon from 'react-icons-kit';
 import {close} from 'react-icons-kit/fa/close';
 import {Field} from 'react-final-form'
+
 import styled from 'styled-components'
-import theme from '../../theme'
 
 const TextField = ({input, ...rest}) => (
     <MemberInput
@@ -42,7 +42,7 @@ export default class ImportForm extends Component {
     }
 
     render() {
-        const {members} = this.props
+        const {members, theme} = this.props
         return (
             <Form onSubmit={this.submit}>
                 <Field

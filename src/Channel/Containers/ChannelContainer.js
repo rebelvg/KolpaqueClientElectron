@@ -5,14 +5,19 @@ import Icon from 'react-icons-kit';
 import {loadC} from 'react-icons-kit/ionicons/loadC';
 import {Link} from 'react-router-dom';
 import styled, {withTheme, keyframes} from 'styled-components';
-import ChannelForm from '../Forms/ChannelForm';
-import menuTemplate from '../Helpers/menu';
-import SearchForm from '../Forms/SearchForm/SearchForm';
-import {getTab} from '../constants';
-import Tabs from '../Components/Tabs/Tabs';
-import {changeSetting, addChannel, getVersion} from '../Helpers/IPCHelpers';
-import Channel from '../../Channel/Components/Channel/Channel';
 import {Form} from 'react-final-form'
+
+import ChannelForm from 'src/Channel/Forms/ChannelForm';
+import menuTemplate from 'src/Channel/Helpers/menu';
+import SearchForm from 'src/Channel/Forms/SearchForm/SearchForm';
+import {getTab} from 'src/Channel/constants';
+import Tabs from 'src/Channel/Components/Tabs/Tabs';
+import {
+    changeSetting,
+    addChannel,
+    getVersion
+} from 'src/Channel/Helpers/IPCHelpers';
+import Channel from 'src/Channel/Components/Channel/Channel';
 import {
     getCompleteChannels,
     getFullCount,
@@ -22,8 +27,8 @@ import {
     getLoading,
     getLoaded,
     sendInfo
-} from '../../redux/channel'
-import {getShowTooltips} from '../../redux/settings'
+} from 'src/redux/channel'
+import {getShowTooltips} from 'src/redux/settings'
 
 const {remote} = window.require('electron');
 const {Menu} = remote;

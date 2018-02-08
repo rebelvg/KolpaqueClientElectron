@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {TABS} from '../../constants';
 import styled from 'styled-components';
+
+import {TABS} from 'src/Channel/constants';
 
 class Tabs extends Component {
     constructor() {

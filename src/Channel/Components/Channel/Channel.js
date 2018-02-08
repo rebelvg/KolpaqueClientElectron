@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 import styled, {withTheme} from 'styled-components';
-import {playChannel, changeSetting} from '../../Helpers/IPCHelpers';
-import ServiceIcon from '../../../Shared/ServiceIcon'
-import AutoRestart from '../../../Shared/AutoRestart'
-import AutoStart from '../../../Shared/AutoStart'
-import Pinned from '../../../Shared/Pinned'
-import EditForm from '../../Forms/EditForm';
+
+import {playChannel, changeSetting} from 'src/Channel/Helpers/IPCHelpers';
+import ServiceIcon from 'src/Shared/Icons/ServiceIcon'
+import {AutoStart, AutoRestart, Pinned, EditForm} from 'src/Shared/Icons'
 
 @withTheme
 class Channel extends Component {
@@ -47,7 +45,9 @@ class Channel extends Component {
                 <ChannelData
                     onDoubleClick={() => !editMode && playChannel(channel)}
                 >
-                    <StyledIcon> <ServiceIcon service={channel.service}/> </StyledIcon>
+                    <StyledIcon>
+                        <ServiceIcon service={channel.service}/>
+                    </StyledIcon>
 
                     {editMode ? (
                         <EditForm
@@ -56,16 +56,24 @@ class Channel extends Component {
                             nameChange={this.renameChannel}
                         />
                     ) : (
-                        <StyledName title={showTooltips ? `${channel.visibleName} (${channel.link})` : ''}>
-                            {channel.isPinned && <Pinned/>}{channel.visibleName || channel.link}{' '}
+                        <StyledName
+                            title={showTooltips
+                                ? `${channel.visibleName} (${channel.link})`
+                                : ''}>
+                            {channel.isPinned && <Pinned/>}
+                            {channel.visibleName || channel.link}{' '}
                         </StyledName>
                     )}
 
                 </ChannelData>
 
                 <Icons>
-                    <AutoRestart toggle={this.changeSetting} channel={channel}/>
-                    <AutoStart toggle={this.changeSetting} channel={channel}/>
+                    <AutoRestart
+                        toggle={this.changeSetting}
+                        channel={channel}/>
+                    <AutoStart
+                        toggle={this.changeSetting}
+                        channel={channel}/>
                 </Icons>
 
             </ChannelWrapper>

@@ -2,8 +2,14 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import styled, {withTheme} from 'styled-components';
-import {changeSettings, changeSettingsResponse, importChannel, getSettings} from '../../redux/settings'
-import Settings from '../Components/Settings/Settings'
+
+import {
+    changeSettings,
+    changeSettingsResponse,
+    importChannel,
+    getSettings
+} from 'src/redux/settings'
+import Settings from 'src/Settings/Components/Settings/Settings'
 
 const {remote, ipcRenderer} = window.require('electron');
 

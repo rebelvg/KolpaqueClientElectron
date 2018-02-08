@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import styled from 'styled-components'
 import Select from 'react-select';
-import SettingsForm from '../../Forms/SettingsForm'
-import ImportForm from '../../Forms/ImportForm'
 import 'react-select/dist/react-select.css';
 import {Form} from 'react-final-form'
+
+import SettingsForm from 'src/Settings/Forms/SettingsForm'
+import ImportForm from 'src/Settings/Forms/ImportForm'
 
 const options = [
     {value: 'general', label: "General Settings"},

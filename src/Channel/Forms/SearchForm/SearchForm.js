@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import styled, {withTheme} from 'styled-components'
-import {template} from '../../constants';
 import {Field} from 'react-final-form'
+
+import {template} from 'src/Channel/constants';
 import AutoSave from './AutoSave'
 const {remote} = window.require('electron');
 const {Menu} = remote;
