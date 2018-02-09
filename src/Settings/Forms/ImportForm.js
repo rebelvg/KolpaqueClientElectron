@@ -6,7 +6,7 @@ import Icon from 'react-icons-kit';
 import {close} from 'react-icons-kit/fa/close';
 import {Field} from 'react-final-form'
 
-import styled from 'styled-components'
+import styled, {withTheme} from 'styled-components'
 
 const TextField = ({input, ...rest}) => (
     <MemberInput
@@ -14,6 +14,7 @@ const TextField = ({input, ...rest}) => (
     />
 )
 
+@withTheme
 export default class ImportForm extends Component {
     constructor() {
         super()

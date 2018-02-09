@@ -58,7 +58,7 @@ const Tab = styled.div`
     box-sizing: content-box;
     ${props => props.active
     ? (`background-color: ${props.theme.tabSelected.bg}; width: 24px; z-index: 200`)
-    : (`background-color: ${props.theme.tab.bg}; width: 21px;`)}
+    : (`background-color: ${props.theme.tab.bg}; width: 20px;`)}
 `
 
 export default Tabs

@@ -172,6 +172,7 @@ class ChannelContainer extends Component {
                         }} to="/about">
                             <Ionicon
                                 icon="ion-gear-b"
+                                fontSize="20px"
                                 color={theme.clientSecondary.color}
                             />
                         </SettingsIcon>
@@ -226,27 +227,29 @@ class ChannelContainer extends Component {
 }
 
 const ChannelAddForm = styled(Form)`
-`
+`;
 
 const ChannelSearchForm = styled(Form)`
-`
+`;
 
 const ChannelWrap = styled.div`
     display: flex;
     color: black;
     flex-direction: column;
-    padding-bottom: ${({isUpdate}) => (isUpdate ? 75 : 50)}px;
+    padding-bottom: ${({isUpdate}) => (isUpdate ? 25 : 0)}px;
+    
 `;
 
 const UpdateWrapper = styled.div`
     position: fixed;
-    bottom: 28px;
-    width: 100%;
+    bottom: 23px;
+    width: calc(100% - 22px);
     font-size: 14px;
     text-align: center;
     color: #9f2dff;
     text-decoration: underline;
     z-index: 0;
+    left: 17px;
     padding: 5px 0px;
     border: 1px solid ${props => props.theme.outline};
     cursor: pointer;
@@ -255,6 +258,7 @@ const UpdateWrapper = styled.div`
 
 const Wrapper = styled.div`
     width: 100%;
+    margin-bottom: 48px;
 `;
 
 const TabPanel = styled.div`
@@ -262,7 +266,10 @@ const TabPanel = styled.div`
     width: 100%;
     display: block;
     max-height: 100vh;
+    margin-right: 3px;
     background-color: ${props => props.theme.clientSecondary.bg};
+    border: 1px solid ${props => props.theme.outline};
+    border-left: none;
 `;
 
 const StyledFooter = styled.div`
@@ -277,20 +284,21 @@ const StyledFooter = styled.div`
 const Version = styled.div`
     font-size: 12px;
     position: absolute;
-    bottom: 20px;
-`
+    bottom: 22px;
+`;
 
 const SettingsIcon = styled(Link)`
     display: flex;
     justify-content: center;
-    padding-bottom: 51px;
 `;
 
 const StyledContainerWrapper = styled.div`
     display: flex;
     width: 100%;
     height: 100%;
+    background-color: ${props => props.theme.client.bg};
 `;
+
 const LoadingWrapper = styled.div`
     width: 100%;
     height: 100vh;
@@ -298,11 +306,11 @@ const LoadingWrapper = styled.div`
     align-items: center;
     justify-content: center;
     flex-direction: column;
-`
+`;
 
 const LoadingText = styled.div`
     font-weight: bold;
-`
+`;
 
 const rotate360 = keyframes`
 	from {transform: rotate(0deg);}

@@ -31,7 +31,7 @@ export default class ChannelForm extends Component {
                                  placeholder="Add Channel..."
                                  type="text"/>
                     <button type="submit">
-                        <StyledIcon fontSize="24px" color={theme.input.color} icon="ion-plus"/>
+                        <StyledIcon fontSize="20px" color={theme.input.color} icon="ion-plus"/>
                     </button>
                 </StyledChannelFormWrap>
             </form>
@@ -43,7 +43,7 @@ export default class ChannelForm extends Component {
 const StyledChannelFormWrap = styled.div`
     display: flex;
     align-items: center;
-    padding: 2px;
+    padding: 2px 3px;
     & button {
         -webkit-appearance: none;
         border:none;
@@ -61,12 +61,13 @@ const StyledInput = styled(Field)`
     color: ${props => props.theme.input.color};
     background-image: none;
     background-clip: padding-box;
-    height: 24px;
+    height: 20px;
     border: none;
-    border-top: 1px solid ${props => props.theme.outline};
+    border: 1px solid ${props => props.theme.outline};
+    border-right: none;
     box-shadow: none;
     box-sizing: border-box;
-    font-size: 14px;
+    font-size: 12px;
     padding-left: 10px;
 `;
 

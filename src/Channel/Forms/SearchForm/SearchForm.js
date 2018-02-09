@@ -46,7 +46,9 @@ const Form = styled.div`
     height: 20px;
     align-items: center;
     position: relative;
-    z-index: 100000
+    z-index: 100000;
+    padding: 2px 0px;
+    background-color: ${props => props.theme.client.bg};
 `
 
 const StyledField = styled(Field)`
@@ -55,21 +57,22 @@ const StyledField = styled(Field)`
     padding: 0px;
     margin: 0px;
     position: relative;
-    z-index: 100000
+    z-index: 100000;
 `
 
 const InputWrapper = styled.div`
     height:20px;
     width:100%;
     overflow: hidden;
+    padding: 2px 3px;
     & > input {
         background-color:${props => props.theme.input.bg};
         color:${props => props.theme.input.color};
+        border:1px solid ${props => props.theme.outline};
         width: 100%;
-        border: none;
         height:20px;
         font-size:12px;
-        border-top: 1px solid ${props => props.theme.outline};
         padding: 0 10px;
+        box-sizing: border-box;
     }
 `

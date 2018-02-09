@@ -95,7 +95,7 @@ const ChannelWrapper = styled.div`
     !props.selected
         ? `${props.theme.channel.bg}`
         : `${props.theme.channelSelected.bg}`};
-    border-top: 1px solid ${props => props.theme.outline};
+    border-bottom: 1px solid ${props => props.theme.outline};
 `;
 
 const Icons = styled.div`
