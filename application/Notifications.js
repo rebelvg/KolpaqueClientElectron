@@ -7,23 +7,24 @@ const {app, shell, Menu, Notification, nativeImage} = require('electron');
 const config = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Logger = require('./Logger');
+const _ = require('lodash');
 
-function printNotification(title, content, channelObj = {}) {
+function printNotification(title, content, channelObj = null) {
     if (!config.settings.showNotifications)
         return;
 
     printNewNotification(title, content, channelObj);
 }
 
-function printNewNotification(title, content, channelObj = {}) {
+function printNewNotification(title, content, channelObj) {
     let icon = app.appIcon.iconPathBalloon;
 
-    Logger(channelObj._icon ? [title, content, channelObj._icon.length] : [title, content]);
+    Logger(title, content, _.get(channelObj, '_icon', []).length);
 
-    if (channelObj._icon) {
+    if (channelObj && channelObj._icon) {
         icon = nativeImage.createFromBuffer(channelObj._icon);
 
-        Logger([icon.isEmpty(), icon.constructor.name, icon.toPNG().length]);
+        Logger(icon.isEmpty(), icon.constructor.name, icon.toPNG().length);
     }
 
     let notification = new Notification({
