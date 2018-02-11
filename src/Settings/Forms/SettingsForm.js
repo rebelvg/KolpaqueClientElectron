@@ -76,7 +76,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
             </InputWrapper>
         </FieldWrapper>
         <FieldWrapper>
-            <Label>Minimize At Start</Label>
+            <Label>Start Minimized</Label>
             <InputWrapper>
                 <Field
                     name="minimizeAtStart"
@@ -86,7 +86,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
             </InputWrapper>
         </FieldWrapper>
         <FieldWrapper>
-            <Label>Play On Balloon Click</Label>
+            <Label>Play on Balloon Click</Label>
             <InputWrapper>
                 <Field
                     name="launchOnBalloonClick"
@@ -117,7 +117,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
             </InputWrapper>
         </FieldWrapper>
         <FieldWrapper full>
-            <Label>Youtube Api Key</Label>
+            <Label>Youtube API Key</Label>
             <InputWrapper>
                 <Field
                     name="youtubeApiKey"

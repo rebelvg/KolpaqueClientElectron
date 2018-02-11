@@ -13,6 +13,10 @@ const Config = require('./ConfigClass');
 let config = new Config();
 
 ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
+    if (settingName === 'twitchImport') {
+        settingValue = _.uniq(settingValue);
+    }
+
     return config.changeSetting(settingName, settingValue);
 });
 

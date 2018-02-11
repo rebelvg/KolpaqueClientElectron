@@ -59,7 +59,7 @@ class Config extends EventEmitter {
             nightMode: false,
             sortType: 'lastAdded',
             sortReverse: false,
-            showTooltips: false
+            showTooltips: true
         };
 
         readFile(this);
