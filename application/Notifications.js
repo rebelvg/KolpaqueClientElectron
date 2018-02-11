@@ -19,12 +19,12 @@ function printNotification(title, content, channelObj = null) {
 function printNewNotification(title, content, channelObj) {
     let icon = app.appIcon.iconPathBalloon;
 
-    Logger(title, content, _.get(channelObj, '_icon', []).length);
+    Logger(title, content);
 
     if (channelObj && channelObj._icon) {
         icon = nativeImage.createFromBuffer(channelObj._icon);
 
-        Logger(icon.isEmpty(), icon.constructor.name, icon.toPNG().length);
+        Logger(channelObj._icon.length, icon.isEmpty(), icon.constructor.name, icon.toPNG().length);
     }
 
     let notification = new Notification({
