@@ -1,12 +1,12 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import styled, {withTheme} from 'styled-components';
 
 import {playChannel, changeSetting} from 'src/Channel/Helpers/IPCHelpers';
-import ServiceIcon from 'src/Shared/Icons/ServiceIcon'
-import {AutoStart, AutoRestart, Pinned, EditForm} from 'src/Shared/Icons'
+import EditForm from 'src/Channel/Forms/EditForm'
+import {AutoStart, AutoRestart, Pinned, ServiceIcon, PinButton} from 'src/Shared/Icons'
 
 @withTheme
-class Channel extends Component {
+class Channel extends PureComponent {
     constructor() {
         super();
     }
@@ -20,7 +20,9 @@ class Channel extends Component {
     renameChannel = (value, id) =>
         this.props.handleChannelAction('RENAME', [value, id]);
 
-    changeSetting = (id, name, value) => changeSetting(id, name, value);
+    changeSetting = (id, name, value) => {
+        changeSetting(id, name, value);
+    }
 
     render() {
         const {
@@ -28,8 +30,8 @@ class Channel extends Component {
             pinned,
             editMode,
             selected,
-            visible,
-            showTooltips
+            showTooltips,
+            visible
         } = this.props;
 
         return (
@@ -60,7 +62,7 @@ class Channel extends Component {
                             title={showTooltips
                                 ? `${channel.visibleName} (${channel.link})`
                                 : ''}>
-                            {channel.isPinned && <Pinned/>}
+                            {/*{channel.isPinned && <Pinned/>}*/}
                             {channel.visibleName || channel.link}{' '}
                         </StyledName>
                     )}
@@ -72,6 +74,9 @@ class Channel extends Component {
                         toggle={this.changeSetting}
                         channel={channel}/>
                     <AutoStart
+                        toggle={this.changeSetting}
+                        channel={channel}/>
+                    <PinButton
                         toggle={this.changeSetting}
                         channel={channel}/>
                 </Icons>

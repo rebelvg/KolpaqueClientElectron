@@ -1,6 +1,6 @@
 import React from 'react'
 import {FormSpy} from 'react-final-form'
-import {debounce} from 'lodash'
+import {debounce, isEqual} from 'lodash'
 
 class AutoSave extends React.Component {
     constructor(props) {
@@ -9,8 +9,12 @@ class AutoSave extends React.Component {
         this.setFilter = debounce(this.save, props.debounce)
     }
 
-    save = (values) => {
-        this.props.save(values);
+    save = (newValues) => {
+        const {values} = this.state
+        console.log(!isEqual(newValues, values));
+        if (!isEqual(newValues, values)) {
+            this.props.save(newValues);
+        }
     }
 
     componentWillReceiveProps(nextProps) {

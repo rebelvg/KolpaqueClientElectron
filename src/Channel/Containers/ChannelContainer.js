@@ -26,7 +26,10 @@ import {
     setFilter,
     getLoading,
     getLoaded,
-    sendInfo
+    sendInfo,
+    changeTab,
+    getActiveTab,
+    getFilter,
 } from 'src/redux/channel'
 import {getShowTooltips} from 'src/redux/settings'
 
@@ -40,13 +43,16 @@ const {Menu} = remote;
         update: getUpdate(state),
         loading: getLoading(state),
         loaded: getLoaded(state),
+        activeTab: getActiveTab(state),
         count: getFullCount(state),
+        filter: getFilter(state),
         showTooltips: getShowTooltips(state),
     }),
     {
         sendInfo,
         setSort,
         setFilter,
+        changeTab
     }
 )
 class ChannelContainer extends Component {
@@ -59,7 +65,6 @@ class ChannelContainer extends Component {
             activeTab: 'online',
             editChannel: null,
             lastAction: new Date(),
-            filter: '',
             version
         };
     }
@@ -91,11 +96,7 @@ class ChannelContainer extends Component {
         }
     };
 
-    changeTab = tab =>
-        this.setState({
-            activeTab: tab,
-            lastAction: `changeTab${tab.value}${new Date()}`
-        });
+    changeTab = tab => this.props.changeTab(tab)
 
     sendInfo = info => this.props.sendInfo(info);
 
@@ -137,10 +138,18 @@ class ChannelContainer extends Component {
 
 
     render() {
-        const {channels, update, theme, loaded, showTooltips} = this.props;
-        const {selected, activeTab, editChannel, version} = this.state;
-        const currentTab = getTab(activeTab);
+        const {
+            channels,
+            update,
+            activeTab,
+            theme,
+            loaded,
+            showTooltips,
+            filter
+        } = this.props;
 
+        const {selected, editChannel, version} = this.state;
+        const tab = getTab(activeTab);
         if (!loaded) {
             return (
                 <LoadingWrapper>
@@ -156,6 +165,7 @@ class ChannelContainer extends Component {
                 <ChannelSearchForm
                     onSubmit={this.setFilter}
                     save={this.setFilter}
+                    initialValues={filter}
                     render={props => <SearchForm {...props}/>}
                     subscription={{}}
                 />
@@ -183,8 +193,7 @@ class ChannelContainer extends Component {
                             {channels.map((channel) => (
                                 <Channel
                                     visible={
-                                        channel[currentTab.filter] ===
-                                        currentTab.filterValue
+                                        channel[tab.filter] === tab.filterValue
                                     }
                                     handleChannelAction={
                                         this.handleChannelAction

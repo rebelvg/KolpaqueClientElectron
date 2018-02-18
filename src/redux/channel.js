@@ -11,7 +11,8 @@ const defaultState = {
     update: false,
     filter: '',
     loading: true,
-    loaded: false
+    loaded: false,
+    activeTab: 'online'
 };
 
 //ACTIONS
@@ -27,6 +28,7 @@ export const {
     getInfo,
     setFilter,
     setSort,
+    changeTab
 } = createActions({
     INIT_CLIENT: () => {
         return {};
@@ -55,6 +57,7 @@ export const {
     GET_INFO: info => ({info}),
     SET_FILTER: filter => ({filter}),
     SET_SORT: sort => ({sort}),
+    CHANGE_TAB: tab => ({tab})
 });
 
 //REDUCER
@@ -99,18 +102,25 @@ export const reducer = handleActions({
 
     GET_INFO: (state, action) => ({...state, update: action.payload.info}),
 
-    SET_FILTER: (state, action) => ({...state, filter: action.payload.filter}),
+    SET_FILTER: (state, action) => {
+        return ({...state, filter: action.payload.filter})
+    },
 
     SET_SORT: (state, action) => {
         return {...state, sort: action.payload.sort}
     },
+
+    CHANGE_TAB: (state, action) =>
+        ({...state, activeTab: action.payload.tab})
+
 }, defaultState);
 
 //SELECTORS
 
 const getChannelsList = (state) => state.channel.channels;
-const getFilter = (state) => state.channel.filter;
 
+export const getFilter = (state) => state.channel.filter;
+export const getActiveTab = (state) => state.channel.activeTab;
 export const getUpdate = (state) => state.channel.update;
 export const getLoading = (state) => state.channel.loading;
 export const getLoaded = (state) => state.channel.loaded;
@@ -132,5 +142,7 @@ export const getFullCount = createSelector(
 
 export const getCompleteChannels = createSelector(
     [getChannelsList, getSortType, getReversed, getFilter],
-    (channels, sort, isReversed, filter) => SortChannels(FilterChannels(channels, filter), sort, isReversed)
+    (channels, sort, isReversed, filter) => {
+        return SortChannels(FilterChannels(channels, filter), sort, isReversed)
+    }
 )
