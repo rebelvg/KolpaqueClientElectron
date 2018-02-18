@@ -5,36 +5,29 @@ import {debounce, isEqual} from 'lodash'
 class AutoSave extends React.Component {
     constructor(props) {
         super(props)
+        console.log(props.values);
         this.state = {values: props.values, submitting: false}
         this.setFilter = debounce(this.save, props.debounce)
     }
 
-    save = (newValues) => {
-        const {values} = this.state
-        console.log(!isEqual(newValues, values));
-        if (!isEqual(newValues, values)) {
-            this.props.save(newValues);
+    save = () => {
+        const {values, save} = this.props;
+        if (!isEqual(this.state.values, values)) {
+            save(values)
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setFilter(nextProps.values)
+
+    componentWillReceiveProps() {
+        this.setFilter()
     }
 
 
     render() {
-        // This component doesn't have to render anything, but it can render
-        // submitting state.
         return null
     }
 }
 
-// Make a HOC
-// This is not the only way to accomplish auto-save, but it does let us:
-// - Use built-in React lifecycle methods to listen for changes
-// - Maintain state of when we are submitting
-// - Render a message when submitting
-// - Pass in debounce and save props nicely
 export default props => (
     <FormSpy {...props} subscription={{values: true}} component={AutoSave}/>
 )

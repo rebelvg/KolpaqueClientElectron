@@ -32,7 +32,7 @@ class SearchForm extends Component {
                         }}
                     />
                 </InputWrapper>
-                <AutoSave save={save} debounce={300}/>
+                <AutoSave save={save} debounce={600}/>
             </Form>
         )
     }

@@ -165,7 +165,7 @@ class ChannelContainer extends Component {
                 <ChannelSearchForm
                     onSubmit={this.setFilter}
                     save={this.setFilter}
-                    initialValues={filter}
+                    initialValues={{filter}}
                     render={props => <SearchForm {...props}/>}
                     subscription={{}}
                 />
