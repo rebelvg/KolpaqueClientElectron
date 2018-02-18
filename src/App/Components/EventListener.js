@@ -65,9 +65,12 @@ class EventListener extends Component {
 
     componentWillMount() {
         const {initSettings, getChannels, addChannelResponse, getInfo, deleteChannel, loaded} = this.props;
+
+        console.log(loaded);
         if (!loaded) {
             getChannels();
             initSettings();
+            this.empty();
             ipcRenderer.on('channel_changeSetting',
                 (event, id, name, value) => this.buildQueue({id, name, value}));
             ipcRenderer.on('channel_add',

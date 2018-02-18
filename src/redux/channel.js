@@ -30,9 +30,7 @@ export const {
     setSort,
     changeTab
 } = createActions({
-    INIT_CLIENT: () => {
-        return {};
-    },
+    INIT_CLIENT: () => ({}),
     GET_CHANNELS: () => {
         const channels = ipcRenderer.sendSync('getChannels');
         ipcRenderer.send('client_ready');

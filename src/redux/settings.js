@@ -14,6 +14,7 @@ export const {
 } = createActions({
     INIT_SETTINGS: () => {
         const list = ipcRenderer.sendSync('getSettings');
+        console.log(list);
         return {list}
     },
     IMPORT_CHANNEL: name => {
