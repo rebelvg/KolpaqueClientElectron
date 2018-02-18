@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const EventEmitter = require('events');
+const moment = require('moment');
 
 const Channel = require('./ChannelClass');
 const {allowedProtocols, registeredServices, preInstalledChannels} = require('./Globals');
@@ -87,6 +88,8 @@ class Config extends EventEmitter {
         let res = this.findChannelByLink(channelObj.link);
 
         if (res !== null) return false;
+
+        channelObj.lastUpdated = moment().unix();
 
         this.channels.push(channelObj);
 
