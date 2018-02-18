@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import Ionicon from 'react-ionicons';
 import Icon from 'react-icons-kit';
 import {loadC} from 'react-icons-kit/ionicons/loadC';
+import {cog} from 'react-icons-kit/fa/cog';
 import {Link} from 'react-router-dom';
 import styled, {withTheme, keyframes} from 'styled-components';
 import {Form} from 'react-final-form'
@@ -180,11 +180,7 @@ class ChannelContainer extends Component {
                         />
                         <SettingsIcon onClick={() => {
                         }} to="/about">
-                            <Ionicon
-                                icon="ion-gear-b"
-                                fontSize="20px"
-                                color={theme.clientSecondary.color}
-                            />
+                            <CogIcon icon={cog} size={18}/>
                         </SettingsIcon>
                     </TabWrapper>
 
@@ -264,6 +260,11 @@ const UpdateWrapper = styled.div`
     cursor: pointer;
     background-color: ${props => props.theme.clientSecondary.bg};
 `;
+
+const CogIcon = styled(Icon)`
+    color: ${props => props.theme.clientSecondary.color};
+    padding-left: 1px;
+`
 
 const Wrapper = styled.div`
     width: 100%;
@@ -345,6 +346,7 @@ const TabWrapper = styled.div`
     border-right: 1px solid ${props => props.theme.outline};
     position: relative;
     z-index: 2;
+    align-items: center;
 `;
 
 export default ChannelContainer

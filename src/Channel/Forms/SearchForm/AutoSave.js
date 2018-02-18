@@ -5,7 +5,6 @@ import {debounce, isEqual} from 'lodash'
 class AutoSave extends React.Component {
     constructor(props) {
         super(props)
-        console.log(props.values);
         this.state = {values: props.values, submitting: false}
         this.setFilter = debounce(this.save, props.debounce)
     }

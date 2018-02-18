@@ -66,7 +66,6 @@ class EventListener extends Component {
     componentWillMount() {
         const {initSettings, getChannels, addChannelResponse, getInfo, deleteChannel, loaded} = this.props;
 
-        console.log(loaded);
         if (!loaded) {
             getChannels();
             initSettings();

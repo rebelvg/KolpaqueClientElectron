@@ -48,7 +48,6 @@ export default class EditForm extends Component {
     renameChannel = (e) => {
         const {value} = this.state;
         const {channel} = this.props;
-        console.log(value);
         this.props.nameChange(value, channel.id);
     };
 

@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import Ionicon from 'react-ionicons'
 import styled, {withTheme} from 'styled-components'
 import {Field} from 'react-final-form'
-
+import Icon from 'react-icons-kit';
+import {plus} from 'react-icons-kit/fa/plus';
 import {template} from 'src/Channel/constants';
 
 const {remote} = window.require('electron');
@@ -31,7 +31,7 @@ export default class ChannelForm extends Component {
                                  placeholder="Add Channel..."
                                  type="text"/>
                     <button type="submit">
-                        <StyledIcon fontSize="20px" color={theme.input.color} icon="ion-plus"/>
+                        <StyledIcon size={14} icon={plus}/>
                     </button>
                 </StyledChannelFormWrap>
             </form>
@@ -45,11 +45,20 @@ const StyledChannelFormWrap = styled.div`
     align-items: center;
     padding: 2px 3px;
     & button {
-        -webkit-appearance: none;
+         -webkit-appearance: none;
         border:none;
         padding: 0;
         margin: 0;
-        cursor: pointer
+        cursor: pointer;
+        background-color:${props => props.theme.input.bg};
+        display: flex !important;
+        box-sizing: border-box;
+        border: 1px solid ${props => props.theme.outline};
+        border-left: 0px;
+        width: 20px;
+        height: 20px;
+        align-items: center;
+        justify-content: center;
     }
 `;
 
@@ -71,12 +80,6 @@ const StyledInput = styled(Field)`
     padding-left: 10px;
 `;
 
-const StyledIcon = styled(Ionicon)`
-    background-color:${props => props.theme.input.bg};
-    color:white;
-    display: flex;
-    box-sizing: border-box;
-    border: 1px solid ${props => props.theme.outline};
-    border-left: 0px;
-    font-size:24px;
+const StyledIcon = styled(Icon)`
+    color:${props => props.theme.input.color};
 `;
