@@ -23,14 +23,6 @@ const menuTemplate = (channel, edit) => [
         }
     }),
     new MenuItem({
-        label: channel.isPinned
-            ? 'Unpin Channel'
-            : 'Pin Channel',
-        click: function () {
-            changeSetting(channel.id, 'isPinned', !channel.isPinned)
-        }
-    }),
-    new MenuItem({
         label: 'Copy to Clipboard', click: function () {
             ipcRenderer.send('channel_copyClipboard', channel.link);
         }
