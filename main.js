@@ -4,7 +4,6 @@ const _ = require('lodash');
 const path = require('path');
 const url = require('url');
 const fixPath = require('fix-path');
-const {default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS} = require('electron-devtools-installer');
 
 const config = require('./application/SettingsFile');
 
@@ -69,6 +68,8 @@ function createWindow() {
 
     // and load the index.html of the app.
     if (isDev) {
+        const {default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS} = require('electron-devtools-installer');
+
         mainWindow.loadURL('http://localhost:3000');
 
         // Open the DevTools.
