@@ -1,27 +1,40 @@
 import React, {Component} from 'react';
 import styled from 'styled-components';
-
+import {connect} from 'react-redux';
 import {TABS} from 'src/Channel/constants';
 
+import {
+    getFullCount,
+    changeTab,
+    getActiveTab,
+} from 'src/redux/channel'
+
+
+@connect(
+    state => ({
+        active: getActiveTab(state),
+        count: getFullCount(state),
+    }),
+    {changeTab}
+)
 class Tabs extends Component {
     constructor() {
         super();
     }
 
-    isActive = (active, value) => this.props.isActive(active, value)
-    onChange = (value) => this.props.onChange(value)
-    getCount = (value) => this.props.getCount(value)
+    onChange = (value) => this.props.changeTab(value)
 
     render() {
-        const {getCount, active, onChange, isActive} = this.props;
+        const {active, count} = this.props;
         return (
             <TabList>
                 {TABS.map(tab => (
-                    <Tab active={this.isActive(active, tab.value)}
-                         onClick={() => this.onChange(tab.value)}
-                         key={tab.value}
+                    <Tab
+                        active={active === tab.value}
+                        onClick={() => this.onChange(tab.value)}
+                        key={tab.value}
                     >
-                        {tab.name} ({this.getCount(tab.value)})
+                        {tab.name} ({count[tab.value]})
                     </Tab>
                 ))}
             </TabList>

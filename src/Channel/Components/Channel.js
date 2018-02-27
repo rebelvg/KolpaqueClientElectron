@@ -12,13 +12,13 @@ class Channel extends PureComponent {
     }
 
     contextMenu = (name, channel) =>
-    !name && this.props.handleChannelAction('OPEN_MENU', [channel]);
+    !name && this.props.handleAction('OPEN_MENU', [channel]);
 
     selectChannel = (name, which, channel) =>
-    !name && this.props.handleChannelAction('SELECT', [which, channel]);
+    !name && this.props.handleAction('SELECT', [which, channel]);
 
     renameChannel = (value, id) =>
-        this.props.handleChannelAction('RENAME', [value, id]);
+        this.props.handleAction('RENAME', [value, id]);
 
     changeSetting = (id, name, value) => {
         changeSetting(id, name, value);
@@ -31,12 +31,11 @@ class Channel extends PureComponent {
             editMode,
             selected,
             showTooltips,
-            visible
         } = this.props;
 
         return (
             <ChannelWrapper
-                visible={visible}
+                visible={channel.visible}
                 onMouseDown={({target: {name}, button}) =>
                     this.selectChannel(name, button, channel)}
                 selected={selected}

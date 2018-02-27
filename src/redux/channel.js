@@ -1,8 +1,8 @@
 import {createActions, handleActions} from 'redux-actions';
 import {createSelector} from 'reselect';
 import {getSortType, getReversed} from './settings'
-import SortChannels from '../Channel/Helpers/SortChannels'
-import {FilterChannels} from '../Channel/Helpers/FilterChannels'
+import channelMiddleWare from 'src/Channel/Helpers/ChannelMiddleware'
+import {FilterChannels} from 'src/Channel/Helpers/FilterChannels'
 
 const {ipcRenderer} = window.require('electron');
 
@@ -139,8 +139,8 @@ export const getFullCount = createSelector(
 )
 
 export const getCompleteChannels = createSelector(
-    [getChannelsList, getSortType, getReversed, getFilter],
-    (channels, sort, isReversed, filter) => {
-        return SortChannels(FilterChannels(channels, filter), sort, isReversed)
+    [getChannelsList, getSortType, getReversed, getFilter, getActiveTab],
+    (channels, sort, isReversed, filter, tab) => {
+        return channelMiddleWare({channels, sort, isReversed, filter, tab})
     }
 )

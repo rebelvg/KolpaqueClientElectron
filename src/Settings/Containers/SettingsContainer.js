@@ -9,7 +9,7 @@ import {
     importChannel,
     getSettings
 } from 'src/redux/settings'
-import Settings from 'src/Settings/Components/Settings/Settings'
+import Settings from 'src/Settings/Components/Settings'
 
 const {remote, ipcRenderer} = window.require('electron');
 
