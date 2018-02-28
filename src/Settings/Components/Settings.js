@@ -65,7 +65,7 @@ export default class Settings extends Component {
                     && <Form
                         onSubmit={this.submit}
                         changeSetting={this.changeSetting}
-                        initialValues={settings}
+                        initialValues={{...settings}}
                         render={(props) => <SettingsForm {...props}/>}
                     />
                 }

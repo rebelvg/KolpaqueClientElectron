@@ -35,7 +35,7 @@ const TextField = ({input, changeSetting, ...rest}) => (
             const value = e.target.value;
             const name = input.name
             input.onBlur(value);
-            changeSetting(value, name)
+            changeSetting(value, name, true)
         }}
     />
 )
