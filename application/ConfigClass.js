@@ -11,6 +11,85 @@ const {allowedProtocols, registeredServices, preInstalledChannels} = require('./
 const settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 const channelSave = ['link', 'visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
+const filterChannel = (channelObj, filter) => {
+    filter = filter.trim();
+
+    if (!filter) {
+        return true;
+    }
+
+    let filters = filter.split(/\s+/gi);
+
+    let searchFilters = _.map(filters, (filter) => {
+        return {
+            pattern: filter,
+            found: false
+        };
+    });
+
+    _.forEach([channelObj.link, channelObj.name, channelObj.visibleName], (searchString) => {
+        _.forEach(searchFilters, (filter) => {
+            let regExp = new RegExp(filter.pattern, 'gi');
+
+            if (regExp.test(searchString)) {
+                filter.found = true;
+            }
+        });
+    });
+
+    return _.filter(searchFilters, 'found').length === filters.length;
+};
+
+const filterChannels = (channels, filter) => {
+    filter = filter.trim();
+
+    if (!filter) {
+        return channels;
+    }
+
+    let filteredChannels = [];
+
+    filteredChannels = _.filter(channels, (channelObj) => {
+        return filterChannel(channelObj, filter);
+    });
+
+    return filteredChannels;
+};
+
+const sortChannels = (channels, sortType, isReversed = false) => {
+    let sortedChannels = [];
+
+    switch (sortType) {
+        case 'lastAdded': {
+            sortedChannels = channels;
+            break;
+        }
+        case 'lastUpdated': {
+            sortedChannels = _.sortBy(channels, ['lastUpdated']);
+            break;
+        }
+        case 'service_visibleName': {
+            sortedChannels = _.sortBy(channels, ['service', 'visibleName']);
+            break;
+        }
+        case 'visibleName': {
+            sortedChannels = _.sortBy(channels, ['visibleName']);
+            break;
+        }
+        default: {
+            sortedChannels = channels;
+        }
+    }
+
+    if (isReversed) {
+        sortedChannels.reverse();
+    }
+
+    sortedChannels = _.sortBy(sortedChannels, [(channel) => !channel.isPinned]);
+
+    return sortedChannels;
+};
+
 function readFile(config) {
     try {
         let file = fs.readFileSync(settingsPath, 'utf8');
@@ -149,6 +228,27 @@ class Config extends EventEmitter {
         if (!channel) return null;
 
         return channel;
+    }
+
+    find(query = {}) {
+        const sort = {
+            type: this.settings.sortType,
+            isReversed: this.settings.isReversed
+        };
+
+        let filteredChannels = this.channels;
+
+        if (_.isBoolean(query.isLive)) {
+            filteredChannels = _.filter(filteredChannels, {'isLive': query.isLive});
+        }
+
+        if (_.isString(query.filter)) {
+            filteredChannels = filterChannels(filteredChannels, query.filter);
+        }
+
+        filteredChannels = sortChannels(this.channels, sort.type, sort.isReversed);
+
+        return filteredChannels;
     }
 
     saveFile() {

@@ -106,4 +106,8 @@ ipcMain.on('getSettingSync', (event, settingName) => {
     return event.returnValue = config.settings[settingName];
 });
 
+ipcMain.on('find', (event, query) => {
+    return event.returnValue = config.find(query);
+});
+
 module.exports = config;
