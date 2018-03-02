@@ -250,17 +250,37 @@ class Config extends EventEmitter {
 
         let filteredChannels = this.channels;
 
-        if (_.isBoolean(query.isLive)) {
-            filteredChannels = _.filter(filteredChannels, {'isLive': query.isLive});
-        }
-
         if (_.isString(query.filter)) {
             filteredChannels = filterChannels(filteredChannels, query.filter);
         }
 
         filteredChannels = sortChannels(this.channels, sort.type, sort.isReversed);
 
-        return filteredChannels;
+        filteredChannels = _.map(filteredChannels, channel => {
+            return {
+                id: channel.id,
+                service: channel.service,
+                name: channel.name,
+                link: channel.link,
+                protocol: channel.protocol,
+                isLive: channel.isLive,
+                onAutoRestart: channel.onAutoRestart,
+                lastUpdated: channel.lastUpdated,
+
+                visibleName: channel.visibleName,
+                isPinned: channel.isPinned,
+                autoStart: channel.autoStart,
+                autoRestart: channel.autoRestart
+            };
+        });
+
+        return {
+            channels: _.filter(filteredChannels, {'isLive': query.isLive}),
+            count: {
+                offline: _.filter(filteredChannels, {'isLive': false}).length,
+                online: _.filter(filteredChannels, {'isLive': true}).length
+            }
+        };
     }
 
     saveFile() {

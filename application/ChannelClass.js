@@ -79,6 +79,10 @@ class Channel extends EventEmitter {
         this.on('setting_changed', (settingName, settingValue, send) => {
             if (send) app.mainWindow.webContents.send('channel_changeSetting', this.id, settingName, settingValue);
         });
+
+        this.on('setting_changed', (settingName, settingValue, send) => {
+            if (send) app.mainWindow.webContents.send('channel_changeSettingSync');
+        });
     }
 
     update(channelConfig) {
