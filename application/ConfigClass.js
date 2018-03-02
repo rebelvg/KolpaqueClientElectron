@@ -150,16 +150,16 @@ class Config extends EventEmitter {
             app.mainWindow.webContents.send('channel_add', channelObj);
         });
 
-        this.on('channel_addedSync', () => {
-            app.mainWindow.webContents.send('channel_add');
+        this.on('channel_added', () => {
+            app.mainWindow.webContents.send('channel_addSync');
         });
 
         this.on('channel_removed', (channelObj) => {
             app.mainWindow.webContents.send('channel_remove', channelObj.id);
         });
 
-        this.on('channel_removedSync', () => {
-            app.mainWindow.webContents.send('channel_remove');
+        this.on('channel_removed', () => {
+            app.mainWindow.webContents.send('channel_removeSync');
         });
 
         this.on('setting_changed', (settingName, settingValue) => {
@@ -167,7 +167,7 @@ class Config extends EventEmitter {
         });
 
         this.on('setting_changed', () => {
-            app.mainWindow.webContents.send('config_changeSetting', this.settings);
+            app.mainWindow.webContents.send('config_changeSettingSync', this.settings);
         });
     }
 
