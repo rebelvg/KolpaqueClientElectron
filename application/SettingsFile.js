@@ -42,6 +42,20 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
     return channelObj.changeSetting(settingName, settingValue);
 });
 
+ipcMain.on('channel_changeSettingSync', (event, id, settingName, settingValue) => {
+    let channelObj = config.findById(id);
+
+    if (!channelObj) return event.returnValue = false;
+
+    if (settingName === 'visibleName') {
+        if (!settingValue) {
+            settingValue = channelObj.name;
+        }
+    }
+
+    return event.returnValue = channelObj.changeSetting(settingName, settingValue);
+});
+
 ipcMain.on('channel_openPage', (event, id) => {
     let channelObj = config.findById(id);
 
