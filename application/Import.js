@@ -95,31 +95,14 @@ async function twitchImport(channelName) {
 }
 
 function autoKlpqImport() {
-    _.forEach([
-        {
-            url: 'http://stats.vps.klpq.men/channels',
-            service: 'klpq-vps'
-        }, {
-            url: 'http://stats.main.klpq.men/channels',
-            service: 'klpq-main'
-        }
-    ], function (importObj) {
-        let url = importObj.url;
-        let service = importObj.service;
+    const url = `http://stats.klpq.men/export/channels.json`;
 
-        request.get({url: url, json: true}, function (err, res, body) {
-            if (err) return;
-            if (res.statusCode !== 200) return;
+    request.get({url: url, json: true}, function (err, res, body) {
+        if (err) return;
+        if (res.statusCode !== 200) return;
 
-            _.forEach(body.result, function (channel) {
-                let protocol = registeredServices[service].protocols[0];
-                let host = registeredServices[service].hosts[0];
-                let pathname = registeredServices[service].paths[0] + `${channel}`;
-
-                let channelUrl = protocol + "//" + host + pathname;
-
-                let channelObj = config.addChannelLink(channelUrl);
-            });
+        _.forEach(body, channelUrl => {
+            config.addChannelLink(channelUrl);
         });
     });
 }
@@ -131,9 +114,9 @@ function autoTwitchImport() {
 }
 
 function importLoop() {
-    //autoKlpqImport();
+    autoKlpqImport();
     autoTwitchImport();
 
-    //setInterval(autoKlpqImport, 10 * 60 * 1000);
+    setInterval(autoKlpqImport, 10 * 60 * 1000);
     setInterval(autoTwitchImport, 10 * 60 * 1000);
 }
