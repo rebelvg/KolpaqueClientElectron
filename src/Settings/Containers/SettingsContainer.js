@@ -9,6 +9,7 @@ import {
     importChannel,
     getSettings
 } from 'src/redux/settings'
+import {updateData} from 'src/redux/channel'
 import Settings from 'src/Settings/Components/Settings'
 
 const {remote, ipcRenderer} = window.require('electron');
@@ -18,7 +19,7 @@ const {remote, ipcRenderer} = window.require('electron');
     state => ({
         settings: getSettings(state)
     }),
-    {changeSettings, changeSettingsResponse, importChannel}
+    {changeSettings, changeSettingsResponse, importChannel, updateData}
 )
 export default class SettingsContainer extends Component {
     constructor() {
@@ -32,6 +33,7 @@ export default class SettingsContainer extends Component {
 
     componentWillMount() {
         ipcRenderer.on('config_changeSetting', (e, settingName, settingValue) => {
+            this.props.updateData()
             this.props.changeSettingsResponse(settingName, settingValue)
         })
     }

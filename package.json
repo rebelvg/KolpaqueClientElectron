@@ -50,7 +50,6 @@
     "react-router-dom": "^4.2.2",
     "react-select": "^1.0.0-rc.10",
     "react-tabs": "^2.0.0",
-    "react-tiny-virtual-list": "^2.1.4",
     "react-toggle-button": "^2.2.0",
     "react-transition-group": "^2.2.1",
     "readline-sync": "^1.4.7",
@@ -72,6 +71,7 @@
     "lodash": "^4.17.4",
     "md5": "^2.2.1",
     "moment": "^2.18.1",
+    "react-list": "^0.8.8",
     "request": "^2.83.0"
   }
 }

@@ -32,7 +32,7 @@ class EventListener extends Component {
         this.state = {
             queue: []
         }
-        this.empty = debounce(this.emptyQueue, 0);
+        this.empty = debounce(this.emptyQueue, 1000);
     }
 
     buildQueue = ({id, name, value}) => {

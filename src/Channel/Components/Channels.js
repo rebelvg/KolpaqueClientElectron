@@ -5,21 +5,26 @@ import Channel from 'src/Channel/Components/Channel'
 import {
     getChannelsList,
     getUpdate,
+    updateData
 } from 'src/redux/channel'
+import {getSortType} from 'src/redux/settings'
 import {
     changeSetting,
     openChannelMenu
 } from 'src/Channel/Helpers/IPCHelpers'
 import {getShowTooltips} from 'src/redux/settings'
-import VirtualList from 'react-tiny-virtual-list'
+import ReactList from 'react-list';
 
 @withTheme
 @connect(
     state => ({
-        channels: getChannelsList(state),
         update: getUpdate(state),
+        sortType: getSortType(state),
+        channels: getChannelsList(state),
         showTooltips: getShowTooltips(state),
-    }),
+    }), {
+        updateData
+    }
 )
 class Channels extends PureComponent {
     constructor() {
@@ -70,18 +75,17 @@ class Channels extends PureComponent {
     render() {
         const {channels, update, showTooltips} = this.props;
         const {edit, selected} = this.state;
+
         return (
             <ChannelWrap isUpdate={update}>
-                <VirtualList
-                    width='100%'
-                    height={600}
-                    overscanCount={20}
-                    itemCount={channels.length}
-                    itemSize={25} // Also supports variable heights (array or function getter)
-                    renderItem={({index, style}) =>
-                        <div key={channels[index].id} style={style}>
+                <ReactList
+                    type={'uniform'}
+                    length={channels.length}
+                    useStaticSize={true}
+                    threshold={600}
+                    itemRenderer={(index, key) =>
+                        <div key={channels[index].id}>
                             <Channel
-                                style={style}
                                 handleAction={this.handleAction}
                                 showTooltips={!!showTooltips}
                                 editMode={
@@ -105,10 +109,10 @@ class Channels extends PureComponent {
 export default Channels
 
 const ChannelWrap = styled.div`
-    display: flex;
+
     color: black;
+    overflow: auto;
     height: 100%;
-    flex-direction: column;
     padding-bottom: ${({isUpdate}) => (isUpdate ? 25 : 0)}px;
     
 `;
