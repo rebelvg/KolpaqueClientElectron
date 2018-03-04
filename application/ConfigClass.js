@@ -245,7 +245,7 @@ class Config extends EventEmitter {
     find(query = {}) {
         const sort = {
             type: this.settings.sortType,
-            isReversed: this.settings.isReversed
+            isReversed: this.settings.sortReverse
         };
 
         let filteredChannels = this.channels;
