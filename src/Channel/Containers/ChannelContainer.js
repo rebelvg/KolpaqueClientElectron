@@ -12,9 +12,9 @@ import Tabs from 'src/Channel/Components/Tabs';
 import Loading from 'src/Shared/Loading'
 import Channels from 'src/Channel/Components/Channels'
 import {
-    setFilter,
     getLoaded,
     getFilter,
+    updateData
 } from 'src/redux/channel'
 
 
@@ -25,7 +25,7 @@ import {
         filter: getFilter(state),
     }),
     {
-        setFilter,
+        updateData,
     }
 )
 class ChannelContainer extends Component {
@@ -42,7 +42,8 @@ class ChannelContainer extends Component {
 
     setFilter = value => {
         const filter = value.filter ? value.filter : '';
-        this.props.setFilter(filter)
+        console.log(value);
+        this.props.updateData(filter, null)
     }
 
 

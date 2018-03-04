@@ -1,14 +1,15 @@
-import {createActions, handleActions} from 'redux-actions';
+import {createActions, handleActions, createAction} from 'redux-actions';
 import {createSelector} from 'reselect';
 import {getSortType, getReversed} from './settings'
 import channelMiddleWare from 'src/Channel/Helpers/ChannelMiddleware'
 import {FilterChannels} from 'src/Channel/Helpers/FilterChannels'
-
+import {getTab} from 'src/Channel/constants'
 const {ipcRenderer} = window.require('electron');
 
 const defaultState = {
     channels: [],
     update: false,
+    count: {online: 0, offline: 0},
     filter: '',
     loading: true,
     loaded: false,
@@ -16,131 +17,96 @@ const defaultState = {
 };
 
 //ACTIONS
+export const updateData = (filter = null, tab = null) => {
+    return (dispatch, getState) => {
+        if (!filter) {
+            filter = getState().channel.filter;
+        } else {
+            dispatch(setFilter(filter))
+        }
+
+        if (!tab) {
+            tab = getState().channel.activeTab;
+        } else {
+            dispatch(changeTab(tab))
+        }
+
+        const activeTab = getTab(tab);
+
+        const query = {filter, [activeTab.filter]: activeTab.filterValue}
+        console.log(query);
+        const data = ipcRenderer.sendSync('config_find', query);
+        console.log(data);
+        dispatch(updateView(data));
+    }
+}
 
 export const {
-    initClient,
-    getChannels,
-    addChannel,
-    addChannelResponse,
-    deleteChannel,
-    sendInfo,
-    changeSetting,
+    initStart,
+    initEnd,
+    updateView,
+    changeTab,
     getInfo,
-    setFilter,
-    setSort,
-    changeTab
+    sendInfo,
+    setFilter
 } = createActions({
-    INIT_CLIENT: () => ({}),
-    GET_CHANNELS: () => {
-        const channels = ipcRenderer.sendSync('getChannels');
+    INIT_START: () => {
         ipcRenderer.send('client_ready');
-        return {channels};
+        return {}
     },
+    INIT_END: () => ({}),
 
-    ADD_CHANNEL: channel => {
-        ipcRenderer.send('channel_add', channel);
-        return {channel};
-    },
+    UPDATE_VIEW: (data) => ({...data}),
 
-    ADD_CHANNEL_RESPONSE: channel => ({channel}),
+    CHANGE_TAB: tab => ({tab}),
 
-    DELETE_CHANNEL: id => ({id}),
+    GET_INFO: info => ({info}),
 
     SEND_INFO: info => {
         ipcRenderer.send('client_getInfo', info);
         return {info};
     },
 
-    CHANGE_SETTING: settings => ({settings}),
-    GET_INFO: info => ({info}),
     SET_FILTER: filter => ({filter}),
-    SET_SORT: sort => ({sort}),
-    CHANGE_TAB: tab => ({tab})
+
 });
 
 //REDUCER
 
 export const reducer = handleActions({
-    INIT_CLIENT: (state, action) => ({
+    INIT_START: (state, action) => ({
         ...state,
-        loaded: true
     }),
-    GET_CHANNELS: (state, action) => ({
+    INIT_END: (state, action) => ({
         ...state,
-        channels: action.payload.channels
-    }),
-
-    ADD_CHANNEL: (state, action) => ({...state}),
-
-    ADD_CHANNEL_RESPONSE: (state, action) => ({
-        ...state,
-        channels: [...state.channels, action.payload.channel]
+        loaded: true,
     }),
 
-    DELETE_CHANNEL: (state, action) => ({
+    UPDATE_VIEW: (state, action) => ({
         ...state,
-        channels: state.channels.filter(
-            channel => channel.id !== action.payload.id
-        )
+        ...action.payload
     }),
 
-    SEND_INFO: (state, action) => ({...state}),
-
-    CHANGE_SETTING: (state, {payload: {settings}}) => ({
-        ...state,
-        channels: state.channels.map(channel => {
-            return settings[channel.id]
-                ? {
-                    ...channel,
-                    ...settings[channel.id]
-                }
-                : channel
-        })
-    }),
+    CHANGE_TAB: (state, action) =>
+        ({...state, activeTab: action.payload.tab}),
 
     GET_INFO: (state, action) => ({...state, update: action.payload.info}),
 
+    SEND_INFO: (state, action) => ({...state}),
+
     SET_FILTER: (state, action) => {
         return ({...state, filter: action.payload.filter})
-    },
-
-    SET_SORT: (state, action) => {
-        return {...state, sort: action.payload.sort}
-    },
-
-    CHANGE_TAB: (state, action) =>
-        ({...state, activeTab: action.payload.tab})
+    }
 
 }, defaultState);
 
 //SELECTORS
 
-const getChannelsList = (state) => state.channel.channels;
-
+export const getChannelsList = (state) => state.channel.channels;
+export const getCount = (state) => state.channel.count;
 export const getFilter = (state) => state.channel.filter;
 export const getActiveTab = (state) => state.channel.activeTab;
 export const getUpdate = (state) => state.channel.update;
 export const getLoading = (state) => state.channel.loading;
 export const getLoaded = (state) => state.channel.loaded;
 
-export const getOnlineCount = createSelector(
-    [getChannelsList, getFilter],
-    (channels, filter) => FilterChannels(channels, filter).filter(channel => channel.isLive).length
-)
-
-export const getOfflineCount = createSelector(
-    [getChannelsList, getFilter],
-    (channels, filter) => FilterChannels(channels, filter).filter(channel => !channel.isLive).length
-)
-
-export const getFullCount = createSelector(
-    [getOnlineCount, getOfflineCount],
-    (online, offline) => ({online, offline})
-)
-
-export const getCompleteChannels = createSelector(
-    [getChannelsList, getSortType, getReversed, getFilter, getActiveTab],
-    (channels, sort, isReversed, filter, tab) => {
-        return channelMiddleWare({channels, sort, isReversed, filter, tab})
-    }
-)

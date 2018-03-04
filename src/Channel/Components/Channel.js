@@ -35,7 +35,6 @@ class Channel extends PureComponent {
 
         return (
             <ChannelWrapper
-                visible={channel.visible}
                 onMouseDown={({target: {name}, button}) =>
                     this.selectChannel(name, button, channel)}
                 selected={selected}
@@ -86,7 +85,7 @@ class Channel extends PureComponent {
 }
 
 const ChannelWrapper = styled.div`
-    display: ${({visible}) => (visible ? 'flex' : 'none')};
+    display: flex;
     user-select: none;
     cursor: pointer;
     align-items: center;

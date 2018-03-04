@@ -4,25 +4,25 @@ import {connect} from 'react-redux';
 import {TABS} from 'src/Channel/constants';
 
 import {
-    getFullCount,
-    changeTab,
+    getCount,
     getActiveTab,
+    updateData
 } from 'src/redux/channel'
 
 
 @connect(
     state => ({
         active: getActiveTab(state),
-        count: getFullCount(state),
+        count: getCount(state),
     }),
-    {changeTab}
+    {updateData}
 )
 class Tabs extends Component {
     constructor() {
         super();
     }
 
-    onChange = (value) => this.props.changeTab(value)
+    onChange = (value) => this.props.updateData(null, value)
 
     render() {
         const {active, count} = this.props;

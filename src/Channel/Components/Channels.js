@@ -3,7 +3,7 @@ import styled, {withTheme} from 'styled-components'
 import {connect} from 'react-redux';
 import Channel from 'src/Channel/Components/Channel';
 import {
-    getCompleteChannels,
+    getChannelsList,
     getUpdate,
 } from 'src/redux/channel'
 import {
@@ -16,12 +16,11 @@ import {getShowTooltips} from 'src/redux/settings'
 @withTheme
 @connect(
     state => ({
-        channels: getCompleteChannels(state),
+        channels: getChannelsList(state),
         update: getUpdate(state),
         showTooltips: getShowTooltips(state),
     }),
 )
-
 class Channels extends Component {
     constructor() {
         super()

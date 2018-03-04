@@ -4,13 +4,11 @@ import styled from 'styled-components';
 import {debounce} from 'lodash'
 
 import {
-    getChannels,
-    changeSetting,
-    deleteChannel,
-    addChannelResponse,
+    initStart,
+    initEnd,
+    updateData,
     getInfo,
     getLoaded,
-    initClient
 } from 'src/redux/channel'
 import {initSettings} from 'src/redux/settings'
 
@@ -22,12 +20,10 @@ const {ipcRenderer} = window.require('electron');
     }),
     {
         initSettings,
-        getChannels,
-        changeSetting,
-        deleteChannel,
-        addChannelResponse,
         getInfo,
-        initClient
+        initStart,
+        initEnd,
+        updateData,
     }
 )
 class EventListener extends Component {
@@ -36,7 +32,7 @@ class EventListener extends Component {
         this.state = {
             queue: []
         }
-        this.empty = debounce(this.emptyQueue, 300);
+        this.empty = debounce(this.emptyQueue, 1000);
     }
 
     buildQueue = ({id, name, value}) => {
@@ -52,31 +48,34 @@ class EventListener extends Component {
 
     emptyQueue = () => {
         const {queue} = this.state
-        const {initClient, changeSetting, loaded} = this.props;
+        const {initEnd, updateData, loaded} = this.props;
         this.setState({
             queue: []
         }, () => {
-            changeSetting(queue);
+            updateData()
             if (!loaded) {
-                initClient()
+                initEnd()
             }
         })
     }
 
     componentWillMount() {
-        const {initSettings, getChannels, addChannelResponse, getInfo, deleteChannel, loaded} = this.props;
+        const {initSettings, updateData, loaded, initStart} = this.props;
 
         if (!loaded) {
-            getChannels();
+            initStart();
             initSettings();
             this.empty();
             ipcRenderer.on('channel_changeSetting',
                 (event, id, name, value) => this.buildQueue({id, name, value}));
-            ipcRenderer.on('channel_add',
-                (event, channel) => addChannelResponse(channel));
-            ipcRenderer.on('client_showInfo', (event, info) => getInfo(info));
-            ipcRenderer.on('channel_remove', (event, id) => {
-                deleteChannel(id);
+            ipcRenderer.on('channel_addSync',
+                (event, channel) =>
+                    updateData()
+            );
+            ipcRenderer.on('client_showInfo', (event, info) =>
+                getInfo(info));
+            ipcRenderer.on('channel_removeSync', (event, id) => {
+                updateData();
             });
         }
     }
