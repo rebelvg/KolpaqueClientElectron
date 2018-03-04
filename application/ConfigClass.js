@@ -254,7 +254,7 @@ class Config extends EventEmitter {
             filteredChannels = filterChannels(filteredChannels, query.filter);
         }
 
-        filteredChannels = sortChannels(this.channels, sort.type, sort.isReversed);
+        filteredChannels = sortChannels(filteredChannels, sort.type, sort.isReversed);
 
         filteredChannels = _.map(filteredChannels, channel => {
             return {
