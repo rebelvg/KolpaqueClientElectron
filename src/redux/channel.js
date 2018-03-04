@@ -17,27 +17,21 @@ const defaultState = {
 };
 
 //ACTIONS
-export const updateData = (filter = null, tab = null) => {
+export const updateData = (filter = null, activeTab = null) => {
     return (dispatch, getState) => {
-        if (!filter) {
+        if (filter === null) {
             filter = getState().channel.filter;
-        } else {
-            dispatch(setFilter(filter))
         }
 
-        if (!tab) {
-            tab = getState().channel.activeTab;
-        } else {
-            dispatch(changeTab(tab))
+        if (!activeTab) {
+            activeTab = getState().channel.activeTab;
         }
 
-        const activeTab = getTab(tab);
+        const tab = getTab(activeTab);
 
-        const query = {filter, [activeTab.filter]: activeTab.filterValue}
-        console.log(query);
+        const query = {filter, [tab.filter]: tab.filterValue}
         const data = ipcRenderer.sendSync('config_find', query);
-        console.log(data);
-        dispatch(updateView(data));
+        dispatch(updateView({...data, filter, activeTab}));
     }
 }
 

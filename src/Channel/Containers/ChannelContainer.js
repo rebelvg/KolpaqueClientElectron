@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import Icon from 'react-icons-kit';
 import {cog} from 'react-icons-kit/fa/cog';
@@ -28,7 +28,7 @@ import {
         updateData,
     }
 )
-class ChannelContainer extends Component {
+class ChannelContainer extends PureComponent {
     constructor() {
         super();
 
