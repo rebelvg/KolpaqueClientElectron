@@ -85,7 +85,7 @@ const sortChannels = (channels, sortType, isReversed = false) => {
         sortedChannels.reverse();
     }
 
-    sortedChannels = _.sortBy(sortedChannels, [(channel) => !channel.isPinned]);
+    sortedChannels = _.sortBy(sortedChannels, [channel => !channel.isPinned]);
 
     return sortedChannels;
 };
@@ -134,7 +134,7 @@ class Config extends EventEmitter {
             minimizeAtStart: false,
             launchOnBalloonClick: true,
             size: [400, 800],
-            youtubeApiKey: null,
+            youtubeApiKey: '',
             twitchImport: [],
             nightMode: false,
             sortType: 'lastAdded',
@@ -256,29 +256,11 @@ class Config extends EventEmitter {
 
         filteredChannels = sortChannels(filteredChannels, sort.type, sort.isReversed);
 
-        filteredChannels = _.map(filteredChannels, channel => {
-            return {
-                id: channel.id,
-                service: channel.service,
-                name: channel.name,
-                link: channel.link,
-                protocol: channel.protocol,
-                isLive: channel.isLive,
-                onAutoRestart: channel.onAutoRestart,
-                lastUpdated: channel.lastUpdated,
-
-                visibleName: channel.visibleName,
-                isPinned: channel.isPinned,
-                autoStart: channel.autoStart,
-                autoRestart: channel.autoRestart
-            };
-        });
-
         return {
-            channels: _.filter(filteredChannels, {'isLive': query.isLive}),
+            channels: _.filter(filteredChannels, {isLive: query.isLive}),
             count: {
-                offline: _.filter(filteredChannels, {'isLive': false}).length,
-                online: _.filter(filteredChannels, {'isLive': true}).length
+                offline: _.filter(filteredChannels, {isLive: false}).length,
+                online: _.filter(filteredChannels, {isLive: true}).length
             }
         };
     }
