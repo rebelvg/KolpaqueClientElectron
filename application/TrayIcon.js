@@ -10,13 +10,13 @@ function setChannelEvents(channelObj) {
             rebuildIconMenu();
         }
     });
-
-    config.on('setting_changed', (settingName, settingValue) => {
-        if (['sortType', 'sortReverse'].includes(settingName)) {
-            rebuildIconMenu();
-        }
-    });
 }
+
+config.on('setting_changed', (settingName, settingValue) => {
+    if (['sortType', 'sortReverse'].includes(settingName)) {
+        rebuildIconMenu();
+    }
+});
 
 _.forEach(config.channels, (channelObj) => {
     setChannelEvents(channelObj);

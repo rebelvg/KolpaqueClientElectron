@@ -13,6 +13,7 @@ const config = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
 const {twitchApiKey} = require('./Globals');
+const {getInfoAsync} = require('./ChannelInfo');
 
 let onlineChannels = {};
 
@@ -36,7 +37,7 @@ config.on('channel_removed', (channelObj) => {
     delete onlineChannels[channelObj.link];
 });
 
-function isOnline(channelObj, printBalloon) {
+async function isOnline(channelObj, printBalloon) {
     let channelLink = channelObj.link;
 
     if (onlineChannels.hasOwnProperty(channelLink)) {
@@ -45,6 +46,8 @@ function isOnline(channelObj, printBalloon) {
     }
 
     console.log(channelLink + " went online.");
+
+    await getInfoAsync(channelObj);
 
     channelObj.changeSetting('isLive', true);
 
@@ -116,7 +119,7 @@ function getKlpqMainStats(channelObj, printBalloon) {
 function getTwitchStats(channelObj, printBalloon) {
     let url = `https://api.twitch.tv/kraken/streams?channel=${channelObj.name}`;
 
-    request({url: url, json: true, headers: {'Client-ID': twitchApiKey}}, function (err, res, body) {
+    request({url: url, json: true, headers: {'Client-ID': twitchApiKey}}, async function (err, res, body) {
         if (err) return;
         if (res.statusCode !== 200) return;
 
