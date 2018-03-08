@@ -1,6 +1,5 @@
 const {app, ipcMain, dialog, shell} = require('electron');
 const request = require('request');
-const moment = require('moment');
 const _ = require('lodash');
 const util = require('util');
 const {URL, URLSearchParams} = require('url');

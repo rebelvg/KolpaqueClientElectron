@@ -4,7 +4,6 @@
 
 const {app, ipcMain, dialog, shell} = require('electron');
 const request = require('request');
-const moment = require('moment');
 const _ = require('lodash');
 const util = require('util');
 const {URL, URLSearchParams} = require('url');
@@ -45,11 +44,11 @@ async function isOnline(channelObj, printBalloon) {
         return;
     }
 
-    console.log(channelLink + " went online.");
-
     await getInfoAsync(channelObj);
 
-    channelObj.changeSetting('lastUpdated', moment().unix());
+    console.log(channelLink + " went online.");
+
+    channelObj.changeSetting('lastUpdated', Date.now());
 
     onlineChannels[channelLink] = 0;
 
@@ -79,7 +78,7 @@ function isOffline(channelObj) {
 
     console.log(channelLink + " went offline.");
 
-    channelObj.changeSetting('lastUpdated', moment().unix());
+    channelObj.changeSetting('lastUpdated', Date.now());
 
     delete onlineChannels[channelLink];
 
