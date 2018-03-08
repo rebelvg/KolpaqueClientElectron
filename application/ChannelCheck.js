@@ -49,8 +49,6 @@ async function isOnline(channelObj, printBalloon) {
 
     await getInfoAsync(channelObj);
 
-    channelObj.changeSetting('isLive', true);
-
     channelObj.changeSetting('lastUpdated', moment().unix());
 
     onlineChannels[channelLink] = 0;
@@ -64,6 +62,8 @@ async function isOnline(channelObj, printBalloon) {
             ChannelPlay.launchPlayerObj(channelObj);
         }
     }
+
+    channelObj.changeSetting('isLive', true);
 }
 
 function isOffline(channelObj) {
@@ -79,11 +79,11 @@ function isOffline(channelObj) {
 
     console.log(channelLink + " went offline.");
 
-    channelObj.changeSetting('isLive', false);
-
     channelObj.changeSetting('lastUpdated', moment().unix());
 
     delete onlineChannels[channelLink];
+
+    channelObj.changeSetting('isLive', false);
 }
 
 function getKlpqStatsBase(url, channelObj, printBalloon) {

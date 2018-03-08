@@ -65,7 +65,7 @@ const sortChannels = (channels, sortType, isReversed = false) => {
             break;
         }
         case 'lastUpdated': {
-            sortedChannels = _.sortBy(channels, ['lastUpdated']);
+            sortedChannels = _.sortBy(channels, ['lastUpdated', 'visibleName']);
             break;
         }
         case 'service_visibleName': {
