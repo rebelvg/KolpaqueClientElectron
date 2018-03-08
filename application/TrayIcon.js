@@ -12,12 +12,6 @@ function setChannelEvents(channelObj) {
     });
 }
 
-config.on('setting_changed', (settingName, settingValue) => {
-    if (['sortType', 'sortReverse'].includes(settingName)) {
-        rebuildIconMenu();
-    }
-});
-
 _.forEach(config.channels, (channelObj) => {
     setChannelEvents(channelObj);
 });
@@ -27,7 +21,7 @@ config.on('setting_changed', function (settingName, settingValue) {
         app.contextMenuTemplate[4].checked = settingValue;
     }
 
-    if (['showNotifications'].includes(settingName)) {
+    if (['sortType', 'sortReverse', 'showNotifications'].includes(settingName)) {
         rebuildIconMenu();
     }
 });
