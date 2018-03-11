@@ -46,14 +46,13 @@ function sendInfo(update) {
 function clientVersionCheck() {
     if (infoArray.includes('client')) return clearInterval(updates['client'].interval);
 
-    let url = "https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases";
+    let url = "https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases/latest";
 
     request.get({url: url, json: true, headers: {'user-agent': "KolpaqueClientElectron"}}, function (err, res, body) {
         if (err) return;
         if (res.statusCode !== 200) return;
-        if (!body[0] || !body[0].tag_name) return;
 
-        let newVersion = body[0].tag_name;
+        let newVersion = body.tag_name;
 
         if (newVersion !== clientVersion) sendInfo('client');
     });

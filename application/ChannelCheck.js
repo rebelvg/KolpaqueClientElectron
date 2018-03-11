@@ -4,7 +4,6 @@
 
 const {app, ipcMain, dialog, shell} = require('electron');
 const request = require('request');
-const moment = require('moment');
 const _ = require('lodash');
 const util = require('util');
 const {URL, URLSearchParams} = require('url');
@@ -13,6 +12,7 @@ const config = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
 const {twitchApiKey} = require('./Globals');
+const {getInfoAsync} = require('./ChannelInfo');
 
 let onlineChannels = {};
 
@@ -36,7 +36,7 @@ config.on('channel_removed', (channelObj) => {
     delete onlineChannels[channelObj.link];
 });
 
-function isOnline(channelObj, printBalloon) {
+async function isOnline(channelObj, printBalloon) {
     let channelLink = channelObj.link;
 
     if (onlineChannels.hasOwnProperty(channelLink)) {
@@ -44,11 +44,11 @@ function isOnline(channelObj, printBalloon) {
         return;
     }
 
+    await getInfoAsync(channelObj);
+
     console.log(channelLink + " went online.");
 
-    channelObj.changeSetting('isLive', true);
-
-    channelObj.changeSetting('lastUpdated', moment().unix());
+    channelObj.changeSetting('lastUpdated', Date.now());
 
     onlineChannels[channelLink] = 0;
 
@@ -61,6 +61,8 @@ function isOnline(channelObj, printBalloon) {
             ChannelPlay.launchPlayerObj(channelObj);
         }
     }
+
+    channelObj.changeSetting('isLive', true);
 }
 
 function isOffline(channelObj) {
@@ -76,11 +78,11 @@ function isOffline(channelObj) {
 
     console.log(channelLink + " went offline.");
 
-    channelObj.changeSetting('isLive', false);
-
-    channelObj.changeSetting('lastUpdated', moment().unix());
+    channelObj.changeSetting('lastUpdated', Date.now());
 
     delete onlineChannels[channelLink];
+
+    channelObj.changeSetting('isLive', false);
 }
 
 function getKlpqStatsBase(url, channelObj, printBalloon) {
@@ -116,7 +118,7 @@ function getKlpqMainStats(channelObj, printBalloon) {
 function getTwitchStats(channelObj, printBalloon) {
     let url = `https://api.twitch.tv/kraken/streams?channel=${channelObj.name}`;
 
-    request({url: url, json: true, headers: {'Client-ID': twitchApiKey}}, function (err, res, body) {
+    request({url: url, json: true, headers: {'Client-ID': twitchApiKey}}, async function (err, res, body) {
         if (err) return;
         if (res.statusCode !== 200) return;
 

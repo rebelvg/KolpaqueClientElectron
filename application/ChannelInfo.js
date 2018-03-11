@@ -1,47 +1,44 @@
 const {app, ipcMain, dialog, shell, nativeImage} = require('electron');
 const _ = require('lodash');
 const request = require('request');
+const axios = require('axios');
 
 const config = require('./SettingsFile');
 const {twitchApiKey} = require('./Globals');
 
-ipcMain.once('client_ready', () => {
-    checkLoop();
-});
-
-config.on('channel_added', (channelObj) => {
-    getInfo(channelObj);
-});
-
 const services = {
-    'twitch': getTwitchInfo
+    'twitch': getTwitchInfoAsync
 };
 
-function getTwitchInfo(channelObj) {
+async function getTwitchInfoAsync(channelObj) {
+    if (channelObj._icon) return;
+
     let url = `https://api.twitch.tv/kraken/channels/${channelObj.name}`;
 
-    request.get({url: url, json: true, headers: {'Client-ID': twitchApiKey}}, function (err, res, body) {
-        if (err) return;
-        if (res.statusCode !== 200) return;
-        if (!body.logo) return;
-
-        request.get(body.logo, {encoding: null}, function (err, res, buffer) {
-            if (err) return;
-            if (res.statusCode !== 200) return;
-
-            channelObj.changeSetting('_icon', buffer, false);
+    try {
+        const res = await axios.get(url, {
+            headers: {'Client-ID': twitchApiKey}
         });
-    });
-}
 
-function getInfo(channelObj) {
-    if (services.hasOwnProperty(channelObj.service)) {
-        services[channelObj.service](channelObj);
+        if (res.status !== 200) return;
+        if (!res.data.logo) return;
+
+        const logoRes = await axios.get(res.data.logo, {
+            responseType: 'arraybuffer'
+        });
+
+        if (logoRes.status !== 200) return;
+
+        channelObj.changeSetting('_icon', logoRes.data, false);
+    }
+    catch (e) {
     }
 }
 
-function checkLoop() {
-    _.forEach(config.channels, (channelObj) => {
-        getInfo(channelObj);
-    });
+async function getInfoAsync(channelObj) {
+    if (services.hasOwnProperty(channelObj.service)) {
+        await services[channelObj.service](channelObj);
+    }
 }
+
+module.exports.getInfoAsync = getInfoAsync;

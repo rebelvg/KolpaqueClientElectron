@@ -6,7 +6,7 @@ const ChannelPlay = require('./ChannelPlay');
 
 function setChannelEvents(channelObj) {
     channelObj.on('setting_changed', (settingName, settingValue) => {
-        if (['isLive', 'visibleName', '_icon'].includes(settingName)) {
+        if (['isLive', 'visibleName', '_icon', 'isPinned'].includes(settingName)) {
             rebuildIconMenu();
         }
     });
@@ -21,7 +21,7 @@ config.on('setting_changed', function (settingName, settingValue) {
         app.contextMenuTemplate[4].checked = settingValue;
     }
 
-    if (['showNotifications'].includes(settingName)) {
+    if (['sortType', 'sortReverse', 'showNotifications'].includes(settingName)) {
         rebuildIconMenu();
     }
 });
@@ -35,7 +35,9 @@ config.on('channel_removed', (channelObj) => {
 });
 
 function rebuildIconMenu() {
-    let onlineChannels = config.channels.filter(channelObj => channelObj.isLive);
+    let onlineChannels = config.find({
+        isLive: true
+    }).channels;
 
     _.forEach(onlineChannels, channelObj => {
         if (!channelObj._icon16 && channelObj._icon) channelObj._icon16 = nativeImage.createFromBuffer(channelObj._icon).resize({height: 16});
