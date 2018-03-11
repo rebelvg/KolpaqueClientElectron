@@ -60,7 +60,7 @@ class EventListener extends Component {
     }
 
     componentWillMount() {
-        const {initSettings, updateData, loaded, initStart} = this.props;
+        const {initSettings, updateData, loaded, getInfo, initStart} = this.props;
 
         if (!loaded) {
             initStart();
