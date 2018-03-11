@@ -29,7 +29,7 @@ async function getTwitchInfoAsync(channelObj) {
 
         if (logoRes.status !== 200) return;
 
-        channelObj.changeSetting('_icon', logoRes.data, false);
+        channelObj._icon = logoRes.data;
     }
     catch (e) {
     }

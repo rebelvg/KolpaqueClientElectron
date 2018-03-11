@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
-import {HashRouter} from 'react-router-dom'
-import {ThemeProvider} from 'styled-components'
+import {HashRouter} from 'react-router-dom';
+import {ThemeProvider} from 'styled-components';
 import styled from 'styled-components';
 import {connect} from 'react-redux';
 
 import Routes from 'src/App/Components/Routes';
-import EventListener from 'src/App/Components/EventListener'
-import {themes} from 'src/Themes'
-import {getTheme} from 'src/redux/settings'
-
+import EventListener from 'src/App/Components/EventListener';
+import {themes} from 'src/Themes';
+import {getTheme} from 'src/redux/settings';
 
 @connect(
     state => ({
@@ -21,8 +20,8 @@ export default class AppContainer extends Component {
     }
 
     render() {
-        const {nightMode} = this.props
-        const theme = nightMode ? themes['nightTheme'] : themes['defaultTheme']
+        const {nightMode} = this.props;
+        const theme = nightMode ? themes['nightTheme'] : themes['defaultTheme'];
         return (
             <Container>
                 <ThemeProvider theme={theme}>
@@ -40,4 +39,4 @@ export default class AppContainer extends Component {
 
 const Container = styled.div`
 	height: 100%
-`
+`;

@@ -1,18 +1,19 @@
 /**
  * Created by JackP on 10/8/2017.
  */
-import React from 'react'
-import {Field} from 'react-final-form'
-import Toggle from 'react-toggle-button'
-import styled from 'styled-components'
+
+import React from 'react';
+import {Field} from 'react-final-form';
+import Toggle from 'react-toggle-button';
+import styled from 'styled-components';
 import Select from 'react-select';
 
 const sortTypes = [
     {value: 'lastAdded', label: 'Last Added'},
     {value: 'lastUpdated', label: 'Last Updated'},
     {value: 'service_visibleName', label: 'By Service and Name'},
-    {value: 'visibleName', label: 'By Name'},
-]
+    {value: 'visibleName', label: 'By Name'}
+];
 
 const ToggleAdapter = ({input: {onChange, name, value}, toggle, label, ...rest}) => (
     <Toggle
@@ -25,7 +26,7 @@ const ToggleAdapter = ({input: {onChange, name, value}, toggle, label, ...rest})
         activeLabel={''}
         {...rest}
     />
-)
+);
 
 const TextField = ({input, changeSetting, ...rest}) => (
     <InputField
@@ -33,25 +34,25 @@ const TextField = ({input, changeSetting, ...rest}) => (
         type="password"
         onBlur={(e) => {
             const value = e.target.value;
-            const name = input.name
+            const name = input.name;
             input.onBlur(value);
             changeSetting(value, name, true)
         }}
     />
-)
+);
 
 const ReactSelectAdapter = ({input, select, ...rest}) => (
     <Select
         {...input}
         {...rest}
         onChange={(selected) => {
-            input.onChange(selected.value)
+            input.onChange(selected.value);
             select(selected.value, input.name)
         }}
         clearable={false}
         searchable={false}
     />
-)
+);
 
 const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting, values}) => (
     <Form onSubmit={handleSubmit}>
@@ -148,42 +149,42 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
             </InputWrapper>
         </FieldWrapper>
     </Form>
-)
+);
 
 const Form = styled.form`
     display: flex;
     flex-direction: column;
     height: 100%;
-`
+`;
 
 const SelectWrapper = styled.div`
     margin: 2px 20px;
-`
+`;
 
 const SelectField = styled(Field)`
     margin-bottom: 20px;
-`
+`;
 
 const FieldWrapper = styled.div`
     display: flex;
     flex-direction: ${props => !!props.full ? 'column' : 'row' };
     justify-content: space-between;
     margin: 2px 20px;
-`
+`;
 
 const Label = styled.label`
     font-weight: bold;
     font-size: 15px;
     color: ${props => props.theme.client.color};
     padding-bottom:10px;
-`
+`;
 
 const InputWrapper = styled.div`
    
-`
+`;
 
 const InputField = styled.input`
     width: 100%;
-`
+`;
 
-export default SettingsForm
+export default SettingsForm;

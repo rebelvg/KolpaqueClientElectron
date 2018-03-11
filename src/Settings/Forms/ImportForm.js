@@ -1,18 +1,18 @@
 /**
  * Created by JackP on 10/8/2017.
  */
-import React, {Component} from 'react'
+
+import React, {Component} from 'react';
 import Icon from 'react-icons-kit';
 import {close} from 'react-icons-kit/fa/close';
-import {Field} from 'react-final-form'
-
-import styled, {withTheme} from 'styled-components'
+import {Field} from 'react-final-form';
+import styled, {withTheme} from 'styled-components';
 
 const TextField = ({input, ...rest}) => (
     <MemberInput
         {...input}
     />
-)
+);
 
 @withTheme
 export default class ImportForm extends Component {
@@ -23,14 +23,14 @@ export default class ImportForm extends Component {
     removeMember = (member) => {
         const {members, submit} = this.props;
         submit([...members.filter(m => m !== member)])
-    }
+    };
 
     addMember = () => {
         const {values, reset, importChannel} = this.props;
         const member = values.member;
         importChannel(member);
         reset()
-    }
+    };
 
     submit = (data) => {
         const {handleSubmit, values, reset, submit, members} = this.props;
@@ -40,10 +40,11 @@ export default class ImportForm extends Component {
         }
         handleSubmit(data);
         reset();
-    }
+    };
 
     render() {
-        const {members, theme} = this.props
+        const {members, theme} = this.props;
+
         return (
             <Form onSubmit={this.submit}>
                 <Field
@@ -89,7 +90,7 @@ const MemberInput = styled.input`
     border:none;
     padding: 5px;
     outline: 1px solid ${props => props.theme.outline};
-`
+`;
 
 const AddBtn = styled.button`
     background-color: transparent;
@@ -99,17 +100,17 @@ const AddBtn = styled.button`
     cursor: pointer;
     width: 50%;
     font-size:14px;
-`
+`;
 
 const Form = styled.form`
     width: 100%;
     display: flex;
     flex-direction: column;
-`
+`;
 
 const BtnWrap = styled.div`
     display: flex;
-`
+`;
 
 const MemberTitle = styled.div`
     color: ${props => props.theme.client.color};
@@ -117,15 +118,15 @@ const MemberTitle = styled.div`
     font-weight: bold;
     text-align: center;
     padding: 5px 0px;
-`
+`;
 
 const MemberName = styled.div`
     flex-grow:1;
-`
+`;
 
 const MemberWrap = styled.div`
     margin-top: 10px;
-`
+`;
 
 const Member = styled.div`
     color: ${props => props.theme.client.color};
@@ -133,4 +134,4 @@ const Member = styled.div`
     align-items: center;
     border-top: 1px solid ${props => props.theme.outline};
     padding: 5px 20px;
-`
+`;

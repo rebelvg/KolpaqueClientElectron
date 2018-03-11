@@ -6,9 +6,13 @@ const ChannelPlay = require('./ChannelPlay');
 
 function setChannelEvents(channelObj) {
     channelObj.on('setting_changed', (settingName, settingValue) => {
-        if (['isLive', 'visibleName', '_icon', 'isPinned'].includes(settingName)) {
+        if (['visibleName', 'isPinned'].includes(settingName)) {
             rebuildIconMenu();
         }
+    });
+
+    channelObj.on('settings_changed', (settingName, settingValue) => {
+        rebuildIconMenu();
     });
 }
 
