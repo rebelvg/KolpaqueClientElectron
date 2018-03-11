@@ -109,10 +109,7 @@ class Channels extends PureComponent {
 export default Channels
 
 const ChannelWrap = styled.div`
-
     color: black;
     overflow: auto;
     height: 100%;
-    padding-bottom: ${({isUpdate}) => (isUpdate ? 25 : 0)}px;
-    
 `;

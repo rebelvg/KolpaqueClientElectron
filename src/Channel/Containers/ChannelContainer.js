@@ -15,6 +15,7 @@ import {
     getLoaded,
     getFilter,
     updateData,
+    getUpdate,
     getChannelsList
 } from 'src/redux/channel'
 
@@ -24,6 +25,7 @@ import {
     state => ({
         loaded: getLoaded(state),
         filter: getFilter(state),
+        update: getUpdate(state)
     }),
     {
         updateData,
@@ -79,7 +81,7 @@ class ChannelContainer extends PureComponent {
                         </SettingsIcon>
                     </TabWrapper>
 
-                    <TabPanel>
+                    <TabPanel update={update}>
                         <Channels/>
                     </TabPanel>
                     <Update/>
@@ -104,8 +106,8 @@ const Wrapper = styled.div`
 `;
 
 const TabPanel = styled.div`
-    overflow-y: auto;
     width: 100%;
+    padding-bottom: ${({update}) => (update ? 25 : 0)}px;
     display: block;
     max-height: 100vh;
     margin-right: 3px;
