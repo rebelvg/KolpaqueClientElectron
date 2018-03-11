@@ -17,18 +17,18 @@ export const {
         return {list}
     },
     IMPORT_CHANNEL: name => {
-        ipcRenderer.send('config_twitchImport', name)
+        ipcRenderer.send('config_twitchImport', name);
         return {}
     },
     CHANGE_SETTINGS: (name, value) => {
-        ipcRenderer.send('config_changeSetting', name, value)
+        ipcRenderer.send('config_changeSetting', name, value);
         return {};
     },
     CHANGE_SETTINGS_RESPONSE: (name, value) => ({
         name,
         value
     }),
-})
+});
 
 export const reducer = handleActions({
     INIT_SETTINGS: (state, action) => ({
@@ -48,14 +48,10 @@ export const reducer = handleActions({
             [action.payload.name]: action.payload.value
         }
     })
-}, defaultState)
+}, defaultState);
 
-export const getSortType = (state) => state.settings && state.settings.list.sortType
-
-export const getReversed = (state) => state.settings && state.settings.list.sortReverse
-
-export const getSettings = (state) => state.settings && state.settings.list
-
-export const getTheme = (state) => state.settings && state.settings.list && state.settings.list.nightMode
-
-export const getShowTooltips = (state) => state.settings && state.settings.list && state.settings.list.showTooltips
+export const getSortType = (state) => state.settings && state.settings.list.sortType;
+export const getReversed = (state) => state.settings && state.settings.list.sortReverse;
+export const getSettings = (state) => state.settings && state.settings.list;
+export const getTheme = (state) => state.settings && state.settings.list && state.settings.list.nightMode;
+export const getShowTooltips = (state) => state.settings && state.settings.list && state.settings.list.showTooltips;

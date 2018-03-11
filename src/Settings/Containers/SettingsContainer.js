@@ -23,7 +23,8 @@ const {remote, ipcRenderer} = window.require('electron');
 )
 export default class SettingsContainer extends Component {
     constructor() {
-        super()
+        super();
+
         const version = ipcRenderer.sendSync("client_getVersion");
 
         this.state = {
@@ -33,7 +34,7 @@ export default class SettingsContainer extends Component {
 
     componentWillMount() {
         ipcRenderer.on('config_changeSetting', (e, settingName, settingValue) => {
-            this.props.updateData()
+            this.props.updateData();
             this.props.changeSettingsResponse(settingName, settingValue)
         })
     }
@@ -54,6 +55,7 @@ export default class SettingsContainer extends Component {
         );
     }
 }
+
 const StyledFooter = styled.div`
     position: absolute;
     bottom: 0px;
@@ -62,20 +64,18 @@ const StyledFooter = styled.div`
     padding: 5px 0px;
     width:100%;
     justify-content: space-between;
-`
+`;
 const Container = styled.div`
    width: 100%;
    height: 100%;
-`
+`;
 const Version = styled.div`
     margin-right: 10px;
     color: ${props => props.theme.client.color}
-`
+`;
 const StyledLink = styled(Link)`
    margin-left: 10px;
    color: ${props => props.theme.client.color};
    text-decoration: none;
    cursor: pointer;
-`
-
-
+`;

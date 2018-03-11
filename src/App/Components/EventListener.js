@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
-import {debounce} from 'lodash'
+import {debounce} from 'lodash';
 
 import {
     initStart,
@@ -9,8 +9,8 @@ import {
     updateData,
     getInfo,
     getLoaded,
-} from 'src/redux/channel'
-import {initSettings} from 'src/redux/settings'
+} from 'src/redux/channel';
+import {initSettings} from 'src/redux/settings';
 
 const {ipcRenderer} = window.require('electron');
 
@@ -28,36 +28,28 @@ const {ipcRenderer} = window.require('electron');
 )
 class EventListener extends Component {
     constructor() {
-        super()
+        super();
+
         this.state = {
             queue: []
-        }
+        };
+
         this.empty = debounce(this.emptyQueue, 0);
     }
 
-    buildQueue = ({id, name, value}) => {
-        const {queue} = this.state
-        this.setState({
-            queue: queue[id]
-                ? {...queue, [id]: {...queue[id], [name]: value}}
-                : {...queue, [id]: {[name]: value}}
-        }, () => {
-            this.empty()
-        })
-    }
-
-    emptyQueue = () => {
-        const {queue} = this.state
+    emptyQueue = function () {
+        const {queue} = this.state;
         const {initEnd, updateData, loaded} = this.props;
+
         this.setState({
             queue: []
         }, () => {
-            updateData()
+            updateData();
             if (!loaded) {
-                initEnd()
+                initEnd();
             }
         })
-    }
+    };
 
     componentWillMount() {
         const {initSettings, updateData, loaded, getInfo, initStart} = this.props;
@@ -65,18 +57,13 @@ class EventListener extends Component {
         if (!loaded) {
             initStart();
             initSettings();
+
             this.empty();
-            ipcRenderer.on('channel_changeSetting',
-                (event, id, name, value) => this.buildQueue({id, name, value}));
-            ipcRenderer.on('channel_addSync',
-                (event, channel) =>
-                    updateData()
-            );
-            ipcRenderer.on('client_showInfo', (event, info) =>
-                getInfo(info));
-            ipcRenderer.on('channel_removeSync', (event, id) => {
-                updateData();
-            });
+
+            ipcRenderer.on('channel_changeSettingSync', (event) => updateData());
+            ipcRenderer.on('channel_addSync', (event) => updateData());
+            ipcRenderer.on('client_showInfo', (event, info) => getInfo(info));
+            ipcRenderer.on('channel_removeSync', (event) => updateData());
         }
     }
 
@@ -89,7 +76,6 @@ class EventListener extends Component {
 
 const EventContainer = styled.div`
 	display:none
-`
+`;
 
 export default EventListener
-

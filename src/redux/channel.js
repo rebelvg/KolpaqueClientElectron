@@ -1,6 +1,7 @@
 import {createActions, handleActions, createAction} from 'redux-actions';
 import {createSelector} from 'reselect';
 import {getTab} from 'src/Channel/constants'
+
 const {ipcRenderer} = window.require('electron');
 
 const defaultState = {
@@ -26,11 +27,11 @@ export const updateData = (filter = null, activeTab = null) => {
 
         const tab = getTab(activeTab);
 
-        const query = {filter, [tab.filter]: tab.filterValue}
+        const query = {filter, [tab.filter]: tab.filterValue};
         const data = ipcRenderer.sendSync('config_find', query);
         dispatch(updateView({...data, filter, activeTab}));
     }
-}
+};
 
 export const {
     initStart,
@@ -63,7 +64,6 @@ export const {
 });
 
 //REDUCER
-
 export const reducer = handleActions({
     INIT_START: (state, action) => ({
         ...state,
@@ -92,7 +92,6 @@ export const reducer = handleActions({
 }, defaultState);
 
 //SELECTORS
-
 export const getChannelsList = (state) => state.channel.channels;
 export const getCount = (state) => state.channel.count;
 export const getFilter = (state) => state.channel.filter;
@@ -100,4 +99,3 @@ export const getActiveTab = (state) => state.channel.activeTab;
 export const getUpdate = (state) => state.channel.update;
 export const getLoading = (state) => state.channel.loading;
 export const getLoaded = (state) => state.channel.loaded;
-

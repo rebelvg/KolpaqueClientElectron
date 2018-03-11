@@ -145,16 +145,8 @@ class Config extends EventEmitter {
 
         saveLoop(this);
 
-        this.on('channel_added', (channelObj) => {
-            app.mainWindow.webContents.send('channel_add', channelObj);
-        });
-
         this.on('channel_added', () => {
             app.mainWindow.webContents.send('channel_addSync');
-        });
-
-        this.on('channel_removed', (channelObj) => {
-            app.mainWindow.webContents.send('channel_remove', channelObj.id);
         });
 
         this.on('channel_removed', () => {
