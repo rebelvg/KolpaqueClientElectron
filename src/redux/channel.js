@@ -1,8 +1,5 @@
 import {createActions, handleActions, createAction} from 'redux-actions';
 import {createSelector} from 'reselect';
-import {getSortType, getReversed} from './settings'
-import channelMiddleWare from 'src/Channel/Helpers/ChannelMiddleware'
-import {FilterChannels} from 'src/Channel/Helpers/FilterChannels'
 import {getTab} from 'src/Channel/constants'
 const {ipcRenderer} = window.require('electron');
 
