@@ -42,7 +42,7 @@ export default class EditForm extends Component {
     }
 
     onChange = (v) => {
-        this.setState({value: v})
+        this.setState({value: v});
     };
 
     renameChannel = (e) => {
@@ -70,7 +70,6 @@ export default class EditForm extends Component {
         )
     }
 }
-
 
 const Form = styled.form`
     width: 100%;

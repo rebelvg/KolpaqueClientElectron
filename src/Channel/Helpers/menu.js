@@ -1,6 +1,6 @@
 const {remote, ipcRenderer} = window.require('electron');
 const {app, Menu, shell, BrowserWindow, MenuItem} = remote;
-import {changeSetting} from './IPCHelpers'
+
 const menuTemplate = (channel, edit) => [
     new MenuItem({
         label: 'Play', click: function (menuItem, browserWindow, event) {
@@ -34,4 +34,4 @@ const menuTemplate = (channel, edit) => [
     })
 ];
 
-export default menuTemplate
+export default menuTemplate;

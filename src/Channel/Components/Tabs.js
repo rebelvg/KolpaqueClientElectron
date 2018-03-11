@@ -22,7 +22,7 @@ class Tabs extends Component {
         super();
     }
 
-    onChange = (value) => this.props.updateData(null, value)
+    onChange = (value) => this.props.updateData(null, value);
 
     render() {
         const {active, count} = this.props;
@@ -53,7 +53,7 @@ const TabList = styled.div`
     margin-top: 1px;
     position: relative;
     z-index: 1000;
-`
+`;
 
 const Tab = styled.div`
     user-select: none;
@@ -72,6 +72,6 @@ const Tab = styled.div`
     ${props => props.active
     ? (`background-color: ${props.theme.tabSelected.bg}; width: 24px; z-index: 200`)
     : (`background-color: ${props.theme.tab.bg}; width: 20px;`)}
-`
+`;
 
-export default Tabs
+export default Tabs;

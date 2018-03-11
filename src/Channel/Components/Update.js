@@ -1,9 +1,9 @@
-import React, {Component} from 'react'
-import styled from 'styled-components'
-import {connect} from 'react-redux'
+import React, {Component} from 'react';
+import styled from 'styled-components';
+import {connect} from 'react-redux';
 import {
     getUpdate, sendInfo
-} from 'src/redux/channel'
+} from 'src/redux/channel';
 
 @connect(
     state => ({
@@ -13,7 +13,7 @@ import {
 )
 export default class Update extends Component {
     constructor() {
-        super()
+        super();
     }
 
     sendInfo = info => this.props.sendInfo(info);

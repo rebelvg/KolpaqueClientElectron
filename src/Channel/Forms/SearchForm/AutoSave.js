@@ -4,9 +4,9 @@ import {debounce, isEqual} from 'lodash'
 
 class AutoSave extends React.Component {
     constructor(props) {
-        super(props)
-        this.state = {values: props.values, submitting: false}
-        this.setFilter = debounce(this.save, props.debounce)
+        super(props);
+        this.state = {values: props.values, submitting: false};
+        this.setFilter = debounce(this.save, props.debounce);
     }
 
     save = () => {
@@ -14,13 +14,11 @@ class AutoSave extends React.Component {
         if (!isEqual(this.state.values, values)) {
             save(values)
         }
-    }
-
+    };
 
     componentWillReceiveProps() {
         this.setFilter()
     }
-
 
     render() {
         return null

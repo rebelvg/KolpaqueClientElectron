@@ -2,8 +2,8 @@ import React, {PureComponent} from 'react';
 import styled, {withTheme} from 'styled-components';
 
 import {playChannel, changeSetting} from 'src/Channel/Helpers/IPCHelpers';
-import EditForm from 'src/Channel/Forms/EditForm'
-import {AutoStart, AutoRestart, Pinned, ServiceIcon, PinButton} from 'src/Shared/Icons'
+import EditForm from 'src/Channel/Forms/EditForm';
+import {AutoStart, AutoRestart, Pinned, ServiceIcon, PinButton} from 'src/Shared/Icons';
 
 @withTheme
 class Channel extends PureComponent {
@@ -11,18 +11,15 @@ class Channel extends PureComponent {
         super();
     }
 
-    contextMenu = (name, channel) =>
-    !name && this.props.handleAction('OPEN_MENU', [channel]);
+    contextMenu = (name, channel) => !name && this.props.handleAction('OPEN_MENU', [channel]);
 
-    selectChannel = (name, which, channel) =>
-    !name && this.props.handleAction('SELECT', [which, channel]);
+    selectChannel = (name, which, channel) => !name && this.props.handleAction('SELECT', [which, channel]);
 
-    renameChannel = (value, id) =>
-        this.props.handleAction('RENAME', [value, id]);
+    renameChannel = (value, id) => this.props.handleAction('RENAME', [value, id]);
 
     changeSetting = (id, name, value) => {
         changeSetting(id, name, value);
-    }
+    };
 
     render() {
         const {

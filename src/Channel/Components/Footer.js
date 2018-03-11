@@ -2,18 +2,18 @@ import React, {Component} from 'react'
 import styled from 'styled-components'
 import ChannelForm from 'src/Channel/Forms/ChannelForm';
 import {addChannel} from 'src/Channel/Helpers/IPCHelpers';
-import {Form} from 'react-final-form'
+import {Form} from 'react-final-form';
 
 export default class Footer extends Component {
     constructor() {
-        super()
+        super();
     }
 
     submit = ({channel}) => {
         if (channel) {
             addChannel(channel)
         }
-    }
+    };
 
     render() {
         return (

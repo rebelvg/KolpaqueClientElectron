@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import styled, {withTheme} from 'styled-components'
-import {Field} from 'react-final-form'
+import styled, {withTheme} from 'styled-components';
+import {Field} from 'react-final-form';
 import Icon from 'react-icons-kit';
 import {search} from 'react-icons-kit/fa/search';
 import {template} from 'src/Channel/constants';
-import AutoSave from './AutoSave'
+import AutoSave from './AutoSave';
 
 const {remote} = window.require('electron');
 const {Menu} = remote;
@@ -12,7 +12,7 @@ const {Menu} = remote;
 const openMenu = () => {
     const macMenu = Menu.buildFromTemplate(template);
     macMenu.popup(remote.getCurrentWindow());
-}
+};
 
 @withTheme
 class SearchForm extends Component {
@@ -23,7 +23,7 @@ class SearchForm extends Component {
     render() {
         const {save} = this.props;
         return (
-            <Form >
+            <Form>
                 <InputWrapper>
                     <StyledField
                         name="filter"
@@ -43,6 +43,7 @@ class SearchForm extends Component {
         )
     }
 }
+
 export default SearchForm;
 
 const Form = styled.div`
@@ -72,7 +73,7 @@ const Form = styled.div`
         align-items: center;
         justify-content: center;
     }
-`
+`;
 
 const StyledField = styled(Field)`
     width: 100%;
@@ -81,7 +82,7 @@ const StyledField = styled(Field)`
     margin: 0px;
     position: relative;
     z-index: 100000;
-`
+`;
 
 const InputWrapper = styled.div`
     height:20px;
@@ -101,7 +102,7 @@ const InputWrapper = styled.div`
         padding: 0 10px;
         box-sizing: border-box;
     }
-`
+`;
 
 const StyledIcon = styled(Icon)`  
     color:${props => props.theme.input.color};

@@ -4,21 +4,20 @@ import Icon from 'react-icons-kit';
 import {cog} from 'react-icons-kit/fa/cog';
 import {Link} from 'react-router-dom';
 import styled, {withTheme} from 'styled-components';
-import {Form} from 'react-final-form'
-import Update from 'src/Channel/Components/Update'
+import {Form} from 'react-final-form';
+import Update from 'src/Channel/Components/Update';
 import SearchForm from 'src/Channel/Forms/SearchForm/SearchForm';
-import Footer from 'src/Channel/Components/Footer'
+import Footer from 'src/Channel/Components/Footer';
 import Tabs from 'src/Channel/Components/Tabs';
-import Loading from 'src/Shared/Loading'
-import Channels from 'src/Channel/Components/Channels'
+import Loading from 'src/Shared/Loading';
+import Channels from 'src/Channel/Components/Channels';
 import {
     getLoaded,
     getFilter,
     updateData,
     getUpdate,
     getChannelsList
-} from 'src/redux/channel'
-
+} from 'src/redux/channel';
 
 @withTheme
 @connect(
@@ -46,8 +45,7 @@ class ChannelContainer extends PureComponent {
     setFilter = value => {
         const filter = value.filter ? value.filter : '';
         this.props.updateData(filter, null)
-    }
-
+    };
 
     render() {
         const {
@@ -98,7 +96,7 @@ const ChannelSearchForm = styled(Form)`
 const CogIcon = styled(Icon)`
     color: ${props => props.theme.clientSecondary.color};
     padding-left: 1px;
-`
+`;
 
 const Wrapper = styled.div`
     width: 100%;
@@ -128,7 +126,6 @@ const ContainerWrapper = styled.div`
     background-color: ${props => props.theme.client.bg};
 `;
 
-
 const TabWrapper = styled.div`
     height: 100%;
     background-color: ${props => props.theme.client.bg};
@@ -141,4 +138,4 @@ const TabWrapper = styled.div`
     align-items: center;
 `;
 
-export default ChannelContainer
+export default ChannelContainer;

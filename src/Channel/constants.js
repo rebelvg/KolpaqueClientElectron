@@ -1,9 +1,8 @@
 export const getTab = (tab) => {
     return TABS.find((t) => t.value === tab);
-}
+};
 
-export const visibleByTab = (channel, tab) => channel[tab.filter] === tab.filterValue
-
+export const visibleByTab = (channel, tab) => channel[tab.filter] === tab.filterValue;
 
 export const TABS = [
     {
@@ -18,7 +17,7 @@ export const TABS = [
         filter: 'isLive',
         filterValue: false
     }
-]
+];
 
 export const template = [
     {

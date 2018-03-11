@@ -9,16 +9,17 @@ const {remote} = window.require('electron');
 const {Menu} = remote;
 
 const openMenu = () => {
-    var macMenu = Menu.buildFromTemplate(template);
+    const macMenu = Menu.buildFromTemplate(template);
     macMenu.popup(remote.getCurrentWindow());
-}
+};
+
 @withTheme
 export default class ChannelForm extends Component {
     handleSubmit = (data) => {
         const {handleSubmit, reset} = this.props;
         handleSubmit(data);
         reset();
-    }
+    };
 
     render() {
         const {theme} = this.props
@@ -38,7 +39,6 @@ export default class ChannelForm extends Component {
         )
     }
 }
-
 
 const StyledChannelFormWrap = styled.div`
     display: flex;

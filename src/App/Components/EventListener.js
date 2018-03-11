@@ -37,7 +37,7 @@ class EventListener extends Component {
         this.empty = debounce(this.emptyQueue, 0);
     }
 
-    emptyQueue = function () {
+    emptyQueue = () => {
         const {queue} = this.state;
         const {initEnd, updateData, loaded} = this.props;
 
