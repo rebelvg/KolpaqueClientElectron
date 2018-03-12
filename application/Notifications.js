@@ -3,11 +3,12 @@
  */
 
 const {app, shell, Menu, Notification, nativeImage} = require('electron');
+const _ = require('lodash');
 
 const config = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
 const Logger = require('./Logger');
-const _ = require('lodash');
+const Globals = require('./Globals');
 
 function printNotification(title, content, channelObj = null) {
     if (!config.settings.showNotifications)
@@ -21,10 +22,16 @@ function printNewNotification(title, content, channelObj) {
 
     Logger(title, content);
 
-    if (channelObj && channelObj._icon) {
-        icon = nativeImage.createFromBuffer(channelObj._icon);
+    if (channelObj) {
+        if (channelObj._icon) {
+            icon = nativeImage.createFromBuffer(channelObj._icon);
 
-        Logger(channelObj._icon.length, icon.isEmpty(), icon.constructor.name, icon.toPNG().length);
+            Logger(channelObj._icon.length, icon.isEmpty(), icon.constructor.name, icon.toPNG().length);
+        } else {
+            const serviceIcon = Globals.registeredServices[channelObj.service].icon;
+
+            if (serviceIcon) icon = nativeImage.createFromBuffer(serviceIcon);
+        }
     }
 
     let notification = new Notification({

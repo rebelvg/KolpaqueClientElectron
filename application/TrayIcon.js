@@ -3,6 +3,7 @@ const _ = require('lodash');
 
 const config = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
+const Globals = require('./Globals');
 
 function setChannelEvents(channelObj) {
     channelObj.on('setting_changed', (settingName, settingValue) => {
@@ -48,13 +49,19 @@ function rebuildIconMenu() {
     });
 
     app.contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
+        let icon;
+
+        const serviceIcon = Globals.registeredServices[channelObj.service].icon;
+
+        if (serviceIcon) icon = nativeImage.createFromBuffer(serviceIcon).resize({height: 16});
+
         return {
             label: channelObj.visibleName,
             type: 'normal',
             click: (menuItem, browserWindow, event) => {
                 ChannelPlay.launchPlayerObj(channelObj, event.ctrlKey, event.shiftKey ? true : null);
             },
-            icon: channelObj._icon16 || null
+            icon: channelObj._icon16 || icon
         }
     });
 

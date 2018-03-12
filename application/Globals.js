@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const allowedProtocols = ['rtmp:', 'http:', 'https:'];
 
 const registeredServices = {
@@ -5,31 +8,46 @@ const registeredServices = {
         protocols: ['rtmp:'],
         hosts: ['vps.klpq.men', 'stream.klpq.men'],
         paths: ['/live/'],
-        name: 2
+        name: 2,
+        icon: fs.readFileSync(path.normalize(path.join(__dirname, '\\..', 'icons', 'klpq_vps.png')), {
+            encoding: null
+        })
     },
     'klpq-main': {
         protocols: ['rtmp:'],
         hosts: ['main.klpq.men'],
         paths: ['/live/'],
-        name: 2
+        name: 2,
+        icon: fs.readFileSync(path.normalize(path.join(__dirname, '\\..', 'icons', 'klpq_main.png')), {
+            encoding: null
+        })
     },
     'twitch': {
         protocols: ['https:', 'http:'],
         hosts: ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'],
         paths: ['/'],
-        name: 1
+        name: 1,
+        icon: fs.readFileSync(path.normalize(path.join(__dirname, '\\..', 'icons', 'twitch.png')), {
+            encoding: null
+        })
     },
     'youtube-user': {
         protocols: ['https:', 'http:'],
         hosts: ['www.youtube.com', 'youtube.com'],
         paths: ['/user/'],
-        name: 2
+        name: 2,
+        icon: fs.readFileSync(path.normalize(path.join(__dirname, '\\..', 'icons', 'youtube.png')), {
+            encoding: null
+        })
     },
     'youtube-channel': {
         protocols: ['https:', 'http:'],
         hosts: ['www.youtube.com', 'youtube.com'],
         paths: ['/channel/'],
-        name: 2
+        name: 2,
+        icon: fs.readFileSync(path.normalize(path.join(__dirname, '\\..', 'icons', 'youtube.png')), {
+            encoding: null
+        })
     },
     'custom': {
         protocols: [],
