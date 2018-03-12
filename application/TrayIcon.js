@@ -44,16 +44,16 @@ function rebuildIconMenu() {
         isLive: true
     }).channels;
 
-    _.forEach(onlineChannels, channelObj => {
-        if (!channelObj._icon16 && channelObj._icon) channelObj._icon16 = nativeImage.createFromBuffer(channelObj._icon).resize({height: 16});
-    });
-
     app.contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
         let icon;
 
-        const serviceIcon = Globals.registeredServices[channelObj.service].icon;
+        if (channelObj._icon) {
+            icon = nativeImage.createFromBuffer(channelObj._icon).resize({height: 16});
+        } else {
+            const serviceIcon = Globals.registeredServices[channelObj.service].icon;
 
-        if (serviceIcon) icon = nativeImage.createFromBuffer(serviceIcon).resize({height: 16});
+            if (serviceIcon) icon = nativeImage.createFromBuffer(serviceIcon).resize({height: 16});
+        }
 
         return {
             label: channelObj.visibleName,
@@ -61,7 +61,7 @@ function rebuildIconMenu() {
             click: (menuItem, browserWindow, event) => {
                 ChannelPlay.launchPlayerObj(channelObj, event.ctrlKey, event.shiftKey ? true : null);
             },
-            icon: channelObj._icon16 || icon
+            icon: icon
         }
     });
 

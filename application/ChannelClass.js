@@ -24,7 +24,6 @@ class Channel extends EventEmitter {
         this.lastUpdated = 0;
         this._processes = [];
         this._icon = null;
-        this._icon16 = null;
 
         this.visibleName = null;
         this.isPinned = false;
