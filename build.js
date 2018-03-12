@@ -35,12 +35,14 @@ if (platformOption === 'all') {
 }
 
 if (!pathOption) {
-    pathOption = __dirname;
+    pathOption = path.join(__dirname, 'builds');
+} else {
+    if (!fs.existsSync(pathOption)) return console.log('bad path.');
+
+    pathOption = path.join(pathOption, 'KolpaqueClientElectron');
 }
 
-if (!fs.existsSync(pathOption)) return console.log('bad path.');
-
-options.out = path.join(pathOption, 'builds/KolpaqueClientElectron');
+options.out = pathOption;
 
 console.log(options);
 
