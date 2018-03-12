@@ -9,7 +9,7 @@ const registeredServices = {
         hosts: ['vps.klpq.men', 'stream.klpq.men'],
         paths: ['/live/'],
         name: 2,
-        icon: fs.readFileSync(path.normalize(path.join(__dirname, '\\..', 'icons', 'klpq_vps.png')), {
+        icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'klpq_vps.png')), {
             encoding: null
         })
     },
@@ -18,7 +18,7 @@ const registeredServices = {
         hosts: ['main.klpq.men'],
         paths: ['/live/'],
         name: 2,
-        icon: fs.readFileSync(path.normalize(path.join(__dirname, '\\..', 'icons', 'klpq_main.png')), {
+        icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'klpq_main.png')), {
             encoding: null
         })
     },
@@ -27,7 +27,7 @@ const registeredServices = {
         hosts: ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'],
         paths: ['/'],
         name: 1,
-        icon: fs.readFileSync(path.normalize(path.join(__dirname, '\\..', 'icons', 'twitch.png')), {
+        icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'twitch.png')), {
             encoding: null
         })
     },
@@ -36,7 +36,7 @@ const registeredServices = {
         hosts: ['www.youtube.com', 'youtube.com'],
         paths: ['/user/'],
         name: 2,
-        icon: fs.readFileSync(path.normalize(path.join(__dirname, '\\..', 'icons', 'youtube.png')), {
+        icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'youtube.png')), {
             encoding: null
         })
     },
@@ -45,7 +45,7 @@ const registeredServices = {
         hosts: ['www.youtube.com', 'youtube.com'],
         paths: ['/channel/'],
         name: 2,
-        icon: fs.readFileSync(path.normalize(path.join(__dirname, '\\..', 'icons', 'youtube.png')), {
+        icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'youtube.png')), {
             encoding: null
         })
     },
