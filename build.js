@@ -4,8 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-let platformOption = readlineSync.question('select platform. all - for all platforms.' + os.EOL);
-let pathOption = readlineSync.question('select output folder.' + os.EOL);
+let platformOption = readlineSync.question('select platform. all - for all platforms. (empty for current)' + os.EOL);
+let pathOption = readlineSync.question('select output folder. (empty for current)' + os.EOL);
 
 let options = {
     dir: './',
@@ -34,9 +34,13 @@ if (platformOption === 'all') {
     options.platform = platformOption;
 }
 
+if (!pathOption) {
+    pathOption = __dirname;
+}
+
 if (!fs.existsSync(pathOption)) return console.log('bad path.');
 
-options.out = path.join(pathOption, 'KolpaqueClientElectron');
+options.out = path.join(pathOption, 'builds/KolpaqueClientElectron');
 
 console.log(options);
 
