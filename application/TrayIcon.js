@@ -45,14 +45,12 @@ function rebuildIconMenu() {
     }).channels;
 
     app.contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
-        let icon;
+        if (!channelObj._trayIcon) {
+            let iconBuffer = channelObj._icon ? channelObj._icon : Globals.registeredServices[channelObj.service].icon;
 
-        if (channelObj._icon) {
-            icon = nativeImage.createFromBuffer(channelObj._icon).resize({height: 16});
-        } else {
-            const serviceIcon = Globals.registeredServices[channelObj.service].icon;
-
-            if (serviceIcon) icon = nativeImage.createFromBuffer(serviceIcon).resize({height: 16});
+            if (iconBuffer) {
+                channelObj._trayIcon = nativeImage.createFromBuffer(iconBuffer).resize({height: 16});
+            }
         }
 
         return {
@@ -61,7 +59,7 @@ function rebuildIconMenu() {
             click: (menuItem, browserWindow, event) => {
                 ChannelPlay.launchPlayerObj(channelObj, event.ctrlKey, event.shiftKey ? true : null);
             },
-            icon: icon
+            icon: channelObj._trayIcon
         }
     });
 

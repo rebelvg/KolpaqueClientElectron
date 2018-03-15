@@ -69,6 +69,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "electron-default-menu": "^1.0.1",
     "fix-path": "^2.1.0",
     "lodash": "^4.17.4",
     "md5": "^2.2.1",

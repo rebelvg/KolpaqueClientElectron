@@ -4,6 +4,9 @@ const _ = require('lodash');
 const path = require('path');
 const url = require('url');
 const fixPath = require('fix-path');
+const defaultMenu = require('electron-default-menu');
+
+fixPath();
 
 const config = require('./application/SettingsFile');
 
@@ -28,8 +31,6 @@ let forceQuit = false;
 
 ipcMain.once('client_ready', () => {
     console.log('client ready.');
-
-    fixPath();
 });
 
 let iconPath = path.normalize(path.join(__dirname, 'icons', 'icon.png'));
@@ -219,6 +220,12 @@ app.on('ready', () => {
     app.appIcon = appIcon;
 
     TrayIcon.rebuildIconMenu();
+
+    if (process.platform === 'darwin') {
+        const menu = defaultMenu(app, shell);
+
+        Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+    }
 });
 
 process.on('uncaughtException', function (err) {

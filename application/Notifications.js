@@ -20,17 +20,11 @@ function printNotification(title, content, channelObj = null) {
 function printNewNotification(title, content, channelObj) {
     let icon = app.appIcon.iconPathBalloon;
 
-    Logger(title, content);
-
     if (channelObj) {
-        if (channelObj._icon) {
-            icon = nativeImage.createFromBuffer(channelObj._icon);
+        let iconBuffer = channelObj._icon ? channelObj._icon : Globals.registeredServices[channelObj.service].icon;
 
-            Logger(channelObj._icon.length, icon.isEmpty(), icon.constructor.name, icon.toPNG().length);
-        } else {
-            const serviceIcon = Globals.registeredServices[channelObj.service].icon;
-
-            if (serviceIcon) icon = nativeImage.createFromBuffer(serviceIcon);
+        if (iconBuffer) {
+            icon = nativeImage.createFromBuffer(iconBuffer);
         }
     }
 
