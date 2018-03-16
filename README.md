@@ -19,9 +19,18 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 - Stream Auto-Start on Online Status
 - Stream Auto-Restart
 - Channel Searching
+- Channel Sorting
 - Channel Renaming
+- Pinned Channels
 - Play from Clipboard
 - Tray Menu
+- Shortcuts (Ctrl - LQ, Shift - Auto-Restart)
+- Night Mode (dark toned theme)
+- Client and Streamlink Update Checks
+
+## Planned Features
+- View Modes (detailed, list, etc)
+- More Stream Services
 
 ## Usage User
 
