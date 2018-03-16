@@ -25,7 +25,7 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 - Play from Clipboard
 - Tray Menu
 - Shortcuts (Ctrl - LQ, Shift - Auto-Restart)
-- Night Mode (dark toned theme)
+- Night Mode (dark theme)
 - Client and Streamlink Update Checks
 
 ## Planned Features
