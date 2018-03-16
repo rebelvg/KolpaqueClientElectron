@@ -1,6 +1,6 @@
 {
   "name": "KolpaqueClient",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Multiplatform GUI for Streamlink",
   "main": "main.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "start-react-dev": "./node_modules/.bin/webpack-dev-server",
     "start-client-dev": "cross-env NODE_ENV=dev electron .",
     "react-build": "cross-env NODE_ENV=production ./node_modules/.bin/webpack --config webpack.config.production",
-    "build": "node build.js"
+    "build": "yarn run react-build && node build.js"
   },
   "repository": {},
   "keywords": [],

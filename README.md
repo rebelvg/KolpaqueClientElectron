@@ -51,7 +51,7 @@ yarn run react-build
 yarn run start
 ```
 
-### Run React Dev
+### Run Dev
 ```
 yarn run start-react-dev
 yarn run start-client-dev
@@ -59,6 +59,5 @@ yarn run start-client-dev
 
 ### Build
 ```
-yarn run react-build
 yarn run build
 ```
