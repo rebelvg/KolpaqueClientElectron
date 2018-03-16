@@ -31,6 +31,8 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 ## Planned Features
 - View Modes (detailed, list, etc)
 - More Stream Services
+- Stream Title Info
+- Streamer Name for KLPQ Service
 
 ## Usage User
 
