@@ -25,7 +25,7 @@ export default class SettingsContainer extends Component {
     constructor() {
         super();
 
-        const version = ipcRenderer.sendSync("client_getVersion");
+        const version = ipcRenderer.sendSync('client_getVersion');
 
         this.state = {
             version
@@ -35,7 +35,7 @@ export default class SettingsContainer extends Component {
     componentWillMount() {
         ipcRenderer.on('config_changeSetting', (e, settingName, settingValue) => {
             this.props.updateData();
-            this.props.changeSettingsResponse(settingName, settingValue)
+            this.props.changeSettingsResponse(settingName, settingValue);
         })
     }
 

@@ -13,7 +13,7 @@ const Loading = () =>
         <LoadingIcon icon={loadC}/>
         <LoadingText>Initializing Client</LoadingText>
         <Version>Kolpaque Client {version}</Version>
-    </LoadingWrapper>
+    </LoadingWrapper>;
 
 export default Loading
 
@@ -43,7 +43,7 @@ const LoadingIcon = styled(Icon)`
         width: 60px;
         height: 60px;
     }
-`
+`;
 
 const Version = styled.div`
     font-size: 12px;

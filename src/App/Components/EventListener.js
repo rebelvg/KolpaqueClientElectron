@@ -45,25 +45,26 @@ class EventListener extends Component {
             queue: []
         }, () => {
             updateData();
+
             if (!loaded) {
                 initEnd();
             }
         })
     };
 
-    componentWillMount() {
+    componentDidMount() {
         const {initSettings, updateData, loaded, getInfo, initStart} = this.props;
 
         if (!loaded) {
-            initStart();
-            initSettings();
-
-            this.empty();
-
             ipcRenderer.on('channel_changeSettingSync', (event) => updateData());
             ipcRenderer.on('channel_addSync', (event) => updateData());
             ipcRenderer.on('client_showInfo', (event, info) => getInfo(info));
             ipcRenderer.on('channel_removeSync', (event) => updateData());
+
+            initStart();
+            initSettings();
+
+            setTimeout(this.empty, 3000);
         }
     }
 
@@ -78,4 +79,4 @@ const EventContainer = styled.div`
 	display:none
 `;
 
-export default EventListener
+export default EventListener;
