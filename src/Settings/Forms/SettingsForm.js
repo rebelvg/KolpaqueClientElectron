@@ -66,6 +66,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 />
             </InputWrapper>
         </FieldWrapper>
+
         <FieldWrapper>
             <Label>Show Notifications</Label>
             <InputWrapper>
@@ -76,6 +77,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 />
             </InputWrapper>
         </FieldWrapper>
+
         <FieldWrapper>
             <Label>Start Minimized</Label>
             <InputWrapper>
@@ -86,6 +88,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 />
             </InputWrapper>
         </FieldWrapper>
+
         <FieldWrapper>
             <Label>Play on Balloon Click</Label>
             <InputWrapper>
@@ -107,6 +110,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 />
             </InputWrapper>
         </FieldWrapper>
+
         <FieldWrapper>
             <Label>Show Tooltips</Label>
             <InputWrapper>
@@ -117,6 +121,18 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 />
             </InputWrapper>
         </FieldWrapper>
+
+        <FieldWrapper>
+            <Label>Confirm Auto-Start</Label>
+            <InputWrapper>
+                <Field
+                    name="confirmAutoStart"
+                    component={ToggleAdapter}
+                    toggle={changeSetting}
+                />
+            </InputWrapper>
+        </FieldWrapper>
+
         <FieldWrapper full>
             <Label>Youtube API Key</Label>
             <InputWrapper>
@@ -128,7 +144,9 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 />
             </InputWrapper>
         </FieldWrapper>
+
         <br/>
+
         <SelectWrapper>
             <Label>Sort Mode</Label>
             <SelectField
@@ -138,6 +156,7 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
                 select={changeSetting}
             />
         </SelectWrapper>
+
         <FieldWrapper>
             <Label>Reversed Sort</Label>
             <InputWrapper>

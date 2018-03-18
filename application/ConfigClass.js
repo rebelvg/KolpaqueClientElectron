@@ -138,7 +138,8 @@ class Config extends EventEmitter {
             nightMode: false,
             sortType: 'lastAdded',
             sortReverse: false,
-            showTooltips: true
+            showTooltips: true,
+            confirmAutoStart: true
         };
 
         readFile(this);
