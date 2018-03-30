@@ -11,6 +11,9 @@ const config = require('./SettingsFile');
 const Config = require('./ConfigClass');
 const Notifications = require('./Notifications');
 
+const AUTO_RESTART_ATTEMPTS = 3;
+const AUTO_RESTART_TIMEOUT = 60;
+
 ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
     let channelObj = config.findById(id);
 
@@ -69,6 +72,8 @@ function launchPlayerObj(channelObj, LQ = null, autoRestart = null) {
 function launchStreamlink(playLink, params, channelObj, firstStart = true) {
     console.log(playLink, params);
 
+    channelObj._startTime = Date.now();
+
     let childProcess = child('streamlink', [playLink, 'best', '--twitch-disable-hosting'].concat(params), function (err, data, stderr) {
         console.log(err);
         console.log(data);
@@ -95,10 +100,18 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
             if (firstStart) Notifications.printNotification('Error', error[1]);
         }
 
-        if (channelObj.isLive && channelObj.onAutoRestart) {
+        if (Date.now() - channelObj._startTime < AUTO_RESTART_TIMEOUT * 1000) {
+            channelObj._autoRestartAttempts++;
+        } else {
+            channelObj._autoRestartAttempts = 0;
+        }
+
+        if (channelObj.isLive && channelObj.onAutoRestart && channelObj._autoRestartAttempts < AUTO_RESTART_ATTEMPTS) {
             launchStreamlink(playLink, params, channelObj, false);
         } else {
             channelObj.changeSetting('onAutoRestart', false);
+
+            channelObj._autoRestartAttempts = 0;
         }
     });
 
