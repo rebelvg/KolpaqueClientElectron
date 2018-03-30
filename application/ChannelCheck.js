@@ -7,6 +7,7 @@ const request = require('request');
 const _ = require('lodash');
 const util = require('util');
 const {URL, URLSearchParams} = require('url');
+const childProcess = require('child_process');
 
 const config = require('./SettingsFile');
 const ChannelPlay = require('./ChannelPlay');
@@ -21,7 +22,8 @@ const services = {
     'klpq-main': getKlpqMainStats,
     'twitch': getTwitchStats,
     'youtube-user': getYoutubeStatsUser,
-    'youtube-channel': getYoutubeStatsChannel
+    'youtube-channel': getYoutubeStatsChannel,
+    'custom': getCustom
 };
 
 ipcMain.once('client_ready', () => {
@@ -203,6 +205,23 @@ function getYoutubeStatsUser(channelObj, printBalloon) {
     });
 }
 
+function getCustom(channelObj, printBalloon) {
+    childProcess.execFile('streamlink', [channelObj.link, '--json'], function (err, stdout, stderr) {
+        try {
+            const res = JSON.parse(stdout);
+
+            if (_.keys(res.streams).length > 0) {
+                isOnline(channelObj, printBalloon);
+            } else {
+                isOffline(channelObj);
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    });
+}
+
 function getYoutubeStatsChannel(channelObj, printBalloon) {
     let apiKey = config.settings.youtubeApiKey;
 
@@ -241,6 +260,14 @@ function getStats120(channelObj, printBalloon = true) {
     }
 }
 
+function getStats300(channelObj, printBalloon = true) {
+    switch (channelObj.service) {
+        case 'custom':
+            getCustom(channelObj, printBalloon);
+            break;
+    }
+}
+
 function checkChannel(channelObj) {
     if (services.hasOwnProperty(channelObj.service)) {
         services[channelObj.service](channelObj, false);
@@ -252,6 +279,7 @@ function checkLoop() {
         getStats5(channelObj, false);
         getStats30(channelObj, false);
         getStats120(channelObj, false);
+        getStats300(channelObj, false);
     });
 
     setInterval(function () {
@@ -271,4 +299,10 @@ function checkLoop() {
             getStats120(channelObj);
         });
     }, 2 * 60 * 1000);
+
+    setInterval(function () {
+        _.forEach(config.channels, (channelObj) => {
+            getStats300(channelObj);
+        });
+    }, 5 * 60 * 1000);
 }
