@@ -72,8 +72,10 @@ class Channel extends EventEmitter {
         });
 
         if (this.service === 'custom') {
+            const pathname = _.endsWith(channelURL.pathname, '/') ? channelURL.pathname.slice(0, -1) : channelURL.pathname;
+
             this.name = this.link;
-            this.visibleName = this.name;
+            this.visibleName = `${channelURL.host}${pathname}`;
         }
 
         this.id = md5(this.link);
