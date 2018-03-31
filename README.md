@@ -11,12 +11,13 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
   - KLPQ Stream Service
   - Twitch
   - Youtube (with your own API key)
+  - Anything Streamlink Supports
 - Notifications
 - Auto-Import
   - KLPQ Stream Service
   - Twitch
 - Low Quality Playback
-- Stream Auto-Start on Online Status
+- Stream Auto-Start on Online Status (with confirmation option)
 - Stream Auto-Restart
 - Channel Searching
 - Channel Sorting
