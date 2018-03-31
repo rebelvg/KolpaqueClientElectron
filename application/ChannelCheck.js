@@ -15,15 +15,40 @@ const Notifications = require('./Notifications');
 const {twitchApiKey} = require('./Globals');
 const {getInfoAsync} = require('./ChannelInfo');
 
-let onlineChannels = {};
-
-const services = {
+const SERVICES = {
     'klpq-vps': getKlpqVpsStats,
     'klpq-main': getKlpqMainStats,
     'twitch': getTwitchStats,
     'youtube-user': getYoutubeStatsUser,
     'youtube-channel': getYoutubeStatsChannel,
     'custom': getCustom
+};
+
+const SERVICES_INTERVALS = {
+    'klpq-vps': {
+        check: 5,
+        confirmations: 0
+    },
+    'klpq-main': {
+        check: 5,
+        confirmations: 0
+    },
+    'twitch': {
+        check: 30,
+        confirmations: 3
+    },
+    'youtube-user': {
+        check: 120,
+        confirmations: 3
+    },
+    'youtube-channel': {
+        check: 120,
+        confirmations: 3
+    },
+    'custom': {
+        check: 120,
+        confirmations: 3
+    }
 };
 
 ipcMain.once('client_ready', () => {
@@ -34,23 +59,14 @@ config.on('channel_added', (channelObj) => {
     checkChannel(channelObj);
 });
 
-config.on('channel_removed', (channelObj) => {
-    delete onlineChannels[channelObj.link];
-});
-
 async function isOnline(channelObj, printBalloon) {
-    let channelLink = channelObj.link;
+    channelObj._offlineConfirmations = 0;
 
-    if (onlineChannels.hasOwnProperty(channelLink)) {
-        onlineChannels[channelLink] = 0;
-        return;
-    }
+    if (channelObj.isLive) return;
 
     await getInfoAsync(channelObj);
 
-    console.log(channelLink + " went online.");
-
-    onlineChannels[channelLink] = 0;
+    console.log(`${channelObj.link} went online.`);
 
     if (printBalloon) {
         Notifications.printNotification('Stream is Live', channelObj.visibleName, channelObj);
@@ -79,19 +95,13 @@ async function isOnline(channelObj, printBalloon) {
 }
 
 function isOffline(channelObj) {
-    let channelLink = channelObj.link;
+    if (!channelObj.isLive) return;
 
-    if (!onlineChannels.hasOwnProperty(channelLink))
-        return;
+    channelObj._offlineConfirmations++;
 
-    onlineChannels[channelLink]++;
+    if (channelObj._offlineConfirmations < _.get(SERVICES_INTERVALS, [channelObj.service, 'confirmations'], 0)) return;
 
-    if (onlineChannels[channelLink] < 3)
-        return;
-
-    console.log(channelLink + " went offline.");
-
-    delete onlineChannels[channelLink];
+    console.log(`${channelObj.link} went offline.`);
 
     channelObj.changeSettings({
         lastUpdated: Date.now(),
@@ -230,79 +240,24 @@ function getYoutubeStatsChannel(channelObj, printBalloon) {
     getYoutubeStatsBase(channelObj.name, channelObj, printBalloon, apiKey);
 }
 
-function getStats5(channelObj, printBalloon = true) {
-    switch (channelObj.service) {
-        case 'klpq-vps':
-            getKlpqVpsStats(channelObj, printBalloon);
-            break;
-        case 'klpq-main':
-            getKlpqMainStats(channelObj, printBalloon);
-            break;
-    }
-}
-
-function getStats30(channelObj, printBalloon = true) {
-    switch (channelObj.service) {
-        case 'twitch':
-            getTwitchStats(channelObj, printBalloon);
-            break;
-    }
-}
-
-function getStats120(channelObj, printBalloon = true) {
-    switch (channelObj.service) {
-        case 'youtube-user':
-            getYoutubeStatsUser(channelObj, printBalloon);
-            break;
-        case 'youtube-channel':
-            getYoutubeStatsChannel(channelObj, printBalloon);
-            break;
-    }
-}
-
-function getStats300(channelObj, printBalloon = true) {
-    switch (channelObj.service) {
-        case 'custom':
-            getCustom(channelObj, printBalloon);
-            break;
-    }
-}
-
-function checkChannel(channelObj) {
-    if (services.hasOwnProperty(channelObj.service)) {
-        services[channelObj.service](channelObj, false);
+function checkChannel(channelObj, printBalloon = false) {
+    if (SERVICES.hasOwnProperty(channelObj.service)) {
+        SERVICES[channelObj.service](channelObj, printBalloon);
     }
 }
 
 function checkLoop() {
     _.forEach(config.channels, (channelObj) => {
-        getStats5(channelObj, false);
-        getStats30(channelObj, false);
-        getStats120(channelObj, false);
-        getStats300(channelObj, false);
+        checkChannel(channelObj, false);
     });
 
-    setInterval(function () {
-        _.forEach(config.channels, (channelObj) => {
-            getStats5(channelObj);
-        });
-    }, 5 * 1000);
-
-    setInterval(function () {
-        _.forEach(config.channels, (channelObj) => {
-            getStats30(channelObj);
-        });
-    }, 30 * 1000);
-
-    setInterval(function () {
-        _.forEach(config.channels, (channelObj) => {
-            getStats120(channelObj);
-        });
-    }, 2 * 60 * 1000);
-
-    setInterval(function () {
-        _.forEach(config.channels, (channelObj) => {
-            getStats300(channelObj);
-        });
-    }, 5 * 60 * 1000);
+    _.forEach(SERVICES_INTERVALS, (service, serviceName) => {
+        setInterval(function () {
+            _.forEach(config.channels, (channelObj) => {
+                if (channelObj.service === serviceName) {
+                    checkChannel(channelObj, true);
+                }
+            });
+        }, service.check * 1000);
+    });
 }

@@ -6,7 +6,7 @@ const axios = require('axios');
 const config = require('./SettingsFile');
 const {twitchApiKey} = require('./Globals');
 
-const services = {
+const SERVICES = {
     'twitch': getTwitchInfoAsync
 };
 
@@ -36,8 +36,8 @@ async function getTwitchInfoAsync(channelObj) {
 }
 
 async function getInfoAsync(channelObj) {
-    if (services.hasOwnProperty(channelObj.service)) {
-        await services[channelObj.service](channelObj);
+    if (SERVICES.hasOwnProperty(channelObj.service)) {
+        await SERVICES[channelObj.service](channelObj);
     }
 }
 

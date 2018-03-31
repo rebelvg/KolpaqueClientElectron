@@ -26,6 +26,7 @@ class Channel extends EventEmitter {
         this._icon = null;
         this._autoRestartAttempts = 0;
         this._startTime = 0;
+        this._offlineConfirmations = 0;
 
         this.visibleName = null;
         this.isPinned = false;
