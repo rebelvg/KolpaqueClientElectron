@@ -5,12 +5,12 @@ const path = require('path');
 const os = require('os');
 const childProcess = require('child_process');
 
+let platformOption = readlineSync.question('select platform. all - for all platforms. (empty for current)' + os.EOL);
+let pathOption = readlineSync.question('select output folder. (empty for current)' + os.EOL);
+
 childProcess.execSync('yarn run react-build', {
     stdio: 'inherit'
 });
-
-let platformOption = readlineSync.question('select platform. all - for all platforms. (empty for current)' + os.EOL);
-let pathOption = readlineSync.question('select output folder. (empty for current)' + os.EOL);
 
 let options = {
     dir: './',
