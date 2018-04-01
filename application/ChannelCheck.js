@@ -74,7 +74,7 @@ async function isOnline(channelObj, printBalloon) {
 
     if (printBalloon && channelObj.autoStart) {
         if (channelObj._processes.length === 0) {
-            if (config.settings.confirmAutoStart || channelObj.autoRestart) {
+            if (config.settings.confirmAutoStart) {
                 dialog.showMessageBox({
                     type: 'none',
                     message: `${channelObj.link} is trying to auto-start. Confirm?`,
@@ -84,6 +84,8 @@ async function isOnline(channelObj, printBalloon) {
                         ChannelPlay.launchPlayerObj(channelObj);
                     }
                 });
+            } else {
+                ChannelPlay.launchPlayerObj(channelObj);
             }
         }
     }
