@@ -218,19 +218,23 @@ function getYoutubeStatsUser(channelObj, printBalloon) {
 }
 
 function getCustom(channelObj, printBalloon) {
-    childProcess.execFile('streamlink', [channelObj.link, '--json'], function (err, stdout, stderr) {
-        try {
-            const res = JSON.parse(stdout);
+    return new Promise(resolve => {
+        childProcess.execFile('streamlink', [channelObj.link, '--json'], function (err, stdout, stderr) {
+            try {
+                const res = JSON.parse(stdout);
 
-            if (_.keys(res.streams).length > 0) {
-                isOnline(channelObj, printBalloon);
-            } else {
-                isOffline(channelObj);
+                if (_.keys(res.streams).length > 0) {
+                    isOnline(channelObj, printBalloon);
+                } else {
+                    isOffline(channelObj);
+                }
             }
-        }
-        catch (e) {
-            console.log(e);
-        }
+            catch (e) {
+                console.log(e);
+            }
+
+            resolve();
+        });
     });
 }
 
@@ -242,9 +246,9 @@ function getYoutubeStatsChannel(channelObj, printBalloon) {
     getYoutubeStatsBase(channelObj.name, channelObj, printBalloon, apiKey);
 }
 
-function checkChannel(channelObj, printBalloon = false) {
+async function checkChannel(channelObj, printBalloon = false) {
     if (SERVICES.hasOwnProperty(channelObj.service)) {
-        SERVICES[channelObj.service](channelObj, printBalloon);
+        await SERVICES[channelObj.service](channelObj, printBalloon);
     }
 }
 
@@ -254,12 +258,12 @@ function checkLoop() {
     });
 
     _.forEach(SERVICES_INTERVALS, (service, serviceName) => {
-        setInterval(function () {
-            _.forEach(config.channels, (channelObj) => {
+        setInterval(async function () {
+            for (const channelObj of config.channels) {
                 if (channelObj.service === serviceName) {
-                    checkChannel(channelObj, true);
+                    await checkChannel(channelObj, true);
                 }
-            });
+            }
         }, service.check * 1000);
     });
 }

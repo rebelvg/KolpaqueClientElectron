@@ -21,8 +21,6 @@ require('./application/VersionCheck');
 
 const clientVersion = require('./package.json').version;
 
-Logger('Client Launched', clientVersion);
-
 const isDev = process.env.NODE_ENV === 'dev';
 
 console.log('isDev', isDev);
