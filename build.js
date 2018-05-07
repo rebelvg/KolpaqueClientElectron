@@ -51,8 +51,8 @@ options.out = pathOption;
 
 console.log(options);
 
-packager(options, function (err, appPaths) {
-    if (err) console.log(err);
+(async () => {
+    const appPaths = await packager(options);
 
     console.log(appPaths);
-});
+})();
