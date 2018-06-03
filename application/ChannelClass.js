@@ -16,6 +16,7 @@ class Channel extends EventEmitter {
 
         this.id = null;
         this.service = 'custom';
+        this.serviceObj = null;
         this.name = null;
         this.link = channelLink;
         this.protocol = null;
@@ -65,6 +66,7 @@ class Channel extends EventEmitter {
                             channelURL.path = serviceObj.paths[0] + nameArray[serviceObj.name];
 
                             this.link = channelURL.href;
+                            this.serviceObj = serviceObj;
                         }
                     });
                 }

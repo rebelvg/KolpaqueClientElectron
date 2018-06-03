@@ -57,17 +57,12 @@ ipcMain.on('channel_openPage', (event, id) => {
 
     if (channelObj === null) return false;
 
-    if (channelObj.protocol === 'rtmp:') {
-        switch (channelObj.service) {
-            case 'klpq-vps': {
-                shell.openExternal('http://stream.klpq.men/' + channelObj.name);
-                break;
-            }
+    if (channelObj.serviceObj.embed) {
+        shell.openExternal(channelObj.serviceObj.embed(channelObj));
+    } else {
+        if (['http:', 'https:'].includes(channelObj.protocol)) {
+            shell.openExternal(channelObj.link);
         }
-    }
-
-    if (['http:', 'https:'].includes(channelObj.protocol)) {
-        shell.openExternal(channelObj.link);
     }
 
     return true;
@@ -78,21 +73,11 @@ ipcMain.on('channel_openChat', (event, id) => {
 
     if (channelObj === null) return false;
 
-    if (channelObj.protocol === 'rtmp:') {
-        switch (channelObj.service) {
-            case 'klpq-vps': {
-                shell.openExternal(`http://stream.klpq.men/chat`);
-                break;
-            }
-        }
-    }
-
-    if (['http:', 'https:'].includes(channelObj.protocol)) {
-        switch (channelObj.service) {
-            case 'twitch': {
-                shell.openExternal(`${channelObj.link}/chat`);
-                break;
-            }
+    if (channelObj.serviceObj.chat) {
+        shell.openExternal(channelObj.serviceObj.chat(channelObj));
+    } else {
+        if (['http:', 'https:'].includes(channelObj.protocol)) {
+            shell.openExternal(`${channelObj.link}/chat`);
         }
     }
 

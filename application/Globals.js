@@ -9,6 +9,12 @@ const registeredServices = {
         hosts: ['vps.klpq.men', 'stream.klpq.men'],
         paths: ['/live/'],
         name: 2,
+        embed: (channelObj) => {
+            return `http://stream.klpq.men/${channelObj.name}`;
+        },
+        chat: (channelObj) => {
+            return `http://stream.klpq.men/chat`;
+        },
         icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'klpq_vps.png')), {
             encoding: null
         })
@@ -18,6 +24,8 @@ const registeredServices = {
         hosts: ['main.klpq.men'],
         paths: ['/live/'],
         name: 2,
+        embed: null,
+        chat: null,
         icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'klpq_main.png')), {
             encoding: null
         })
@@ -27,6 +35,10 @@ const registeredServices = {
         hosts: ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'],
         paths: ['/'],
         name: 1,
+        embed: null,
+        chat: (channelObj) => {
+            return `https://www.twitch.tv/${channelObj.name}/chat`;
+        },
         icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'twitch.png')), {
             encoding: null
         })
@@ -36,6 +48,8 @@ const registeredServices = {
         hosts: ['www.youtube.com', 'youtube.com'],
         paths: ['/user/'],
         name: 2,
+        embed: null,
+        chat: null,
         icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'youtube.png')), {
             encoding: null
         })
@@ -45,6 +59,8 @@ const registeredServices = {
         hosts: ['www.youtube.com', 'youtube.com'],
         paths: ['/channel/'],
         name: 2,
+        embed: null,
+        chat: null,
         icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'youtube.png')), {
             encoding: null
         })
@@ -53,7 +69,10 @@ const registeredServices = {
         protocols: [],
         hosts: [],
         paths: [],
-        name: 0
+        name: 0,
+        embed: null,
+        chat: null,
+        icon: null
     }
 };
 
