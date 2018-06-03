@@ -104,8 +104,6 @@ ipcMain.on('channel_openChat', (event, id) => {
                 if (window) {
                     window.close();
                 }
-
-                window = null;
             });
         } else {
             shell.openExternal(link);

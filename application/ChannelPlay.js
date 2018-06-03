@@ -13,9 +13,9 @@ const AUTO_RESTART_TIMEOUT = 60;
 function setChannelEvents(channelObj) {
     channelObj.on('setting_changed', (settingName, settingValue) => {
         if (['isLive'].includes(settingName) && !settingValue) {
-            if (channelObj._window) {
-                channelObj._window.close();
-            }
+            _.forEach(channelObj._windows, window => window.close());
+
+            channelObj._windows = [];
         }
     });
 
@@ -90,11 +90,9 @@ function playInWindow(channelObj) {
             if (window) {
                 window.close();
             }
-
-            window = null;
         });
 
-        channelObj._window = window;
+        channelObj._windows.push(window);
     }
 
     return !!window;
