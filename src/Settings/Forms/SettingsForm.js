@@ -129,6 +129,17 @@ const SettingsForm = ({handleSubmit, pristine, reset, submitting, changeSetting,
             </InputWrapper>
         </FieldWrapper>
 
+        <FieldWrapper>
+            <Label>Play In Window</Label>
+            <InputWrapper>
+                <Field
+                    name="playInWindow"
+                    component={ToggleAdapter}
+                    toggle={changeSetting}
+                />
+            </InputWrapper>
+        </FieldWrapper>
+
         <FieldWrapper full>
             <Label>Youtube API Key</Label>
             <InputWrapper>

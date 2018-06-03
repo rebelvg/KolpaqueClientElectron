@@ -10,8 +10,7 @@ import ImportForm from 'src/Settings/Forms/ImportForm'
 const options = [
     {value: 'general', label: "General Settings"},
     {value: 'import', label: "Import Settings"},
-]
-
+];
 
 export default class Settings extends Component {
     constructor() {
@@ -25,14 +24,13 @@ export default class Settings extends Component {
         this.setState({
             activeKey: selected.value
         })
-    }
+    };
 
     submitImports = (members) => {
         this.props.changeSettings('twitchImport', members)
-    }
+    };
 
-    importChannel = (name) => this.props.importChannel(name)
-
+    importChannel = (name) => this.props.importChannel(name);
 
     changeSetting = (value, name, text = false) => {
         if (!text) {
@@ -42,7 +40,7 @@ export default class Settings extends Component {
         }
 
         this.props.changeSettings(name, value);
-    }
+    };
 
     submit = (values) => values;
 
@@ -92,4 +90,4 @@ const Container = styled.div`
     width: 100%;
     height: 100%;
     background-color: ${props => props.theme.channel.bg}
-`
+`;
