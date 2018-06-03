@@ -1,7 +1,3 @@
-/**
- * Created by JackP on 10/8/2017.
- */
-
 import React, {Component} from 'react';
 import Icon from 'react-icons-kit';
 import {close} from 'react-icons-kit/fa/close';

@@ -1,7 +1,3 @@
-/**
- * Created by JackP on 10/8/2017.
- */
-
 import React from 'react';
 import {Field} from 'react-final-form';
 import Toggle from 'react-toggle-button';
