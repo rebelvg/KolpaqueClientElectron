@@ -2,7 +2,6 @@ const {app, shell, Menu, Notification, nativeImage} = require('electron');
 const _ = require('lodash');
 
 const config = require('./SettingsFile');
-const ChannelPlay = require('./ChannelPlay');
 const Globals = require('./Globals');
 
 function setChannelEvents(channelObj) {
@@ -17,10 +16,6 @@ function setChannelEvents(channelObj) {
     });
 }
 
-_.forEach(config.channels, (channelObj) => {
-    setChannelEvents(channelObj);
-});
-
 config.on('setting_changed', function (settingName, settingValue) {
     if (settingName === 'showNotifications') {
         app.contextMenuTemplate[4].checked = settingValue;
@@ -31,13 +26,9 @@ config.on('setting_changed', function (settingName, settingValue) {
     }
 });
 
-config.on('channel_added', (channelObj) => {
-    setChannelEvents(channelObj);
-});
-
-config.on('channel_removed', (channelObj) => {
-    rebuildIconMenu();
-});
+_.forEach(config.channels, setChannelEvents);
+config.on('channel_added', setChannelEvents);
+config.on('channel_removed', rebuildIconMenu);
 
 function rebuildIconMenu() {
     let onlineChannels = config.find({
@@ -57,7 +48,7 @@ function rebuildIconMenu() {
             label: channelObj.visibleName,
             type: 'normal',
             click: (menuItem, browserWindow, event) => {
-                ChannelPlay.launchPlayerObj(channelObj, event.ctrlKey, event.shiftKey ? true : null);
+                channelObj.emit('play', event.ctrlKey, event.shiftKey ? true : null);
             },
             icon: channelObj._trayIcon
         }

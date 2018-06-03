@@ -28,6 +28,7 @@ class Channel extends EventEmitter {
         this._autoRestartAttempts = 0;
         this._startTime = 0;
         this._offlineConfirmations = 0;
+        this._window = null;
 
         this.visibleName = null;
         this.isPinned = false;
@@ -66,7 +67,6 @@ class Channel extends EventEmitter {
                             channelURL.path = serviceObj.paths[0] + nameArray[serviceObj.name];
 
                             this.link = channelURL.href;
-                            this.serviceObj = serviceObj;
                         }
                     });
                 }
@@ -79,6 +79,8 @@ class Channel extends EventEmitter {
             this.name = this.link;
             this.visibleName = `${channelURL.host}${pathname}`;
         }
+
+        this.serviceObj = registeredServices[this.service];
 
         this.id = md5(this.link);
 

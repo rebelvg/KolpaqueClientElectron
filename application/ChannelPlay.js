@@ -1,4 +1,4 @@
-const {ipcMain, dialog, shell} = require('electron');
+const {ipcMain, dialog, shell, BrowserWindow} = require('electron');
 const fs = require('fs');
 const child = require('child_process').execFile;
 const _ = require('lodash');
@@ -10,12 +10,32 @@ const Notifications = require('./Notifications');
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
 
+function setChannelEvents(channelObj) {
+    channelObj.on('setting_changed', (settingName, settingValue) => {
+        if (['isLive'].includes(settingName) && !settingValue) {
+            if (channelObj._window) {
+                channelObj._window.close();
+            }
+        }
+    });
+
+    channelObj.on('play', (LQ = null, autoRestart = null) => {
+        if (config.settings.playInWindow) {
+            if (!playInWindow(channelObj)) {
+                launchPlayerObj(channelObj, LQ, autoRestart);
+            }
+        } else {
+            launchPlayerObj(channelObj, LQ, autoRestart);
+        }
+    });
+}
+
 ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
     let channelObj = config.findById(id);
 
     if (!channelObj) return false;
 
-    launchPlayerObj(channelObj, LQ, autoRestart);
+    channelObj.emit('play', LQ, autoRestart);
 });
 
 ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
@@ -28,12 +48,41 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
     }
 });
 
+_.forEach(config.channels, setChannelEvents);
+config.on('channel_added', setChannelEvents);
+
 function launchPlayerLink(channelLink, LQ = null) {
     let channelObj = Config.buildChannelObj(channelLink);
 
     if (channelObj === false) return false;
 
     launchPlayerObj(channelObj, LQ);
+}
+
+function playInWindow(channelObj) {
+    let window;
+
+    if (channelObj.serviceObj.embed) {
+        window = new BrowserWindow({width: 1280, height: 720});
+
+        window.loadURL(channelObj.serviceObj.embed(channelObj));
+    } else {
+        window = new BrowserWindow({width: 1280, height: 720});
+
+        if (['http:', 'https:'].includes(channelObj.protocol)) {
+            window.loadURL(channelObj.link);
+        }
+    }
+
+    if (window) {
+        window.on('closed', () => {
+            window = null
+        });
+
+        channelObj._window = window;
+    }
+
+    return !!window;
 }
 
 function launchPlayerObj(channelObj, LQ = null, autoRestart = null) {

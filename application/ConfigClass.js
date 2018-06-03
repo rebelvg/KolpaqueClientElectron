@@ -139,7 +139,8 @@ class Config extends EventEmitter {
             sortType: 'lastAdded',
             sortReverse: false,
             showTooltips: true,
-            confirmAutoStart: true
+            confirmAutoStart: true,
+            playInWindow: false
         };
 
         readFile(this);

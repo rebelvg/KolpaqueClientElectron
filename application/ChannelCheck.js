@@ -6,7 +6,6 @@ const {URL, URLSearchParams} = require('url');
 const childProcess = require('child_process');
 
 const config = require('./SettingsFile');
-const ChannelPlay = require('./ChannelPlay');
 const Notifications = require('./Notifications');
 const {twitchApiKey} = require('./Globals');
 const {getInfoAsync} = require('./ChannelInfo');
@@ -77,11 +76,11 @@ async function isOnline(channelObj, printBalloon) {
                     buttons: ['Ok', 'Cancel']
                 }, function (res) {
                     if (res === 0) {
-                        ChannelPlay.launchPlayerObj(channelObj);
+                        channelObj.emit('play');
                     }
                 });
             } else {
-                ChannelPlay.launchPlayerObj(channelObj);
+                channelObj.emit('play');
             }
         }
     }

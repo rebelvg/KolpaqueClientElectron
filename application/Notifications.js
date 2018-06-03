@@ -2,8 +2,6 @@ const {app, shell, Menu, Notification, nativeImage} = require('electron');
 const _ = require('lodash');
 
 const config = require('./SettingsFile');
-const ChannelPlay = require('./ChannelPlay');
-const Logger = require('./Logger');
 const Globals = require('./Globals');
 
 function printNotification(title, content, channelObj = null) {
@@ -44,7 +42,7 @@ function onBalloonClick(title, content, channelObj) {
         return;
 
     if (title.indexOf('Stream is Live') === 0) {
-        ChannelPlay.launchPlayerObj(channelObj);
+        channelObj.emit('play');
     }
 
     if (title.includes('Update Available')) {
