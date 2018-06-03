@@ -63,11 +63,23 @@ function playInWindow(channelObj) {
     let window;
 
     if (channelObj.serviceObj.embed) {
-        window = new BrowserWindow({width: 1280, height: 720});
+        window = new BrowserWindow({
+            width: 1280,
+            height: 720,
+            webPreferences: {
+                nodeIntegration: false
+            }
+        });
 
         window.loadURL(channelObj.serviceObj.embed(channelObj));
     } else {
-        window = new BrowserWindow({width: 1280, height: 720});
+        window = new BrowserWindow({
+            width: 1280,
+            height: 720,
+            webPreferences: {
+                nodeIntegration: false
+            }
+        });
 
         if (['http:', 'https:'].includes(channelObj.protocol)) {
             window.loadURL(channelObj.link);
