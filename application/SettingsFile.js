@@ -1,4 +1,4 @@
-const {app, ipcMain, shell, clipboard, dialog} = require('electron');
+const {app, BrowserWindow, ipcMain, shell, clipboard, dialog} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
@@ -73,11 +73,42 @@ ipcMain.on('channel_openChat', (event, id) => {
 
     if (channelObj === null) return false;
 
+    let link;
+    let window;
+
     if (channelObj.serviceObj.chat) {
-        shell.openExternal(channelObj.serviceObj.chat(channelObj));
+        link = channelObj.serviceObj.chat(channelObj);
     } else {
         if (['http:', 'https:'].includes(channelObj.protocol)) {
-            shell.openExternal(`${channelObj.link}/chat`);
+            link = `${channelObj.link}/chat`;
+        }
+    }
+
+    if (link) {
+        if (config.settings.playInWindow) {
+            window = new BrowserWindow({
+                width: 405,
+                height: 720,
+                webPreferences: {
+                    nodeIntegration: false,
+                }
+            });
+
+            window.loadURL(link);
+
+            window.on('closed', () => {
+                window = null;
+            });
+
+            app.mainWindow.on('closed', () => {
+                if (window) {
+                    window.close();
+                }
+
+                window = null;
+            });
+        } else {
+            shell.openExternal(link);
         }
     }
 

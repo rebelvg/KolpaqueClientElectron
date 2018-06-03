@@ -1,4 +1,4 @@
-const {ipcMain, dialog, shell, BrowserWindow} = require('electron');
+const {app, ipcMain, dialog, shell, BrowserWindow} = require('electron');
 const fs = require('fs');
 const child = require('child_process').execFile;
 const _ = require('lodash');
@@ -80,12 +80,18 @@ function playInWindow(channelObj) {
             }
         });
 
-        window.loadURL(channelObj.serviceObj.embed(link));
-    }
+        window.loadURL(link);
 
-    if (window) {
         window.on('closed', () => {
-            window = null
+            window = null;
+        });
+
+        app.mainWindow.on('closed', () => {
+            if (window) {
+                window.close();
+            }
+
+            window = null;
         });
 
         channelObj._window = window;
