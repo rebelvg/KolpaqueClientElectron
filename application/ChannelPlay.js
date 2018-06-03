@@ -60,30 +60,27 @@ function launchPlayerLink(channelLink, LQ = null) {
 }
 
 function playInWindow(channelObj) {
+    let link;
     let window;
 
     if (channelObj.serviceObj.embed) {
-        window = new BrowserWindow({
-            width: 1280,
-            height: 720,
-            webPreferences: {
-                nodeIntegration: false
-            }
-        });
-
-        window.loadURL(channelObj.serviceObj.embed(channelObj));
+        link = channelObj.serviceObj.embed(channelObj);
     } else {
+        if (['http:', 'https:'].includes(channelObj.protocol)) {
+            link = channelObj.link;
+        }
+    }
+
+    if (link) {
         window = new BrowserWindow({
             width: 1280,
             height: 720,
             webPreferences: {
-                nodeIntegration: false
+                nodeIntegration: false,
             }
         });
 
-        if (['http:', 'https:'].includes(channelObj.protocol)) {
-            window.loadURL(channelObj.link);
-        }
+        window.loadURL(channelObj.serviceObj.embed(link));
     }
 
     if (window) {
