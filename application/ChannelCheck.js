@@ -1,7 +1,3 @@
-/**
- * Created by rebel on 21/03/2017.
- */
-
 const {app, ipcMain, dialog, shell} = require('electron');
 const request = require('request');
 const _ = require('lodash');

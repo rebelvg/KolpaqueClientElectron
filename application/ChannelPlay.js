@@ -1,7 +1,3 @@
-/**
- * Created by rebel on 22/03/2017.
- */
-
 const {ipcMain, dialog, shell} = require('electron');
 const fs = require('fs');
 const child = require('child_process').execFile;

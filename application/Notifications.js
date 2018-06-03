@@ -1,7 +1,3 @@
-/**
- * Created by rebel on 27/03/2017.
- */
-
 const {app, shell, Menu, Notification, nativeImage} = require('electron');
 const _ = require('lodash');
 

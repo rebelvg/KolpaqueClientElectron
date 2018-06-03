@@ -1,7 +1,3 @@
-/**
- * Created by rebel on 21/03/2017.
- */
-
 const {app, ipcMain, shell, clipboard, dialog} = require('electron');
 const path = require('path');
 const fs = require('fs');
