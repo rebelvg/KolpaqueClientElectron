@@ -27,13 +27,9 @@ ipcMain.on('client_getInfo', (event, info) => {
     });
 });
 
-ipcMain.on('client_getVersion', (event) => {
-    event.returnValue = clientVersion;
-});
+ipcMain.on('client_getVersion', (event) => event.returnValue = clientVersion);
 
-ipcMain.once('client_ready', () => {
-    checkLoop();
-});
+ipcMain.once('client_ready', checkLoop);
 
 function sendInfo(update) {
     infoArray.push(update);

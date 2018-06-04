@@ -46,13 +46,9 @@ const SERVICES_INTERVALS = {
     }
 };
 
-ipcMain.once('client_ready', () => {
-    checkLoop();
-});
+ipcMain.once('client_ready', checkLoop);
 
-config.on('channel_added', (channelObj) => {
-    checkChannel(channelObj);
-});
+config.on('channel_added', checkChannel);
 
 async function isOnline(channelObj, printBalloon) {
     channelObj._offlineConfirmations = 0;

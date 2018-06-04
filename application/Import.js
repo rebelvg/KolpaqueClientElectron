@@ -13,9 +13,7 @@ ipcMain.on('config_twitchImport', async (event, channelName) => {
     return await twitchImport(channelName);
 });
 
-ipcMain.once('client_ready', () => {
-    importLoop();
-});
+ipcMain.once('client_ready', importLoop);
 
 function twitchImportChannels(channels, i) {
     channels.forEach(function (channel) {
