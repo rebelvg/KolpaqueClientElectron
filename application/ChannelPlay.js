@@ -187,4 +187,3 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
 }
 
 exports.launchPlayerLink = launchPlayerLink;
-exports.launchPlayerObj = launchPlayerObj;
