@@ -83,6 +83,8 @@ function playInWindow(channelObj) {
         window.loadURL(link);
 
         window.on('closed', () => {
+            _.pull(channelObj._windows, window);
+
             window = null;
         });
 
