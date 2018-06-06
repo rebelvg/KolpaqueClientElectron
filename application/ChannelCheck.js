@@ -63,7 +63,7 @@ async function isOnline(channelObj, printBalloon) {
         Notifications.printNotification('Stream is Live', channelObj.visibleName, channelObj);
     }
 
-    if (printBalloon && channelObj.autoStart) {
+    if (printBalloon && config.settings.showNotifications && channelObj.autoStart) {
         if (channelObj._processes.length === 0) {
             if (config.settings.confirmAutoStart) {
                 dialog.showMessageBox({
