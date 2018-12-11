@@ -1,5 +1,4 @@
-const electron = require('electron');
-const { app, BrowserWindow, clipboard, shell, globalShortcut, ipcMain, Menu, Tray, nativeImage } = require('electron');
+import { app, BrowserWindow, clipboard, shell, globalShortcut, ipcMain, Menu, Tray, nativeImage } from 'electron';
 const _ = require('lodash');
 const path = require('path');
 const url = require('url');
