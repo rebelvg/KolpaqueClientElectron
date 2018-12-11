@@ -1,0 +1,11 @@
+{
+  "name": "application",
+  "version": "1.0.0",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "electron-default-menu": "^1.0.1",
+    "fix-path": "^2.1.0",
+    "md5": "^2.2.1",
+    "request": "^2.83.0"
+  }
+}
