@@ -8,7 +8,7 @@ const childProcess = require('child_process');
 let platformOption = readlineSync.question('select platform. all - for all platforms. (empty for current)' + os.EOL);
 let pathOption = readlineSync.question('select output folder. (empty for current)' + os.EOL);
 
-childProcess.execSync('yarn run react-build', {
+childProcess.execSync('yarn run build:app', {
     stdio: 'inherit'
 });
 

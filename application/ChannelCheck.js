@@ -209,6 +209,12 @@ function getYoutubeStatsUser(channelObj, printBalloon) {
 }
 
 function getCustom(channelObj, printBalloon) {
+    const {useStreamlinkForCustomChannels} = config.settings;
+
+    if (!useStreamlinkForCustomChannels) {
+        return;
+    }
+
     return new Promise(resolve => {
         childProcess.execFile('streamlink', [channelObj.link, '--json'], function (err, stdout, stderr) {
             try {

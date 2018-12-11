@@ -140,7 +140,8 @@ class Config extends EventEmitter {
             sortReverse: false,
             showTooltips: true,
             confirmAutoStart: true,
-            playInWindow: false
+            playInWindow: false,
+            useStreamlinkForCustomChannels: false
         };
 
         readFile(this);
