@@ -1,4 +1,4 @@
-const { app, shell, Menu, Notification, nativeImage } = require('electron');
+import { app, Menu, nativeImage } from 'electron';
 const _ = require('lodash');
 
 const config = require('./SettingsFile');
@@ -18,7 +18,7 @@ function setChannelEvents(channelObj) {
 
 config.on('setting_changed', function(settingName, settingValue) {
   if (settingName === 'showNotifications') {
-    app.contextMenuTemplate[4].checked = settingValue;
+    (app as any).contextMenuTemplate[4].checked = settingValue;
   }
 
   if (['sortType', 'sortReverse', 'showNotifications'].includes(settingName)) {
@@ -35,7 +35,7 @@ function rebuildIconMenu() {
     isLive: true
   }).channels;
 
-  app.contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
+  (app as any).contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
     if (!channelObj._trayIcon) {
       let iconBuffer = channelObj._icon ? channelObj._icon : Globals.registeredServices[channelObj.service].icon;
 
@@ -54,9 +54,9 @@ function rebuildIconMenu() {
     };
   });
 
-  let contextMenu = Menu.buildFromTemplate(app.contextMenuTemplate);
+  let contextMenu = Menu.buildFromTemplate((app as any).contextMenuTemplate);
 
-  app.appIcon.setContextMenu(contextMenu);
+  (app as any).appIcon.setContextMenu(contextMenu);
 }
 
 exports.rebuildIconMenu = rebuildIconMenu;

@@ -1,4 +1,4 @@
-const fs = require('fs');
+import * as fs from 'fs';
 const path = require('path');
 
 const allowedProtocols = ['rtmp:', 'http:', 'https:'];

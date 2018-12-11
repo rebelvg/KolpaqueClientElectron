@@ -1,9 +1,6 @@
-const { app, BrowserWindow, ipcMain, shell, clipboard, dialog } = require('electron');
-const path = require('path');
-const fs = require('fs');
+import { app, BrowserWindow, ipcMain, shell, clipboard } from 'electron';
 const _ = require('lodash');
 
-const { allowedProtocols, registeredServices, preInstalledChannels } = require('./Globals');
 const Config = require('./ConfigClass');
 
 let config = new Config();
@@ -100,7 +97,7 @@ ipcMain.on('channel_openChat', (event, id) => {
         window = null;
       });
 
-      app.mainWindow.on('closed', () => {
+      (app as any).mainWindow.on('closed', () => {
         if (window) {
           window.close();
         }

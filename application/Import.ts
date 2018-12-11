@@ -1,11 +1,10 @@
-const { app, ipcMain, dialog, shell } = require('electron');
+import { ipcMain, dialog } from 'electron';
 const axios = require('axios');
 const _ = require('lodash');
-const util = require('util');
-const { URL, URLSearchParams } = require('url');
+const { URL } = require('url');
 
 const config = require('./SettingsFile');
-const { twitchApiKey, registeredServices } = require('./Globals');
+const { twitchApiKey } = require('./Globals');
 
 ipcMain.on('config_twitchImport', async (event, channelName) => {
   return await twitchImport(channelName);

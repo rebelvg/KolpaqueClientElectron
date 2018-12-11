@@ -1,6 +1,4 @@
-const { app, ipcMain, dialog, shell, nativeImage } = require('electron');
-const _ = require('lodash');
-const axios = require('axios');
+import axios from 'axios';
 
 const config = require('./SettingsFile');
 const { twitchApiKey } = require('./Globals');

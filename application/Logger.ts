@@ -1,4 +1,4 @@
-const { app, ipcMain, dialog } = require('electron');
+import { app } from 'electron';
 const fs = require('fs');
 const path = require('path');
 const os = require('os');

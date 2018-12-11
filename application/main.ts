@@ -1,4 +1,4 @@
-import { app, BrowserWindow, clipboard, shell, globalShortcut, ipcMain, Menu, Tray, nativeImage } from 'electron';
+import { app, BrowserWindow, clipboard, shell, ipcMain, Menu, Tray, nativeImage } from 'electron';
 const _ = require('lodash');
 const path = require('path');
 const url = require('url');
@@ -7,16 +7,16 @@ const defaultMenu = require('electron-default-menu');
 
 fixPath();
 
-const config = require('./application/SettingsFile');
+const config = require('./SettingsFile');
 
-const ChannelPlay = require('./application/ChannelPlay');
-const TrayIcon = require('./application/TrayIcon');
-const Logger = require('./application/Logger');
+const ChannelPlay = require('./ChannelPlay');
+const TrayIcon = require('./TrayIcon');
+const Logger = require('./Logger');
 
-require('./application/ChannelCheck');
-require('./application/Import');
-require('./application/ChannelInfo');
-require('./application/VersionCheck');
+require('./ChannelCheck');
+require('./Import');
+require('./ChannelInfo');
+require('./VersionCheck');
 
 const isDev = process.env.NODE_ENV === 'dev';
 
@@ -28,25 +28,22 @@ ipcMain.once('client_ready', () => {
   console.log('client ready.');
 });
 
-let iconPath = path.normalize(path.join(__dirname, 'icons', 'icon.png'));
-let iconPathTray = path.normalize(path.join(__dirname, 'icons', 'icon32.png'));
-let iconPathBalloon = path.normalize(path.join(__dirname, 'icons', 'icon.png'));
+let iconPath = path.resolve('./icons/icon.png');
+let iconPathTray = path.resolve('./icons/icon32.png');
+let iconPathBalloon = path.resolve('./icons/icon.png');
 
 if (process.platform === 'darwin') {
   app.dock.setIcon(iconPath);
   app.dock.hide();
 
-  iconPathTray = path.normalize(path.join(__dirname, 'icons', 'iconTemplate.png'));
+  iconPathTray = path.resolve('./icons/iconTemplate.png');
 }
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 app.setName('Kolpaque Client');
 
 function createWindow() {
-  // Create the browser window.
   mainWindow = new BrowserWindow({
     title: 'Kolpaque Client',
     minWidth: 300,
@@ -58,11 +55,10 @@ function createWindow() {
     icon: iconPath
   });
 
-  app.mainWindow = mainWindow;
+  (app as any).mainWindow = mainWindow;
 
   mainWindow.setMenu(null);
 
-  // and load the index.html of the app.
   if (isDev) {
     const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer');
 
@@ -79,7 +75,7 @@ function createWindow() {
   } else {
     mainWindow.loadURL(
       url.format({
-        pathname: path.join(__dirname, 'dist/index.html'),
+        pathname: path.resolve('./dist/index.html'),
         protocol: 'file:',
         slashes: true
       })
@@ -180,9 +176,10 @@ let contextMenuTemplate = [
   }
 ];
 
-app.contextMenuTemplate = contextMenuTemplate;
+(app as any).contextMenuTemplate = contextMenuTemplate;
 
 let appIcon;
+
 app.on('ready', () => {
   appIcon = new Tray(nativeImage.createFromPath(iconPathTray));
   appIcon.setToolTip('Kolpaque Client');
@@ -198,7 +195,7 @@ app.on('ready', () => {
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
-  app.appIcon = appIcon;
+  (app as any).appIcon = appIcon;
 
   TrayIcon.rebuildIconMenu();
 

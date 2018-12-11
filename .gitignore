@@ -1,5 +1,6 @@
 .vscode/
 .idea/
-builds/
+dist-api/
 dist/
 node_modules/
+builds/

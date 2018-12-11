@@ -1,5 +1,4 @@
-const { app, ipcMain, dialog, shell, BrowserWindow } = require('electron');
-const fs = require('fs');
+import { app, ipcMain, dialog, shell, BrowserWindow } from 'electron';
 const child = require('child_process').execFile;
 const _ = require('lodash');
 
@@ -88,7 +87,7 @@ function playInWindow(channelObj) {
       window = null;
     });
 
-    app.mainWindow.on('closed', () => {
+    (app as any).mainWindow.on('closed', () => {
       if (window) {
         window.close();
       }

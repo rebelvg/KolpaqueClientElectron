@@ -2,14 +2,14 @@
   "name": "KolpaqueClient",
   "version": "0.2.2",
   "description": "Multiplatform GUI for Streamlink",
-  "main": "main.ts",
   "scripts": {
     "prepush": "prettier --write \"**/*.js\"",
-    "start": "electron ./main.ts",
-    "start:api": "cross-env NODE_ENV=dev electron .",
-    "start:app": "webpack-dev-server",
+    "build:api": "tsc",
     "build:app": "cross-env NODE_ENV=production webpack --config webpack.config.production",
-    "build": "node build.js"
+    "build": "yarn run build:api && yarn run build:app && node build.js",
+    "start:api": "cross-env NODE_ENV=dev yarn run start",
+    "start:app": "webpack-dev-server",
+    "start": "yarn run build:api && electron ./dist-api/main.js"
   },
   "author": "KLPQ",
   "license": "CC0-1.0",

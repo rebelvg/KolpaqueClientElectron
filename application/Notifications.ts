@@ -1,4 +1,4 @@
-const { app, shell, Menu, Notification, nativeImage } = require('electron');
+import { app, shell, Notification, nativeImage } from 'electron';
 const _ = require('lodash');
 
 const config = require('./SettingsFile');
@@ -11,7 +11,7 @@ function printNotification(title, content, channelObj = null) {
 }
 
 function printNewNotification(title, content, channelObj) {
-  let icon = app.appIcon.iconPathBalloon;
+  let icon = (app as any).appIcon.iconPathBalloon;
 
   if (channelObj) {
     let iconBuffer = channelObj._icon ? channelObj._icon : Globals.registeredServices[channelObj.service].icon;

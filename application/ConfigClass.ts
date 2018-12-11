@@ -1,4 +1,4 @@
-const { app, ipcMain, dialog } = require('electron');
+import { app } from 'electron';
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
@@ -148,19 +148,19 @@ class Config extends EventEmitter {
     saveLoop(this);
 
     this.on('channel_added', () => {
-      app.mainWindow.webContents.send('channel_addSync');
+      (app as any).mainWindow.webContents.send('channel_addSync');
     });
 
     this.on('channel_removed', () => {
-      app.mainWindow.webContents.send('channel_removeSync');
+      (app as any).mainWindow.webContents.send('channel_removeSync');
     });
 
     this.on('setting_changed', (settingName, settingValue) => {
-      app.mainWindow.webContents.send('config_changeSetting', settingName, settingValue);
+      (app as any).mainWindow.webContents.send('config_changeSetting', settingName, settingValue);
     });
 
     this.on('setting_changed', () => {
-      app.mainWindow.webContents.send('config_changeSettingSync', this.settings);
+      (app as any).mainWindow.webContents.send('config_changeSettingSync', this.settings);
     });
   }
 
@@ -234,7 +234,7 @@ class Config extends EventEmitter {
     return channel;
   }
 
-  find(query = {}) {
+  find(query: any = {}) {
     const sort = {
       type: this.settings.sortType,
       isReversed: this.settings.sortReverse
@@ -259,9 +259,7 @@ class Config extends EventEmitter {
 
   saveFile() {
     try {
-      let saveConfig = {};
-
-      saveConfig.channels = _.map(this.channels, channelObj => {
+      const channels = _.map(this.channels, channelObj => {
         let channel = {};
 
         _.forEach(channelSave, settingName => {
@@ -273,7 +271,10 @@ class Config extends EventEmitter {
         return channel;
       });
 
-      saveConfig.settings = this.settings;
+      const saveConfig = {
+        channels,
+        settings: this.settings
+      };
 
       fs.writeFileSync(settingsPath, JSON.stringify(saveConfig, null, 4));
 

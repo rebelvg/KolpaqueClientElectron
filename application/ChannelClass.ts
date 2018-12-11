@@ -1,4 +1,4 @@
-const { app, ipcMain, shell, clipboard } = require('electron');
+import { app } from 'electron';
 const { URL } = require('url');
 const _ = require('lodash');
 const EventEmitter = require('events');
@@ -88,11 +88,11 @@ class Channel extends EventEmitter {
     this.id = md5(this.link);
 
     this.on('setting_changed', (settingName, settingValue, send) => {
-      if (send) app.mainWindow.webContents.send('channel_changeSettingSync');
+      if (send) (app as any).mainWindow.webContents.send('channel_changeSettingSync');
     });
 
     this.on('settings_changed', send => {
-      if (send) app.mainWindow.webContents.send('channel_changeSettingSync');
+      if (send) (app as any).mainWindow.webContents.send('channel_changeSettingSync');
     });
   }
 

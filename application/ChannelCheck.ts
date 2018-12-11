@@ -1,7 +1,6 @@
-const { app, ipcMain, dialog, shell } = require('electron');
+import { ipcMain, dialog } from 'electron';
 const _ = require('lodash');
-const util = require('util');
-const { URL, URLSearchParams } = require('url');
+const { URL } = require('url');
 const childProcess = require('child_process');
 const axios = require('axios');
 

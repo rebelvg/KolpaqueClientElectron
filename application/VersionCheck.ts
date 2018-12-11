@@ -1,4 +1,4 @@
-const { app, ipcMain, dialog, shell } = require('electron');
+import { app, ipcMain, shell } from 'electron';
 const child = require('child_process').execFile;
 const _ = require('lodash');
 const axios = require('axios');
@@ -36,7 +36,10 @@ function sendInfo(update) {
 
   Notifications.printNotification(`${_.capitalize(update)} Update Available`, updates[update].releaseLink);
 
-  app.mainWindow.webContents.send('client_showInfo', infoArray.map(_.capitalize).join(' & ') + ' Update Available');
+  (app as any).mainWindow.webContents.send(
+    'client_showInfo',
+    infoArray.map(_.capitalize).join(' & ') + ' Update Available'
+  );
 }
 
 async function clientVersionCheck() {
