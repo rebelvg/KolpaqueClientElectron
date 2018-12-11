@@ -5,8 +5,8 @@ const path = require('path');
 const os = require('os');
 const childProcess = require('child_process');
 
-let platformOption = readlineSync.question('select platform. all - for all platforms. (empty for current)' + os.EOL);
-let pathOption = readlineSync.question('select output folder. (empty for current)' + os.EOL);
+let platformOption = readlineSync.question(`select platform. all - for all platforms. (empty for current)${os.EOL}`);
+let pathOption = readlineSync.question(`select output folder. (empty for current)${os.EOL}`);
 
 childProcess.execSync('yarn run build:app', {
   stdio: 'inherit'
@@ -17,7 +17,7 @@ let options = {
   tmpdir: false,
   icon: './icons/icon',
   arch: 'x64',
-  ignore: ['.idea', 'src'],
+  ignore: ['.vscode', '.idea', 'src'],
   overwrite: true,
   win32metadata: {
     ProductName: 'KolpaqueClientElectron',
