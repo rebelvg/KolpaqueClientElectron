@@ -1,13 +1,11 @@
 const { app, ipcMain, dialog, shell } = require('electron');
-const request = require('request');
+const axios = require('axios');
 const _ = require('lodash');
 const util = require('util');
 const { URL, URLSearchParams } = require('url');
 
 const config = require('./SettingsFile');
 const { twitchApiKey, registeredServices } = require('./Globals');
-
-let requestGet = util.promisify(request.get);
 
 ipcMain.on('config_twitchImport', async (event, channelName) => {
   return await twitchImport(channelName);
@@ -26,9 +24,9 @@ function twitchImportChannels(channels, i) {
 }
 
 async function getTwitchData(url) {
-  let res = await requestGet({ url: url, json: true, headers: { 'Client-ID': twitchApiKey } });
+  const { data } = await axios.get(url, { headers: { 'Client-ID': twitchApiKey } });
 
-  return res.body;
+  return data;
 }
 
 async function twitchImportBase(channelName) {
@@ -39,7 +37,7 @@ async function twitchImportBase(channelName) {
   try {
     let i = 0;
 
-    let apiUrl = new URL(`https://api.twitch.tv/kraken/users/${channelName}/follows/channels`);
+    const apiUrl = new URL(`https://api.twitch.tv/kraken/users/${channelName}/follows/channels`);
 
     apiUrl.searchParams.set('sortby', 'created_at');
     apiUrl.searchParams.set('direction', 'ASC');
@@ -89,16 +87,13 @@ async function twitchImport(channelName) {
   }
 }
 
-function autoKlpqImport() {
+async function autoKlpqImport() {
   const url = `http://stats.klpq.men/export/channels.json`;
 
-  request.get({ url: url, json: true }, function(err, res, body) {
-    if (err) return;
-    if (res.statusCode !== 200) return;
+  const { data } = await axios.get(url);
 
-    _.forEach(body, channelUrl => {
-      config.addChannelLink(channelUrl);
-    });
+  _.forEach(data, channelUrl => {
+    config.addChannelLink(channelUrl);
   });
 }
 

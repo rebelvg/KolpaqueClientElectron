@@ -1,7 +1,7 @@
 const { app, ipcMain, dialog, shell } = require('electron');
-const request = require('request');
 const child = require('child_process').execFile;
 const _ = require('lodash');
+const axios = require('axios');
 
 const Notifications = require('./Notifications');
 const clientVersion = require('../package.json').version;
@@ -39,19 +39,22 @@ function sendInfo(update) {
   app.mainWindow.webContents.send('client_showInfo', infoArray.map(_.capitalize).join(' & ') + ' Update Available');
 }
 
-function clientVersionCheck() {
+async function clientVersionCheck() {
   if (infoArray.includes('client')) return clearInterval(updates['client'].interval);
 
-  let url = 'https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases/latest';
+  const url = 'https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases/latest';
 
-  request.get({ url: url, json: true, headers: { 'user-agent': 'KolpaqueClientElectron' } }, function(err, res, body) {
-    if (err) return;
-    if (res.statusCode !== 200) return;
-
-    let newVersion = body.tag_name;
-
-    if (newVersion !== clientVersion) sendInfo('client');
+  const { data } = await axios.get(url, {
+    headers: {
+      'user-agent': 'KolpaqueClientElectron'
+    }
   });
+
+  const newVersion = data.tag_name;
+
+  if (newVersion !== clientVersion) {
+    sendInfo('client');
+  }
 }
 
 function streamlinkVersionCheck() {

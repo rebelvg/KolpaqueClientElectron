@@ -1,6 +1,5 @@
 const { app, ipcMain, dialog, shell, nativeImage } = require('electron');
 const _ = require('lodash');
-const request = require('request');
 const axios = require('axios');
 
 const config = require('./SettingsFile');
@@ -13,23 +12,20 @@ const SERVICES = {
 async function getTwitchInfoAsync(channelObj) {
   if (channelObj._icon) return;
 
-  let url = `https://api.twitch.tv/kraken/channels/${channelObj.name}`;
+  const url = `https://api.twitch.tv/kraken/channels/${channelObj.name}`;
 
   try {
-    const res = await axios.get(url, {
+    const { data: channelData } = await axios.get(url, {
       headers: { 'Client-ID': twitchApiKey }
     });
 
-    if (res.status !== 200) return;
-    if (!res.data.logo) return;
+    if (!channelData.logo) return;
 
-    const logoRes = await axios.get(res.data.logo, {
+    const { data: logoData } = await axios.get(channelData.logo, {
       responseType: 'arraybuffer'
     });
 
-    if (logoRes.status !== 200) return;
-
-    channelObj._icon = logoRes.data;
+    channelObj._icon = logoData;
   } catch (e) {}
 }
 
