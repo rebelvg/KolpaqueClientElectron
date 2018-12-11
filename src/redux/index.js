@@ -1,11 +1,11 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 
-import {reducer as channel} from 'src/redux/channel';
-import {reducer as settings} from 'src/redux/settings';
+import { reducer as channel } from 'src/redux/channel';
+import { reducer as settings } from 'src/redux/settings';
 
 const reducers = combineReducers({
-    channel,
-    settings,
+  channel,
+  settings
 });
 
 export default reducers;

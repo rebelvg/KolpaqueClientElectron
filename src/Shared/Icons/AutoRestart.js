@@ -1,54 +1,56 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Icon from 'react-icons-kit';
-import styled, {withTheme} from 'styled-components'
-import {refresh} from 'react-icons-kit/fa/refresh';
+import styled, { withTheme } from 'styled-components';
+import { refresh } from 'react-icons-kit/fa/refresh';
 
 @withTheme
 class AutoRestart extends Component {
+  onClick = e => {
+    const {
+      channel: { id, onAutoRestart, autoRestart },
+      toggle
+    } = this.props;
 
-    onClick = (e) => {
-        const {
-            channel: {id, onAutoRestart, autoRestart},
-            toggle
-        } = this.props;
-
-        e.preventDefault();
-        e.stopPropagation();
-        if (onAutoRestart) {
-            toggle(id, 'onAutoRestart', !onAutoRestart)
-        } else {
-            toggle(id, 'autoRestart', !autoRestart)
-        }
+    e.preventDefault();
+    e.stopPropagation();
+    if (onAutoRestart) {
+      toggle(id, 'onAutoRestart', !onAutoRestart);
+    } else {
+      toggle(id, 'autoRestart', !autoRestart);
     }
+  };
 
-    getColor = () => {
-        const {theme, channel: {onAutoRestart, autoRestart}} = this.props;
-        if (onAutoRestart) {
-            return '#119400'
-        } else {
-            return autoRestart ? theme.client.color : '#979797'
-        }
+  getColor = () => {
+    const {
+      theme,
+      channel: { onAutoRestart, autoRestart }
+    } = this.props;
+    if (onAutoRestart) {
+      return '#119400';
+    } else {
+      return autoRestart ? theme.client.color : '#979797';
     }
+  };
 
-    render() {
-        return (
-            <Wrapper onClick={this.onClick}>
-                <IconBase icon={refresh} style={{color: this.getColor()}}/>
-            </Wrapper>
-        )
-    }
+  render() {
+    return (
+      <Wrapper onClick={this.onClick}>
+        <IconBase icon={refresh} style={{ color: this.getColor() }} />
+      </Wrapper>
+    );
+  }
 }
 
-export default AutoRestart
+export default AutoRestart;
 
 const Wrapper = styled.div`
-    display: flex;
-    align-items: center;
-    height: 20px;
-    margin-right: 4px;
-`
+  display: flex;
+  align-items: center;
+  height: 20px;
+  margin-right: 4px;
+`;
 
 const IconBase = styled(Icon)`
-    width: 12px;
-    height: 12px
-`
+  width: 12px;
+  height: 12px;
+`;

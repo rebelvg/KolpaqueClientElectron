@@ -1,29 +1,29 @@
-const {app, shell, Menu, Notification, nativeImage} = require('electron');
+const { app, shell, Menu, Notification, nativeImage } = require('electron');
 const _ = require('lodash');
 
 const config = require('./SettingsFile');
 const Globals = require('./Globals');
 
 function setChannelEvents(channelObj) {
-    channelObj.on('setting_changed', (settingName, settingValue) => {
-        if (['visibleName', 'isPinned'].includes(settingName)) {
-            rebuildIconMenu();
-        }
-    });
+  channelObj.on('setting_changed', (settingName, settingValue) => {
+    if (['visibleName', 'isPinned'].includes(settingName)) {
+      rebuildIconMenu();
+    }
+  });
 
-    channelObj.on('settings_changed', (settingName, settingValue) => {
-        rebuildIconMenu();
-    });
+  channelObj.on('settings_changed', (settingName, settingValue) => {
+    rebuildIconMenu();
+  });
 }
 
-config.on('setting_changed', function (settingName, settingValue) {
-    if (settingName === 'showNotifications') {
-        app.contextMenuTemplate[4].checked = settingValue;
-    }
+config.on('setting_changed', function(settingName, settingValue) {
+  if (settingName === 'showNotifications') {
+    app.contextMenuTemplate[4].checked = settingValue;
+  }
 
-    if (['sortType', 'sortReverse', 'showNotifications'].includes(settingName)) {
-        rebuildIconMenu();
-    }
+  if (['sortType', 'sortReverse', 'showNotifications'].includes(settingName)) {
+    rebuildIconMenu();
+  }
 });
 
 _.forEach(config.channels, setChannelEvents);
@@ -31,32 +31,32 @@ config.on('channel_added', setChannelEvents);
 config.on('channel_removed', rebuildIconMenu);
 
 function rebuildIconMenu() {
-    let onlineChannels = config.find({
-        isLive: true
-    }).channels;
+  let onlineChannels = config.find({
+    isLive: true
+  }).channels;
 
-    app.contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
-        if (!channelObj._trayIcon) {
-            let iconBuffer = channelObj._icon ? channelObj._icon : Globals.registeredServices[channelObj.service].icon;
+  app.contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
+    if (!channelObj._trayIcon) {
+      let iconBuffer = channelObj._icon ? channelObj._icon : Globals.registeredServices[channelObj.service].icon;
 
-            if (iconBuffer) {
-                channelObj._trayIcon = nativeImage.createFromBuffer(iconBuffer).resize({height: 16});
-            }
-        }
+      if (iconBuffer) {
+        channelObj._trayIcon = nativeImage.createFromBuffer(iconBuffer).resize({ height: 16 });
+      }
+    }
 
-        return {
-            label: channelObj.visibleName,
-            type: 'normal',
-            click: (menuItem, browserWindow, event) => {
-                channelObj.emit('play', event.ctrlKey, event.shiftKey ? true : null);
-            },
-            icon: channelObj._trayIcon
-        }
-    });
+    return {
+      label: channelObj.visibleName,
+      type: 'normal',
+      click: (menuItem, browserWindow, event) => {
+        channelObj.emit('play', event.ctrlKey, event.shiftKey ? true : null);
+      },
+      icon: channelObj._trayIcon
+    };
+  });
 
-    let contextMenu = Menu.buildFromTemplate(app.contextMenuTemplate);
+  let contextMenu = Menu.buildFromTemplate(app.contextMenuTemplate);
 
-    app.appIcon.setContextMenu(contextMenu);
+  app.appIcon.setContextMenu(contextMenu);
 }
 
 exports.rebuildIconMenu = rebuildIconMenu;

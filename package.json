@@ -4,6 +4,7 @@
   "description": "Multiplatform GUI for Streamlink",
   "main": "main.js",
   "scripts": {
+    "prepush": "prettier --write \"**/*.js\"",
     "start": "electron .",
     "start:api": "cross-env NODE_ENV=dev electron .",
     "start:app": "webpack-dev-server",
@@ -27,6 +28,7 @@
     "history": "^4.7.2",
     "html-webpack-plugin": "^2.30.1",
     "normalize.css": "^8.0.0",
+    "prettier": "^1.15.3",
     "readline-sync": "^1.4.7",
     "url-loader": "^0.6.2",
     "webpack": "^3.6.0",

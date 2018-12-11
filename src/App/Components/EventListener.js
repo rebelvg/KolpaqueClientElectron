@@ -1,82 +1,77 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
-import {debounce} from 'lodash';
+import { debounce } from 'lodash';
 
-import {
-    initStart,
-    initEnd,
-    updateData,
-    getInfo,
-    getLoaded,
-} from 'src/redux/channel';
-import {initSettings} from 'src/redux/settings';
+import { initStart, initEnd, updateData, getInfo, getLoaded } from 'src/redux/channel';
+import { initSettings } from 'src/redux/settings';
 
-const {ipcRenderer} = window.require('electron');
+const { ipcRenderer } = window.require('electron');
 
 @connect(
-    state => ({
-        loaded: getLoaded(state)
-    }),
-    {
-        initSettings,
-        getInfo,
-        initStart,
-        initEnd,
-        updateData,
-    }
+  state => ({
+    loaded: getLoaded(state)
+  }),
+  {
+    initSettings,
+    getInfo,
+    initStart,
+    initEnd,
+    updateData
+  }
 )
 class EventListener extends Component {
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this.state = {
-            queue: []
-        };
-
-        this.empty = debounce(this.emptyQueue, 0);
-    }
-
-    emptyQueue = () => {
-        const {queue} = this.state;
-        const {initEnd, updateData, loaded} = this.props;
-
-        this.setState({
-            queue: []
-        }, () => {
-            updateData();
-
-            if (!loaded) {
-                initEnd();
-            }
-        })
+    this.state = {
+      queue: []
     };
 
-    componentDidMount() {
-        const {initSettings, updateData, loaded, getInfo, initStart} = this.props;
+    this.empty = debounce(this.emptyQueue, 0);
+  }
+
+  emptyQueue = () => {
+    const { queue } = this.state;
+    const { initEnd, updateData, loaded } = this.props;
+
+    this.setState(
+      {
+        queue: []
+      },
+      () => {
+        updateData();
 
         if (!loaded) {
-            ipcRenderer.on('channel_changeSettingSync', (event) => updateData());
-            ipcRenderer.on('channel_addSync', (event) => updateData());
-            ipcRenderer.on('client_showInfo', (event, info) => getInfo(info));
-            ipcRenderer.on('channel_removeSync', (event) => updateData());
-
-            initStart();
-            initSettings();
-
-            setTimeout(this.empty, 3000);
+          initEnd();
         }
-    }
+      }
+    );
+  };
 
-    render() {
-        return (
-            <EventContainer/>
-        );
+  componentDidMount() {
+    const { initSettings, updateData, loaded, getInfo, initStart } = this.props;
+
+    if (!loaded) {
+      ipcRenderer.on('channel_changeSettingSync', event => updateData());
+      ipcRenderer.on('channel_addSync', event => updateData());
+      ipcRenderer.on('client_showInfo', (event, info) => getInfo(info));
+      ipcRenderer.on('channel_removeSync', event => updateData());
+
+      initStart();
+      initSettings();
+
+      setTimeout(this.empty, 3000);
     }
+  }
+
+  render() {
+    return <EventContainer />;
+  }
 }
 
 const EventContainer = styled.div`
-	display:none
+  display: none;
 `;
 
 export default EventListener;

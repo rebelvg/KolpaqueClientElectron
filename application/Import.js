@@ -1,119 +1,117 @@
-const {app, ipcMain, dialog, shell} = require('electron');
+const { app, ipcMain, dialog, shell } = require('electron');
 const request = require('request');
 const _ = require('lodash');
 const util = require('util');
-const {URL, URLSearchParams} = require('url');
+const { URL, URLSearchParams } = require('url');
 
 const config = require('./SettingsFile');
-const {twitchApiKey, registeredServices} = require('./Globals');
+const { twitchApiKey, registeredServices } = require('./Globals');
 
 let requestGet = util.promisify(request.get);
 
 ipcMain.on('config_twitchImport', async (event, channelName) => {
-    return await twitchImport(channelName);
+  return await twitchImport(channelName);
 });
 
 ipcMain.once('client_ready', importLoop);
 
 function twitchImportChannels(channels, i) {
-    channels.forEach(function (channel) {
-        let channelObj = config.addChannelLink(channel.channel.url);
+  channels.forEach(function(channel) {
+    let channelObj = config.addChannelLink(channel.channel.url);
 
-        if (channelObj !== false) i++;
-    });
+    if (channelObj !== false) i++;
+  });
 
-    return i;
+  return i;
 }
 
 async function getTwitchData(url) {
-    let res = await requestGet({url: url, json: true, headers: {'Client-ID': twitchApiKey}});
+  let res = await requestGet({ url: url, json: true, headers: { 'Client-ID': twitchApiKey } });
 
-    return res.body;
+  return res.body;
 }
 
 async function twitchImportBase(channelName) {
-    channelName = channelName.trim();
+  channelName = channelName.trim();
 
-    if (channelName.length === 0) return null;
+  if (channelName.length === 0) return null;
 
-    try {
-        let i = 0;
+  try {
+    let i = 0;
 
-        let apiUrl = new URL(`https://api.twitch.tv/kraken/users/${channelName}/follows/channels`);
+    let apiUrl = new URL(`https://api.twitch.tv/kraken/users/${channelName}/follows/channels`);
 
-        apiUrl.searchParams.set('sortby', 'created_at');
-        apiUrl.searchParams.set('direction', 'ASC');
-        apiUrl.searchParams.set('limit', '100');
+    apiUrl.searchParams.set('sortby', 'created_at');
+    apiUrl.searchParams.set('direction', 'ASC');
+    apiUrl.searchParams.set('limit', '100');
 
-        let body = await getTwitchData(apiUrl.href);
-        let channels = body.follows;
+    let body = await getTwitchData(apiUrl.href);
+    let channels = body.follows;
 
-        if (!channels || channels.length === 0)
-            return 0;
+    if (!channels || channels.length === 0) return 0;
 
-        config.addChannelLink(`http://www.twitch.tv/${channelName}`);
+    config.addChannelLink(`http://www.twitch.tv/${channelName}`);
 
-        i = twitchImportChannels(channels, i);
+    i = twitchImportChannels(channels, i);
 
-        while (channels.length !== 0) {
-            body = await getTwitchData(body._links.next);
-            channels = body.follows;
+    while (channels.length !== 0) {
+      body = await getTwitchData(body._links.next);
+      channels = body.follows;
 
-            i = twitchImportChannels(channels, i);
-        }
-
-        return i;
+      i = twitchImportChannels(channels, i);
     }
-    catch (e) {
-        console.log(e);
 
-        return null;
-    }
+    return i;
+  } catch (e) {
+    console.log(e);
+
+    return null;
+  }
 }
 
 async function twitchImport(channelName) {
-    let res = await twitchImportBase(channelName);
+  let res = await twitchImportBase(channelName);
 
-    if (res !== null) {
-        dialog.showMessageBox({
-            type: 'info',
-            message: 'Import done. ' + res + ' channels added.'
-        });
+  if (res !== null) {
+    dialog.showMessageBox({
+      type: 'info',
+      message: 'Import done. ' + res + ' channels added.'
+    });
 
-        return true;
-    } else {
-        dialog.showMessageBox({
-            type: 'error',
-            message: 'Import error.'
-        });
+    return true;
+  } else {
+    dialog.showMessageBox({
+      type: 'error',
+      message: 'Import error.'
+    });
 
-        return false;
-    }
+    return false;
+  }
 }
 
 function autoKlpqImport() {
-    const url = `http://stats.klpq.men/export/channels.json`;
+  const url = `http://stats.klpq.men/export/channels.json`;
 
-    request.get({url: url, json: true}, function (err, res, body) {
-        if (err) return;
-        if (res.statusCode !== 200) return;
+  request.get({ url: url, json: true }, function(err, res, body) {
+    if (err) return;
+    if (res.statusCode !== 200) return;
 
-        _.forEach(body, channelUrl => {
-            config.addChannelLink(channelUrl);
-        });
+    _.forEach(body, channelUrl => {
+      config.addChannelLink(channelUrl);
     });
+  });
 }
 
 function autoTwitchImport() {
-    _.forEach(config.settings.twitchImport, async function (channelName) {
-        await twitchImportBase(channelName);
-    });
+  _.forEach(config.settings.twitchImport, async function(channelName) {
+    await twitchImportBase(channelName);
+  });
 }
 
 function importLoop() {
-    autoKlpqImport();
-    autoTwitchImport();
+  autoKlpqImport();
+  autoTwitchImport();
 
-    setInterval(autoKlpqImport, 10 * 60 * 1000);
-    setInterval(autoTwitchImport, 10 * 60 * 1000);
+  setInterval(autoKlpqImport, 10 * 60 * 1000);
+  setInterval(autoTwitchImport, 10 * 60 * 1000);
 }

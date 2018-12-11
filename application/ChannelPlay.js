@@ -1,4 +1,4 @@
-const {app, ipcMain, dialog, shell, BrowserWindow} = require('electron');
+const { app, ipcMain, dialog, shell, BrowserWindow } = require('electron');
 const fs = require('fs');
 const child = require('child_process').execFile;
 const _ = require('lodash');
@@ -11,181 +11,185 @@ const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
 
 function setChannelEvents(channelObj) {
-    channelObj.on('setting_changed', (settingName, settingValue) => {
-        if (settingName === 'isLive' && !settingValue) {
-            _.forEach(channelObj._windows, window => window.close());
+  channelObj.on('setting_changed', (settingName, settingValue) => {
+    if (settingName === 'isLive' && !settingValue) {
+      _.forEach(channelObj._windows, window => window.close());
 
-            channelObj._windows = [];
-        }
-    });
+      channelObj._windows = [];
+    }
+  });
 
-    channelObj.on('play', (LQ = null, autoRestart = null) => {
-        if (config.settings.playInWindow) {
-            if (!playInWindow(channelObj)) {
-                launchPlayerObj(channelObj, LQ, autoRestart);
-            }
-        } else {
-            launchPlayerObj(channelObj, LQ, autoRestart);
-        }
-    });
+  channelObj.on('play', (LQ = null, autoRestart = null) => {
+    if (config.settings.playInWindow) {
+      if (!playInWindow(channelObj)) {
+        launchPlayerObj(channelObj, LQ, autoRestart);
+      }
+    } else {
+      launchPlayerObj(channelObj, LQ, autoRestart);
+    }
+  });
 }
 
 ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
-    let channelObj = config.findById(id);
+  let channelObj = config.findById(id);
 
-    if (!channelObj) return false;
+  if (!channelObj) return false;
 
-    channelObj.emit('play', LQ, autoRestart);
+  channelObj.emit('play', LQ, autoRestart);
 });
 
 ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
-    let channelObj = config.findById(id);
+  let channelObj = config.findById(id);
 
-    if (!channelObj) return false;
+  if (!channelObj) return false;
 
-    if (channelObj._processes.length > 0 && settingName === 'autoRestart' && settingValue) {
-        channelObj.changeSetting('onAutoRestart', true);
-    }
+  if (channelObj._processes.length > 0 && settingName === 'autoRestart' && settingValue) {
+    channelObj.changeSetting('onAutoRestart', true);
+  }
 });
 
 _.forEach(config.channels, setChannelEvents);
 config.on('channel_added', setChannelEvents);
 
 function launchPlayerLink(channelLink, LQ = null) {
-    let channelObj = Config.buildChannelObj(channelLink);
+  let channelObj = Config.buildChannelObj(channelLink);
 
-    if (channelObj === false) return false;
+  if (channelObj === false) return false;
 
-    launchPlayerObj(channelObj, LQ);
+  launchPlayerObj(channelObj, LQ);
 }
 
 function playInWindow(channelObj) {
-    let link;
-    let window;
+  let link;
+  let window;
 
-    if (channelObj.serviceObj.embed) {
-        link = channelObj.serviceObj.embed(channelObj);
-    } else {
-        if (['http:', 'https:'].includes(channelObj.protocol)) {
-            link = channelObj.link;
-        }
+  if (channelObj.serviceObj.embed) {
+    link = channelObj.serviceObj.embed(channelObj);
+  } else {
+    if (['http:', 'https:'].includes(channelObj.protocol)) {
+      link = channelObj.link;
     }
+  }
 
-    if (link) {
-        window = new BrowserWindow({
-            width: 1280,
-            height: 720,
-            webPreferences: {
-                nodeIntegration: false,
-            }
-        });
+  if (link) {
+    window = new BrowserWindow({
+      width: 1280,
+      height: 720,
+      webPreferences: {
+        nodeIntegration: false
+      }
+    });
 
-        window.loadURL(link);
+    window.loadURL(link);
 
-        window.on('closed', () => {
-            _.pull(channelObj._windows, window);
+    window.on('closed', () => {
+      _.pull(channelObj._windows, window);
 
-            window = null;
-        });
+      window = null;
+    });
 
-        app.mainWindow.on('closed', () => {
-            if (window) {
-                window.close();
-            }
-        });
+    app.mainWindow.on('closed', () => {
+      if (window) {
+        window.close();
+      }
+    });
 
-        channelObj._windows.push(window);
-    }
+    channelObj._windows.push(window);
+  }
 
-    return !!window;
+  return !!window;
 }
 
 function launchPlayerObj(channelObj, LQ = null, autoRestart = null) {
-    if (LQ === null) {
-        LQ = config.settings.LQ;
+  if (LQ === null) {
+    LQ = config.settings.LQ;
+  }
+
+  if (autoRestart === null) {
+    channelObj.changeSetting('onAutoRestart', channelObj.autoRestart);
+  } else {
+    channelObj.changeSetting('onAutoRestart', autoRestart);
+  }
+
+  let playLink = channelObj.link;
+  let params = [];
+
+  if (channelObj.protocol === 'rtmp:') {
+    playLink = `${playLink} live=1`;
+
+    if (LQ && ['klpq-vps', 'klpq-main'].includes(channelObj.service)) {
+      playLink = playLink.replace('/live/', '/restream/');
     }
-
-    if (autoRestart === null) {
-        channelObj.changeSetting('onAutoRestart', channelObj.autoRestart);
-    } else {
-        channelObj.changeSetting('onAutoRestart', autoRestart);
+  } else {
+    if (LQ) {
+      params = params.concat(['--stream-sorting-excludes', '>=720p,>=high']);
     }
+  }
 
-    let playLink = channelObj.link;
-    let params = [];
-
-    if (channelObj.protocol === 'rtmp:') {
-        playLink = `${playLink} live=1`;
-
-        if (LQ && ['klpq-vps', 'klpq-main'].includes(channelObj.service)) {
-            playLink = playLink.replace('/live/', '/restream/');
-        }
-    } else {
-        if (LQ) {
-            params = params.concat(['--stream-sorting-excludes', '>=720p,>=high']);
-        }
-    }
-
-    launchStreamlink(playLink, params, channelObj);
+  launchStreamlink(playLink, params, channelObj);
 }
 
 function launchStreamlink(playLink, params, channelObj, firstStart = true) {
-    console.log(playLink, params);
+  console.log(playLink, params);
 
-    channelObj._startTime = Date.now();
+  channelObj._startTime = Date.now();
 
-    let childProcess = child('streamlink', [playLink, 'best', '--twitch-disable-hosting'].concat(params), function (err, data, stderr) {
-        console.log(err);
-        console.log(data);
-        console.log('streamlink exited.');
+  let childProcess = child('streamlink', [playLink, 'best', '--twitch-disable-hosting'].concat(params), function(
+    err,
+    data,
+    stderr
+  ) {
+    console.log(err);
+    console.log(data);
+    console.log('streamlink exited.');
 
-        if (err) {
-            if (err.code === 'ENOENT') {
-                dialog.showMessageBox({
-                    type: 'error',
-                    message: 'Streamlink not found.'
-                });
+    if (err) {
+      if (err.code === 'ENOENT') {
+        dialog.showMessageBox({
+          type: 'error',
+          message: 'Streamlink not found.'
+        });
 
-                channelObj.changeSetting('onAutoRestart', false);
+        channelObj.changeSetting('onAutoRestart', false);
 
-                return shell.openExternal(`https://github.com/streamlink/streamlink/releases`);
-            } else {
-                if (firstStart) Notifications.printNotification('Error', err.message);
-            }
-        }
+        return shell.openExternal(`https://github.com/streamlink/streamlink/releases`);
+      } else {
+        if (firstStart) Notifications.printNotification('Error', err.message);
+      }
+    }
 
-        if (data.indexOf('error: ') >= 0) {
-            let error = data.split('error: ');
+    if (data.indexOf('error: ') >= 0) {
+      let error = data.split('error: ');
 
-            if (firstStart) Notifications.printNotification('Error', error[1]);
-        }
+      if (firstStart) Notifications.printNotification('Error', error[1]);
+    }
 
-        if (Date.now() - channelObj._startTime < AUTO_RESTART_TIMEOUT * 1000) {
-            channelObj._autoRestartAttempts++;
-        } else {
-            channelObj._autoRestartAttempts = 0;
-        }
+    if (Date.now() - channelObj._startTime < AUTO_RESTART_TIMEOUT * 1000) {
+      channelObj._autoRestartAttempts++;
+    } else {
+      channelObj._autoRestartAttempts = 0;
+    }
 
-        if (channelObj.isLive && channelObj.onAutoRestart && channelObj._autoRestartAttempts < AUTO_RESTART_ATTEMPTS) {
-            launchStreamlink(playLink, params, channelObj, false);
-        } else {
-            channelObj.changeSetting('onAutoRestart', false);
+    if (channelObj.isLive && channelObj.onAutoRestart && channelObj._autoRestartAttempts < AUTO_RESTART_ATTEMPTS) {
+      launchStreamlink(playLink, params, channelObj, false);
+    } else {
+      channelObj.changeSetting('onAutoRestart', false);
 
-            channelObj._autoRestartAttempts = 0;
-        }
-    });
+      channelObj._autoRestartAttempts = 0;
+    }
+  });
 
-    channelObj._processes.push(childProcess);
+  channelObj._processes.push(childProcess);
 
-    childProcess.on('error', () => {
-        _.pull(channelObj._processes, childProcess);
-    });
+  childProcess.on('error', () => {
+    _.pull(channelObj._processes, childProcess);
+  });
 
-    childProcess.on('exit', () => {
-        _.pull(channelObj._processes, childProcess);
-    });
+  childProcess.on('exit', () => {
+    _.pull(channelObj._processes, childProcess);
+  });
 
-    return childProcess;
+  return childProcess;
 }
 
 exports.launchPlayerLink = launchPlayerLink;
