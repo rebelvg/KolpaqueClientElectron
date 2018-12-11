@@ -1,6 +1,9 @@
 {
   "name": "application",
   "version": "1.0.0",
+  "devDependencies": {
+    "electron-devtools-installer": "^2.2.3"
+  },
   "dependencies": {
     "axios": "^0.18.0",
     "electron-default-menu": "^1.0.1",
