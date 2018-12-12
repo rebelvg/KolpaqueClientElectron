@@ -11,7 +11,6 @@ const config = require('./SettingsFile');
 
 const ChannelPlay = require('./ChannelPlay');
 const TrayIcon = require('./TrayIcon');
-const Logger = require('./Logger');
 
 require('./ChannelCheck');
 require('./Import');
@@ -208,6 +207,4 @@ app.on('ready', () => {
 
 process.on('uncaughtException', function(err) {
   console.log('Caught exception: ' + err.stack);
-
-  Logger(err.stack);
 });
