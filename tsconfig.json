@@ -2,6 +2,6 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "commonjs",
-    "outDir": "dist-api"
+    "outDir": "./dist-api"
   }
 }

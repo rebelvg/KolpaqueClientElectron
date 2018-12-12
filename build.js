@@ -4,8 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const platformOption = readlineSync.question(`select platform. all - for all platforms. (empty for current)${os.EOL}`);
-const pathOption = readlineSync.question(`select output folder. (empty for current)${os.EOL}`);
+let platformOption = readlineSync.question(`select platform. all - for all platforms. (empty for current)${os.EOL}`);
+let pathOption = readlineSync.question(`select output folder. (empty for current)${os.EOL}`);
 
 const options = {
   dir: './',

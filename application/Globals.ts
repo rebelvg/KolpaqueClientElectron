@@ -15,7 +15,7 @@ const registeredServices = {
     chat: channelObj => {
       return `http://stream.klpq.men/chat`;
     },
-    icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'klpq_vps.png')), {
+    icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'klpq_vps.png')), {
       encoding: null
     })
   },
@@ -26,7 +26,7 @@ const registeredServices = {
     name: 2,
     embed: null,
     chat: null,
-    icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'klpq_main.png')), {
+    icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'klpq_main.png')), {
       encoding: null
     })
   },
@@ -39,7 +39,7 @@ const registeredServices = {
     chat: channelObj => {
       return `https://www.twitch.tv/${channelObj.name}/chat`;
     },
-    icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'twitch.png')), {
+    icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'twitch.png')), {
       encoding: null
     })
   },
@@ -50,7 +50,7 @@ const registeredServices = {
     name: 2,
     embed: null,
     chat: null,
-    icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'youtube.png')), {
+    icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'youtube.png')), {
       encoding: null
     })
   },
@@ -61,7 +61,7 @@ const registeredServices = {
     name: 2,
     embed: null,
     chat: null,
-    icon: fs.readFileSync(path.normalize(path.join(__dirname, '/..', 'icons', 'youtube.png')), {
+    icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'youtube.png')), {
       encoding: null
     })
   },

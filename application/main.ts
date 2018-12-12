@@ -28,15 +28,15 @@ ipcMain.once('client_ready', () => {
   console.log('client ready.');
 });
 
-let iconPath = path.resolve('./icons/icon.png');
-let iconPathTray = path.resolve('./icons/icon32.png');
-let iconPathBalloon = path.resolve('./icons/icon.png');
+let iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
+let iconPathTray = path.normalize(path.join(__dirname, '../icons', 'icon32.png'));
+let iconPathBalloon = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
 
 if (process.platform === 'darwin') {
   app.dock.setIcon(iconPath);
   app.dock.hide();
 
-  iconPathTray = path.resolve('./icons/iconTemplate.png');
+  iconPathTray = path.normalize(path.join(__dirname, '../icons', 'iconTemplate.png'));
 }
 
 let mainWindow;
@@ -75,7 +75,7 @@ function createWindow() {
   } else {
     mainWindow.loadURL(
       url.format({
-        pathname: path.resolve('./dist/index.html'),
+        pathname: path.join(__dirname, '../dist/index.html'),
         protocol: 'file:',
         slashes: true
       })
