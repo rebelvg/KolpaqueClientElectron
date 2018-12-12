@@ -56,7 +56,7 @@ class Channel extends EventEmitter {
         serviceObj.protocols.includes(channelURL.protocol.toLowerCase()) &&
         serviceObj.hosts.includes(channelURL.host.toLowerCase())
       ) {
-        let nameArray = _.split(channelURL.pathname, '/');
+        const nameArray = _.split(channelURL.pathname, '/');
 
         if (nameArray[serviceObj.name]) {
           _.forEach(serviceObj.paths, path => {

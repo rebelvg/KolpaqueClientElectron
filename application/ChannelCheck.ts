@@ -2,7 +2,8 @@ import { ipcMain, dialog } from 'electron';
 const _ = require('lodash');
 const { URL } = require('url');
 const childProcess = require('child_process');
-const axios = require('axios');
+import axios from 'axios';
+import * as qs from 'querystring';
 
 const config = require('./SettingsFile');
 const Notifications = require('./Notifications');
@@ -15,7 +16,7 @@ const SERVICES = {
   twitch: getTwitchStats,
   'youtube-user': getYoutubeStatsUser,
   'youtube-channel': getYoutubeStatsChannel,
-  custom: getCustom
+  chaturbate: getChaturbateStats
 };
 
 const SERVICES_INTERVALS = {
@@ -36,6 +37,10 @@ const SERVICES_INTERVALS = {
     confirmations: 3
   },
   'youtube-channel': {
+    check: 120,
+    confirmations: 3
+  },
+  chaturbate: {
     check: 120,
     confirmations: 3
   },
@@ -176,30 +181,34 @@ async function getYoutubeStatsUser(channelObj, printBalloon) {
   }
 }
 
-function getCustom(channelObj, printBalloon) {
-  const { useStreamlinkForCustomChannels } = config.settings;
+async function getChaturbateStats(channelObj, printBalloon) {
+  const url = 'https://chaturbate.com/get_edge_hls_url_ajax';
 
-  if (!useStreamlinkForCustomChannels) {
-    return;
-  }
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'X-Requested-With': 'XMLHttpRequest'
+  };
 
-  return new Promise(resolve => {
-    childProcess.execFile('streamlink', [channelObj.link, '--json'], function(err, stdout, stderr) {
-      try {
-        const res = JSON.parse(stdout);
-
-        if (_.keys(res.streams).length > 0) {
-          isOnline(channelObj, printBalloon);
-        } else {
-          isOffline(channelObj);
-        }
-      } catch (e) {
-        console.log(e);
+  try {
+    const { data } = await axios.post(
+      url,
+      qs.stringify({
+        room_slug: channelObj.name,
+        bandwidth: 'high'
+      }),
+      {
+        headers
       }
+    );
 
-      resolve();
-    });
-  });
+    if (data.room_status === 'public') {
+      isOnline(channelObj, printBalloon);
+    } else {
+      isOffline(channelObj);
+    }
+  } catch (e) {
+    console.error(e.message);
+  }
 }
 
 async function getYoutubeStatsChannel(channelObj, printBalloon) {

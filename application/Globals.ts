@@ -65,6 +65,15 @@ const registeredServices = {
       encoding: null
     })
   },
+  chaturbate: {
+    protocols: ['https:', 'http:'],
+    hosts: ['www.chaturbate.com', 'chaturbate.com'],
+    paths: ['/'],
+    name: 1,
+    embed: null,
+    chat: null,
+    icon: null
+  },
   custom: {
     protocols: [],
     hosts: [],
