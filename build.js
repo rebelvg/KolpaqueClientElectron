@@ -12,7 +12,7 @@ const options = {
   tmpdir: false,
   icon: './icons/icon',
   arch: 'x64',
-  ignore: ['.vscode', '.idea', 'src'],
+  ignore: ['.git', '.vscode', '.idea', 'application', 'src'],
   overwrite: true,
   win32metadata: {
     ProductName: 'KolpaqueClientElectron',
