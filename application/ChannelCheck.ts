@@ -182,31 +182,29 @@ async function getYoutubeStatsUser(channelObj, printBalloon) {
 }
 
 async function getChaturbateStats(channelObj, printBalloon) {
-  const url = 'https://chaturbate.com/get_edge_hls_url_ajax';
+  const url = 'https://chaturbate.com/get_edge_hls_url_ajax/';
 
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'X-Requested-With': 'XMLHttpRequest'
   };
 
-  try {
-    const { data } = await axios.post(
-      url,
-      qs.stringify({
-        room_slug: channelObj.name,
-        bandwidth: 'high'
-      }),
-      {
-        headers
-      }
-    );
-
-    if (data.room_status === 'public') {
-      isOnline(channelObj, printBalloon);
-    } else {
-      isOffline(channelObj);
+  const { data } = await axios.post(
+    url,
+    qs.stringify({
+      room_slug: channelObj.name,
+      bandwidth: 'high'
+    }),
+    {
+      headers
     }
-  } catch (e) {}
+  );
+
+  if (data.room_status === 'public') {
+    isOnline(channelObj, printBalloon);
+  } else {
+    isOffline(channelObj);
+  }
 }
 
 async function getYoutubeStatsChannel(channelObj, printBalloon) {
@@ -222,7 +220,9 @@ async function checkChannel(channelObj, printBalloon = false) {
     if (SERVICES.hasOwnProperty(channelObj.service)) {
       await SERVICES[channelObj.service](channelObj, printBalloon);
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error(e.message);
+  }
 }
 
 function checkLoop() {

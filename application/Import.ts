@@ -60,7 +60,7 @@ async function twitchImportBase(channelName) {
 
     return i;
   } catch (e) {
-    console.log(e);
+    console.error(e.message);
 
     return null;
   }

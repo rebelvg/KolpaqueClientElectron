@@ -205,6 +205,10 @@ app.on('ready', () => {
   }
 });
 
-process.on('uncaughtException', function(err) {
-  console.log('Caught exception: ' + err.stack);
+process.on('unhandledRejection', err => {
+  console.error('unhandledRejection', err);
+});
+
+process.on('uncaughtException', err => {
+  console.error('uncaughtException', err);
 });
