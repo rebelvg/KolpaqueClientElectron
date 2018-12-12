@@ -206,9 +206,7 @@ async function getChaturbateStats(channelObj, printBalloon) {
     } else {
       isOffline(channelObj);
     }
-  } catch (e) {
-    console.error(e.message);
-  }
+  } catch (e) {}
 }
 
 async function getYoutubeStatsChannel(channelObj, printBalloon) {
