@@ -1,8 +1,8 @@
 import { app } from 'electron';
 import { createHash } from 'crypto';
-const { URL } = require('url');
-const _ = require('lodash');
-const EventEmitter = require('events');
+import { URL } from 'url';
+import * as _ from 'lodash';
+import { EventEmitter } from 'events';
 
 const { allowedProtocols, registeredServices } = require('./Globals');
 
@@ -30,7 +30,7 @@ export class Channel extends EventEmitter {
   public autoStart = false;
   public autoRestart = false;
 
-  constructor(channelLink) {
+  constructor(channelLink: string) {
     super();
 
     channelLink = channelLink.trim();
@@ -39,8 +39,6 @@ export class Channel extends EventEmitter {
     this.id = createHash('md5')
       .update(this.link)
       .digest('hex');
-
-    console.log(this.id);
 
     const channelURL = new URL(channelLink);
 
@@ -74,7 +72,7 @@ export class Channel extends EventEmitter {
 
               channelURL.protocol = serviceObj.protocols[0];
               channelURL.host = serviceObj.hosts[0];
-              channelURL.path = serviceObj.paths[0] + nameArray[serviceObj.name];
+              channelURL.pathname = serviceObj.paths[0] + nameArray[serviceObj.name];
 
               this.link = channelURL.href;
             }

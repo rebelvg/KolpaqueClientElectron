@@ -1,8 +1,8 @@
 import { app } from 'electron';
-const fs = require('fs');
-const path = require('path');
-const _ = require('lodash');
-const EventEmitter = require('events');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as _ from 'lodash';
+import { EventEmitter } from 'events';
 
 import { Channel } from './ChannelClass';
 const { allowedProtocols, registeredServices, preInstalledChannels } = require('./Globals');
@@ -17,7 +17,7 @@ const filterChannel = (channelObj, filter) => {
     return true;
   }
 
-  let filters = filter.split(/\s+/gi);
+  const filters = filter.split(/\s+/gi);
 
   let searchFilters = _.map(filters, filter => {
     return {
