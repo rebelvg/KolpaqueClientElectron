@@ -11,9 +11,9 @@ import { config } from './SettingsFile';
 import { launchPlayerLink } from './ChannelPlay';
 import { rebuildIconMenu } from './TrayIcon';
 
-require('./ChannelCheck');
-require('./Import');
-require('./VersionCheck');
+import './ChannelCheck';
+import './Import';
+import './VersionCheck';
 
 const isDev = process.env.NODE_ENV === 'dev';
 
