@@ -1,7 +1,7 @@
 import { app, ipcMain, shell } from 'electron';
-const child = require('child_process').execFile;
-const _ = require('lodash');
-const axios = require('axios');
+import { execFile } from 'child_process';
+import * as _ from 'lodash';
+import axios from 'axios';
 
 const Notifications = require('./Notifications');
 const clientVersion = require('../package.json').version;
@@ -63,7 +63,7 @@ async function clientVersionCheck() {
 function streamlinkVersionCheck() {
   if (infoArray.includes('streamlink')) return clearInterval(updates['streamlink'].interval);
 
-  child('streamlink', ['--version-check'], function(err, data, stderr) {
+  execFile('streamlink', ['--version-check'], function(err, data, stderr) {
     if (err) return;
 
     let regExp = new RegExp(/A new version of Streamlink \((.*)\) is available!/gi);

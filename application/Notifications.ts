@@ -1,5 +1,5 @@
 import { app, shell, Notification, nativeImage } from 'electron';
-const _ = require('lodash');
+import * as _ from 'lodash';
 
 import { config } from './SettingsFile';
 import { registeredServices } from './Globals';

@@ -1,7 +1,6 @@
 import { ipcMain, dialog } from 'electron';
-const _ = require('lodash');
-const { URL } = require('url');
-const childProcess = require('child_process');
+import * as _ from 'lodash';
+import { URL } from 'url';
 import axios from 'axios';
 import * as qs from 'querystring';
 

@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain, shell, clipboard } from 'electron';
-const _ = require('lodash');
+import * as _ from 'lodash';
 
 import { Config } from './ConfigClass';
 

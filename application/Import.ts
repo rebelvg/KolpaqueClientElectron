@@ -1,7 +1,7 @@
 import { ipcMain, dialog } from 'electron';
-const axios = require('axios');
-const _ = require('lodash');
-const { URL } = require('url');
+import axios from 'axios';
+import * as _ from 'lodash';
+import { URL } from 'url';
 
 import { config } from './SettingsFile';
 import { twitchApiKey } from './Globals';

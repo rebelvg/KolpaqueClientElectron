@@ -1,9 +1,9 @@
 import { app, BrowserWindow, clipboard, shell, ipcMain, Menu, Tray, nativeImage } from 'electron';
-const _ = require('lodash');
-const path = require('path');
-const url = require('url');
-const fixPath = require('fix-path');
-const defaultMenu = require('electron-default-menu');
+import * as _ from 'lodash';
+import * as path from 'path';
+import * as url from 'url';
+import * as fixPath from 'fix-path';
+import * as defaultMenu from 'electron-default-menu';
 
 fixPath();
 
