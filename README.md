@@ -1,11 +1,13 @@
 # KolpaqueClientElectron
 
 ## Overview
+
 Electron version of Kolpaque Client **React Edition**.
 
 Multiplatform desktop app for tracking statuses of your favorite channels on various stream services and piping them with Streamlink into any desktop videoplayer (MPC, VLC, etc).
 
 ## Features
+
 - Multiplatform (Win/Mac/Linux)
 - Services Support
   - KLPQ Stream Service
@@ -30,6 +32,7 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 - Client and Streamlink Update Checks
 
 ## Planned Features
+
 - View Modes (detailed, list, etc)
 - More Stream Services
 - Stream Title Info
@@ -38,38 +41,46 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 ## Usage User
 
 ### Requirements
+
 - [Streamlink](https://github.com/streamlink/streamlink) (with RTMPDump)
 
 ### Optionals
+
 - [Youtube API Key](https://console.developers.google.com/apis/library/youtube.googleapis.com)
 
 ### Builds
+
 > https://github.com/rebelvg/KolpaqueClientElectron/releases
 
 ## Usage Dev
 
 ### Requirements
+
 - Node.js >= 8
 - Yarn
 
 ### Setup
+
 ```
 yarn install
 ```
 
 ### Run
+
 ```
 yarn run react-build
 yarn run start
 ```
 
 ### Run Dev
+
 ```
 yarn run start-react-dev
 yarn run start-client-dev
 ```
 
 ### Build
+
 ```
 yarn run build
 ```
