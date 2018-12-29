@@ -16,9 +16,9 @@ function setChannelEvents(channelObj) {
   });
 }
 
-config.on('setting_changed', function(settingName, settingValue) {
+config.on('setting_changed', (settingName, settingValue) => {
   if (settingName === 'showNotifications') {
-    (app as any).contextMenuTemplate[4].checked = settingValue;
+    (app as any).contextMenuTemplate[3].checked = settingValue;
   }
 
   if (['LQ', 'sortType', 'sortReverse', 'showNotifications'].includes(settingName)) {
@@ -31,13 +31,13 @@ config.on('channel_added', setChannelEvents);
 config.on('channel_removed', rebuildIconMenu);
 
 export function rebuildIconMenu() {
-  let onlineChannels = config.find({
+  const onlineChannels = config.find({
     isLive: true
   }).channels;
 
   (app as any).contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
     if (!channelObj._trayIcon) {
-      let iconBuffer = channelObj._icon ? channelObj._icon : registeredServices[channelObj.service].icon;
+      const iconBuffer = channelObj._icon ? channelObj._icon : registeredServices[channelObj.service].icon;
 
       if (iconBuffer) {
         channelObj._trayIcon = nativeImage.createFromBuffer(iconBuffer).resize({ height: 16 });

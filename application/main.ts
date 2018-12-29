@@ -152,7 +152,6 @@ let contextMenuTemplate = [
     label: 'Notifications',
     type: 'checkbox',
     click: menuItem => {
-      console.log('menuItem.checked', menuItem.checked);
       config.changeSetting('showNotifications', menuItem.checked);
     },
     checked: config.settings.showNotifications
