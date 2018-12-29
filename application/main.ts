@@ -8,13 +8,11 @@ import * as defaultMenu from 'electron-default-menu';
 fixPath();
 
 import { config } from './SettingsFile';
-
-const ChannelPlay = require('./ChannelPlay');
-const TrayIcon = require('./TrayIcon');
+import { launchPlayerLink } from './ChannelPlay';
+import { rebuildIconMenu } from './TrayIcon';
 
 require('./ChannelCheck');
 require('./Import');
-require('./ChannelInfo');
 require('./VersionCheck');
 
 const isDev = process.env.NODE_ENV === 'dev';
@@ -147,7 +145,7 @@ let contextMenuTemplate = [
     label: 'Play / Clipboard',
     type: 'normal',
     click: (menuItem, browserWindow, event) => {
-      ChannelPlay.launchPlayerLink(clipboard.readText(), event.ctrlKey);
+      launchPlayerLink(clipboard.readText(), event.ctrlKey);
     }
   },
   {
@@ -190,7 +188,7 @@ app.on('ready', () => {
 
   (app as any).appIcon = appIcon;
 
-  TrayIcon.rebuildIconMenu();
+  rebuildIconMenu();
 
   if (process.platform === 'darwin') {
     const menu = defaultMenu(app, shell);

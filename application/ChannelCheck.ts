@@ -5,9 +5,9 @@ import axios from 'axios';
 import * as qs from 'querystring';
 
 import { config } from './SettingsFile';
-const Notifications = require('./Notifications');
 import { twitchApiKey } from './Globals';
-const { getInfoAsync } = require('./ChannelInfo');
+import { getInfoAsync } from './ChannelInfo';
+import { printNotification } from './Notifications';
 
 const SERVICES_INTERVALS = {
   'klpq-vps': {
@@ -61,7 +61,7 @@ async function isOnline(channelObj, printBalloon) {
   console.log(`${channelObj.link} went online.`);
 
   if (printBalloon) {
-    Notifications.printNotification('Stream is Live', channelObj.visibleName, channelObj);
+    printNotification('Stream is Live', channelObj.visibleName, channelObj);
   }
 
   if (printBalloon && config.settings.showNotifications && channelObj.autoStart) {

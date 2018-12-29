@@ -2,9 +2,9 @@ import { app, ipcMain, shell } from 'electron';
 import { execFile } from 'child_process';
 import * as _ from 'lodash';
 import axios from 'axios';
+import { printNotification } from './Notifications';
 
-const Notifications = require('./Notifications');
-const clientVersion = require('../package.json').version;
+const { version } = require('../package.json');
 
 const updates = {
   client: {
@@ -17,7 +17,7 @@ const updates = {
   }
 };
 
-let infoArray = [];
+const infoArray = [];
 
 ipcMain.on('client_getInfo', (event, info) => {
   _.forEach(infoArray, value => {
@@ -27,14 +27,14 @@ ipcMain.on('client_getInfo', (event, info) => {
   });
 });
 
-ipcMain.on('client_getVersion', event => (event.returnValue = clientVersion));
+ipcMain.on('client_getVersion', event => (event.returnValue = version));
 
 ipcMain.once('client_ready', checkLoop);
 
 function sendInfo(update) {
   infoArray.push(update);
 
-  Notifications.printNotification(`${_.capitalize(update)} Update Available`, updates[update].releaseLink);
+  printNotification(`${_.capitalize(update)} Update Available`, updates[update].releaseLink);
 
   (app as any).mainWindow.webContents.send(
     'client_showInfo',
@@ -55,7 +55,7 @@ async function clientVersionCheck() {
 
   const newVersion = data.tag_name;
 
-  if (newVersion !== clientVersion) {
+  if (newVersion !== version) {
     sendInfo('client');
   }
 }

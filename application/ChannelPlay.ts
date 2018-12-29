@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 import { config } from './SettingsFile';
 import { Config } from './ConfigClass';
-const Notifications = require('./Notifications');
+import { printNotification } from './Notifications';
 
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
@@ -50,7 +50,7 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
 _.forEach(config.channels, setChannelEvents);
 config.on('channel_added', setChannelEvents);
 
-function launchPlayerLink(channelLink, LQ = null) {
+export function launchPlayerLink(channelLink, LQ = null) {
   let channelObj = Config.buildChannelObj(channelLink);
 
   if (channelObj === false) return false;
@@ -150,14 +150,14 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
 
           return shell.openExternal(`https://github.com/streamlink/streamlink/releases`);
         } else {
-          if (firstStart) Notifications.printNotification('Error', err.message);
+          if (firstStart) printNotification('Error', err.message);
         }
       }
 
       if (data.indexOf('error: ') >= 0) {
         const error = data.split('error: ');
 
-        if (firstStart) Notifications.printNotification('Error', error[1]);
+        if (firstStart) printNotification('Error', error[1]);
       }
 
       if (Date.now() - channelObj._startTime < AUTO_RESTART_TIMEOUT * 1000) {
@@ -188,5 +188,3 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
 
   return childProcess;
 }
-
-exports.launchPlayerLink = launchPlayerLink;

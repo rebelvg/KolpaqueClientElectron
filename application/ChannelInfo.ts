@@ -26,10 +26,8 @@ async function getTwitchInfoAsync(channelObj) {
   } catch (e) {}
 }
 
-async function getInfoAsync(channelObj) {
+export async function getInfoAsync(channelObj) {
   if (SERVICES.hasOwnProperty(channelObj.service)) {
     await SERVICES[channelObj.service](channelObj);
   }
 }
-
-module.exports.getInfoAsync = getInfoAsync;

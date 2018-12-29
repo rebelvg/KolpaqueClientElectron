@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { config } from './SettingsFile';
 import { registeredServices } from './Globals';
 
-function printNotification(title, content, channelObj = null) {
+export function printNotification(title, content, channelObj = null) {
   if (!config.settings.showNotifications) return;
 
   printNewNotification(title, content, channelObj);
@@ -47,5 +47,3 @@ function onBalloonClick(title, content, channelObj) {
     shell.openExternal(content);
   }
 }
-
-exports.printNotification = printNotification;

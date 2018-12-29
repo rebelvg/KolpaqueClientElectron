@@ -30,7 +30,7 @@ _.forEach(config.channels, setChannelEvents);
 config.on('channel_added', setChannelEvents);
 config.on('channel_removed', rebuildIconMenu);
 
-function rebuildIconMenu() {
+export function rebuildIconMenu() {
   let onlineChannels = config.find({
     isLive: true
   }).channels;
@@ -58,5 +58,3 @@ function rebuildIconMenu() {
 
   (app as any).appIcon.setContextMenu(contextMenu);
 }
-
-exports.rebuildIconMenu = rebuildIconMenu;
