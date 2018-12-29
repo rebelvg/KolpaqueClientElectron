@@ -1,4 +1,5 @@
 import { app } from 'electron';
+import { createHash } from 'crypto';
 const { URL } = require('url');
 const _ = require('lodash');
 const EventEmitter = require('events');
@@ -8,34 +9,41 @@ const { allowedProtocols, registeredServices } = require('./Globals');
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
-class Channel extends EventEmitter {
+export class Channel extends EventEmitter {
+  public id = null;
+  public service = 'custom';
+  public serviceObj = null;
+  public name = null;
+  public link = null;
+  public protocol = null;
+  public isLive = false;
+  public onAutoRestart = false;
+  public lastUpdated = 0;
+  public _processes = [];
+  public _icon = null;
+  public _autoRestartAttempts = 0;
+  public _startTime = 0;
+  public _offlineConfirmations = 0;
+  public _windows = [];
+
+  public visibleName = null;
+  public isPinned = false;
+  public autoStart = false;
+  public autoRestart = false;
+
   constructor(channelLink) {
     super();
 
     channelLink = channelLink.trim();
 
-    this.id = null;
-    this.service = 'custom';
-    this.serviceObj = null;
-    this.name = null;
     this.link = channelLink;
-    this.protocol = null;
-    this.isLive = false;
-    this.onAutoRestart = false;
-    this.lastUpdated = 0;
-    this._processes = [];
-    this._icon = null;
-    this._autoRestartAttempts = 0;
-    this._startTime = 0;
-    this._offlineConfirmations = 0;
-    this._windows = [];
+    this.id = createHash('md5')
+      .update(this.link)
+      .digest('hex');
 
-    this.visibleName = null;
-    this.isPinned = false;
-    this.autoStart = false;
-    this.autoRestart = false;
+    console.log(this.id);
 
-    let channelURL = new URL(channelLink);
+    const channelURL = new URL(channelLink);
 
     if (!allowedProtocols.includes(channelURL.protocol)) {
       throw Error(`Only [${allowedProtocols}] are allowed.`);
@@ -85,8 +93,6 @@ class Channel extends EventEmitter {
 
     this.serviceObj = registeredServices[this.service];
 
-    this.id = md5(this.link);
-
     this.on('setting_changed', (settingName, settingValue, send) => {
       if (send) (app as any).mainWindow.webContents.send('channel_changeSettingSync');
     });
@@ -126,5 +132,3 @@ class Channel extends EventEmitter {
     return true;
   }
 }
-
-module.exports = Channel;
