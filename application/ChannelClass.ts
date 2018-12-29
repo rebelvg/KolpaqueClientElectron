@@ -3,7 +3,6 @@ import { createHash } from 'crypto';
 const { URL } = require('url');
 const _ = require('lodash');
 const EventEmitter = require('events');
-const md5 = require('md5');
 
 const { allowedProtocols, registeredServices } = require('./Globals');
 

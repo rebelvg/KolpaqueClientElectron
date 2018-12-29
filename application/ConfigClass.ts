@@ -4,7 +4,7 @@ const path = require('path');
 const _ = require('lodash');
 const EventEmitter = require('events');
 
-const Channel = require('./ChannelClass');
+import { Channel } from './ChannelClass';
 const { allowedProtocols, registeredServices, preInstalledChannels } = require('./Globals');
 
 const settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
