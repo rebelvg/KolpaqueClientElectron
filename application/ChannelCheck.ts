@@ -10,43 +10,41 @@ const Notifications = require('./Notifications');
 import { twitchApiKey } from './Globals';
 const { getInfoAsync } = require('./ChannelInfo');
 
-const SERVICES = {
-  'klpq-vps': getKlpqVpsStats,
-  'klpq-main': getKlpqMainStats,
-  twitch: getTwitchStats,
-  'youtube-user': getYoutubeStatsUser,
-  'youtube-channel': getYoutubeStatsChannel,
-  chaturbate: getChaturbateStats
-};
-
 const SERVICES_INTERVALS = {
   'klpq-vps': {
     check: 5,
-    confirmations: 0
+    confirmations: 0,
+    function: getKlpqVpsStats
   },
   'klpq-main': {
     check: 5,
-    confirmations: 0
+    confirmations: 0,
+    function: () => {}
   },
   twitch: {
     check: 30,
-    confirmations: 3
+    confirmations: 3,
+    function: getTwitchStats
   },
   'youtube-user': {
     check: 120,
-    confirmations: 3
+    confirmations: 3,
+    function: getYoutubeStatsUser
   },
   'youtube-channel': {
     check: 120,
-    confirmations: 3
+    confirmations: 3,
+    function: getYoutubeStatsChannel
   },
   chaturbate: {
     check: 120,
-    confirmations: 3
+    confirmations: 3,
+    function: getChaturbateStats
   },
   custom: {
     check: 120,
-    confirmations: 3
+    confirmations: 3,
+    function: () => {}
   }
 };
 
@@ -217,8 +215,8 @@ async function getYoutubeStatsChannel(channelObj, printBalloon) {
 
 async function checkChannel(channelObj, printBalloon = false) {
   try {
-    if (SERVICES.hasOwnProperty(channelObj.service)) {
-      await SERVICES[channelObj.service](channelObj, printBalloon);
+    if (SERVICES_INTERVALS.hasOwnProperty(channelObj.service)) {
+      await SERVICES_INTERVALS[channelObj.service].function(channelObj, printBalloon);
     }
   } catch (e) {
     console.error(e.message);
@@ -231,7 +229,7 @@ function checkLoop() {
   });
 
   _.forEach(SERVICES_INTERVALS, (service, serviceName) => {
-    setInterval(async function() {
+    setInterval(async () => {
       for (const channelObj of config.channels) {
         if (channelObj.service === serviceName) {
           checkChannel(channelObj, true);
