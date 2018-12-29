@@ -5,7 +5,7 @@ const childProcess = require('child_process');
 import axios from 'axios';
 import * as qs from 'querystring';
 
-const config = require('./SettingsFile');
+import { config } from './SettingsFile';
 const Notifications = require('./Notifications');
 const { twitchApiKey } = require('./Globals');
 const { getInfoAsync } = require('./ChannelInfo');

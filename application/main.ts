@@ -7,7 +7,7 @@ const defaultMenu = require('electron-default-menu');
 
 fixPath();
 
-const config = require('./SettingsFile');
+import { config } from './SettingsFile';
 
 const ChannelPlay = require('./ChannelPlay');
 const TrayIcon = require('./TrayIcon');
@@ -142,12 +142,6 @@ let contextMenuTemplate = [
     label: 'Online Channels',
     type: 'submenu',
     submenu: []
-  },
-  {
-    label: 'Play / Last Closed',
-    type: 'normal',
-    visible: false,
-    click: () => {}
   },
   {
     label: 'Play / Clipboard',

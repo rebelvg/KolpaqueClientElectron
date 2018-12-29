@@ -89,63 +89,31 @@ const sortChannels = (channels, sortType, isReversed = false) => {
   return sortedChannels;
 };
 
-function readFile(config) {
-  try {
-    let file = fs.readFileSync(settingsPath, 'utf8');
+export class Config extends EventEmitter {
+  public channels = [];
+  public settings = {
+    LQ: false,
+    showNotifications: true,
+    minimizeAtStart: false,
+    launchOnBalloonClick: true,
+    size: [400, 800],
+    youtubeApiKey: '',
+    twitchImport: [],
+    nightMode: false,
+    sortType: 'lastAdded',
+    sortReverse: false,
+    showTooltips: true,
+    confirmAutoStart: true,
+    playInWindow: false,
+    useStreamlinkForCustomChannels: false
+  };
 
-    let parseJson = JSON.parse(file);
-
-    _.forEach(parseJson.channels, channelObj => {
-      let channel = config.addChannelLink(channelObj.link);
-
-      if (channel !== false) channel.update(channelObj);
-    });
-
-    _.forEach(config.settings, (settingValue, settingName) => {
-      if (parseJson.settings.hasOwnProperty(settingName)) {
-        config.settings[settingName] = parseJson.settings[settingName];
-      }
-    });
-  } catch (e) {
-    console.log(e.stack);
-
-    _.forEach(preInstalledChannels, channelLink => {
-      config.addChannelLink(channelLink);
-    });
-  }
-}
-
-function saveLoop(config) {
-  setInterval(() => {
-    config.saveFile();
-  }, 5 * 60 * 1000);
-}
-
-class Config extends EventEmitter {
   constructor() {
     super();
 
-    this.channels = [];
-    this.settings = {
-      LQ: false,
-      showNotifications: true,
-      minimizeAtStart: false,
-      launchOnBalloonClick: true,
-      size: [400, 800],
-      youtubeApiKey: '',
-      twitchImport: [],
-      nightMode: false,
-      sortType: 'lastAdded',
-      sortReverse: false,
-      showTooltips: true,
-      confirmAutoStart: true,
-      playInWindow: false,
-      useStreamlinkForCustomChannels: false
-    };
+    this.readFile();
 
-    readFile(this);
-
-    saveLoop(this);
+    this.saveLoop();
 
     this.on('channel_added', () => {
       (app as any).mainWindow.webContents.send('channel_addSync');
@@ -162,6 +130,38 @@ class Config extends EventEmitter {
     this.on('setting_changed', () => {
       (app as any).mainWindow.webContents.send('config_changeSettingSync', this.settings);
     });
+  }
+
+  private readFile() {
+    try {
+      let file = fs.readFileSync(settingsPath, 'utf8');
+
+      let parseJson = JSON.parse(file);
+
+      _.forEach(parseJson.channels, channelObj => {
+        let channel = this.addChannelLink(channelObj.link);
+
+        if (channel !== false) channel.update(channelObj);
+      });
+
+      _.forEach(this.settings, (settingValue, settingName) => {
+        if (parseJson.settings.hasOwnProperty(settingName)) {
+          this.settings[settingName] = parseJson.settings[settingName];
+        }
+      });
+    } catch (e) {
+      console.log(e.stack);
+
+      _.forEach(preInstalledChannels, channelLink => {
+        this.addChannelLink(channelLink);
+      });
+    }
+  }
+
+  private saveLoop() {
+    setInterval(() => {
+      this.saveFile();
+    }, 5 * 60 * 1000);
   }
 
   addChannelLink(channelLink) {
@@ -288,5 +288,3 @@ class Config extends EventEmitter {
     }
   }
 }
-
-module.exports = Config;

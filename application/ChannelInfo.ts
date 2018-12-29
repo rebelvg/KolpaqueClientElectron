@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-const config = require('./SettingsFile');
 const { twitchApiKey } = require('./Globals');
 
 const SERVICES = {

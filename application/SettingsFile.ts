@@ -1,9 +1,9 @@
 import { app, BrowserWindow, ipcMain, shell, clipboard } from 'electron';
 const _ = require('lodash');
 
-const Config = require('./ConfigClass');
+import { Config } from './ConfigClass';
 
-let config = new Config();
+export const config = new Config();
 
 ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
   if (settingName === 'twitchImport') {
@@ -149,5 +149,3 @@ ipcMain.on('config_find', (event, query) => {
 
   return (event.returnValue = find);
 });
-
-module.exports = config;

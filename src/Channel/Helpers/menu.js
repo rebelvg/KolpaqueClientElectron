@@ -1,4 +1,4 @@
-const { remote, ipcRenderer } = window.require('electron');
+const { remote, ipcRenderer } = require('electron');
 const { app, Menu, shell, BrowserWindow, MenuItem } = remote;
 
 const menuTemplate = (channel, edit) => [
@@ -7,7 +7,7 @@ const menuTemplate = (channel, edit) => [
     click: function(menuItem, browserWindow, event) {
       ipcRenderer.send('channel_play', channel.id, event.ctrlKey, event.shiftKey ? true : null);
     },
-    sublabel: 'Ctrl - LQ, Shift - Auto-Restart'
+    sublabel: 'Ctrl - Alt Quality, Shift - Auto-Restart'
   }),
   new MenuItem({
     label: 'Open Page',

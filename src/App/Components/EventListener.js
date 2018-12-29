@@ -6,7 +6,7 @@ import { debounce } from 'lodash';
 import { initStart, initEnd, updateData, getInfo, getLoaded } from 'src/redux/channel';
 import { initSettings } from 'src/redux/settings';
 
-const { ipcRenderer } = window.require('electron');
+const { ipcRenderer } = require('electron');
 
 @connect(
   state => ({

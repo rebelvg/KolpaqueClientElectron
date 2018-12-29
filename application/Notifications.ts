@@ -1,7 +1,7 @@
 import { app, shell, Notification, nativeImage } from 'electron';
 const _ = require('lodash');
 
-const config = require('./SettingsFile');
+import { config } from './SettingsFile';
 const Globals = require('./Globals');
 
 function printNotification(title, content, channelObj = null) {

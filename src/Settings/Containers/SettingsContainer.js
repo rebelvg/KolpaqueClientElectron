@@ -7,7 +7,7 @@ import { changeSettings, changeSettingsResponse, importChannel, getSettings } fr
 import { updateData } from 'src/redux/channel';
 import Settings from 'src/Settings/Components/Settings';
 
-const { remote, ipcRenderer } = window.require('electron');
+const { remote, ipcRenderer } = require('electron');
 
 @withTheme
 @connect(

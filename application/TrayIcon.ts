@@ -1,7 +1,7 @@
 import { app, Menu, nativeImage } from 'electron';
 const _ = require('lodash');
 
-const config = require('./SettingsFile');
+import { config } from './SettingsFile';
 const Globals = require('./Globals');
 
 function setChannelEvents(channelObj) {
@@ -21,7 +21,7 @@ config.on('setting_changed', function(settingName, settingValue) {
     (app as any).contextMenuTemplate[4].checked = settingValue;
   }
 
-  if (['sortType', 'sortReverse', 'showNotifications'].includes(settingName)) {
+  if (['LQ', 'sortType', 'sortReverse', 'showNotifications'].includes(settingName)) {
     rebuildIconMenu();
   }
 });
@@ -45,10 +45,10 @@ function rebuildIconMenu() {
     }
 
     return {
-      label: channelObj.visibleName,
+      label: !config.settings.LQ ? channelObj.visibleName : `${channelObj.visibleName} (LQ)`,
       type: 'normal',
       click: (menuItem, browserWindow, event) => {
-        channelObj.emit('play', event.ctrlKey, event.shiftKey ? true : null);
+        channelObj.emit('play', null, event.shiftKey ? true : null);
       },
       icon: channelObj._trayIcon
     };

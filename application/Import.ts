@@ -3,7 +3,7 @@ const axios = require('axios');
 const _ = require('lodash');
 const { URL } = require('url');
 
-const config = require('./SettingsFile');
+import { config } from './SettingsFile';
 const { twitchApiKey } = require('./Globals');
 
 ipcMain.on('config_twitchImport', async (event, channelName) => {

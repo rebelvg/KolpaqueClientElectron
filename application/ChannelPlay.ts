@@ -2,8 +2,8 @@ import { app, ipcMain, dialog, shell, BrowserWindow } from 'electron';
 const child = require('child_process').execFile;
 const _ = require('lodash');
 
-const config = require('./SettingsFile');
-const Config = require('./ConfigClass');
+import { config } from './SettingsFile';
+import { Config } from './ConfigClass';
 const Notifications = require('./Notifications');
 
 const AUTO_RESTART_ATTEMPTS = 3;
@@ -34,7 +34,7 @@ ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
 
   if (!channelObj) return false;
 
-  channelObj.emit('play', LQ, autoRestart);
+  channelObj.emit('play', null, autoRestart);
 });
 
 ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
