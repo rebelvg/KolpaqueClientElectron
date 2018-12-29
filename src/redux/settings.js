@@ -1,6 +1,6 @@
 import { createActions, handleActions } from 'redux-actions';
 
-const { ipcRenderer } = require('electron');
+const { ipcRenderer } = window.require('electron');
 
 const defaultState = {
   list: {}

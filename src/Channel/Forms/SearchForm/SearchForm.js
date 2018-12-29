@@ -6,7 +6,7 @@ import { search } from 'react-icons-kit/fa/search';
 import { template } from 'src/Channel/constants';
 import AutoSave from './AutoSave';
 
-const { remote } = require('electron');
+const { remote } = window.require('electron');
 const { Menu } = remote;
 
 const openMenu = () => {

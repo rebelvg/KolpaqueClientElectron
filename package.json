@@ -10,7 +10,7 @@
     "build": "yarn run build:api && yarn run build:app && node build.js",
     "start:api": "cross-env NODE_ENV=dev yarn run start",
     "start:app": "webpack-dev-server",
-    "start": "yarn run build:api && electron ."
+    "start": "yarn run build:api && yarn run build:app && electron ."
   },
   "author": "KLPQ",
   "license": "CC0-1.0",

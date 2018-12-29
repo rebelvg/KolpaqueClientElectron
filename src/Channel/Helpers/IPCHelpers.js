@@ -1,4 +1,4 @@
-const { remote, ipcRenderer } = require('electron');
+const { remote, ipcRenderer } = window.require('electron');
 const { Menu } = remote;
 
 import menuTemplate from 'src/Channel/Helpers/menu';

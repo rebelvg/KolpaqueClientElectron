@@ -5,7 +5,7 @@ import Icon from 'react-icons-kit';
 import { plus } from 'react-icons-kit/fa/plus';
 import { template } from 'src/Channel/constants';
 
-const { remote } = require('electron');
+const { remote } = window.require('electron');
 const { Menu } = remote;
 
 const openMenu = () => {

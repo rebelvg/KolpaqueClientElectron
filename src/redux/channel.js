@@ -2,7 +2,7 @@ import { createActions, handleActions, createAction } from 'redux-actions';
 import { createSelector } from 'reselect';
 import { getTab } from 'src/Channel/constants';
 
-const { ipcRenderer } = require('electron');
+const { ipcRenderer } = window.require('electron');
 
 const defaultState = {
   channels: [],

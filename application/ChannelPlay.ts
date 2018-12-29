@@ -18,23 +18,23 @@ function setChannelEvents(channelObj) {
     }
   });
 
-  channelObj.on('play', (LQ = null, autoRestart = null) => {
+  channelObj.on('play', (altQuality = false, autoRestart = null) => {
     if (config.settings.playInWindow) {
       if (!playInWindow(channelObj)) {
-        launchPlayerObj(channelObj, LQ, autoRestart);
+        launchPlayerObj(channelObj, altQuality, autoRestart);
       }
     } else {
-      launchPlayerObj(channelObj, LQ, autoRestart);
+      launchPlayerObj(channelObj, altQuality, autoRestart);
     }
   });
 }
 
-ipcMain.on('channel_play', (event, id, LQ = null, autoRestart = null) => {
+ipcMain.on('channel_play', (event, id, altQuality = false, autoRestart = null) => {
   let channelObj = config.findById(id);
 
   if (!channelObj) return false;
 
-  channelObj.emit('play', null, autoRestart);
+  channelObj.emit('play', altQuality, autoRestart);
 });
 
 ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
@@ -99,10 +99,8 @@ function playInWindow(channelObj) {
   return !!window;
 }
 
-function launchPlayerObj(channelObj, LQ = null, autoRestart = null) {
-  if (LQ === null) {
-    LQ = config.settings.LQ;
-  }
+function launchPlayerObj(channelObj, altQuality = false, autoRestart = null) {
+  const LQ = !altQuality ? config.settings.LQ : !config.settings.LQ;
 
   if (autoRestart === null) {
     channelObj.changeSetting('onAutoRestart', channelObj.autoRestart);

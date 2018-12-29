@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled, { withTheme } from 'styled-components';
 
-const { remote } = require('electron');
+const { remote } = window.require('electron');
 const { Menu } = remote;
 
 let template = [

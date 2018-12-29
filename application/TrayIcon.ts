@@ -48,7 +48,7 @@ function rebuildIconMenu() {
       label: !config.settings.LQ ? channelObj.visibleName : `${channelObj.visibleName} (LQ)`,
       type: 'normal',
       click: (menuItem, browserWindow, event) => {
-        channelObj.emit('play', null, event.shiftKey ? true : null);
+        channelObj.emit('play', event.ctrlKey, event.shiftKey ? true : null);
       },
       icon: channelObj._trayIcon
     };
