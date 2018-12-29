@@ -2,7 +2,7 @@ import { app, Menu, nativeImage } from 'electron';
 const _ = require('lodash');
 
 import { config } from './SettingsFile';
-const Globals = require('./Globals');
+import { registeredServices } from './Globals';
 
 function setChannelEvents(channelObj) {
   channelObj.on('setting_changed', (settingName, settingValue) => {
@@ -37,7 +37,7 @@ function rebuildIconMenu() {
 
   (app as any).contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
     if (!channelObj._trayIcon) {
-      let iconBuffer = channelObj._icon ? channelObj._icon : Globals.registeredServices[channelObj.service].icon;
+      let iconBuffer = channelObj._icon ? channelObj._icon : registeredServices[channelObj.service].icon;
 
       if (iconBuffer) {
         channelObj._trayIcon = nativeImage.createFromBuffer(iconBuffer).resize({ height: 16 });

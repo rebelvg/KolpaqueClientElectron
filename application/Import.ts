@@ -4,7 +4,7 @@ const _ = require('lodash');
 const { URL } = require('url');
 
 import { config } from './SettingsFile';
-const { twitchApiKey } = require('./Globals');
+import { twitchApiKey } from './Globals';
 
 ipcMain.on('config_twitchImport', async (event, channelName) => {
   return await twitchImport(channelName);

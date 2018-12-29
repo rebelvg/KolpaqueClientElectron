@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 
 import { Channel } from './ChannelClass';
-const { allowedProtocols, registeredServices, preInstalledChannels } = require('./Globals');
+import { preInstalledChannels } from './Globals';
 
 const settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 const channelSave = ['link', 'visibleName', 'isPinned', 'autoStart', 'autoRestart'];

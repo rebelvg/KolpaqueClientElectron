@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const { twitchApiKey } = require('./Globals');
+import { twitchApiKey } from './Globals';
 
 const SERVICES = {
   twitch: getTwitchInfoAsync

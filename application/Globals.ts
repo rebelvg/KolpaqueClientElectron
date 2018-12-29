@@ -1,9 +1,9 @@
 import * as fs from 'fs';
-const path = require('path');
+import * as path from 'path';
 
-const allowedProtocols = ['rtmp:', 'http:', 'https:'];
+export const allowedProtocols = ['rtmp:', 'http:', 'https:'];
 
-const registeredServices = {
+export const registeredServices = {
   'klpq-vps': {
     protocols: ['rtmp:'],
     hosts: ['vps.klpq.men', 'stream.klpq.men'],
@@ -85,11 +85,6 @@ const registeredServices = {
   }
 };
 
-const preInstalledChannels = ['rtmp://vps.klpq.men/live/main', 'rtmp://main.klpq.men/live/main'];
+export const preInstalledChannels = ['rtmp://vps.klpq.men/live/main'];
 
-let twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
-
-exports.allowedProtocols = allowedProtocols;
-exports.registeredServices = registeredServices;
-exports.preInstalledChannels = preInstalledChannels;
-exports.twitchApiKey = twitchApiKey;
+export const twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';

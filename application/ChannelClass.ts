@@ -4,7 +4,7 @@ import { URL } from 'url';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 
-const { allowedProtocols, registeredServices } = require('./Globals');
+import { allowedProtocols, registeredServices } from './Globals';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 

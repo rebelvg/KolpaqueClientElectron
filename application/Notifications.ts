@@ -2,7 +2,7 @@ import { app, shell, Notification, nativeImage } from 'electron';
 const _ = require('lodash');
 
 import { config } from './SettingsFile';
-const Globals = require('./Globals');
+import { registeredServices } from './Globals';
 
 function printNotification(title, content, channelObj = null) {
   if (!config.settings.showNotifications) return;
@@ -14,7 +14,7 @@ function printNewNotification(title, content, channelObj) {
   let icon = (app as any).appIcon.iconPathBalloon;
 
   if (channelObj) {
-    let iconBuffer = channelObj._icon ? channelObj._icon : Globals.registeredServices[channelObj.service].icon;
+    let iconBuffer = channelObj._icon ? channelObj._icon : registeredServices[channelObj.service].icon;
 
     if (iconBuffer) {
       icon = nativeImage.createFromBuffer(iconBuffer);

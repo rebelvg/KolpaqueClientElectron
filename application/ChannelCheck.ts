@@ -7,7 +7,7 @@ import * as qs from 'querystring';
 
 import { config } from './SettingsFile';
 const Notifications = require('./Notifications');
-const { twitchApiKey } = require('./Globals');
+import { twitchApiKey } from './Globals';
 const { getInfoAsync } = require('./ChannelInfo');
 
 const SERVICES = {
