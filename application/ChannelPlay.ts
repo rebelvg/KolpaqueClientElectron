@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { config } from './SettingsFile';
 import { Config } from './ConfigClass';
 import { printNotification } from './Notifications';
+import { Channel } from './ChannelClass';
 
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
@@ -99,7 +100,7 @@ function playInWindow(channelObj) {
   return !!window;
 }
 
-function launchPlayerObj(channelObj, altQuality = false, autoRestart = null) {
+function launchPlayerObj(channelObj: Channel, altQuality = false, autoRestart = null) {
   const LQ = !altQuality ? config.settings.LQ : !config.settings.LQ;
 
   if (autoRestart === null) {
@@ -108,7 +109,7 @@ function launchPlayerObj(channelObj, altQuality = false, autoRestart = null) {
     channelObj.changeSetting('onAutoRestart', autoRestart);
   }
 
-  let playLink = channelObj.link;
+  let playLink = channelObj._customPlayUrl || channelObj.link;
   let params = [];
 
   if (channelObj.protocol === 'rtmp:') {

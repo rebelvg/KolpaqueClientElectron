@@ -8,6 +8,7 @@ import { config } from './SettingsFile';
 import { twitchApiKey } from './Globals';
 import { getInfoAsync } from './ChannelInfo';
 import { printNotification } from './Notifications';
+import { Channel } from './ChannelClass';
 
 const SERVICES_INTERVALS = {
   'klpq-vps': {
@@ -73,7 +74,7 @@ async function isOnline(channelObj, printBalloon) {
             message: `${channelObj.link} is trying to auto-start. Confirm?`,
             buttons: ['Ok', 'Cancel']
           },
-          function(res) {
+          res => {
             if (res === 0) {
               channelObj.emit('play');
             }
@@ -178,7 +179,7 @@ async function getYoutubeStatsUser(channelObj, printBalloon) {
   }
 }
 
-async function getChaturbateStats(channelObj, printBalloon) {
+async function getChaturbateStats(channelObj: Channel, printBalloon) {
   const url = 'https://chaturbate.com/get_edge_hls_url_ajax/';
 
   const headers = {
@@ -199,8 +200,10 @@ async function getChaturbateStats(channelObj, printBalloon) {
 
   if (data.room_status === 'public') {
     isOnline(channelObj, printBalloon);
+    channelObj._customPlayUrl = data.url;
   } else {
     isOffline(channelObj);
+    channelObj._customPlayUrl = null;
   }
 }
 

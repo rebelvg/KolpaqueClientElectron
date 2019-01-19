@@ -24,6 +24,7 @@ export class Channel extends EventEmitter {
   public _startTime = 0;
   public _offlineConfirmations = 0;
   public _windows = [];
+  public _customPlayUrl = null;
 
   public visibleName = null;
   public isPinned = false;
