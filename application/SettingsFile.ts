@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, shell, clipboard } from 'electron';
 import * as _ from 'lodash';
 
 import { Config } from './ConfigClass';
+import { Channel } from './ChannelClass';
 
 export const config = new Config();
 
@@ -129,22 +130,8 @@ ipcMain.on('getSettingSync', (event, settingName) => {
 ipcMain.on('config_find', (event, query) => {
   const find = config.find(query);
 
-  find.channels = _.map(find.channels, channel => {
-    return {
-      id: channel.id,
-      service: channel.service,
-      name: channel.name,
-      link: channel.link,
-      protocol: channel.protocol,
-      isLive: channel.isLive,
-      onAutoRestart: channel.onAutoRestart,
-      lastUpdated: channel.lastUpdated,
-
-      visibleName: channel.visibleName,
-      isPinned: channel.isPinned,
-      autoStart: channel.autoStart,
-      autoRestart: channel.autoRestart
-    };
+  find.channels = _.map(find.channels, (channel: Channel) => {
+    return channel.filterData();
   });
 
   return (event.returnValue = find);

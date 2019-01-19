@@ -25,7 +25,6 @@ export class Channel extends EventEmitter {
   public _offlineConfirmations = 0;
   public _windows = [];
   public _customPlayUrl = null;
-
   public visibleName = null;
   public isPinned = false;
   public autoStart = false;
@@ -100,7 +99,7 @@ export class Channel extends EventEmitter {
     });
   }
 
-  update(channelConfig) {
+  public update(channelConfig) {
     _.forEach(channelConfig, (settingValue, settingName) => {
       if (channelValidate.includes(settingName)) {
         if (settingName === 'visibleName' && !settingValue) return;
@@ -110,7 +109,7 @@ export class Channel extends EventEmitter {
     });
   }
 
-  changeSetting(settingName, settingValue, send = true) {
+  public changeSetting(settingName, settingValue, send = true) {
     if (!this.hasOwnProperty(settingName)) return false;
 
     this[settingName] = settingValue;
@@ -120,7 +119,7 @@ export class Channel extends EventEmitter {
     return true;
   }
 
-  changeSettings(settings, send = true) {
+  public changeSettings(settings, send = true) {
     _.forEach(settings, (settingValue, settingName) => {
       this.changeSetting(settingName, settingValue, false);
     });
@@ -128,5 +127,22 @@ export class Channel extends EventEmitter {
     this.emit('settings_changed', send);
 
     return true;
+  }
+
+  public filterData() {
+    return {
+      id: this.id,
+      service: this.service,
+      name: this.name,
+      link: this.link,
+      protocol: this.protocol,
+      isLive: this.isLive,
+      onAutoRestart: this.onAutoRestart,
+      lastUpdated: this.lastUpdated,
+      visibleName: this.visibleName,
+      isPinned: this.isPinned,
+      autoStart: this.autoStart,
+      autoRestart: this.autoRestart
+    };
   }
 }

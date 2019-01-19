@@ -10,7 +10,7 @@ import { preInstalledChannels } from './Globals';
 const settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 const channelSave = ['link', 'visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
-const filterChannel = (channelObj, filter) => {
+const filterChannel = (channelObj: Channel, filter: string): boolean => {
   filter = filter.trim();
 
   if (!filter) {
@@ -39,7 +39,7 @@ const filterChannel = (channelObj, filter) => {
   return _.filter(searchFilters, 'found').length === filters.length;
 };
 
-const filterChannels = (channels, filter) => {
+const filterChannels = (channels: Channel[], filter: string): Channel[] => {
   filter = filter.trim();
 
   if (!filter) {
@@ -55,7 +55,7 @@ const filterChannels = (channels, filter) => {
   return filteredChannels;
 };
 
-const sortChannels = (channels, sortType, isReversed = false) => {
+const sortChannels = (channels: Channel[], sortType: string, isReversed: boolean = false): Channel[] => {
   let sortedChannels = [];
 
   switch (sortType) {
@@ -90,7 +90,7 @@ const sortChannels = (channels, sortType, isReversed = false) => {
 };
 
 export class Config extends EventEmitter {
-  public channels = [];
+  public channels: Channel[] = [];
   public settings = {
     LQ: false,
     showNotifications: true,
@@ -234,7 +234,7 @@ export class Config extends EventEmitter {
     return channel;
   }
 
-  find(query: any = {}) {
+  find(query: any = {}): any {
     const sort = {
       type: this.settings.sortType,
       isReversed: this.settings.sortReverse
