@@ -1,6 +1,6 @@
 {
   "name": "KolpaqueClient",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Multiplatform GUI for Streamlink",
   "main": "./dist-api/main.js",
   "scripts": {
