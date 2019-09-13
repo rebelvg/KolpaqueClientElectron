@@ -2,33 +2,59 @@ import axios from 'axios';
 import * as _ from 'lodash';
 
 import { twitchApiKey } from './Globals';
+import { Channel } from './ChannelClass';
 
 const SERVICES = {
   twitch: getTwitchInfoAsync
 };
 
-async function getTwitchInfoAsync(channelObj) {
-  if (channelObj._icon) return;
+async function getTwitchInfoAsync(channelObjs: Channel[]) {
+  const filteredChannels = _.filter(channelObjs, channelObj => !channelObj._icon);
 
-  const url = `https://api.twitch.tv/helix/users?login=${channelObj.name}`;
+  if (filteredChannels.length === 0) {
+    return;
+  }
 
-  try {
-    const { data: channelData } = await axios.get(url, {
-      headers: { 'Client-ID': twitchApiKey }
-    });
+  const chunkedChannels = _.chunk(filteredChannels, 100);
 
-    if (!_.get(channelData, 'data.0.profile_image_url')) return;
+  await Promise.all(
+    chunkedChannels.map(async channelObjs => {
+      const { data: userData } = await axios.get(
+        `https://api.twitch.tv/helix/users?${channelObjs.map(channel => `login=${channel.name}`).join('&')}`,
+        {
+          headers: { 'Client-ID': twitchApiKey }
+        }
+      );
 
-    const { data: logoData } = await axios.get(_.get(channelData, 'data.0.profile_image_url'), {
-      responseType: 'arraybuffer'
-    });
+      await Promise.all(
+        channelObjs.map(async channelObj => {
+          await Promise.all(
+            userData.data.map(async user => {
+              if (user.login !== channelObj.name) {
+                return;
+              }
 
-    channelObj._icon = logoData;
-  } catch (e) {}
+              if (!_.get(user, 'profile_image_url')) return;
+
+              try {
+                const { data: logoData } = await axios.get(_.get(user, 'profile_image_url'), {
+                  responseType: 'arraybuffer'
+                });
+
+                channelObj._icon = logoData;
+              } catch (e) {
+                console.error(e.message);
+              }
+            })
+          );
+        })
+      );
+    })
+  );
 }
 
-export async function getInfoAsync(channelObj) {
+export async function getInfoAsync(channelObj: Channel) {
   if (SERVICES.hasOwnProperty(channelObj.service)) {
-    await SERVICES[channelObj.service](channelObj);
+    await SERVICES[channelObj.service]([channelObj]);
   }
 }

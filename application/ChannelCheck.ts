@@ -138,14 +138,14 @@ async function getKlpqMainStats(channelObjs: Channel[], printBalloon: boolean) {
 }
 
 async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
+  if (channelObjs.length === 0) {
+    return;
+  }
+
   const chunkedChannels = _.chunk(channelObjs, 100);
 
   await Promise.all(
     chunkedChannels.map(async channelObjs => {
-      if (channelObjs.length === 0) {
-        return;
-      }
-
       const channels = channelObjs.map(channelObj => {
         return {
           channelObj,
