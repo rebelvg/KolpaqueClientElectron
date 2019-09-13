@@ -12,12 +12,19 @@ ipcMain.on('config_twitchImport', async (event, channelName) => {
 
 ipcMain.once('client_ready', importLoop);
 
-function twitchImportChannels(channels, i) {
-  channels.forEach(channel => {
-    let channelObj = config.addChannelLink(`https://twitch.tv/${channel.to_name.toLowerCase()}`);
+async function twitchImportChannels(channels: any[], i: number) {
+  const { data: userData } = await axios.get(
+    `https://api.twitch.tv/helix/users?${channels.map(channel => `id=${channel.to_id}`).join('&')}`,
+    {
+      headers: { 'Client-ID': twitchApiKey }
+    }
+  );
+
+  for (const channel of userData.data) {
+    let channelObj = config.addChannelLink(`https://twitch.tv/${channel.login}`);
 
     if (channelObj !== false) i++;
-  });
+  }
 
   return i;
 }
@@ -48,14 +55,16 @@ async function twitchImportBase(channelName) {
 
     const apiUrl = new URL(`https://api.twitch.tv/helix/users/follows?from_id=${userId}`);
 
+    apiUrl.searchParams.set('first', '100');
+
     let followersData = await getTwitchData(apiUrl);
     let channels = followersData.data;
 
-    if (!channels || channels.length === 0) return 0;
+    if (!channels || channels.length === 0) return i;
 
     config.addChannelLink(`http://www.twitch.tv/${channelName}`);
 
-    i = twitchImportChannels(channels, i);
+    i = await twitchImportChannels(channels, i);
 
     while (channels.length !== 0) {
       apiUrl.searchParams.set('after', followersData.pagination.cursor);
@@ -63,7 +72,9 @@ async function twitchImportBase(channelName) {
       followersData = await getTwitchData(apiUrl);
       channels = followersData.data;
 
-      i = twitchImportChannels(channels, i);
+      if (!channels || channels.length === 0) return i;
+
+      i = await twitchImportChannels(channels, i);
     }
 
     return i;
@@ -105,7 +116,7 @@ async function autoKlpqImport() {
 }
 
 function autoTwitchImport() {
-  _.forEach(config.settings.twitchImport, async function(channelName) {
+  _.forEach(config.settings.twitchImport, async channelName => {
     await twitchImportBase(channelName);
   });
 }

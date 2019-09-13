@@ -52,7 +52,7 @@ ipcMain.once('client_ready', checkLoop);
 
 config.on('channel_added', checkChannel);
 
-async function isOnline(channelObj, printBalloon) {
+async function isOnline(channelObj: Channel, printBalloon: boolean) {
   channelObj._offlineConfirmations = 0;
 
   if (channelObj.isLive) return;
@@ -92,7 +92,7 @@ async function isOnline(channelObj, printBalloon) {
   });
 }
 
-function isOffline(channelObj) {
+function isOffline(channelObj: Channel) {
   if (!channelObj.isLive) return;
 
   channelObj._offlineConfirmations++;
@@ -107,7 +107,7 @@ function isOffline(channelObj) {
   });
 }
 
-async function getKlpqStatsBase(url, channelObj, printBalloon) {
+async function getKlpqStatsBase(url: string, channelObj: Channel, printBalloon: boolean) {
   const { data } = await axios.get(url);
 
   if (data.isLive) {
@@ -117,31 +117,84 @@ async function getKlpqStatsBase(url, channelObj, printBalloon) {
   }
 }
 
-async function getKlpqVpsStats(channelObj, printBalloon) {
-  const url = `http://stats.vps.klpq.men/channel/${channelObj.name}`;
+async function getKlpqVpsStats(channelObjs: Channel[], printBalloon: boolean) {
+  await Promise.all(
+    channelObjs.map(channelObj => {
+      const url = `http://stats.vps.klpq.men/channel/${channelObj.name}`;
 
-  await getKlpqStatsBase(url, channelObj, printBalloon);
+      return getKlpqStatsBase(url, channelObj, printBalloon);
+    })
+  );
 }
 
-async function getKlpqMainStats(channelObj, printBalloon) {
-  const url = `http://stats.main.klpq.men/channel/${channelObj.name}`;
+async function getKlpqMainStats(channelObjs: Channel[], printBalloon: boolean) {
+  await Promise.all(
+    channelObjs.map(channelObj => {
+      const url = `http://stats.main.klpq.men/channel/${channelObj.name}`;
 
-  await getKlpqStatsBase(url, channelObj, printBalloon);
+      return getKlpqStatsBase(url, channelObj, printBalloon);
+    })
+  );
 }
 
-async function getTwitchStats(channelObj, printBalloon) {
-  const url = `https://api.twitch.tv/helix/streams/?user_login=${channelObj.name}`;
+async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
+  const chunkedChannels = _.chunk(channelObjs, 100);
 
-  const { data: streamData } = await axios.get(url, { headers: { 'Client-ID': twitchApiKey } });
+  await Promise.all(
+    chunkedChannels.map(async channelObjs => {
+      if (channelObjs.length === 0) {
+        return;
+      }
 
-  if (streamData.data.length > 0) {
-    isOnline(channelObj, printBalloon);
-  } else {
-    isOffline(channelObj);
-  }
+      const channels = channelObjs.map(channelObj => {
+        return {
+          channelObj,
+          userId: null
+        };
+      });
+
+      const { data: userData } = await axios.get(
+        `https://api.twitch.tv/helix/users?${channelObjs.map(channel => `login=${channel.name}`).join('&')}`,
+        {
+          headers: { 'Client-ID': twitchApiKey }
+        }
+      );
+
+      _.forEach(channels, channel => {
+        _.forEach(userData.data, user => {
+          if (user.login === channel.channelObj.name) {
+            channel.userId = user.id;
+          }
+        });
+      });
+
+      const existingChannels = channels.filter(channel => !!channel.userId);
+
+      if (existingChannels.length === 0) {
+        _.forEach(channels, ({ channelObj }) => {
+          isOffline(channelObj);
+        });
+
+        return;
+      }
+
+      const { data: streamData } = await axios.get(
+        `https://api.twitch.tv/helix/streams/?${existingChannels.map(({ userId }) => `user_id=${userId}`).join('&')}`,
+        { headers: { 'Client-ID': twitchApiKey } }
+      );
+
+      _.forEach(channels, ({ channelObj, userId }) => {
+        if (_.find(streamData.data, { user_id: userId })) {
+          isOnline(channelObj, printBalloon);
+        } else {
+          isOffline(channelObj);
+        }
+      });
+    })
+  );
 }
 
-async function getYoutubeStatsBase(channelId, channelObj, printBalloon, apiKey) {
+async function getYoutubeStatsBase(channelId: string, channelObj: Channel, printBalloon: boolean, apiKey: string) {
   const searchUrl = new URL(`https://www.googleapis.com/youtube/v3/search`);
 
   searchUrl.searchParams.set('channelId', channelId);
@@ -159,84 +212,104 @@ async function getYoutubeStatsBase(channelId, channelObj, printBalloon, apiKey) 
   }
 }
 
-async function getYoutubeStatsUser(channelObj, printBalloon) {
+async function getYoutubeStatsUser(channelObjs: Channel[], printBalloon: boolean) {
   const { youtubeApiKey } = config.settings;
 
   if (!youtubeApiKey) return;
 
-  const channelsUrl = new URL(`https://www.googleapis.com/youtube/v3/channels`);
+  await Promise.all(
+    channelObjs.map(async channelObj => {
+      const channelsUrl = new URL(`https://www.googleapis.com/youtube/v3/channels`);
 
-  channelsUrl.searchParams.set('forUsername', channelObj.name);
-  channelsUrl.searchParams.set('part', 'id');
-  channelsUrl.searchParams.set('key', youtubeApiKey);
+      channelsUrl.searchParams.set('forUsername', channelObj.name);
+      channelsUrl.searchParams.set('part', 'id');
+      channelsUrl.searchParams.set('key', youtubeApiKey);
 
-  const { data } = await axios.get(channelsUrl.href);
+      const { data } = await axios.get(channelsUrl.href);
 
-  if (data.items.length > 0) {
-    const channelId = _.get(data, 'items[0].id');
+      if (data.items.length > 0) {
+        const channelId = _.get(data, 'items[0].id');
 
-    await getYoutubeStatsBase(channelId, channelObj, printBalloon, youtubeApiKey);
-  }
-}
-
-async function getChaturbateStats(channelObj: Channel, printBalloon) {
-  const url = 'https://chaturbate.com/get_edge_hls_url_ajax/';
-
-  const headers = {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'X-Requested-With': 'XMLHttpRequest'
-  };
-
-  const { data } = await axios.post(
-    url,
-    qs.stringify({
-      room_slug: channelObj.name,
-      bandwidth: 'high'
-    }),
-    {
-      headers
-    }
+        await getYoutubeStatsBase(channelId, channelObj, printBalloon, youtubeApiKey);
+      }
+    })
   );
-
-  if (data.room_status === 'public') {
-    isOnline(channelObj, printBalloon);
-    channelObj._customPlayUrl = data.url;
-  } else {
-    isOffline(channelObj);
-    channelObj._customPlayUrl = null;
-  }
 }
 
-async function getYoutubeStatsChannel(channelObj, printBalloon) {
+async function getChaturbateStats(channelObjs: Channel[], printBalloon: boolean) {
+  await Promise.all(
+    channelObjs.map(async channelObj => {
+      const url = 'https://chaturbate.com/get_edge_hls_url_ajax/';
+
+      const headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest'
+      };
+
+      const { data } = await axios.post(
+        url,
+        qs.stringify({
+          room_slug: channelObj.name,
+          bandwidth: 'high'
+        }),
+        {
+          headers
+        }
+      );
+
+      if (data.room_status === 'public') {
+        isOnline(channelObj, printBalloon);
+        channelObj._customPlayUrl = data.url;
+      } else {
+        isOffline(channelObj);
+        channelObj._customPlayUrl = null;
+      }
+    })
+  );
+}
+
+async function getYoutubeStatsChannel(channelObjs: Channel[], printBalloon: boolean) {
   const { youtubeApiKey } = config.settings;
 
   if (!youtubeApiKey) return;
 
-  await getYoutubeStatsBase(channelObj.name, channelObj, printBalloon, youtubeApiKey);
+  await Promise.all(
+    channelObjs.map(async channelObj => {
+      await getYoutubeStatsBase(channelObj.name, channelObj, printBalloon, youtubeApiKey);
+    })
+  );
 }
 
-async function checkChannel(channelObj, printBalloon = false) {
+async function checkChannel(channelObj: Channel, printBalloon = false) {
   try {
     if (SERVICES_INTERVALS.hasOwnProperty(channelObj.service)) {
-      await SERVICES_INTERVALS[channelObj.service].function(channelObj, printBalloon);
+      await SERVICES_INTERVALS[channelObj.service].function([channelObj], printBalloon);
     }
   } catch (e) {
     console.error(e.message);
   }
 }
 
+async function checkChannels(channelObjs: Channel[], service: string, printBalloon = false) {
+  if (!service) {
+    _.forEach(SERVICES_INTERVALS, (service, serviceName) => {
+      service.function(_.filter(channelObjs, { service: serviceName }), printBalloon);
+    });
+
+    return;
+  }
+
+  if (SERVICES_INTERVALS.hasOwnProperty(service)) {
+    await SERVICES_INTERVALS[service].function(_.filter(channelObjs, { service }), printBalloon);
+  }
+}
+
 function checkLoop() {
-  _.forEach(config.channels, channelObj => {
-    checkChannel(channelObj, false);
-  });
+  checkChannels(config.channels, null, false);
 
   _.forEach(SERVICES_INTERVALS, (service, serviceName) => {
-    setInterval(async () => {
-      for (const channelObj of config.channels) {
-        if (channelObj.service === serviceName) {
-          checkChannel(channelObj, true);
-        }
-      }
+    setInterval(() => {
+      checkChannels(config.channels, serviceName, true);
     }, service.check * 1000);
   });
 }
