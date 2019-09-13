@@ -130,11 +130,11 @@ async function getKlpqMainStats(channelObj, printBalloon) {
 }
 
 async function getTwitchStats(channelObj, printBalloon) {
-  const url = `https://api.twitch.tv/kraken/streams?channel=${channelObj.name}`;
+  const url = `https://api.twitch.tv/helix/streams/?user_login=${channelObj.name}`;
 
-  const { data } = await axios.get(url, { headers: { 'Client-ID': twitchApiKey } });
+  const { data: streamData } = await axios.get(url, { headers: { 'Client-ID': twitchApiKey } });
 
-  if (data.streams.length > 0) {
+  if (streamData.data.length > 0) {
     isOnline(channelObj, printBalloon);
   } else {
     isOffline(channelObj);

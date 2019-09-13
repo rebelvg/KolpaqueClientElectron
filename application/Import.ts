@@ -13,8 +13,8 @@ ipcMain.on('config_twitchImport', async (event, channelName) => {
 ipcMain.once('client_ready', importLoop);
 
 function twitchImportChannels(channels, i) {
-  channels.forEach(function(channel) {
-    let channelObj = config.addChannelLink(channel.channel.url);
+  channels.forEach(channel => {
+    let channelObj = config.addChannelLink(`https://twitch.tv/${channel.to_name.toLowerCase()}`);
 
     if (channelObj !== false) i++;
   });
@@ -22,8 +22,8 @@ function twitchImportChannels(channels, i) {
   return i;
 }
 
-async function getTwitchData(url) {
-  const { data } = await axios.get(url, { headers: { 'Client-ID': twitchApiKey } });
+async function getTwitchData(url: URL) {
+  const { data } = await axios.get(url.href, { headers: { 'Client-ID': twitchApiKey } });
 
   return data;
 }
@@ -33,17 +33,23 @@ async function twitchImportBase(channelName) {
 
   if (channelName.length === 0) return null;
 
+  const { data: userData } = await axios.get(`https://api.twitch.tv/helix/users?login=${channelName}`, {
+    headers: { 'Client-ID': twitchApiKey }
+  });
+
+  if (!_.get(userData, 'data.0.id')) {
+    return;
+  }
+
+  const userId = _.get(userData, 'data.0.id');
+
   try {
     let i = 0;
 
-    const apiUrl = new URL(`https://api.twitch.tv/kraken/users/${channelName}/follows/channels`);
+    const apiUrl = new URL(`https://api.twitch.tv/helix/users/follows?from_id=${userId}`);
 
-    apiUrl.searchParams.set('sortby', 'created_at');
-    apiUrl.searchParams.set('direction', 'ASC');
-    apiUrl.searchParams.set('limit', '100');
-
-    let body = await getTwitchData(apiUrl.href);
-    let channels = body.follows;
+    let followersData = await getTwitchData(apiUrl);
+    let channels = followersData.data;
 
     if (!channels || channels.length === 0) return 0;
 
@@ -52,15 +58,17 @@ async function twitchImportBase(channelName) {
     i = twitchImportChannels(channels, i);
 
     while (channels.length !== 0) {
-      body = await getTwitchData(body._links.next);
-      channels = body.follows;
+      apiUrl.searchParams.set('after', followersData.pagination.cursor);
+
+      followersData = await getTwitchData(apiUrl);
+      channels = followersData.data;
 
       i = twitchImportChannels(channels, i);
     }
 
     return i;
   } catch (e) {
-    console.error(e.message);
+    console.error(e);
 
     return null;
   }

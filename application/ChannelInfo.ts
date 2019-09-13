@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as _ from 'lodash';
 
 import { twitchApiKey } from './Globals';
 
@@ -9,16 +10,16 @@ const SERVICES = {
 async function getTwitchInfoAsync(channelObj) {
   if (channelObj._icon) return;
 
-  const url = `https://api.twitch.tv/kraken/channels/${channelObj.name}`;
+  const url = `https://api.twitch.tv/helix/users?login=${channelObj.name}`;
 
   try {
     const { data: channelData } = await axios.get(url, {
       headers: { 'Client-ID': twitchApiKey }
     });
 
-    if (!channelData.logo) return;
+    if (!_.get(channelData, 'data.0.profile_image_url')) return;
 
-    const { data: logoData } = await axios.get(channelData.logo, {
+    const { data: logoData } = await axios.get(_.get(channelData, 'data.0.profile_image_url'), {
       responseType: 'arraybuffer'
     });
 
