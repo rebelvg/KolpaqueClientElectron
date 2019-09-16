@@ -25,10 +25,12 @@ const options = {
   prune: true
 };
 
+let platforms;
+
 if (platformOption === 'all') {
-  options.platform = 'win32,darwin,linux';
+  platforms = ['win32', 'darwin', 'linux'];
 } else {
-  options.platform = platformOption;
+  platforms = [platformOption];
 }
 
 if (!pathOption) {
@@ -44,7 +46,12 @@ options.out = pathOption;
 console.log(options);
 
 (async () => {
-  const appPaths = await packager(options);
+  for (const platform of platforms) {
+    const appPaths = await packager({
+      ...options,
+      platform
+    });
 
-  console.log(appPaths);
+    console.log(appPaths);
+  }
 })();
