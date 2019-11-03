@@ -1,5 +1,3 @@
-import { addLogs } from './application/Logs';
-
 const packager = require('electron-packager');
 const readlineSync = require('readline-sync');
 const fs = require('fs');
@@ -41,7 +39,7 @@ let pathOption = readlineSync.question(`select output folder. (empty for current
     pathOption = path.join(__dirname, 'builds');
   } else {
     if (!fs.existsSync(pathOption)) {
-      addLogs('bad path.');
+      console.error('bad path.');
 
       return;
     }
@@ -51,7 +49,7 @@ let pathOption = readlineSync.question(`select output folder. (empty for current
 
   options.out = pathOption;
 
-  addLogs(options);
+  console.error(options);
 
   for (const platform of platforms) {
     const appPaths = await packager({
@@ -59,6 +57,6 @@ let pathOption = readlineSync.question(`select output folder. (empty for current
       platform
     });
 
-    addLogs(appPaths);
+    console.error(appPaths);
   }
 })();
