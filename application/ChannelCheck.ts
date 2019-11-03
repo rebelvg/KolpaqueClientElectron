@@ -9,6 +9,7 @@ import { twitchApiKey } from './Globals';
 import { getInfoAsync } from './ChannelInfo';
 import { printNotification } from './Notifications';
 import { Channel } from './ChannelClass';
+import { addLogs } from './Logs';
 
 const SERVICES_INTERVALS = {
   'klpq-vps': {
@@ -59,7 +60,7 @@ async function isOnline(channelObj: Channel, printBalloon: boolean) {
 
   await getInfoAsync(channelObj);
 
-  console.log(`${channelObj.link} went online.`);
+  addLogs(`${channelObj.link} went online.`);
 
   if (printBalloon) {
     printNotification('Stream is Live', channelObj.visibleName, channelObj);
@@ -99,7 +100,7 @@ function isOffline(channelObj: Channel) {
 
   if (channelObj._offlineConfirmations < _.get(SERVICES_INTERVALS, [channelObj.service, 'confirmations'], 0)) return;
 
-  console.log(`${channelObj.link} went offline.`);
+  addLogs(`${channelObj.link} went offline.`);
 
   channelObj.changeSettings({
     lastUpdated: Date.now(),
@@ -286,7 +287,7 @@ async function checkChannel(channelObj: Channel, printBalloon = false) {
       await SERVICES_INTERVALS[channelObj.service].function([channelObj], printBalloon);
     }
   } catch (e) {
-    console.error(e.message);
+    addLogs(e.message);
   }
 }
 

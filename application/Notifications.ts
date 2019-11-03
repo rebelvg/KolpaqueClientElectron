@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 
 import { config } from './SettingsFile';
 import { registeredServices } from './Globals';
+import { addLogs } from './Logs';
 
 export function printNotification(title, content, channelObj = null) {
   if (!config.settings.showNotifications) return;
@@ -35,7 +36,7 @@ function printNewNotification(title, content, channelObj) {
 }
 
 function onBalloonClick(title, content, channelObj) {
-  console.log('balloon was clicked.');
+  addLogs('balloon was clicked.');
 
   if (!config.settings.launchOnBalloonClick) return;
 

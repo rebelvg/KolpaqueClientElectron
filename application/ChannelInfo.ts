@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 
 import { twitchApiKey } from './Globals';
 import { Channel } from './ChannelClass';
+import { addLogs } from './Logs';
 
 const SERVICES = {
   twitch: getTwitchInfoAsync
@@ -43,7 +44,7 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
 
                 channelObj._icon = logoData;
               } catch (e) {
-                console.error(e.message);
+                addLogs(e.message);
               }
             })
           );

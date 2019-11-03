@@ -6,6 +6,7 @@ import { config } from './SettingsFile';
 import { Config } from './ConfigClass';
 import { printNotification } from './Notifications';
 import { Channel } from './ChannelClass';
+import { addLogs } from './Logs';
 
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
@@ -128,7 +129,7 @@ function launchPlayerObj(channelObj: Channel, altQuality = false, autoRestart = 
 }
 
 function launchStreamlink(playLink, params, channelObj, firstStart = true) {
-  console.log(playLink, params);
+  addLogs(playLink, params);
 
   channelObj._startTime = Date.now();
 
@@ -136,9 +137,9 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
     'streamlink',
     [playLink, 'best', '--twitch-disable-hosting'].concat(params),
     (err, data, stderr) => {
-      console.log(err);
-      console.log(data);
-      console.log('streamlink exited.');
+      addLogs(err);
+      addLogs(data);
+      addLogs('streamlink exited.');
 
       if (err) {
         if (err.code === 'ENOENT') {

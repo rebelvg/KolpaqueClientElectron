@@ -6,6 +6,7 @@ import { EventEmitter } from 'events';
 
 import { Channel } from './ChannelClass';
 import { preInstalledChannels } from './Globals';
+import { addLogs } from './Logs';
 
 const settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
 const channelSave = ['link', 'visibleName', 'isPinned', 'autoStart', 'autoRestart'];
@@ -150,7 +151,7 @@ export class Config extends EventEmitter {
         }
       });
     } catch (e) {
-      console.log(e.stack);
+      addLogs(e.stack);
 
       _.forEach(preInstalledChannels, channelLink => {
         this.addChannelLink(channelLink);
@@ -186,7 +187,7 @@ export class Config extends EventEmitter {
     try {
       return new Channel(channelLink);
     } catch (e) {
-      console.log(e.stack);
+      addLogs(e.stack);
 
       return false;
     }
@@ -278,11 +279,11 @@ export class Config extends EventEmitter {
 
       fs.writeFileSync(settingsPath, JSON.stringify(saveConfig, null, 4));
 
-      console.log('settings saved.');
+      addLogs('settings saved.');
 
       return true;
     } catch (e) {
-      console.log(e.message);
+      addLogs(e.message);
 
       return false;
     }

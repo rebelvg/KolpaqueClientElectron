@@ -14,15 +14,16 @@ import { rebuildIconMenu } from './TrayIcon';
 import './ChannelCheck';
 import './Import';
 import './VersionCheck';
+import { addLogs } from './Logs';
 
 const isDev = process.env.NODE_ENV === 'dev';
 
-console.log('isDev', isDev);
+addLogs('isDev', isDev);
 
 let forceQuit = false;
 
 ipcMain.once('client_ready', () => {
-  console.log('client ready.');
+  addLogs('client ready.');
 });
 
 let iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
@@ -64,11 +65,11 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
 
     installExtension(REACT_DEVELOPER_TOOLS)
-      .then(name => console.log('Extension added', name))
-      .catch(err => console.log('An error occurred', err));
+      .then(name => addLogs('Extension added', name))
+      .catch(err => addLogs('An error occurred', err));
     installExtension(REDUX_DEVTOOLS)
-      .then(name => console.log('Extension added', name))
-      .catch(err => console.log('An error occurred', err));
+      .then(name => addLogs('Extension added', name))
+      .catch(err => addLogs('An error occurred', err));
   } else {
     mainWindow.loadURL(
       url.format({
@@ -88,7 +89,7 @@ function createWindow() {
   });
 
   mainWindow.on('close', function(e) {
-    console.log('forceQuit', forceQuit);
+    addLogs('forceQuit', forceQuit);
 
     if (forceQuit) return;
 
@@ -176,12 +177,12 @@ app.on('ready', () => {
   appIcon.iconPathBalloon = iconPathBalloon;
 
   appIcon.on('click', () => {
-    console.log('left-click event.');
+    addLogs('left-click event.');
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
   appIcon.on('right-click', () => {
-    console.log('right-click event.');
+    addLogs('right-click event.');
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
@@ -197,9 +198,9 @@ app.on('ready', () => {
 });
 
 process.on('unhandledRejection', err => {
-  console.error('unhandledRejection', err);
+  addLogs('unhandledRejection', err);
 });
 
 process.on('uncaughtException', err => {
-  console.error('uncaughtException', err);
+  addLogs('uncaughtException', err);
 });

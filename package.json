@@ -9,7 +9,7 @@
     "lint:fix": "prettier --write \"**/*.{ts,js,json,css,md}\"",
     "build:api": "tsc",
     "build:app": "cross-env NODE_ENV=production webpack --config webpack.config.production",
-    "build": "yarn run build:api && yarn run build:app && node build.js",
+    "build": "yarn run build:api && yarn run build:app && ts-node build.ts",
     "start:api": "cross-env NODE_ENV=dev yarn run start",
     "start:app": "webpack-dev-server",
     "start": "yarn run build:api && yarn run build:app && electron ."
@@ -31,6 +31,7 @@
     "husky": "^1.3.1",
     "prettier": "^1.15.3",
     "readline-sync": "^1.4.7",
+    "ts-node": "^8.4.1",
     "tsc": "^1.20150623.0",
     "typescript": "^3.2.2",
     "url-loader": "^0.6.2",

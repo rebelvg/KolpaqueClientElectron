@@ -5,6 +5,7 @@ import { URL } from 'url';
 
 import { config } from './SettingsFile';
 import { twitchApiKey } from './Globals';
+import { addLogs } from './Logs';
 
 ipcMain.on('config_twitchImport', async (event, channelName) => {
   return await twitchImport(channelName);
@@ -79,7 +80,7 @@ async function twitchImportBase(channelName) {
 
     return i;
   } catch (e) {
-    console.error(e);
+    addLogs(e);
 
     return null;
   }
