@@ -6,8 +6,16 @@ import { Form } from 'react-final-form';
 
 import SettingsForm from 'src/Settings/Forms/SettingsForm';
 import ImportForm from 'src/Settings/Forms/ImportForm';
+import Logs from 'src/Settings/Forms/LogsForm';
 
-const options = [{ value: 'general', label: 'General Settings' }, { value: 'import', label: 'Import Settings' }];
+const options = [
+  { value: 'general', label: 'General Settings' },
+  { value: 'import', label: 'Import Settings' },
+  {
+    value: 'logs',
+    label: 'Logs'
+  }
+];
 
 export default class Settings extends Component {
   constructor() {
@@ -63,6 +71,7 @@ export default class Settings extends Component {
             render={props => <SettingsForm {...props} />}
           />
         )}
+
         {activeKey === 'import' && (
           <Form
             members={settings.twitchImport}
@@ -72,6 +81,8 @@ export default class Settings extends Component {
             render={props => <ImportForm {...props} />}
           />
         )}
+
+        {activeKey === 'logs' && <Form render={props => <Logs {...props} />} />}
       </Container>
     );
   }

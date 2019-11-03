@@ -10,7 +10,7 @@
     "build:api": "tsc",
     "build:app": "cross-env NODE_ENV=production webpack --config webpack.config.production",
     "build": "yarn run build:api && yarn run build:app && ts-node build.ts",
-    "start:api": "cross-env NODE_ENV=dev yarn run start",
+    "start:api": "yarn build:api && cross-env NODE_ENV=dev electron .",
     "start:app": "webpack-dev-server",
     "start": "yarn run build:api && yarn run build:app && electron ."
   },

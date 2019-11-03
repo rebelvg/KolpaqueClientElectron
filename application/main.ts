@@ -14,6 +14,7 @@ import { rebuildIconMenu } from './TrayIcon';
 import './ChannelCheck';
 import './Import';
 import './VersionCheck';
+import './Logs';
 import { addLogs } from './Logs';
 
 const isDev = process.env.NODE_ENV === 'dev';

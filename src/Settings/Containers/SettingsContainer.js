@@ -37,6 +37,7 @@ export default class SettingsContainer extends Component {
   render() {
     const { settings } = this.props;
     const { version } = this.state;
+
     return (
       <Container>
         <Settings

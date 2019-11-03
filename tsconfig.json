@@ -3,5 +3,6 @@
     "target": "esnext",
     "module": "commonjs",
     "outDir": "./dist-api"
-  }
+  },
+  "include": ["./application/**/*"]
 }
