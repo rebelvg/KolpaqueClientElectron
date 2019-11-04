@@ -2,6 +2,7 @@ const { remote, ipcRenderer } = window.require('electron');
 
 import React, { Component } from 'react';
 import styled, { withTheme } from 'styled-components';
+import ReactJson from 'react-json-view';
 
 @withTheme
 export default class LogsForm extends Component {
@@ -30,6 +31,6 @@ export default class LogsForm extends Component {
   }
 
   render() {
-    return <pre>{JSON.stringify(this.state.logs, null, 2)}</pre>;
+    return <ReactJson src={this.state.logs} collapsed={false} />;
   }
 }

@@ -1,9 +1,10 @@
 import { ipcMain } from 'electron';
+import * as _ from 'lodash';
 
-const logs: string[] = [];
+let logs: string[] = [];
 
 ipcMain.on('config_logs', event => {
-  event.returnValue = logs;
+  event.returnValue = _.takeRight(logs, 20);
 });
 
 export function addLogs(...log: any[]) {
@@ -12,4 +13,6 @@ export function addLogs(...log: any[]) {
   console.log(logLine);
 
   logs.push(logLine);
+
+  logs = _.takeRight(logs, 20);
 }
