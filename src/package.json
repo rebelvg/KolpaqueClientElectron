@@ -21,7 +21,7 @@
     "normalize.css": "^8.0.0",
     "prop-types": "^15.6.2",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react-dom": "^16.2.1",
     "react-final-form": "^3.0.4",
     "react-hot-loader": "^3.0.0",
     "react-icons-kit": "^1.0.7",
