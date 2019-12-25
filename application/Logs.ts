@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 let logs: string[] = [];
 
 ipcMain.on('config_logs', event => {
-  event.returnValue = _.takeRight(logs, 20);
+  event.returnValue = logs.slice().reverse();
 });
 
 export function addLogs(...log: any[]) {

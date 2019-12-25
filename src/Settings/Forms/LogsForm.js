@@ -17,6 +17,12 @@ export default class LogsForm extends Component {
   }
 
   componentDidMount() {
+    const logs = ipcRenderer.sendSync('config_logs');
+
+    this.setState({
+      logs
+    });
+
     this.getLogsInterval = setInterval(() => {
       const logs = ipcRenderer.sendSync('config_logs');
 
