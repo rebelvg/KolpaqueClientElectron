@@ -1,8 +1,8 @@
-const packager = require('electron-packager');
-const readlineSync = require('readline-sync');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+import * as packager from 'electron-packager';
+import * as readlineSync from 'readline-sync';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 
 let platformOption = readlineSync.question(`select platform. all - for all platforms. (empty for current)${os.EOL}`);
 let pathOption = readlineSync.question(`select output folder. (empty for current)${os.EOL}`);
