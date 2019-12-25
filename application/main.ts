@@ -88,6 +88,10 @@ function createWindow() {
     mainWindow.hide();
   });
 
+  mainWindow.on('restore', () => {
+    mainWindow.show();
+  });
+
   mainWindow.on('close', function() {
     config.saveFile();
   });
