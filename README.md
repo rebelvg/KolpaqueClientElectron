@@ -56,7 +56,7 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 
 ### Requirements
 
-- Node.js >= 8
+- Node.js LTS
 - Yarn
 
 ### Setup
@@ -68,15 +68,7 @@ yarn install
 ### Run
 
 ```
-yarn run react-build
 yarn run start
-```
-
-### Run Dev
-
-```
-yarn run start-react-dev
-yarn run start-client-dev
 ```
 
 ### Build

@@ -13,7 +13,7 @@ let pathOption = readlineSync.question(`select output folder. (empty for current
     tmpdir: false,
     icon: './icons/icon',
     arch: 'x64',
-    ignore: ['.git', '.vscode', '.idea', 'src'],
+    ignore: ['.git', '.vscode', '.idea', 'node_modules/application', 'node_modules/src'],
     overwrite: true,
     win32metadata: {
       ProductName: 'KolpaqueClientElectron',
@@ -22,7 +22,6 @@ let pathOption = readlineSync.question(`select output folder. (empty for current
       OriginalFilename: 'KolpaqueClientElectron.exe'
     },
     asar: true,
-    packageManager: 'yarn',
     prune: true,
     out: null
   };
