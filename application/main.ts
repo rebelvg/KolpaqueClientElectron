@@ -38,7 +38,7 @@ if (process.platform === 'darwin') {
   iconPathTray = path.normalize(path.join(__dirname, '../icons', 'iconTemplate.png'));
 }
 
-let mainWindow;
+let mainWindow: BrowserWindow;
 
 app.setName('Kolpaque Client');
 
@@ -140,7 +140,7 @@ let contextMenuTemplate = [
   {
     label: 'Toggle Client',
     type: 'normal',
-    visible: process.platform === 'linux',
+    visible: process.platform !== 'win32',
     click: () => {
       mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
     }
@@ -177,20 +177,22 @@ let contextMenuTemplate = [
 
 (app as any).contextMenuTemplate = contextMenuTemplate;
 
-let appIcon;
+let appIcon: Tray;
 
 app.on('ready', () => {
   appIcon = new Tray(nativeImage.createFromPath(iconPathTray));
   appIcon.setToolTip('Kolpaque Client');
-  appIcon.iconPathBalloon = iconPathBalloon;
+  (appIcon as any).iconPathBalloon = iconPathBalloon;
 
   appIcon.on('click', () => {
     addLogs('left-click event.');
+
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
   appIcon.on('right-click', () => {
     addLogs('right-click event.');
+
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
@@ -199,6 +201,8 @@ app.on('ready', () => {
   rebuildIconMenu();
 
   if (process.platform === 'darwin') {
+    appIcon.setIgnoreDoubleClickEvents(true);
+
     const menu = defaultMenu(app, shell);
 
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
