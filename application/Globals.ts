@@ -19,17 +19,6 @@ export const registeredServices = {
       encoding: null
     })
   },
-  'klpq-main': {
-    protocols: ['rtmp:'],
-    hosts: ['main.klpq.men'],
-    paths: ['/live/'],
-    name: 2,
-    embed: null,
-    chat: null,
-    icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'klpq_main.png')), {
-      encoding: null
-    })
-  },
   twitch: {
     protocols: ['https:', 'http:'],
     hosts: ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'],
@@ -85,6 +74,6 @@ export const registeredServices = {
   }
 };
 
-export const preInstalledChannels = ['rtmp://vps.klpq.men/live/main'];
+export const preInstalledChannels = [];
 
 export const twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';

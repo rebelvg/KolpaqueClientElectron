@@ -106,16 +106,6 @@ async function twitchImport(channelName) {
   }
 }
 
-async function autoKlpqImport() {
-  const url = `http://stats.klpq.men/export/channels.json`;
-
-  const { data } = await axios.get(url);
-
-  _.forEach(data, channelUrl => {
-    config.addChannelLink(channelUrl);
-  });
-}
-
 function autoTwitchImport() {
   _.forEach(config.settings.twitchImport, async channelName => {
     await twitchImportBase(channelName);
@@ -123,9 +113,7 @@ function autoTwitchImport() {
 }
 
 function importLoop() {
-  autoKlpqImport();
   autoTwitchImport();
 
-  setInterval(autoKlpqImport, 10 * 60 * 1000);
   setInterval(autoTwitchImport, 10 * 60 * 1000);
 }
