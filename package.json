@@ -1,6 +1,6 @@
 {
   "name": "KolpaqueClient",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Multiplatform GUI for Streamlink",
   "main": "./dist-api/main.js",
   "scripts": {
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.120",
     "cross-env": "^5.0.5",
-    "electron": "^3.0.0",
+    "electron": "3.0.16",
     "electron-packager": "^11.0.0",
     "file-loader": "^1.1.5",
     "html-webpack-plugin": "^2.30.1",
