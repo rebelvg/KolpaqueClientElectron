@@ -133,7 +133,7 @@ let contextMenuTemplate = [
   {
     label: 'Toggle Client',
     type: 'normal',
-    visible: process.platform !== 'win32',
+    visible: process.platform === 'linux',
     click: () => {
       mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
     }
