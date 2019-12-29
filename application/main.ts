@@ -51,10 +51,7 @@ function createWindow() {
     height: config.settings.size[1],
     resizable: true,
     fullscreenable: false,
-    icon: iconPath,
-    webPreferences: {
-      nodeIntegration: true
-    }
+    icon: iconPath
   });
 
   (app as any).mainWindow = mainWindow;
@@ -86,10 +83,6 @@ function createWindow() {
 
   mainWindow.on('minimize', function() {
     mainWindow.hide();
-  });
-
-  mainWindow.on('restore', () => {
-    mainWindow.show();
   });
 
   mainWindow.on('close', function() {
@@ -201,8 +194,6 @@ app.on('ready', () => {
   rebuildIconMenu();
 
   if (process.platform === 'darwin') {
-    appIcon.setIgnoreDoubleClickEvents(true);
-
     const menu = defaultMenu(app, shell);
 
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu));

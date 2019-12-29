@@ -22,6 +22,7 @@ let pathOption = readlineSync.question(`select output folder. (empty for current
       OriginalFilename: 'KolpaqueClientElectron.exe'
     },
     asar: true,
+    packageManager: 'yarn',
     prune: true,
     out: null
   };

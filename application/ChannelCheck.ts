@@ -69,17 +69,18 @@ async function isOnline(channelObj: Channel, printBalloon: boolean) {
   if (printBalloon && config.settings.showNotifications && channelObj.autoStart) {
     if (channelObj._processes.length === 0) {
       if (config.settings.confirmAutoStart) {
-        dialog
-          .showMessageBox({
+        dialog.showMessageBox(
+          {
             type: 'none',
             message: `${channelObj.link} is trying to auto-start. Confirm?`,
             buttons: ['Ok', 'Cancel']
-          })
-          .then(({ response }) => {
+          },
+          response => {
             if (response === 0) {
               channelObj.emit('play');
             }
-          });
+          }
+        );
       } else {
         channelObj.emit('play');
       }
