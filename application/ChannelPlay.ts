@@ -137,9 +137,7 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
     'streamlink',
     [playLink, 'best', '--twitch-disable-hosting'].concat(params),
     (err, data, stderr) => {
-      addLogs(err);
-      addLogs(data);
-      addLogs('streamlink exited.');
+      addLogs(err, data, 'streamlink exited.');
 
       if (err) {
         if (err.code === 'ENOENT') {
