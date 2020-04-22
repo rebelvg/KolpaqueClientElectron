@@ -17,11 +17,6 @@ const SERVICES_INTERVALS = {
     confirmations: 0,
     function: getKlpqVpsStats
   },
-  'klpq-main': {
-    check: 5,
-    confirmations: 0,
-    function: () => {}
-  },
   twitch: {
     check: 30,
     confirmations: 3,
@@ -123,17 +118,7 @@ async function getKlpqStatsBase(url: string, channelObj: Channel, printBalloon: 
 async function getKlpqVpsStats(channelObjs: Channel[], printBalloon: boolean) {
   await Promise.all(
     channelObjs.map(channelObj => {
-      const url = `http://stats.vps.klpq.men/channel/${channelObj.name}`;
-
-      return getKlpqStatsBase(url, channelObj, printBalloon);
-    })
-  );
-}
-
-async function getKlpqMainStats(channelObjs: Channel[], printBalloon: boolean) {
-  await Promise.all(
-    channelObjs.map(channelObj => {
-      const url = `http://stats.main.klpq.men/channel/${channelObj.name}`;
+      const url = `http://stats.klpq.men/api/nms/live/${channelObj.name}`;
 
       return getKlpqStatsBase(url, channelObj, printBalloon);
     })

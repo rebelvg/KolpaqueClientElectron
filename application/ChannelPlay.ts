@@ -116,7 +116,7 @@ function launchPlayerObj(channelObj: Channel, altQuality = false, autoRestart = 
   if (channelObj.protocol === 'rtmp:') {
     playLink = `${playLink} live=1`;
 
-    if (LQ && ['klpq-vps', 'klpq-main'].includes(channelObj.service)) {
+    if (LQ && ['klpq-vps'].includes(channelObj.service)) {
       playLink = playLink.replace('/live/', '/restream/');
     }
   } else {
