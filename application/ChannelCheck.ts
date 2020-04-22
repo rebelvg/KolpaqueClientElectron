@@ -286,27 +286,25 @@ async function getYoutubeStatsChannel(channelObjs: Channel[], printBalloon: bool
   );
 }
 
-async function checkChannel(channelObj: Channel, printBalloon = false) {
-  try {
-    if (SERVICES_INTERVALS.hasOwnProperty(channelObj.service)) {
-      await SERVICES_INTERVALS[channelObj.service].function([channelObj], printBalloon);
-    }
-  } catch (e) {
-    addLogs(e);
-  }
-}
-
 async function checkChannels(channelObjs: Channel[], service: string, printBalloon = false) {
   if (!service) {
-    _.forEach(SERVICES_INTERVALS, (service, serviceName) => {
-      service.function(_.filter(channelObjs, { service: serviceName }), printBalloon);
+    _.forEach(SERVICES_INTERVALS, async (service, serviceName) => {
+      try {
+        await service.function(_.filter(channelObjs, { service: serviceName }), printBalloon);
+      } catch (error) {
+        addLogs(error);
+      }
     });
 
     return;
   }
 
   if (SERVICES_INTERVALS.hasOwnProperty(service)) {
-    await SERVICES_INTERVALS[service].function(_.filter(channelObjs, { service }), printBalloon);
+    try {
+      await SERVICES_INTERVALS[service].function(_.filter(channelObjs, { service }), printBalloon);
+    } catch (error) {
+      addLogs(error);
+    }
   }
 }
 
