@@ -202,8 +202,12 @@ app.on('ready', () => {
 
 process.on('unhandledRejection', err => {
   addLogs('unhandledRejection', err);
+
+  throw err;
 });
 
 process.on('uncaughtException', err => {
   addLogs('uncaughtException', err);
+
+  throw err;
 });

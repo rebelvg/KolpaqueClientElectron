@@ -150,8 +150,8 @@ export class Config extends EventEmitter {
           this.settings[settingName] = parseJson.settings[settingName];
         }
       });
-    } catch (e) {
-      addLogs(e.stack);
+    } catch (error) {
+      addLogs(error);
 
       _.forEach(preInstalledChannels, channelLink => {
         this.addChannelLink(channelLink);

@@ -8,7 +8,15 @@ ipcMain.on('config_logs', event => {
 });
 
 export function addLogs(...log: any[]) {
-  const logLine = log.map(logItem => JSON.stringify(logItem)).join(' ');
+  const logLine = log
+    .map(logItem => {
+      if (logItem instanceof Error) {
+        return logItem.stack;
+      }
+
+      return JSON.stringify(logItem);
+    })
+    .join(' ');
 
   console.log(logLine);
 
