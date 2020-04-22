@@ -6,6 +6,7 @@ import { URL } from 'url';
 import { config } from './SettingsFile';
 import { twitchApiKey } from './Globals';
 import { addLogs } from './Logs';
+import { Channel } from './ChannelClass';
 
 ipcMain.on('config_twitchImport', async (event, channelName) => {
   return await twitchImport(channelName);
@@ -13,7 +14,13 @@ ipcMain.on('config_twitchImport', async (event, channelName) => {
 
 ipcMain.once('client_ready', importLoop);
 
-async function twitchImportChannels(channels: any[], i: number) {
+async function twitchImportChannels(
+  channels: any[]
+): Promise<{
+  channelsAdded: Channel[];
+}> {
+  const channelsAdded = [];
+
   const { data: userData } = await axios.get(
     `https://api.twitch.tv/helix/users?${channels.map(channel => `id=${channel.to_id}`).join('&')}`,
     {
@@ -24,10 +31,14 @@ async function twitchImportChannels(channels: any[], i: number) {
   for (const channel of userData.data) {
     let channelObj = config.addChannelLink(`https://twitch.tv/${channel.login}`);
 
-    if (channelObj !== false) i++;
+    if (channelObj) {
+      channelsAdded.push(channelObj);
+    }
   }
 
-  return i;
+  return {
+    channelsAdded
+  };
 }
 
 async function getTwitchData(url: URL) {
@@ -36,7 +47,7 @@ async function getTwitchData(url: URL) {
   return data;
 }
 
-async function twitchImportBase(channelName) {
+async function twitchImportBase(channelName: string): Promise<number> {
   channelName = channelName.trim();
 
   if (channelName.length === 0) return null;
@@ -51,9 +62,9 @@ async function twitchImportBase(channelName) {
 
   const userId = _.get(userData, 'data.0.id');
 
-  try {
-    let i = 0;
+  const addedChannels: Channel[] = [];
 
+  try {
     const apiUrl = new URL(`https://api.twitch.tv/helix/users/follows?from_id=${userId}`);
 
     apiUrl.searchParams.set('first', '100');
@@ -61,11 +72,17 @@ async function twitchImportBase(channelName) {
     let followersData = await getTwitchData(apiUrl);
     let channels = followersData.data;
 
-    if (!channels || channels.length === 0) return i;
+    if (!channels || channels.length === 0) return 0;
 
-    config.addChannelLink(`http://www.twitch.tv/${channelName}`);
+    const addedChannel = config.addChannelLink(`http://www.twitch.tv/${channelName}`);
 
-    i = await twitchImportChannels(channels, i);
+    if (addedChannel) {
+      addedChannels.push(addedChannel);
+    }
+
+    const { channelsAdded } = await twitchImportChannels(channels);
+
+    channelsAdded.forEach(channelObj => addedChannels.push(channelObj));
 
     while (channels.length !== 0) {
       apiUrl.searchParams.set('after', followersData.pagination.cursor);
@@ -73,12 +90,18 @@ async function twitchImportBase(channelName) {
       followersData = await getTwitchData(apiUrl);
       channels = followersData.data;
 
-      if (!channels || channels.length === 0) return i;
+      if (!channels || channels.length === 0) {
+        break;
+      }
 
-      i = await twitchImportChannels(channels, i);
+      const { channelsAdded } = await twitchImportChannels(channels);
+
+      channelsAdded.forEach(channelObj => addedChannels.push(channelObj));
     }
 
-    return i;
+    config.emit('channel_added_channels', addedChannels);
+
+    return addedChannels.length;
   } catch (e) {
     addLogs(e);
 

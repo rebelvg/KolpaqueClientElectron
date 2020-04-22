@@ -51,7 +51,9 @@ const SERVICES_INTERVALS = {
 
 ipcMain.once('client_ready', checkLoop);
 
-config.on('channel_added', checkChannel);
+config.on('channel_added_channels', async channels => {
+  await checkChannels(channels, null, false);
+});
 
 async function isOnline(channelObj: Channel, printBalloon: boolean) {
   channelObj._offlineConfirmations = 0;
@@ -179,7 +181,10 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
         return;
       }
 
-      const { data: streamData } = await axios.get(
+      const {
+        data: streamData,
+        headers
+      } = await axios.get(
         `https://api.twitch.tv/helix/streams/?${existingChannels.map(({ userId }) => `user_id=${userId}`).join('&')}`,
         { headers: { 'Client-ID': twitchApiKey } }
       );
@@ -287,7 +292,7 @@ async function checkChannel(channelObj: Channel, printBalloon = false) {
       await SERVICES_INTERVALS[channelObj.service].function([channelObj], printBalloon);
     }
   } catch (e) {
-    addLogs(e.message);
+    addLogs(e);
   }
 }
 
