@@ -187,7 +187,7 @@ export class Config extends EventEmitter {
     try {
       return new Channel(channelLink);
     } catch (e) {
-      addLogs(e.stack);
+      addLogs(e);
 
       return false;
     }
@@ -277,13 +277,13 @@ export class Config extends EventEmitter {
         settings: this.settings
       };
 
-      fs.writeFileSync(settingsPath, JSON.stringify(saveConfig, null, 4));
+      fs.writeFileSync(settingsPath, JSON.stringify(saveConfig, null, 2));
 
       addLogs('settings saved.');
 
       return true;
     } catch (e) {
-      addLogs(e.message);
+      addLogs(e);
 
       return false;
     }

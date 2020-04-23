@@ -118,7 +118,7 @@ async function getKlpqStatsBase(url: string, channelObj: Channel, printBalloon: 
 async function getKlpqVpsStats(channelObjs: Channel[], printBalloon: boolean) {
   await Promise.all(
     channelObjs.map(channelObj => {
-      const url = `http://stats.klpq.men/api/nms/live/${channelObj.name}`;
+      const url = `https://stats.klpq.men/api/channels/nms/live/${channelObj.name}`;
 
       return getKlpqStatsBase(url, channelObj, printBalloon);
     })

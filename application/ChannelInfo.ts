@@ -44,7 +44,7 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
 
                 channelObj._icon = logoData;
               } catch (e) {
-                addLogs(e.message);
+                addLogs(e);
               }
             })
           );
