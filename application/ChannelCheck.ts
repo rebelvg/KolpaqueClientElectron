@@ -5,11 +5,11 @@ import axios from 'axios';
 import * as qs from 'querystring';
 
 import { config } from './SettingsFile';
-import { twitchApiKey } from './Globals';
 import { getInfoAsync } from './ChannelInfo';
 import { printNotification } from './Notifications';
 import { Channel } from './ChannelClass';
 import { addLogs } from './Logs';
+import { twitchClient, klpqStreamClient } from './ApiClients';
 
 const SERVICES_INTERVALS = {
   'klpq-vps': {
@@ -105,10 +105,14 @@ function isOffline(channelObj: Channel) {
   });
 }
 
-async function getKlpqStatsBase(url: string, channelObj: Channel, printBalloon: boolean) {
-  const { data } = await axios.get(url);
+async function getKlpqStatsBase(channelObj: Channel, printBalloon: boolean) {
+  const channelData = await klpqStreamClient.getChannel(channelObj.name);
 
-  if (data.isLive) {
+  if (!channelData) {
+    return;
+  }
+
+  if (channelData.isLive) {
     isOnline(channelObj, printBalloon);
   } else {
     isOffline(channelObj);
@@ -118,9 +122,7 @@ async function getKlpqStatsBase(url: string, channelObj: Channel, printBalloon: 
 async function getKlpqVpsStats(channelObjs: Channel[], printBalloon: boolean) {
   await Promise.all(
     channelObjs.map(channelObj => {
-      const url = `https://stats.klpq.men/api/channels/nms/live/${channelObj.name}`;
-
-      return getKlpqStatsBase(url, channelObj, printBalloon);
+      return getKlpqStatsBase(channelObj, printBalloon);
     })
   );
 }
@@ -141,12 +143,11 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
         };
       });
 
-      const { data: userData } = await axios.get(
-        `https://api.twitch.tv/helix/users?${channelObjs.map(channel => `login=${channel.name}`).join('&')}`,
-        {
-          headers: { 'Client-ID': twitchApiKey }
-        }
-      );
+      const userData = await twitchClient.getUsers(channelObjs.map(channel => channel.name));
+
+      if (!userData) {
+        return;
+      }
 
       _.forEach(channels, channel => {
         _.forEach(userData.data, user => {
@@ -166,13 +167,7 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
         return;
       }
 
-      const {
-        data: streamData,
-        headers
-      } = await axios.get(
-        `https://api.twitch.tv/helix/streams/?${existingChannels.map(({ userId }) => `user_id=${userId}`).join('&')}`,
-        { headers: { 'Client-ID': twitchApiKey } }
-      );
+      const streamData = await twitchClient.getStreams(existingChannels.map(({ userId }) => userId));
 
       _.forEach(channels, ({ channelObj, userId }) => {
         if (_.find(streamData.data, { user_id: userId })) {
