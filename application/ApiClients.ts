@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { addLogs } from './Logs';
 import { twitchApiKey } from './Globals';
+import { config } from './SettingsFile';
+import * as qs from 'querystring';
 
 interface ITwitchClientUsers {
   data: Array<{
@@ -82,5 +84,95 @@ class KlpqStreamClient {
   }
 }
 
+interface IYoutubeChannels {
+  items: Array<{ id: string }>;
+}
+
+interface IYoutubeStreams {
+  items: any[];
+}
+
+class YoutubeClient {
+  private baseUrl = 'https://www.googleapis.com/youtube/v3';
+  private apiKey = config.settings.youtubeApiKey;
+
+  public async getChannels(channelName: string): Promise<IYoutubeChannels> {
+    const channelsUrl = new URL(`${this.baseUrl}/channels`);
+
+    channelsUrl.searchParams.set('forUsername', channelName);
+    channelsUrl.searchParams.set('part', 'id');
+    channelsUrl.searchParams.set('key', this.apiKey);
+
+    try {
+      const { data } = await axios.get(channelsUrl.href);
+
+      return data;
+    } catch (error) {
+      addLogs(error);
+
+      return;
+    }
+  }
+
+  public async getStreams(channelId: string): Promise<IYoutubeStreams> {
+    const searchUrl = new URL(`${this.baseUrl}/search`);
+
+    searchUrl.searchParams.set('channelId', channelId);
+    searchUrl.searchParams.set('part', 'snippet');
+    searchUrl.searchParams.set('type', 'video');
+    searchUrl.searchParams.set('eventType', 'live');
+    searchUrl.searchParams.set('key', this.apiKey);
+
+    try {
+      const { data } = await axios.get(searchUrl.href);
+
+      return data;
+    } catch (error) {
+      addLogs(error);
+
+      return;
+    }
+  }
+}
+
+interface IChaturbateChannel {
+  room_status: string;
+  url: string;
+}
+
+class ChaturbateClient {
+  private baseUrl = 'https://chaturbate.com/get_edge_hls_url_ajax';
+
+  public async getChannel(channelName: string): Promise<IChaturbateChannel> {
+    const url = `${this.baseUrl}/`;
+
+    const headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest'
+    };
+
+    try {
+      const { data } = await axios.post(
+        url,
+        qs.stringify({
+          room_slug: channelName,
+          bandwidth: 'high'
+        }),
+        {
+          headers
+        }
+      );
+
+      return data;
+    } catch (error) {
+      addLogs(error);
+
+      return;
+    }
+  }
+}
+
 export const twitchClient = new TwitchClient();
 export const klpqStreamClient = new KlpqStreamClient();
+export const youtubeClient = new YoutubeClient();
+export const chaturbateClient = new ChaturbateClient();

@@ -1,15 +1,12 @@
 import { ipcMain, dialog } from 'electron';
 import * as _ from 'lodash';
-import { URL } from 'url';
-import axios from 'axios';
-import * as qs from 'querystring';
 
 import { config } from './SettingsFile';
 import { getInfoAsync } from './ChannelInfo';
 import { printNotification } from './Notifications';
 import { Channel } from './ChannelClass';
 import { addLogs } from './Logs';
-import { twitchClient, klpqStreamClient } from './ApiClients';
+import { twitchClient, klpqStreamClient, youtubeClient, chaturbateClient } from './ApiClients';
 
 const SERVICES_INTERVALS = {
   'klpq-vps': {
@@ -45,6 +42,12 @@ const SERVICES_INTERVALS = {
 };
 
 ipcMain.once('client_ready', checkLoop);
+
+config.on('channel_added', async channel => {
+  console.log('channel_added');
+
+  await checkChannels([channel], null, false);
+});
 
 config.on('channel_added_channels', async channels => {
   await checkChannels(channels, null, false);
@@ -169,6 +172,10 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
 
       const streamData = await twitchClient.getStreams(existingChannels.map(({ userId }) => userId));
 
+      if (!streamData) {
+        return;
+      }
+
       _.forEach(channels, ({ channelObj, userId }) => {
         if (_.find(streamData.data, { user_id: userId })) {
           isOnline(channelObj, printBalloon);
@@ -180,43 +187,53 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
   );
 }
 
-async function getYoutubeStatsBase(channelId: string, channelObj: Channel, printBalloon: boolean, apiKey: string) {
-  const searchUrl = new URL(`https://www.googleapis.com/youtube/v3/search`);
+async function getYoutubeStatsBase(channelId: string) {
+  const data = await youtubeClient.getStreams(channelId);
 
-  searchUrl.searchParams.set('channelId', channelId);
-  searchUrl.searchParams.set('part', 'snippet');
-  searchUrl.searchParams.set('type', 'video');
-  searchUrl.searchParams.set('eventType', 'live');
-  searchUrl.searchParams.set('key', apiKey);
-
-  const { data } = await axios.get(searchUrl.href);
-
-  if (data.items.length > 0) {
-    isOnline(channelObj, printBalloon);
-  } else {
-    isOffline(channelObj);
+  if (!data) {
+    return;
   }
+
+  if (data.items.length === 0) {
+    return false;
+  }
+
+  return true;
 }
 
 async function getYoutubeStatsUser(channelObjs: Channel[], printBalloon: boolean) {
-  const { youtubeApiKey } = config.settings;
-
-  if (!youtubeApiKey) return;
-
   await Promise.all(
     channelObjs.map(async channelObj => {
-      const channelsUrl = new URL(`https://www.googleapis.com/youtube/v3/channels`);
+      const data = await youtubeClient.getChannels(channelObj.name);
 
-      channelsUrl.searchParams.set('forUsername', channelObj.name);
-      channelsUrl.searchParams.set('part', 'id');
-      channelsUrl.searchParams.set('key', youtubeApiKey);
+      if (!data) {
+        return;
+      }
 
-      const { data } = await axios.get(channelsUrl.href);
+      const channelStatuses = await Promise.all(
+        data.items.map(({ id }) => {
+          return getYoutubeStatsBase(id);
+        })
+      );
 
-      if (data.items.length > 0) {
-        const channelId = _.get(data, 'items[0].id');
+      if (_.some(channelStatuses)) {
+        isOnline(channelObj, printBalloon);
+      } else {
+        isOffline(channelObj);
+      }
+    })
+  );
+}
 
-        await getYoutubeStatsBase(channelId, channelObj, printBalloon, youtubeApiKey);
+async function getYoutubeStatsChannel(channelObjs: Channel[], printBalloon: boolean) {
+  await Promise.all(
+    channelObjs.map(async channelObj => {
+      const channelStatus = await getYoutubeStatsBase(channelObj.name);
+
+      if (channelStatus) {
+        isOnline(channelObj, printBalloon);
+      } else {
+        isOffline(channelObj);
       }
     })
   );
@@ -225,43 +242,17 @@ async function getYoutubeStatsUser(channelObjs: Channel[], printBalloon: boolean
 async function getChaturbateStats(channelObjs: Channel[], printBalloon: boolean) {
   await Promise.all(
     channelObjs.map(async channelObj => {
-      const url = 'https://chaturbate.com/get_edge_hls_url_ajax/';
-
-      const headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-Requested-With': 'XMLHttpRequest'
-      };
-
-      const { data } = await axios.post(
-        url,
-        qs.stringify({
-          room_slug: channelObj.name,
-          bandwidth: 'high'
-        }),
-        {
-          headers
-        }
-      );
+      const data = await chaturbateClient.getChannel(channelObj.name);
 
       if (data.room_status === 'public') {
-        isOnline(channelObj, printBalloon);
         channelObj._customPlayUrl = data.url;
+
+        isOnline(channelObj, printBalloon);
       } else {
-        isOffline(channelObj);
         channelObj._customPlayUrl = null;
+
+        isOffline(channelObj);
       }
-    })
-  );
-}
-
-async function getYoutubeStatsChannel(channelObjs: Channel[], printBalloon: boolean) {
-  const { youtubeApiKey } = config.settings;
-
-  if (!youtubeApiKey) return;
-
-  await Promise.all(
-    channelObjs.map(async channelObj => {
-      await getYoutubeStatsBase(channelObj.name, channelObj, printBalloon, youtubeApiKey);
     })
   );
 }

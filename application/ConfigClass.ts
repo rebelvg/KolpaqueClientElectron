@@ -165,7 +165,7 @@ export class Config extends EventEmitter {
     }, 5 * 60 * 1000);
   }
 
-  addChannelLink(channelLink) {
+  addChannelLink(channelLink: string, emitEvent: boolean = true) {
     let channelObj = Config.buildChannelObj(channelLink);
 
     if (channelObj === false) return false;
@@ -178,7 +178,9 @@ export class Config extends EventEmitter {
 
     this.channels.push(channelObj);
 
-    this.emit('channel_added', channelObj);
+    if (emitEvent) {
+      this.emit('channel_added', channelObj);
+    }
 
     return channelObj;
   }

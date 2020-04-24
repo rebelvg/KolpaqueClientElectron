@@ -29,7 +29,7 @@ async function twitchImportChannels(
   );
 
   for (const channel of userData.data) {
-    let channelObj = config.addChannelLink(`https://twitch.tv/${channel.login}`);
+    let channelObj = config.addChannelLink(`https://twitch.tv/${channel.login}`, false);
 
     if (channelObj) {
       channelsAdded.push(channelObj);
@@ -74,7 +74,7 @@ async function twitchImportBase(channelName: string): Promise<number> {
 
     if (!channels || channels.length === 0) return 0;
 
-    const addedChannel = config.addChannelLink(`http://www.twitch.tv/${channelName}`);
+    const addedChannel = config.addChannelLink(`http://www.twitch.tv/${channelName}`, false);
 
     if (addedChannel) {
       addedChannels.push(addedChannel);
