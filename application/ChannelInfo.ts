@@ -1,10 +1,8 @@
-import axios from 'axios';
 import * as _ from 'lodash';
 
-import { twitchApiKey } from './Globals';
 import { Channel } from './ChannelClass';
 import { addLogs } from './Logs';
-import { twitchClient } from './ApiClients';
+import { twitchClient, commonClient } from './ApiClients';
 
 const SERVICES = {
   twitch: getTwitchInfoAsync
@@ -21,7 +19,7 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
 
   await Promise.all(
     chunkedChannels.map(async channelObjs => {
-      const userData = await twitchClient.getUsers(channelObjs.map(channel => channel.name));
+      const userData = await twitchClient.getUsersByLogin(channelObjs.map(channel => channel.name));
 
       await Promise.all(
         channelObjs.map(async channelObj => {
@@ -31,18 +29,16 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
                 return;
               }
 
-              if (!_.get(user, 'profile_image_url')) return;
+              const profileImageUrl = user?.profile_image_url;
 
-              try {
-                const { data: logoData } = await axios.get(_.get(user, 'profile_image_url'), {
-                  responseType: 'arraybuffer'
-                });
-
-                channelObj._icon = logoData;
-              } catch (e) {
-                addLogs(e);
-
+              if (!profileImageUrl) {
                 return;
+              }
+
+              const logoBuffer = await commonClient.getContentAsBuffer(profileImageUrl);
+
+              if (logoBuffer) {
+                channelObj._icon = logoBuffer;
               }
             })
           );

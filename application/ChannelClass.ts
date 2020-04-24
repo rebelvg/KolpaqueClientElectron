@@ -19,7 +19,7 @@ export class Channel extends EventEmitter {
   public onAutoRestart = false;
   public lastUpdated = 0;
   public _processes = [];
-  public _icon = null;
+  public _icon: Buffer = null;
   public _autoRestartAttempts = 0;
   public _startTime = 0;
   public _offlineConfirmations = 0;

@@ -4,24 +4,38 @@ import { twitchApiKey } from './Globals';
 import { config } from './SettingsFile';
 import * as qs from 'querystring';
 
-interface ITwitchClientUsers {
+export interface ITwitchClientUsers {
   data: Array<{
     id: string;
     login: string;
+    profile_image_url?: string;
   }>;
 }
 
-interface ITwitchClientStreams {
+export interface ITwitchClientStreams {
   data: Array<{
     user_id: string;
   }>;
 }
 
+export interface ITwitchFollowedChannels {
+  data: ITwitchFollowedChannel[];
+  pagination: {
+    cursor: string;
+  };
+}
+
+export interface ITwitchFollowedChannel {
+  to_id: string;
+}
+
+export const TWITCH_CHUNK_LIMIT = 100;
+
 class TwitchClient {
   private baseUrl = 'https://api.twitch.tv/helix';
   private apiKey = twitchApiKey;
 
-  public async getUsers(channelNames: string[]): Promise<ITwitchClientUsers> {
+  public async getUsersByLogin(channelNames: string[]): Promise<ITwitchClientUsers> {
     if (channelNames.length === 0) {
       return;
     }
@@ -33,6 +47,24 @@ class TwitchClient {
           headers: { 'Client-ID': this.apiKey }
         }
       );
+
+      return userData;
+    } catch (error) {
+      addLogs(error);
+
+      return;
+    }
+  }
+
+  public async getUsersById(ids: string[]): Promise<ITwitchClientUsers> {
+    if (ids.length === 0) {
+      return;
+    }
+
+    try {
+      const { data: userData } = await axios.get(`${this.baseUrl}/users?${ids.map(id => `id=${id}`).join('&')}`, {
+        headers: { 'Client-ID': this.apiKey }
+      });
 
       return userData;
     } catch (error) {
@@ -60,9 +92,26 @@ class TwitchClient {
       return;
     }
   }
+
+  public async getFollowedChannels(userId: string, after: string): Promise<ITwitchFollowedChannels> {
+    const url = new URL(`${this.baseUrl}/users/follows?from_id=${userId}`);
+
+    url.searchParams.set('first', '100');
+    url.searchParams.set('after', after);
+
+    try {
+      const { data } = await axios.get(url.href, { headers: { 'Client-ID': this.apiKey } });
+
+      return data;
+    } catch (error) {
+      addLogs(error);
+
+      return;
+    }
+  }
 }
 
-interface IKlpqStreamChannel {
+export interface IKlpqStreamChannel {
   isLive: boolean;
 }
 
@@ -84,11 +133,11 @@ class KlpqStreamClient {
   }
 }
 
-interface IYoutubeChannels {
+export interface IYoutubeChannels {
   items: Array<{ id: string }>;
 }
 
-interface IYoutubeStreams {
+export interface IYoutubeStreams {
   items: any[];
 }
 
@@ -135,7 +184,7 @@ class YoutubeClient {
   }
 }
 
-interface IChaturbateChannel {
+export interface IChaturbateChannel {
   room_status: string;
   url: string;
 }
@@ -172,7 +221,24 @@ class ChaturbateClient {
   }
 }
 
+class CommonClient {
+  public async getContentAsBuffer(url: string): Promise<Buffer> {
+    try {
+      const { data } = await axios.get(url, {
+        responseType: 'arraybuffer'
+      });
+
+      return data;
+    } catch (error) {
+      addLogs(error);
+
+      return;
+    }
+  }
+}
+
 export const twitchClient = new TwitchClient();
 export const klpqStreamClient = new KlpqStreamClient();
 export const youtubeClient = new YoutubeClient();
 export const chaturbateClient = new ChaturbateClient();
+export const commonClient = new CommonClient();

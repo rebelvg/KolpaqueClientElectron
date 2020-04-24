@@ -6,7 +6,7 @@ import { getInfoAsync } from './ChannelInfo';
 import { printNotification } from './Notifications';
 import { Channel } from './ChannelClass';
 import { addLogs } from './Logs';
-import { twitchClient, klpqStreamClient, youtubeClient, chaturbateClient } from './ApiClients';
+import { twitchClient, klpqStreamClient, youtubeClient, chaturbateClient, TWITCH_CHUNK_LIMIT } from './ApiClients';
 
 const SERVICES_INTERVALS = {
   'klpq-vps': {
@@ -135,7 +135,7 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
     return;
   }
 
-  const chunkedChannels = _.chunk(channelObjs, 100);
+  const chunkedChannels = _.chunk(channelObjs, TWITCH_CHUNK_LIMIT);
 
   await Promise.all(
     chunkedChannels.map(async channelObjs => {
@@ -146,7 +146,7 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
         };
       });
 
-      const userData = await twitchClient.getUsers(channelObjs.map(channel => channel.name));
+      const userData = await twitchClient.getUsersByLogin(channelObjs.map(channel => channel.name));
 
       if (!userData) {
         return;
