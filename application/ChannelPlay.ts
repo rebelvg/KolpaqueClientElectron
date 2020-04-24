@@ -7,6 +7,7 @@ import { Config } from './ConfigClass';
 import { printNotification } from './Notifications';
 import { Channel } from './ChannelClass';
 import { addLogs } from './Logs';
+import { ProtocolsEnum } from './Globals';
 
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
@@ -113,12 +114,15 @@ function launchPlayerObj(channelObj: Channel, altQuality = false, autoRestart = 
   let playLink = channelObj._customPlayUrl || channelObj.link;
   let params = [];
 
-  if (channelObj.protocol === 'rtmp:') {
-    playLink = `${playLink} live=1`;
+  if (LQ) {
+    const onLQ = channelObj.serviceObj?.onLQ();
 
-    if (LQ && ['klpq-vps'].includes(channelObj.service)) {
-      playLink = playLink.replace('/live/', '/restream/');
-    }
+    playLink = onLQ.playLink;
+    params = onLQ.params;
+  }
+
+  if (channelObj.protocol === ProtocolsEnum.RTMP) {
+    playLink = `${playLink} live=1`;
   } else {
     if (LQ) {
       params = params.concat(['--stream-sorting-excludes', '>=720p,>=high']);

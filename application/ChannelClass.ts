@@ -4,7 +4,7 @@ import { URL } from 'url';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 
-import { allowedProtocols, registeredServices } from './Globals';
+import { allowedProtocols, registeredServices, ProtocolsEnum } from './Globals';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
@@ -14,7 +14,7 @@ export class Channel extends EventEmitter {
   public serviceObj = null;
   public name = null;
   public link = null;
-  public protocol = null;
+  public protocol: ProtocolsEnum = null;
   public isLive = false;
   public onAutoRestart = false;
   public lastUpdated = 0;
@@ -42,11 +42,13 @@ export class Channel extends EventEmitter {
 
     const channelURL = new URL(channelLink);
 
-    if (!allowedProtocols.includes(channelURL.protocol)) {
+    const protocol = channelURL.protocol.toLowerCase() as ProtocolsEnum;
+
+    if (!allowedProtocols.includes(protocol)) {
       throw Error(`Only [${allowedProtocols}] are allowed.`);
     }
 
-    this.protocol = channelURL.protocol;
+    this.protocol = protocol;
 
     if (channelURL.host.length < 1) {
       throw Error(`Hostname can't be empty.`);
@@ -57,10 +59,7 @@ export class Channel extends EventEmitter {
     }
 
     _.forEach(registeredServices, (serviceObj, serviceName) => {
-      if (
-        serviceObj.protocols.includes(channelURL.protocol.toLowerCase()) &&
-        serviceObj.hosts.includes(channelURL.host.toLowerCase())
-      ) {
+      if (serviceObj.protocols.includes(protocol) && serviceObj.hosts.includes(channelURL.host.toLowerCase())) {
         const nameArray = _.split(channelURL.pathname, '/');
 
         if (nameArray[serviceObj.name]) {

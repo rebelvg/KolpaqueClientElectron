@@ -1,11 +1,17 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-export const allowedProtocols = ['rtmp:', 'http:', 'https:'];
+export enum ProtocolsEnum {
+  RTMP = 'rtmp:',
+  HTTP = 'http:',
+  HTTPS = 'https:'
+}
+
+export const allowedProtocols = [...Object.values(ProtocolsEnum)];
 
 export const registeredServices = {
   'klpq-vps': {
-    protocols: ['rtmp:'],
+    protocols: [ProtocolsEnum.RTMP],
     hosts: ['vps.klpq.men', 'stream.klpq.men'],
     paths: ['/live/'],
     name: 2,
@@ -17,10 +23,16 @@ export const registeredServices = {
     },
     icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'klpq_vps.png')), {
       encoding: null
-    })
+    }),
+    onLQ: (playLink: string, params: string[]) => {
+      return {
+        playLink: playLink.replace('/live/', '/restream/'),
+        params
+      };
+    }
   },
   twitch: {
-    protocols: ['https:', 'http:'],
+    protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
     hosts: ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'],
     paths: ['/'],
     name: 1,
@@ -33,7 +45,7 @@ export const registeredServices = {
     })
   },
   'youtube-user': {
-    protocols: ['https:', 'http:'],
+    protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
     hosts: ['www.youtube.com', 'youtube.com'],
     paths: ['/user/'],
     name: 2,
@@ -44,7 +56,7 @@ export const registeredServices = {
     })
   },
   'youtube-channel': {
-    protocols: ['https:', 'http:'],
+    protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
     hosts: ['www.youtube.com', 'youtube.com'],
     paths: ['/channel/'],
     name: 2,
@@ -55,7 +67,7 @@ export const registeredServices = {
     })
   },
   chaturbate: {
-    protocols: ['https:', 'http:'],
+    protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
     hosts: ['www.chaturbate.com', 'chaturbate.com'],
     paths: ['/'],
     name: 1,
