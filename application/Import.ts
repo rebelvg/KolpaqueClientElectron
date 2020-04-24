@@ -1,5 +1,4 @@
 import { ipcMain, dialog } from 'electron';
-import axios from 'axios';
 import * as _ from 'lodash';
 
 import { config } from './SettingsFile';
@@ -55,7 +54,7 @@ async function twitchImportBase(channelName: string): Promise<number> {
 
   const channelsAddedAll: Channel[] = [];
 
-  const addedChannel = config.addChannelLink(`http://www.twitch.tv/${channelName}`, false);
+  const addedChannel = config.addChannelLink(`https://www.twitch.tv/${channelName}`, false);
 
   if (addedChannel) {
     channelsAddedAll.push(addedChannel);

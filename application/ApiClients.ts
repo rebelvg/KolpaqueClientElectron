@@ -41,7 +41,7 @@ class TwitchClient {
     }
 
     try {
-      const { data: userData } = await axios.get(
+      const { data: userData } = await axios.get<ITwitchClientUsers>(
         `${this.baseUrl}/users?${channelNames.map(channelName => `login=${channelName}`).join('&')}`,
         {
           headers: { 'Client-ID': this.apiKey }
@@ -62,9 +62,12 @@ class TwitchClient {
     }
 
     try {
-      const { data: userData } = await axios.get(`${this.baseUrl}/users?${ids.map(id => `id=${id}`).join('&')}`, {
-        headers: { 'Client-ID': this.apiKey }
-      });
+      const { data: userData } = await axios.get<ITwitchClientUsers>(
+        `${this.baseUrl}/users?${ids.map(id => `id=${id}`).join('&')}`,
+        {
+          headers: { 'Client-ID': this.apiKey }
+        }
+      );
 
       return userData;
     } catch (error) {
@@ -80,7 +83,7 @@ class TwitchClient {
     }
 
     try {
-      const { data: streamData } = await axios.get(
+      const { data: streamData } = await axios.get<ITwitchClientStreams>(
         `${this.baseUrl}/streams/?${userIds.map(userId => `user_id=${userId}`).join('&')}`,
         { headers: { 'Client-ID': this.apiKey } }
       );
@@ -100,7 +103,7 @@ class TwitchClient {
     url.searchParams.set('after', after);
 
     try {
-      const { data } = await axios.get(url.href, { headers: { 'Client-ID': this.apiKey } });
+      const { data } = await axios.get<ITwitchFollowedChannels>(url.href, { headers: { 'Client-ID': this.apiKey } });
 
       return data;
     } catch (error) {
@@ -122,7 +125,7 @@ class KlpqStreamClient {
     const url = `${this.baseUrl}/channels/nms/live/${channelName}`;
 
     try {
-      const { data } = await axios.get(url);
+      const { data } = await axios.get<IKlpqStreamChannel>(url);
 
       return data;
     } catch (error) {
@@ -153,7 +156,7 @@ class YoutubeClient {
     channelsUrl.searchParams.set('key', this.apiKey);
 
     try {
-      const { data } = await axios.get(channelsUrl.href);
+      const { data } = await axios.get<IYoutubeChannels>(channelsUrl.href);
 
       return data;
     } catch (error) {
@@ -173,7 +176,7 @@ class YoutubeClient {
     searchUrl.searchParams.set('key', this.apiKey);
 
     try {
-      const { data } = await axios.get(searchUrl.href);
+      const { data } = await axios.get<IYoutubeStreams>(searchUrl.href);
 
       return data;
     } catch (error) {
@@ -201,7 +204,7 @@ class ChaturbateClient {
     };
 
     try {
-      const { data } = await axios.post(
+      const { data } = await axios.post<IChaturbateChannel>(
         url,
         qs.stringify({
           room_slug: channelName,
@@ -224,8 +227,34 @@ class ChaturbateClient {
 class CommonClient {
   public async getContentAsBuffer(url: string): Promise<Buffer> {
     try {
-      const { data } = await axios.get(url, {
+      const { data } = await axios.get<Buffer>(url, {
         responseType: 'arraybuffer'
+      });
+
+      return data;
+    } catch (error) {
+      addLogs(error);
+
+      return;
+    }
+  }
+}
+
+interface IGithubLatestVersion {
+  tag_name: string;
+}
+
+class GithubClient {
+  private baseUrl = 'https://api.github.com';
+
+  public async getLatestVersion(): Promise<IGithubLatestVersion> {
+    const url = `${this.baseUrl}/rebelvg/KolpaqueClientElectron/releases/latest`;
+
+    try {
+      const { data } = await axios.get<IGithubLatestVersion>(url, {
+        headers: {
+          'user-agent': 'KolpaqueClientElectron'
+        }
       });
 
       return data;
@@ -242,3 +271,4 @@ export const klpqStreamClient = new KlpqStreamClient();
 export const youtubeClient = new YoutubeClient();
 export const chaturbateClient = new ChaturbateClient();
 export const commonClient = new CommonClient();
+export const githubClient = new GithubClient();

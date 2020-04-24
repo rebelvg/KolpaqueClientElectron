@@ -1,8 +1,9 @@
 import { app, ipcMain, shell } from 'electron';
 import { execFile } from 'child_process';
 import * as _ from 'lodash';
-import axios from 'axios';
 import { printNotification } from './Notifications';
+import { addLogs } from './Logs';
+import { githubClient } from './ApiClients';
 
 const { version } = require('../package.json');
 
@@ -43,17 +44,17 @@ function sendInfo(update) {
 }
 
 async function clientVersionCheck() {
-  if (infoArray.includes('client')) return clearInterval(updates['client'].interval);
+  if (infoArray.includes('client')) {
+    return clearInterval(updates['client'].interval);
+  }
 
-  const url = 'https://api.github.com/repos/rebelvg/KolpaqueClientElectron/releases/latest';
+  const versionData = await githubClient.getLatestVersion();
 
-  const { data } = await axios.get(url, {
-    headers: {
-      'user-agent': 'KolpaqueClientElectron'
-    }
-  });
+  if (!versionData) {
+    return;
+  }
 
-  const newVersion = data.tag_name;
+  const newVersion = versionData.tag_name;
 
   if (newVersion !== version) {
     sendInfo('client');
@@ -61,10 +62,16 @@ async function clientVersionCheck() {
 }
 
 function streamlinkVersionCheck() {
-  if (infoArray.includes('streamlink')) return clearInterval(updates['streamlink'].interval);
+  if (infoArray.includes('streamlink')) {
+    return clearInterval(updates['streamlink'].interval);
+  }
 
   execFile('streamlink', ['--version-check'], function(err, data, stderr) {
-    if (err) return;
+    if (err) {
+      addLogs(err);
+
+      return;
+    }
 
     let regExp = new RegExp(/A new version of Streamlink \((.*)\) is available!/gi);
 
