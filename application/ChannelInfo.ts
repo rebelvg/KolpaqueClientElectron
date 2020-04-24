@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { twitchApiKey } from './Globals';
 import { Channel } from './ChannelClass';
 import { addLogs } from './Logs';
+import { twitchClient } from './ApiClients';
 
 const SERVICES = {
   twitch: getTwitchInfoAsync
@@ -20,17 +21,12 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
 
   await Promise.all(
     chunkedChannels.map(async channelObjs => {
-      const { data: userData } = await axios.get(
-        `https://api.twitch.tv/helix/users?${channelObjs.map(channel => `login=${channel.name}`).join('&')}`,
-        {
-          headers: { 'Client-ID': twitchApiKey }
-        }
-      );
+      const userData = await twitchClient.getUsers(channelObjs.map(channel => channel.name));
 
       await Promise.all(
         channelObjs.map(async channelObj => {
           await Promise.all(
-            userData.data.map(async user => {
+            userData?.data?.map(async user => {
               if (user.login !== channelObj.name) {
                 return;
               }
@@ -45,6 +41,8 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
                 channelObj._icon = logoData;
               } catch (e) {
                 addLogs(e);
+
+                return;
               }
             })
           );
@@ -55,7 +53,11 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
 }
 
 export async function getInfoAsync(channelObj: Channel) {
-  if (SERVICES.hasOwnProperty(channelObj.service)) {
-    await SERVICES[channelObj.service]([channelObj]);
+  try {
+    if (SERVICES.hasOwnProperty(channelObj.service)) {
+      await SERVICES[channelObj.service]([channelObj]);
+    }
+  } catch (error) {
+    addLogs(error);
   }
 }
