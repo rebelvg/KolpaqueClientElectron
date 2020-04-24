@@ -17,11 +17,6 @@ const Services = {
     isImage: true,
     color: null
   },
-  'klpq-main': {
-    asset: './static/icons/klpq_main.svg',
-    isImage: true,
-    color: null
-  },
   'youtube-user': {
     asset: youtubePlay,
     isImage: false,
