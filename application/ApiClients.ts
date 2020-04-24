@@ -248,7 +248,7 @@ class GithubClient {
   private baseUrl = 'https://api.github.com';
 
   public async getLatestVersion(): Promise<IGithubLatestVersion> {
-    const url = `${this.baseUrl}/rebelvg/KolpaqueClientElectron/releases/latest`;
+    const url = `${this.baseUrl}/repos/rebelvg/KolpaqueClientElectron/releases/latest`;
 
     try {
       const { data } = await axios.get<IGithubLatestVersion>(url, {
@@ -259,6 +259,8 @@ class GithubClient {
 
       return data;
     } catch (error) {
+      console.error(error);
+
       addLogs(error);
 
       return;
