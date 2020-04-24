@@ -120,6 +120,10 @@ export class Config extends EventEmitter {
       (app as any).mainWindow.webContents.send('channel_addSync');
     });
 
+    this.on('channel_added_channels', () => {
+      (app as any).mainWindow.webContents.send('channel_addSync');
+    });
+
     this.on('channel_removed', () => {
       (app as any).mainWindow.webContents.send('channel_removeSync');
     });

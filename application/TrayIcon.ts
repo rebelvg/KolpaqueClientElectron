@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 
 import { config } from './SettingsFile';
 import { registeredServices } from './Globals';
+import { Channel } from './ChannelClass';
 
 function setChannelEvents(channelObj) {
   channelObj.on('setting_changed', (settingName, settingValue) => {
@@ -27,7 +28,13 @@ config.on('setting_changed', (settingName, settingValue) => {
 });
 
 _.forEach(config.channels, setChannelEvents);
+
 config.on('channel_added', setChannelEvents);
+config.on('channel_added_channels', async (channels: Channel[]) => {
+  channels.forEach(channel => {
+    setChannelEvents(channel);
+  });
+});
 config.on('channel_removed', rebuildIconMenu);
 
 export function rebuildIconMenu() {

@@ -49,7 +49,7 @@ config.on('channel_added', async channel => {
   await checkChannels([channel], null, false);
 });
 
-config.on('channel_added_channels', async channels => {
+config.on('channel_added_channels', async (channels: Channel[]) => {
   await checkChannels(channels, null, false);
 });
 

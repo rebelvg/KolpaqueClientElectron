@@ -51,7 +51,14 @@ ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
 });
 
 _.forEach(config.channels, setChannelEvents);
+
 config.on('channel_added', setChannelEvents);
+
+config.on('channel_added_channels', async (channels: Channel[]) => {
+  channels.forEach(channel => {
+    setChannelEvents(channel);
+  });
+});
 
 export function launchPlayerLink(channelLink, LQ = null) {
   let channelObj = Config.buildChannelObj(channelLink);
