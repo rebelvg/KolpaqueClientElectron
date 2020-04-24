@@ -43,9 +43,7 @@ process.on('unhandledRejection', error => {
     pathOption = path.join(__dirname, 'builds');
   } else {
     if (!fs.existsSync(pathOption)) {
-      console.error('bad path.');
-
-      return;
+      throw new Error('Bad path.');
     }
 
     pathOption = path.join(pathOption, 'KolpaqueClientElectron');
