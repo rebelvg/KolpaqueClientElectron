@@ -51,7 +51,10 @@ function createWindow() {
     height: config.settings.size[1],
     resizable: true,
     fullscreenable: false,
-    icon: iconPath
+    icon: iconPath,
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
   (app as any).mainWindow = mainWindow;
