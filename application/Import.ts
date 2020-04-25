@@ -24,6 +24,10 @@ async function twitchImportChannels(
     chunkedChannels.map(async channels => {
       const userData = await twitchClient.getUsersById(channels.map(channel => channel.to_id));
 
+      if (!userData) {
+        return;
+      }
+
       for (const channel of userData.data) {
         let channelObj = config.addChannelLink(`https://twitch.tv/${channel.login}`, false);
 

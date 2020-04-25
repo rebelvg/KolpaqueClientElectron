@@ -4,6 +4,8 @@ import * as path from 'path';
 import * as url from 'url';
 import * as fixPath from 'fix-path';
 import * as defaultMenu from 'electron-default-menu';
+import * as fs from 'fs';
+import * as os from 'os';
 
 fixPath();
 
@@ -41,6 +43,12 @@ if (process.platform === 'darwin') {
 let mainWindow: BrowserWindow;
 
 app.setName('Kolpaque Client');
+
+app.on('second-instance', () => {
+  mainWindow.show();
+});
+
+app.requestSingleInstanceLock();
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -223,6 +231,8 @@ process.on('unhandledRejection', err => {
 
 process.on('uncaughtException', err => {
   addLogs('uncaughtException', err);
+
+  fs.appendFileSync('./crash.log', `${err.stack}${os.EOL}`);
 
   throw err;
 });

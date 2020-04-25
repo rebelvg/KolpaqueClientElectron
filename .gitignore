@@ -4,3 +4,4 @@ dist-api/
 dist/
 node_modules/
 builds/
+*.log
