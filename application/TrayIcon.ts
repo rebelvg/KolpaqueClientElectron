@@ -5,25 +5,11 @@ import { config } from './SettingsFile';
 import { registeredServices } from './Globals';
 import { Channel } from './ChannelClass';
 
-function setChannelEvents(channelObj) {
-  channelObj.on('setting_changed', (settingName, settingValue) => {
-    if (['visibleName', 'isPinned'].includes(settingName)) {
-      rebuildIconMenu();
-    }
-  });
-
-  channelObj.on('settings_changed', (settingName, settingValue) => {
-    rebuildIconMenu();
-  });
-}
+function setChannelEvents(channelObj) {}
 
 config.on('setting_changed', (settingName, settingValue) => {
   if (settingName === 'showNotifications') {
-    (app as any).contextMenuTemplate[3].checked = settingValue;
-  }
-
-  if (['LQ', 'sortType', 'sortReverse', 'showNotifications'].includes(settingName)) {
-    rebuildIconMenu();
+    app['contextMenuTemplate'][3].checked = settingValue;
   }
 });
 
@@ -35,14 +21,15 @@ config.on('channel_added_channels', async (channels: Channel[]) => {
     setChannelEvents(channel);
   });
 });
-config.on('channel_removed', rebuildIconMenu);
 
 export function rebuildIconMenu() {
   const onlineChannels = config.find({
     isLive: true
   }).channels;
 
-  (app as any).contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
+  const contextMenuTemplate = app['contextMenuTemplate'];
+
+  contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
     if (!channelObj._trayIcon) {
       const iconBuffer = channelObj._icon ? channelObj._icon : registeredServices[channelObj.service].icon;
 
@@ -61,7 +48,5 @@ export function rebuildIconMenu() {
     };
   });
 
-  let contextMenu = Menu.buildFromTemplate((app as any).contextMenuTemplate);
-
-  (app as any).appIcon.setContextMenu(contextMenu);
+  return Menu.buildFromTemplate(contextMenuTemplate);
 }

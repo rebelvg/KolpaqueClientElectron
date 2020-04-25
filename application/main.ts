@@ -132,7 +132,7 @@ app.on('ready', function() {
   mainWindow.hide();
 });
 
-let contextMenuTemplate = [
+const contextMenuTemplate = [
   {
     label: 'Toggle Client',
     type: 'normal',
@@ -171,14 +171,16 @@ let contextMenuTemplate = [
   }
 ];
 
-(app as any).contextMenuTemplate = contextMenuTemplate;
+app['contextMenuTemplate'] = contextMenuTemplate;
 
 let appIcon: Tray;
 
 app.on('ready', () => {
   appIcon = new Tray(nativeImage.createFromPath(iconPathTray));
   appIcon.setToolTip('Kolpaque Client');
-  (appIcon as any).iconPathBalloon = iconPathBalloon;
+  appIcon['iconPathBalloon'] = iconPathBalloon;
+
+  appIcon.setIgnoreDoubleClickEvents(true);
 
   appIcon.on('click', () => {
     addLogs('left-click event.');
@@ -189,12 +191,12 @@ app.on('ready', () => {
   appIcon.on('right-click', () => {
     addLogs('right-click event.');
 
-    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+    const contextMenu = rebuildIconMenu();
+
+    appIcon.popUpContextMenu(contextMenu);
   });
 
-  (app as any).appIcon = appIcon;
-
-  rebuildIconMenu();
+  app['appIcon'] = appIcon;
 
   if (process.platform === 'darwin') {
     const menu = defaultMenu(app, shell);
