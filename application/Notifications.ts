@@ -1,9 +1,10 @@
-import { app, shell, Notification, nativeImage } from 'electron';
+import { app, shell, Notification, nativeImage, NativeImage } from 'electron';
 import * as _ from 'lodash';
 
 import { config } from './SettingsFile';
 import { registeredServices } from './Globals';
 import { addLogs } from './Logs';
+import { iconPathBalloon } from './main';
 
 export function printNotification(title, content, channelObj = null) {
   if (!config.settings.showNotifications) return;
@@ -12,7 +13,7 @@ export function printNotification(title, content, channelObj = null) {
 }
 
 function printNewNotification(title, content, channelObj) {
-  let icon = app['appIcon'].iconPathBalloon;
+  let icon: string | NativeImage = iconPathBalloon;
 
   if (channelObj) {
     let iconBuffer = channelObj._icon ? channelObj._icon : registeredServices[channelObj.service].icon;

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, clipboard, shell, ipcMain, Menu, Tray, nativeImage } from 'electron';
+import { app, BrowserWindow, clipboard, shell, ipcMain, Menu, Tray, nativeImage, MenuItem } from 'electron';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as url from 'url';
@@ -29,7 +29,7 @@ ipcMain.once('client_ready', () => {
 
 let iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
 let iconPathTray = path.normalize(path.join(__dirname, '../icons', 'icon32.png'));
-let iconPathBalloon = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
+export let iconPathBalloon = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
 
 if (process.platform === 'darwin') {
   app.dock.setIcon(iconPath);
@@ -132,7 +132,7 @@ app.on('ready', function() {
   mainWindow.hide();
 });
 
-const contextMenuTemplate = [
+export const contextMenuTemplate = [
   {
     label: 'Toggle Client',
     type: 'normal',
@@ -171,15 +171,11 @@ const contextMenuTemplate = [
   }
 ];
 
-app['contextMenuTemplate'] = contextMenuTemplate;
-
 let appIcon: Tray;
 
 app.on('ready', () => {
   appIcon = new Tray(nativeImage.createFromPath(iconPathTray));
   appIcon.setToolTip('Kolpaque Client');
-  appIcon['iconPathBalloon'] = iconPathBalloon;
-
   appIcon.setIgnoreDoubleClickEvents(true);
 
   appIcon.on('click', () => {
@@ -195,8 +191,6 @@ app.on('ready', () => {
 
     appIcon.popUpContextMenu(contextMenu);
   });
-
-  app['appIcon'] = appIcon;
 
   if (process.platform === 'darwin') {
     const menu = defaultMenu(app, shell);

@@ -1,25 +1,14 @@
-import { app, Menu, nativeImage } from 'electron';
+import { app, Menu, nativeImage, MenuItem } from 'electron';
 import * as _ from 'lodash';
 
 import { config } from './SettingsFile';
 import { registeredServices } from './Globals';
-import { Channel } from './ChannelClass';
-
-function setChannelEvents(channelObj) {}
+import { contextMenuTemplate } from './main';
 
 config.on('setting_changed', (settingName, settingValue) => {
   if (settingName === 'showNotifications') {
-    app['contextMenuTemplate'][3].checked = settingValue;
+    contextMenuTemplate[3].checked = settingValue;
   }
-});
-
-_.forEach(config.channels, setChannelEvents);
-
-config.on('channel_added', setChannelEvents);
-config.on('channel_added_channels', async (channels: Channel[]) => {
-  channels.forEach(channel => {
-    setChannelEvents(channel);
-  });
 });
 
 export function rebuildIconMenu() {
@@ -27,9 +16,7 @@ export function rebuildIconMenu() {
     isLive: true
   }).channels;
 
-  const contextMenuTemplate = app['contextMenuTemplate'];
-
-  contextMenuTemplate[1].submenu = onlineChannels.map(channelObj => {
+  contextMenuTemplate[1]['submenu'] = onlineChannels.map(channelObj => {
     if (!channelObj._trayIcon) {
       const iconBuffer = channelObj._icon ? channelObj._icon : registeredServices[channelObj.service].icon;
 
@@ -48,5 +35,5 @@ export function rebuildIconMenu() {
     };
   });
 
-  return Menu.buildFromTemplate(contextMenuTemplate);
+  return Menu.buildFromTemplate(contextMenuTemplate as any);
 }
