@@ -171,6 +171,16 @@ export const contextMenuTemplate = [
   }
 ];
 
+function toggleHideClient() {
+  mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+}
+
+function showTrayContextMenu() {
+  const contextMenu = rebuildIconMenu();
+
+  appIcon.popUpContextMenu(contextMenu);
+}
+
 let appIcon: Tray;
 
 app.on('ready', () => {
@@ -181,15 +191,21 @@ app.on('ready', () => {
   appIcon.on('click', () => {
     addLogs('left-click event.');
 
-    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+    if (process.platform === 'darwin') {
+      showTrayContextMenu();
+    } else {
+      toggleHideClient();
+    }
   });
 
   appIcon.on('right-click', () => {
     addLogs('right-click event.');
 
-    const contextMenu = rebuildIconMenu();
-
-    appIcon.popUpContextMenu(contextMenu);
+    if (process.platform === 'darwin') {
+      toggleHideClient();
+    } else {
+      showTrayContextMenu();
+    }
   });
 
   if (process.platform === 'darwin') {
