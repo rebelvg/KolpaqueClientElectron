@@ -90,11 +90,11 @@ export class Channel extends EventEmitter {
     this.serviceObj = registeredServices[this.service];
 
     this.on('setting_changed', (settingName, settingValue, send) => {
-      if (send) (app as any).mainWindow.webContents.send('channel_changeSettingSync');
+      if (send) app['mainWindow'].webContents.send('channel_changeSettingSync');
     });
 
     this.on('settings_changed', send => {
-      if (send) (app as any).mainWindow.webContents.send('channel_changeSettingSync');
+      if (send) app['mainWindow'].webContents.send('channel_changeSettingSync');
     });
   }
 

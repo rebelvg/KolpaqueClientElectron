@@ -98,7 +98,7 @@ ipcMain.on('channel_openChat', (event, id) => {
         window = null;
       });
 
-      (app as any).mainWindow.on('closed', () => {
+      app['mainWindow'].on('closed', () => {
         if (window) {
           window.close();
         }

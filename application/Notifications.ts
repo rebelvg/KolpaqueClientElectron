@@ -12,7 +12,7 @@ export function printNotification(title, content, channelObj = null) {
 }
 
 function printNewNotification(title, content, channelObj) {
-  let icon = (app as any).appIcon.iconPathBalloon;
+  let icon = app['appIcon'].iconPathBalloon;
 
   if (channelObj) {
     let iconBuffer = channelObj._icon ? channelObj._icon : registeredServices[channelObj.service].icon;

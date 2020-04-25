@@ -117,23 +117,23 @@ export class Config extends EventEmitter {
     this.saveLoop();
 
     this.on('channel_added', () => {
-      (app as any).mainWindow.webContents.send('channel_addSync');
+      app['mainWindow'].webContents.send('channel_addSync');
     });
 
     this.on('channel_added_channels', () => {
-      (app as any).mainWindow.webContents.send('channel_addSync');
+      app['mainWindow'].webContents.send('channel_addSync');
     });
 
     this.on('channel_removed', () => {
-      (app as any).mainWindow.webContents.send('channel_removeSync');
+      app['mainWindow'].webContents.send('channel_removeSync');
     });
 
     this.on('setting_changed', (settingName, settingValue) => {
-      (app as any).mainWindow.webContents.send('config_changeSetting', settingName, settingValue);
+      app['mainWindow'].webContents.send('config_changeSetting', settingName, settingValue);
     });
 
     this.on('setting_changed', () => {
-      (app as any).mainWindow.webContents.send('config_changeSettingSync', this.settings);
+      app['mainWindow'].webContents.send('config_changeSettingSync', this.settings);
     });
   }
 

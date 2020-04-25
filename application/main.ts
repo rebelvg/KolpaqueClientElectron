@@ -57,7 +57,7 @@ function createWindow() {
     }
   });
 
-  (app as any).mainWindow = mainWindow;
+  app['mainWindow'] = mainWindow;
 
   mainWindow.setMenu(null);
 

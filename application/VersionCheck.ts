@@ -37,10 +37,7 @@ function sendInfo(update) {
 
   printNotification(`${_.capitalize(update)} Update Available`, updates[update].releaseLink);
 
-  (app as any).mainWindow.webContents.send(
-    'client_showInfo',
-    infoArray.map(_.capitalize).join(' & ') + ' Update Available'
-  );
+  app['mainWindow'].webContents.send('client_showInfo', infoArray.map(_.capitalize).join(' & ') + ' Update Available');
 }
 
 async function clientVersionCheck() {
