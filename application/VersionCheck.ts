@@ -55,6 +55,8 @@ async function clientVersionCheck() {
 
   if (newVersion !== version) {
     sendInfo('client');
+
+    return;
   }
 }
 
@@ -63,16 +65,24 @@ function streamlinkVersionCheck() {
     return clearInterval(updates['streamlink'].interval);
   }
 
-  execFile('streamlink', ['--version-check'], function(err, data, stderr) {
+  execFile('streamlink', ['--version-check'], function(err: any, data, stderr) {
     if (err) {
+      if (err.code === 'ENOENT') {
+        sendInfo('streamlink');
+      }
+
       addLogs(err);
 
       return;
     }
 
-    let regExp = new RegExp(/A new version of Streamlink \((.*)\) is available!/gi);
+    const regExp = new RegExp(/A new version of Streamlink \((.*)\) is available!/gi);
 
-    if (regExp.test(data)) sendInfo('streamlink');
+    if (regExp.test(data)) {
+      sendInfo('streamlink');
+
+      return;
+    }
   });
 }
 
