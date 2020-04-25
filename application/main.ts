@@ -48,7 +48,11 @@ app.on('second-instance', () => {
   mainWindow.show();
 });
 
-app.requestSingleInstanceLock();
+const lockStatus = app.requestSingleInstanceLock();
+
+if (!lockStatus) {
+  app.quit();
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
