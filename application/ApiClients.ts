@@ -33,7 +33,10 @@ export const TWITCH_CHUNK_LIMIT = 100;
 
 class TwitchClient {
   private baseUrl = 'https://api.twitch.tv/helix';
-  private apiKey = twitchApiKey;
+
+  private get apiKey() {
+    return twitchApiKey;
+  }
 
   public async getUsersByLogin(channelNames: string[]): Promise<ITwitchClientUsers> {
     if (channelNames.length === 0) {
@@ -146,7 +149,10 @@ export interface IYoutubeStreams {
 
 class YoutubeClient {
   private baseUrl = 'https://www.googleapis.com/youtube/v3';
-  private apiKey = config.settings.youtubeApiKey;
+
+  private get apiKey() {
+    return config.settings.youtubeApiKey;
+  }
 
   public async getChannels(channelName: string): Promise<IYoutubeChannels> {
     const channelsUrl = new URL(`${this.baseUrl}/channels`);
