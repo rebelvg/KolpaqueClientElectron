@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 
 let platformOption = readlineSync.question(`select platform. all - for all platforms. (empty for current)${os.EOL}`);
-let pathOption = readlineSync.question(`select output folder. (empty for current)${os.EOL}`);
+let pathOption = readlineSync.question(`select output folder.${os.EOL}`);
 
 process.on('unhandledRejection', error => {
   throw error;
