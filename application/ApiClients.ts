@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { addLogs } from './Logs';
-import { twitchApiKey, klpqServiceUrl } from './Globals';
+import { klpqServiceUrl } from './Globals';
 import { config } from './SettingsFile';
 import * as qs from 'querystring';
 import { shell, ipcMain } from 'electron';
@@ -41,10 +41,6 @@ export const TWITCH_CHUNK_LIMIT = 100;
 class TwitchClient {
   private baseUrl = 'https://api.twitch.tv/helix';
   private accessToken: string = null;
-
-  private get clientId() {
-    return twitchApiKey;
-  }
 
   private get refreshToken() {
     return config.settings.twitchRefreshToken;
@@ -123,7 +119,7 @@ class TwitchClient {
       const { data: userData } = await axios.get<ITwitchClientUsers>(
         `${this.baseUrl}/users?${ids.map(id => `id=${id}`).join('&')}`,
         {
-          headers: { Authorization: `Bearer ${this.accessToken}`, 'Client-ID': this.clientId }
+          headers: { Authorization: `Bearer ${this.accessToken}` }
         }
       );
 
@@ -147,7 +143,7 @@ class TwitchClient {
     try {
       const { data: streamData } = await axios.get<ITwitchClientStreams>(
         `${this.baseUrl}/streams/?${userIds.map(userId => `user_id=${userId}`).join('&')}`,
-        { headers: { Authorization: `Bearer ${this.accessToken}`, 'Client-ID': this.clientId } }
+        { headers: { Authorization: `Bearer ${this.accessToken}` } }
       );
 
       return streamData;
@@ -170,7 +166,7 @@ class TwitchClient {
 
     try {
       const { data } = await axios.get<ITwitchFollowedChannels>(url.href, {
-        headers: { Authorization: `Bearer ${this.accessToken}`, 'Client-ID': this.clientId }
+        headers: { Authorization: `Bearer ${this.accessToken}` }
       });
 
       return data;

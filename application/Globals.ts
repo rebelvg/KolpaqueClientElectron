@@ -88,6 +88,4 @@ export const registeredServices = {
 
 export const preInstalledChannels = [];
 
-export const twitchApiKey = 'dk330061dv4t81s21utnhhdona0a91x';
-
 export const klpqServiceUrl = 'https://client-api.klpq.men';
