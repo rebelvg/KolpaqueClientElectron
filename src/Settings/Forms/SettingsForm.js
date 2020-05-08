@@ -4,6 +4,8 @@ import Toggle from 'react-toggle-button';
 import styled from 'styled-components';
 import Select from 'react-select';
 
+const { ipcRenderer } = window.require('electron');
+
 const sortTypes = [
   { value: 'lastAdded', label: 'Last Added' },
   { value: 'lastUpdated', label: 'Last Changed Status' },
@@ -128,6 +130,14 @@ const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting
         <Field name="sortReverse" component={ToggleAdapter} toggle={changeSetting} />
       </InputWrapper>
     </FieldWrapper>
+
+    <button
+      onClick={() => {
+        ipcRenderer.send('twitch_login');
+      }}
+    >
+      Twitch Login
+    </button>
   </Form>
 );
 

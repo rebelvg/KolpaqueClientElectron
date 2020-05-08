@@ -106,7 +106,8 @@ export class Config extends EventEmitter {
     showTooltips: true,
     confirmAutoStart: true,
     playInWindow: false,
-    useStreamlinkForCustomChannels: false
+    useStreamlinkForCustomChannels: false,
+    twitchRefreshToken: ''
   };
 
   constructor() {

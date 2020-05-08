@@ -12,6 +12,8 @@ fixPath();
 import { config } from './SettingsFile';
 import { launchPlayerLink } from './ChannelPlay';
 import { rebuildIconMenu } from './TrayIcon';
+import './SocketClient';
+import './ChannelInfo';
 
 import './ChannelCheck';
 import './Import';
@@ -76,7 +78,7 @@ function createWindow() {
   if (isDev) {
     const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer');
 
-    mainWindow.loadURL('http://localhost:3000');
+    mainWindow.loadURL('http://localhost:10000');
 
     mainWindow.webContents.openDevTools();
 

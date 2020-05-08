@@ -2,11 +2,23 @@ import * as _ from 'lodash';
 
 import { Channel } from './ChannelClass';
 import { addLogs } from './Logs';
-import { twitchClient, commonClient } from './ApiClients';
+import { twitchClient, commonClient, TWITCH_CHUNK_LIMIT } from './ApiClients';
+import { config } from './SettingsFile';
+import { ipcMain } from 'electron';
 
 const SERVICES = {
   twitch: getTwitchInfoAsync
 };
+
+ipcMain.once('client_ready', checkLoop);
+
+config.on('channel_added', async channel => {
+  await checkChannels([channel], null);
+});
+
+config.on('channel_added_channels', async (channels: Channel[]) => {
+  await checkChannels(channels, null);
+});
 
 async function getTwitchInfoAsync(channelObjs: Channel[]) {
   const filteredChannels = _.filter(channelObjs, channelObj => !channelObj._icon);
@@ -15,7 +27,7 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
     return;
   }
 
-  const chunkedChannels = _.chunk(filteredChannels, 100);
+  const chunkedChannels = _.chunk(filteredChannels, TWITCH_CHUNK_LIMIT);
 
   await Promise.all(
     chunkedChannels.map(async channelObjs => {
@@ -56,4 +68,22 @@ export async function getInfoAsync(channelObj: Channel) {
   } catch (error) {
     addLogs(error);
   }
+}
+
+async function checkChannels(channelObjs: Channel[], service: string) {
+  if (SERVICES.hasOwnProperty(service)) {
+    try {
+      await SERVICES[service](_.filter(channelObjs, { service }));
+    } catch (error) {
+      addLogs(error);
+    }
+  }
+}
+
+async function checkLoop() {
+  await Promise.all(
+    _.map(SERVICES, async (checkFnc, service) => {
+      await checkChannels(config.channels, service);
+    })
+  );
 }

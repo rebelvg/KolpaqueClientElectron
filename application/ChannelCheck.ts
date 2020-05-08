@@ -2,7 +2,6 @@ import { ipcMain, dialog } from 'electron';
 import * as _ from 'lodash';
 
 import { config } from './SettingsFile';
-import { getInfoAsync } from './ChannelInfo';
 import { printNotification } from './Notifications';
 import { Channel } from './ChannelClass';
 import { addLogs } from './Logs';
@@ -44,8 +43,6 @@ const SERVICES_INTERVALS = {
 ipcMain.once('client_ready', checkLoop);
 
 config.on('channel_added', async channel => {
-  console.log('channel_added');
-
   await checkChannels([channel], null, false);
 });
 
@@ -57,8 +54,6 @@ async function isOnline(channelObj: Channel, printBalloon: boolean) {
   channelObj._offlineConfirmations = 0;
 
   if (channelObj.isLive) return;
-
-  await getInfoAsync(channelObj);
 
   addLogs(`${channelObj.link} went online.`);
 
