@@ -2,10 +2,10 @@ import * as SocketClient from 'socket.io-client';
 import * as uuid from 'uuid';
 
 import { addLogs } from './Logs';
-import { twitchClient } from './ApiClients';
+import { twitchClient, klpqServiceClient } from './ApiClients';
 import { klpqServiceUrl } from './Globals';
 
-export interface IUser {
+export interface ITwitchUser {
   accessToken: string;
   refreshToken: string;
 }
@@ -14,11 +14,17 @@ const io = SocketClient(klpqServiceUrl);
 
 export const SOCKET_CLIENT_ID = uuid.v4();
 
-io.on('user', (user: IUser) => {
-  addLogs('socket_got_user', user);
+io.on('twitch_user', (user: ITwitchUser) => {
+  addLogs('socket_got_twitch_user', user);
 
   twitchClient.setAccessToken(user.accessToken);
   twitchClient.setRefreshToken(user.refreshToken);
+});
+
+io.on('klpq_user', (signedJwt: string) => {
+  addLogs('socket_got_klpq_user', signedJwt);
+
+  klpqServiceClient.setUser(signedJwt);
 });
 
 io.on('connect', () => {

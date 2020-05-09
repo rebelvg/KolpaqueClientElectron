@@ -5,10 +5,14 @@ import { config } from './SettingsFile';
 import * as qs from 'querystring';
 import { shell, ipcMain } from 'electron';
 
-import { SOCKET_CLIENT_ID, IUser } from './SocketClient';
+import { SOCKET_CLIENT_ID, ITwitchUser } from './SocketClient';
 
 ipcMain.on('twitch_login', () => {
-  klpqServiceClient.getToken();
+  klpqServiceClient.getTwitchUser();
+});
+
+ipcMain.on('klpq_login', () => {
+  klpqServiceClient.getKlpqUser();
 });
 
 export interface ITwitchClientUsers {
@@ -217,46 +221,12 @@ export interface IYoutubeStreams {
 class YoutubeClient {
   private baseUrl = 'https://www.googleapis.com/youtube/v3';
 
-  private get apiKey() {
-    return config.settings.youtubeApiKey;
-  }
-
   public async getChannels(channelName: string): Promise<IYoutubeChannels> {
-    const channelsUrl = new URL(`${this.baseUrl}/channels`);
-
-    channelsUrl.searchParams.set('forUsername', channelName);
-    channelsUrl.searchParams.set('part', 'id');
-    channelsUrl.searchParams.set('key', this.apiKey);
-
-    try {
-      const { data } = await axios.get<IYoutubeChannels>(channelsUrl.href);
-
-      return data;
-    } catch (error) {
-      addLogs(error);
-
-      return;
-    }
+    return klpqServiceClient.getYoutubeChannels(channelName);
   }
 
   public async getStreams(channelId: string): Promise<IYoutubeStreams> {
-    const searchUrl = new URL(`${this.baseUrl}/search`);
-
-    searchUrl.searchParams.set('channelId', channelId);
-    searchUrl.searchParams.set('part', 'snippet');
-    searchUrl.searchParams.set('type', 'video');
-    searchUrl.searchParams.set('eventType', 'live');
-    searchUrl.searchParams.set('key', this.apiKey);
-
-    try {
-      const { data } = await axios.get<IYoutubeStreams>(searchUrl.href);
-
-      return data;
-    } catch (error) {
-      addLogs(error);
-
-      return;
-    }
+    return klpqServiceClient.getYoutubeStreams(channelId);
   }
 }
 
@@ -300,15 +270,59 @@ class ChaturbateClient {
 class KlpqServiceClient {
   private baseUrl = klpqServiceUrl;
 
-  public async getToken() {
+  private get jwtToken() {
+    return config.settings.klpqJwt;
+  }
+
+  public setUser(jwt: string) {
+    config.settings.klpqJwt = jwt;
+  }
+
+  public async getTwitchUser() {
     await shell.openExternal(`${this.baseUrl}/auth/twitch?requestId=${SOCKET_CLIENT_ID}`);
   }
 
-  public async refreshToken(refreshToken: string): Promise<IUser> {
+  public async getKlpqUser() {
+    await shell.openExternal(`${this.baseUrl}/auth?requestId=${SOCKET_CLIENT_ID}`);
+  }
+
+  public async refreshToken(refreshToken: string): Promise<ITwitchUser> {
     const url = `${this.baseUrl}/auth/twitch/refresh?refreshToken=${refreshToken}`;
 
     try {
-      const { data } = await axios.get<IUser>(url);
+      const { data } = await axios.get<ITwitchUser>(url);
+
+      return data;
+    } catch (error) {
+      addLogs(error);
+
+      return;
+    }
+  }
+
+  public async getYoutubeChannels(channelName: string): Promise<IYoutubeChannels> {
+    const url = `${this.baseUrl}/youtube/channels?channelName=${channelName}`;
+
+    try {
+      const { data } = await axios.get<IYoutubeChannels>(url, {
+        headers: { jwt: this.jwtToken }
+      });
+
+      return data;
+    } catch (error) {
+      addLogs(error);
+
+      return;
+    }
+  }
+
+  public async getYoutubeStreams(channelId: string): Promise<IYoutubeStreams> {
+    const url = `${this.baseUrl}/youtube/streams?channelId=${channelId}`;
+
+    try {
+      const { data } = await axios.get<IYoutubeStreams>(url, {
+        headers: { jwt: this.jwtToken }
+      });
 
       return data;
     } catch (error) {
@@ -354,8 +368,6 @@ class GithubClient {
 
       return data;
     } catch (error) {
-      console.error(error);
-
       addLogs(error);
 
       return;

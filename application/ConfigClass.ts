@@ -98,7 +98,6 @@ export class Config extends EventEmitter {
     minimizeAtStart: false,
     launchOnBalloonClick: true,
     size: [400, 800],
-    youtubeApiKey: '',
     twitchImport: [],
     nightMode: false,
     sortType: 'lastAdded',
@@ -107,7 +106,8 @@ export class Config extends EventEmitter {
     confirmAutoStart: true,
     playInWindow: false,
     useStreamlinkForCustomChannels: false,
-    twitchRefreshToken: ''
+    twitchRefreshToken: '',
+    klpqJwt: ''
   };
 
   constructor() {

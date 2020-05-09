@@ -110,13 +110,6 @@ const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting
       </InputWrapper>
     </FieldWrapper>
 
-    <FieldWrapper full>
-      <Label>Youtube API Key</Label>
-      <InputWrapper>
-        <Field name="youtubeApiKey" component={TextField} type="password" changeSetting={changeSetting} />
-      </InputWrapper>
-    </FieldWrapper>
-
     <br />
 
     <SelectWrapper>
@@ -131,12 +124,25 @@ const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting
       </InputWrapper>
     </FieldWrapper>
 
+    <br />
+    <br />
+
     <button
       onClick={() => {
         ipcRenderer.send('twitch_login');
       }}
     >
       Twitch Login
+    </button>
+
+    <br />
+
+    <button
+      onClick={() => {
+        ipcRenderer.send('klpq_login');
+      }}
+    >
+      KLPQ Login
     </button>
   </Form>
 );
