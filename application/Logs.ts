@@ -1,5 +1,7 @@
 import { ipcMain } from 'electron';
 import * as _ from 'lodash';
+import * as fs from 'fs';
+import * as os from 'os';
 
 let logs: string[] = [];
 
@@ -19,6 +21,8 @@ export function addLogs(...log: any[]) {
     .join(' ');
 
   console.log(logLine);
+
+  fs.appendFileSync('./app.log', `${logLine}${os.EOL}`);
 
   logs.push(logLine);
 

@@ -36,7 +36,7 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
       await Promise.all(
         channelObjs.map(async channelObj => {
           await Promise.all(
-            userData?.data?.map(async user => {
+            _.map(userData?.data, async user => {
               if (user.login !== channelObj.name) {
                 return;
               }

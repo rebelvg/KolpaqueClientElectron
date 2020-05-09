@@ -176,7 +176,8 @@ class TwitchClient {
   }
 
   private handleError(error: AxiosError): void {
-    addLogs(error);
+    addLogs(error?.response?.status, error?.response?.data);
+    addLogs(new Error(error.message));
 
     if (error?.response?.status === 401) {
       this.accessToken = null;
@@ -199,7 +200,8 @@ class KlpqStreamClient {
 
       return data;
     } catch (error) {
-      addLogs(error);
+      addLogs(error?.response?.status, error?.response?.data);
+      addLogs(new Error(error.message));
 
       return;
     }
@@ -256,7 +258,8 @@ class ChaturbateClient {
 
       return data;
     } catch (error) {
-      addLogs(error);
+      addLogs(error?.response?.status, error?.response?.data);
+      addLogs(new Error(error.message));
 
       return;
     }
@@ -305,7 +308,8 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      addLogs(error);
+      addLogs(error?.response?.status, error?.response?.data);
+      addLogs(new Error(error.message));
 
       return;
     }
@@ -319,7 +323,8 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      addLogs(error);
+      addLogs(error?.response?.status, error?.response?.data);
+      addLogs(new Error(error.message));
 
       return;
     }
@@ -369,8 +374,9 @@ class KlpqServiceClient {
     }
   }
 
-  private handleError(error: AxiosError) {
-    addLogs(error);
+  private handleError(error: AxiosError): void {
+    addLogs(error?.response?.status, error?.response?.data);
+    addLogs(new Error(error.message));
 
     this.jwtToken = null;
   }
@@ -385,7 +391,8 @@ class CommonClient {
 
       return data;
     } catch (error) {
-      addLogs(error);
+      addLogs(error?.response?.status, error?.response?.data);
+      addLogs(new Error(error.message));
 
       return;
     }
@@ -411,7 +418,8 @@ class GithubClient {
 
       return data;
     } catch (error) {
-      addLogs(error);
+      addLogs(error?.response?.status, error?.response?.data);
+      addLogs(new Error(error.message));
 
       return;
     }
