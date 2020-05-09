@@ -106,8 +106,7 @@ export class Config extends EventEmitter {
     confirmAutoStart: true,
     playInWindow: false,
     useStreamlinkForCustomChannels: false,
-    twitchRefreshToken: '',
-    klpqJwt: ''
+    twitchRefreshToken: ''
   };
 
   constructor() {

@@ -11,10 +11,6 @@ ipcMain.on('twitch_login', () => {
   klpqServiceClient.getTwitchUser();
 });
 
-ipcMain.on('klpq_login', () => {
-  klpqServiceClient.getKlpqUser();
-});
-
 export interface ITwitchClientUsers {
   data: Array<{
     id: string;
@@ -64,15 +60,15 @@ class TwitchClient {
     }
 
     if (!this.refreshToken) {
-      addLogs('no_refresh_token');
+      addLogs('no_twitch_refresh_token');
 
       return false;
     }
 
-    const user = await klpqServiceClient.refreshToken(this.refreshToken);
+    const user = await klpqServiceClient.refreshTwitchToken(this.refreshToken);
 
     if (!user) {
-      addLogs('refresh_access_token_failed');
+      addLogs('refresh_twitch_access_token_failed');
 
       return false;
     }
@@ -267,26 +263,41 @@ class ChaturbateClient {
   }
 }
 
+interface IKlpqUser {
+  jwt: string;
+}
+
 class KlpqServiceClient {
   private baseUrl = klpqServiceUrl;
-
-  private get jwtToken() {
-    return config.settings.klpqJwt;
-  }
+  private jwtToken: string = null;
 
   public setUser(jwt: string) {
-    config.settings.klpqJwt = jwt;
+    this.jwtToken = jwt;
   }
 
   public async getTwitchUser() {
     await shell.openExternal(`${this.baseUrl}/auth/twitch?requestId=${SOCKET_CLIENT_ID}`);
   }
 
-  public async getKlpqUser() {
-    await shell.openExternal(`${this.baseUrl}/auth?requestId=${SOCKET_CLIENT_ID}`);
+  public async refreshJwtToken(): Promise<boolean> {
+    if (this.jwtToken) {
+      return;
+    }
+
+    const user = await this.refreshKlpqToken();
+
+    if (!user) {
+      addLogs('refresh_klpq_access_token_failed');
+
+      return false;
+    }
+
+    this.jwtToken = user.jwt;
+
+    return true;
   }
 
-  public async refreshToken(refreshToken: string): Promise<ITwitchUser> {
+  public async refreshTwitchToken(refreshToken: string): Promise<ITwitchUser> {
     const url = `${this.baseUrl}/auth/twitch/refresh?refreshToken=${refreshToken}`;
 
     try {
@@ -300,13 +311,11 @@ class KlpqServiceClient {
     }
   }
 
-  public async getYoutubeChannels(channelName: string): Promise<IYoutubeChannels> {
-    const url = `${this.baseUrl}/youtube/channels?channelName=${channelName}`;
+  public async refreshKlpqToken(): Promise<IKlpqUser> {
+    const url = `${this.baseUrl}/auth`;
 
     try {
-      const { data } = await axios.get<IYoutubeChannels>(url, {
-        headers: { jwt: this.jwtToken }
-      });
+      const { data } = await axios.get<IKlpqUser>(url);
 
       return data;
     } catch (error) {
@@ -316,7 +325,35 @@ class KlpqServiceClient {
     }
   }
 
+  public async getYoutubeChannels(channelName: string): Promise<IYoutubeChannels> {
+    await this.refreshJwtToken();
+
+    if (!this.jwtToken) {
+      return;
+    }
+
+    const url = `${this.baseUrl}/youtube/channels?channelName=${channelName}`;
+
+    try {
+      const { data } = await axios.get<IYoutubeChannels>(url, {
+        headers: { jwt: this.jwtToken }
+      });
+
+      return data;
+    } catch (error) {
+      this.handleError(error);
+
+      return;
+    }
+  }
+
   public async getYoutubeStreams(channelId: string): Promise<IYoutubeStreams> {
+    await this.refreshJwtToken();
+
+    if (!this.jwtToken) {
+      return;
+    }
+
     const url = `${this.baseUrl}/youtube/streams?channelId=${channelId}`;
 
     try {
@@ -326,10 +363,16 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      addLogs(error);
+      this.handleError(error);
 
       return;
     }
+  }
+
+  private handleError(error: AxiosError) {
+    addLogs(error);
+
+    this.jwtToken = null;
   }
 }
 

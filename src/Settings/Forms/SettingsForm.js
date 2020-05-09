@@ -134,16 +134,6 @@ const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting
     >
       Twitch Login
     </button>
-
-    <br />
-
-    <button
-      onClick={() => {
-        ipcRenderer.send('klpq_login');
-      }}
-    >
-      KLPQ Login
-    </button>
   </Form>
 );
 
