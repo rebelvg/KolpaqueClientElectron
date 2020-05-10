@@ -11,7 +11,7 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 - Multiplatform (Win/Mac/Linux)
 - Services Support
   - KLPQ Stream Service
-  - Twitch (have to login via Twitch)
+  - Twitch (only after login via Twitch)
   - Youtube (only after you agree to [youtube's terms of use](https://www.youtube.com/t/terms), located in the settings)
   - Anything Streamlink Supports
 - Notifications
