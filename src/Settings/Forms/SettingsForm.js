@@ -124,6 +124,15 @@ const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting
       </InputWrapper>
     </FieldWrapper>
 
+    <FieldWrapper>
+      <Label>
+        Youtube <a href="https://www.youtube.com/t/terms">Terms Of Use</a> Consent
+      </Label>
+      <InputWrapper>
+        <Field name="youtubeTosConsent" component={ToggleAdapter} toggle={changeSetting} />
+      </InputWrapper>
+    </FieldWrapper>
+
     <br />
     <br />
 

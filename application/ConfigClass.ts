@@ -106,7 +106,8 @@ export class Config extends EventEmitter {
     confirmAutoStart: true,
     playInWindow: false,
     useStreamlinkForCustomChannels: false,
-    twitchRefreshToken: ''
+    twitchRefreshToken: '',
+    youtubeTosConsent: false
   };
 
   constructor() {

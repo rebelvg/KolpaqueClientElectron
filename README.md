@@ -11,8 +11,8 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 - Multiplatform (Win/Mac/Linux)
 - Services Support
   - KLPQ Stream Service
-  - Twitch
-  - Youtube (with your own API key)
+  - Twitch (have to login via Twitch)
+  - Youtube (only after you agree to [youtube's terms of use](https://www.youtube.com/t/terms), located in the settings)
   - Anything Streamlink Supports
 - Notifications
 - Auto-Import
@@ -43,10 +43,6 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 ### Requirements
 
 - [Streamlink](https://github.com/streamlink/streamlink) (with RTMPDump)
-
-### Optionals
-
-- [Youtube API Key](https://console.developers.google.com/apis/library/youtube.googleapis.com)
 
 ### Builds
 

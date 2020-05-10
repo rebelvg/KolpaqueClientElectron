@@ -220,10 +220,18 @@ class YoutubeClient {
   private baseUrl = 'https://www.googleapis.com/youtube/v3';
 
   public async getChannels(channelName: string): Promise<IYoutubeChannels> {
+    if (!config.settings.youtubeTosConsent) {
+      return;
+    }
+
     return klpqServiceClient.getYoutubeChannels(channelName);
   }
 
   public async getStreams(channelId: string): Promise<IYoutubeStreams> {
+    if (!config.settings.youtubeTosConsent) {
+      return;
+    }
+
     return klpqServiceClient.getYoutubeStreams(channelId);
   }
 }
