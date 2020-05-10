@@ -11,6 +11,7 @@ ipcMain.on('config_logs', event => {
 
 export function addLogs(...log: any[]) {
   const logLine = log
+    .filter(logItem => logItem !== undefined)
     .map(logItem => {
       if (logItem instanceof Error) {
         return logItem.stack;
@@ -22,7 +23,7 @@ export function addLogs(...log: any[]) {
 
   console.log(logLine);
 
-  fs.appendFileSync('./app.log', `${logLine}${os.EOL}`);
+  fs.appendFileSync('./app.log', `${new Date().toLocaleString()} - ${logLine}${os.EOL}`);
 
   logs.push(logLine);
 
