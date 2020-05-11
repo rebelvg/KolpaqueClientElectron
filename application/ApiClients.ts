@@ -7,6 +7,8 @@ import { shell, ipcMain } from 'electron';
 
 import { SOCKET_CLIENT_ID, ITwitchUser } from './SocketClient';
 
+const twitchClientId = 'dk330061dv4t81s21utnhhdona0a91x';
+
 ipcMain.on('twitch_login', () => {
   klpqServiceClient.getTwitchUser();
 });
@@ -94,7 +96,7 @@ class TwitchClient {
       const { data: userData } = await axios.get<ITwitchClientUsers>(
         `${this.baseUrl}/users?${channelNames.map(channelName => `login=${channelName}`).join('&')}`,
         {
-          headers: { Authorization: `Bearer ${this.accessToken}` }
+          headers: { Authorization: `Bearer ${this.accessToken}`, 'Client-ID': twitchClientId }
         }
       );
 
@@ -119,7 +121,7 @@ class TwitchClient {
       const { data: userData } = await axios.get<ITwitchClientUsers>(
         `${this.baseUrl}/users?${ids.map(id => `id=${id}`).join('&')}`,
         {
-          headers: { Authorization: `Bearer ${this.accessToken}` }
+          headers: { Authorization: `Bearer ${this.accessToken}`, 'Client-ID': twitchClientId }
         }
       );
 
@@ -143,7 +145,7 @@ class TwitchClient {
     try {
       const { data: streamData } = await axios.get<ITwitchClientStreams>(
         `${this.baseUrl}/streams/?${userIds.map(userId => `user_id=${userId}`).join('&')}`,
-        { headers: { Authorization: `Bearer ${this.accessToken}` } }
+        { headers: { Authorization: `Bearer ${this.accessToken}`, 'Client-ID': twitchClientId } }
       );
 
       return streamData;
@@ -166,7 +168,7 @@ class TwitchClient {
 
     try {
       const { data } = await axios.get<ITwitchFollowedChannels>(url.href, {
-        headers: { Authorization: `Bearer ${this.accessToken}` }
+        headers: { Authorization: `Bearer ${this.accessToken}`, 'Client-ID': twitchClientId }
       });
 
       return data;
