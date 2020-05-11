@@ -102,7 +102,6 @@ const StyledName = styled.div`
   overflow: hidden;
   width: 10px;
   white-space: nowrap;
-  overflow: hidden;
 `;
 
 export default Channel;
