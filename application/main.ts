@@ -19,7 +19,7 @@ import './ChannelCheck';
 import './Import';
 import './VersionCheck';
 import './Logs';
-import { addLogs } from './Logs';
+import { addLogs, crashLogPath } from './Logs';
 
 const isDev = process.env.NODE_ENV === 'dev';
 
@@ -238,7 +238,7 @@ process.on('unhandledRejection', err => {
 process.on('uncaughtException', err => {
   addLogs('uncaughtException', err);
 
-  fs.appendFileSync('./crash.log', `${err.stack}${os.EOL}`);
+  fs.appendFileSync(crashLogPath, `${err.stack}${os.EOL}`);
 
   throw err;
 });

@@ -5,10 +5,15 @@ import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 
 import { Channel } from './ChannelClass';
-import { preInstalledChannels } from './Globals';
 import { addLogs } from './Logs';
 
-const settingsPath = path.normalize(path.join(app.getPath('documents'), 'KolpaqueClient.json'));
+const oldSettingsPath = path.join(app.getPath('documents'), 'KolpaqueClient.json');
+const settingsPath = path.join(app.getPath('documents'), 'KolpaqueClientElectron.json');
+
+if (fs.existsSync(oldSettingsPath)) {
+  fs.renameSync(oldSettingsPath, settingsPath);
+}
+
 const channelSave = ['link', 'visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
 const filterChannel = (channelObj: Channel, filter: string): boolean => {
@@ -157,10 +162,6 @@ export class Config extends EventEmitter {
       });
     } catch (error) {
       addLogs(error);
-
-      _.forEach(preInstalledChannels, channelLink => {
-        this.addChannelLink(channelLink);
-      });
     }
   }
 

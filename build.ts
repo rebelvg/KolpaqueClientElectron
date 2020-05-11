@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 
 let platformOption = readlineSync.question(`select platform. all - for all platforms. (empty for current)${os.EOL}`);
-let pathOption = readlineSync.question(`select output folder.${os.EOL}`);
+let pathOption = readlineSync.question(`select output folder. (will default to home dir)${os.EOL}`);
 
 process.on('unhandledRejection', error => {
   throw error;
@@ -37,6 +37,10 @@ process.on('unhandledRejection', error => {
     platforms = ['win32', 'darwin', 'linux'];
   } else {
     platforms = [platformOption];
+  }
+
+  if (!pathOption) {
+    pathOption = os.homedir();
   }
 
   if (!fs.existsSync(pathOption)) {

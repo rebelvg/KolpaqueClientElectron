@@ -86,6 +86,4 @@ export const registeredServices = {
   }
 };
 
-export const preInstalledChannels = [];
-
 export const klpqServiceUrl = 'https://client-api.klpq.men';
