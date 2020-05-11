@@ -1,10 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Field } from 'react-final-form';
 import Toggle from 'react-toggle-button';
 import styled from 'styled-components';
 import Select from 'react-select';
 
-const { ipcRenderer } = window.require('electron');
+const { shell, ipcRenderer } = window.require('electron');
 
 const sortTypes = [
   { value: 'lastAdded', label: 'Last Added' },
@@ -126,7 +127,18 @@ const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting
 
     <FieldWrapper>
       <Label>
-        Youtube <a href="https://www.youtube.com/t/terms">Terms Of Use</a> Consent
+        Youtube{' '}
+        <Link
+          onClick={e => {
+            e.preventDefault();
+
+            shell.openExternal(`https://www.youtube.com/t/terms`);
+          }}
+          to="/"
+        >
+          Terms Of Use
+        </Link>{' '}
+        Consent
       </Label>
       <InputWrapper>
         <Field name="youtubeTosConsent" component={ToggleAdapter} toggle={changeSetting} />
