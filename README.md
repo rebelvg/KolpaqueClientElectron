@@ -13,7 +13,7 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
   - KLPQ Stream Service
   - Twitch (only after login via Twitch)
   - Youtube (only after you agree to [youtube's terms of use](https://www.youtube.com/t/terms), located in the settings menu)
-  - Anything Streamlink Supports (disabled for now)
+  - Anything Streamlink Supports (disabled at the moment due to high cpu usage)
 - Notifications
 - Auto-Import
   - Twitch
