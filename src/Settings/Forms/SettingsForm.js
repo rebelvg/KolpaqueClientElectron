@@ -155,6 +155,16 @@ const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting
     >
       Twitch Login
     </button>
+
+    <br />
+
+    <button
+      onClick={() => {
+        ipcRenderer.send('youtube_login');
+      }}
+    >
+      Youtube Login
+    </button>
   </Form>
 );
 

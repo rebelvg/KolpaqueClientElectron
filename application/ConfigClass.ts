@@ -112,7 +112,8 @@ export class Config extends EventEmitter {
     playInWindow: false,
     useStreamlinkForCustomChannels: false,
     twitchRefreshToken: '',
-    youtubeTosConsent: false
+    youtubeTosConsent: false,
+    youtubeRefreshToken: ''
   };
 
   constructor() {
