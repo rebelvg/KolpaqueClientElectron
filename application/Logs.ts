@@ -4,12 +4,9 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { app } from 'electron';
+import * as util from 'util';
 
-const clientAppDataPath = path.join(app.getPath('appData'), 'KolpaqueClientElectron');
-
-if (!fs.existsSync(clientAppDataPath)) {
-  fs.mkdirSync(clientAppDataPath);
-}
+const clientAppDataPath = app.getPath('userData');
 
 export const appLogPath = path.join(clientAppDataPath, 'app.log');
 export const crashLogPath = path.join(clientAppDataPath, 'crash.log');
@@ -24,11 +21,7 @@ export function addLogs(...log: any[]) {
   const logLine = log
     .filter(logItem => logItem !== undefined)
     .map(logItem => {
-      if (logItem instanceof Error) {
-        return logItem.stack;
-      }
-
-      return JSON.stringify(logItem);
+      return util.inspect(logItem, { depth: 2 });
     })
     .join(' ');
 
@@ -40,3 +33,7 @@ export function addLogs(...log: any[]) {
 
   logs = _.takeRight(logs, 20);
 }
+
+setInterval(() => {
+  addLogs(`memory usage`, _.forEach(process.memoryUsage()));
+}, 100000);

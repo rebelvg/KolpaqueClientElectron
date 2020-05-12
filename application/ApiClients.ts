@@ -178,8 +178,7 @@ class TwitchClient {
   }
 
   private handleError(error: AxiosError): void {
-    addLogs(error?.response?.status, error?.response?.data);
-    addLogs(new Error(error.message));
+    addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
 
     if (error?.response?.status === 401) {
       this.accessToken = null;
@@ -202,8 +201,7 @@ class KlpqStreamClient {
 
       return data;
     } catch (error) {
-      addLogs(error?.response?.status, error?.response?.data);
-      addLogs(new Error(error.message));
+      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
 
       return;
     }
@@ -268,8 +266,7 @@ class ChaturbateClient {
 
       return data;
     } catch (error) {
-      addLogs(error?.response?.status, error?.response?.data);
-      addLogs(new Error(error.message));
+      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
 
       return;
     }
@@ -318,8 +315,7 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      addLogs(error?.response?.status, error?.response?.data);
-      addLogs(new Error(error.message));
+      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
 
       return;
     }
@@ -333,8 +329,7 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      addLogs(error?.response?.status, error?.response?.data);
-      addLogs(new Error(error.message));
+      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
 
       return;
     }
@@ -385,8 +380,7 @@ class KlpqServiceClient {
   }
 
   private handleError(error: AxiosError): void {
-    addLogs(error?.response?.status, error?.response?.data);
-    addLogs(new Error(error.message));
+    addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
 
     this.jwtToken = null;
   }
@@ -401,8 +395,7 @@ class CommonClient {
 
       return data;
     } catch (error) {
-      addLogs(error?.response?.status, error?.response?.data);
-      addLogs(new Error(error.message));
+      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
 
       return;
     }
@@ -428,8 +421,7 @@ class GithubClient {
 
       return data;
     } catch (error) {
-      addLogs(error?.response?.status, error?.response?.data);
-      addLogs(new Error(error.message));
+      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
 
       return;
     }
