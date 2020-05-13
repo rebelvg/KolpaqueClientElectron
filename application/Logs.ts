@@ -36,4 +36,4 @@ export function addLogs(...log: any[]) {
 
 setInterval(() => {
   addLogs(`memory usage`, _.forEach(process.memoryUsage()));
-}, 100000);
+}, 100 * 1000);
