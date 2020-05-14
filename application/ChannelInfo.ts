@@ -6,18 +6,21 @@ import { twitchClient, commonClient, TWITCH_CHUNK_LIMIT } from './ApiClients';
 import { config } from './SettingsFile';
 import { ipcMain } from 'electron';
 
-const SERVICES = {
-  twitch: getTwitchInfoAsync
-};
+interface IServiceInfo {
+  name: string;
+  function: (channels: Channel[]) => {};
+}
+
+const SERVICES: IServiceInfo[] = [{ name: 'twitch', function: getTwitchInfoAsync }];
 
 ipcMain.once('client_ready', checkLoop);
 
 config.on('channel_added', async channel => {
-  await checkChannels([channel], null);
+  await checkChannels([channel]);
 });
 
 config.on('channel_added_channels', async (channels: Channel[]) => {
-  await checkChannels(channels, null);
+  await checkChannels(channels);
 });
 
 async function getTwitchInfoAsync(channelObjs: Channel[]) {
@@ -60,30 +63,22 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
   );
 }
 
-export async function getInfoAsync(channelObj: Channel) {
-  try {
-    if (SERVICES.hasOwnProperty(channelObj.service)) {
-      await SERVICES[channelObj.service]([channelObj]);
-    }
-  } catch (error) {
-    addLogs(error);
-  }
-}
+async function checkChannels(channelObjs: Channel[]) {
+  await Promise.all(
+    SERVICES.map(async service => {
+      const channels = _.filter(channelObjs, { service: service.name });
 
-async function checkChannels(channelObjs: Channel[], service: string) {
-  if (SERVICES.hasOwnProperty(service)) {
-    try {
-      await SERVICES[service](_.filter(channelObjs, { service }));
-    } catch (error) {
-      addLogs(error);
-    }
-  }
+      await service.function(channels);
+    })
+  );
 }
 
 async function checkLoop() {
   await Promise.all(
-    _.map(SERVICES, async (checkFnc, service) => {
-      await checkChannels(config.channels, service);
+    _.map(SERVICES, async service => {
+      const channels = _.filter(config.channels, { service: service.name });
+
+      await service.function(channels);
     })
   );
 }

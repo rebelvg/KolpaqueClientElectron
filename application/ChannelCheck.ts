@@ -1,5 +1,6 @@
 import { ipcMain, dialog } from 'electron';
 import * as _ from 'lodash';
+import * as childProcess from 'child_process';
 
 import { config } from './SettingsFile';
 import { printNotification } from './Notifications';
@@ -7,47 +8,60 @@ import { Channel } from './ChannelClass';
 import { addLogs } from './Logs';
 import { twitchClient, klpqStreamClient, youtubeClient, chaturbateClient, TWITCH_CHUNK_LIMIT } from './ApiClients';
 
-const SERVICES_INTERVALS = {
-  'klpq-vps': {
+interface IServiceInterval {
+  name: string;
+  check: number;
+  confirmations: number;
+  function: (channels: Channel[], printBalloon: boolean) => {};
+}
+
+const SERVICES_INTERVALS: IServiceInterval[] = [
+  {
+    name: 'klpq-vps',
     check: 5,
     confirmations: 0,
     function: getKlpqVpsStats
   },
-  twitch: {
+  {
+    name: 'twitch',
     check: 30,
     confirmations: 3,
     function: getTwitchStats
   },
-  'youtube-user': {
+  {
+    name: 'youtube-user',
     check: 120,
     confirmations: 3,
     function: getYoutubeStatsUser
   },
-  'youtube-channel': {
+  {
+    name: 'youtube-channel',
     check: 120,
     confirmations: 3,
     function: getYoutubeStatsChannel
   },
-  chaturbate: {
+  {
+    name: 'chaturbate',
     check: 120,
     confirmations: 3,
     function: getChaturbateStats
   },
-  custom: {
+  {
+    name: 'custom',
     check: 120,
     confirmations: 3,
-    function: () => {}
+    function: getCustomStats
   }
-};
+];
 
 ipcMain.once('client_ready', checkLoop);
 
 config.on('channel_added', async channel => {
-  await checkChannels([channel], null, false);
+  await checkChannels([channel], false);
 });
 
 config.on('channel_added_channels', async (channels: Channel[]) => {
-  await checkChannels(channels, null, false);
+  await checkChannels(channels, false);
 });
 
 async function isOnline(channelObj: Channel, printBalloon: boolean) {
@@ -251,34 +265,78 @@ async function getChaturbateStats(channelObjs: Channel[], printBalloon: boolean)
   );
 }
 
-async function checkChannels(channelObjs: Channel[], service: string, printBalloon = false) {
-  if (!service) {
-    _.forEach(SERVICES_INTERVALS, async (service, serviceName) => {
-      try {
-        await service.function(_.filter(channelObjs, { service: serviceName }), printBalloon);
-      } catch (error) {
-        addLogs(error);
-      }
-    });
+async function getCustomStats(channels: Channel[], printBalloon: boolean) {
+  const { useStreamlinkForCustomChannels } = config.settings;
 
+  if (!useStreamlinkForCustomChannels) {
     return;
   }
 
-  if (SERVICES_INTERVALS.hasOwnProperty(service)) {
-    try {
-      await SERVICES_INTERVALS[service].function(_.filter(channelObjs, { service }), printBalloon);
-    } catch (error) {
-      addLogs(error);
-    }
+  const chunkedChannels = _.chunk(channels, 1);
+
+  for (const channelObjs of chunkedChannels) {
+    await Promise.all(
+      channelObjs.map(async channelObj => {
+        return new Promise(resolve => {
+          childProcess.execFile('streamlink', [channelObj.link, 'best', '--twitch-disable-hosting', '--json'], function(
+            err,
+            stdout,
+            stderr
+          ) {
+            try {
+              const res = JSON.parse(stdout);
+
+              if (!res.error) {
+                isOnline(channelObj, printBalloon);
+              } else {
+                isOffline(channelObj);
+              }
+            } catch (error) {
+              addLogs(error);
+            }
+
+            resolve();
+          });
+        });
+      })
+    );
   }
 }
 
-function checkLoop() {
-  checkChannels(config.channels, null, false);
+async function checkChannels(channelObjs: Channel[], printBalloon: boolean) {
+  await Promise.all(
+    SERVICES_INTERVALS.map(async service => {
+      const channels = _.filter(channelObjs, { service: service.name });
 
-  _.forEach(SERVICES_INTERVALS, (service, serviceName) => {
-    setInterval(() => {
-      checkChannels(config.channels, serviceName, true);
-    }, service.check * 1000);
-  });
+      await service.function(channels, printBalloon);
+    })
+  );
+}
+
+async function checkService(service: IServiceInterval, printBalloon: boolean) {
+  try {
+    const channels = _.filter(config.channels, { service: service.name });
+
+    await service.function(channels, printBalloon);
+  } catch (error) {
+    addLogs(error);
+  }
+}
+
+async function checkServiceLoop(service: IServiceInterval, printBalloon: boolean) {
+  while (true) {
+    await checkService(service, printBalloon);
+
+    await sleep(service.check * 1000);
+  }
+}
+
+export async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function checkLoop() {
+  await Promise.all(_.map(SERVICES_INTERVALS, service => checkService(service, false)));
+
+  _.forEach(SERVICES_INTERVALS, service => checkServiceLoop(service, true));
 }

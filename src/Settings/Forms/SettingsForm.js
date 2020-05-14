@@ -145,6 +145,13 @@ const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting
       </InputWrapper>
     </FieldWrapper>
 
+    <FieldWrapper>
+      <Label>Use Streamlink To Check Custom Channels</Label>
+      <InputWrapper>
+        <Field name="useStreamlinkForCustomChannels" component={ToggleAdapter} toggle={changeSetting} />
+      </InputWrapper>
+    </FieldWrapper>
+
     <br />
     <br />
 

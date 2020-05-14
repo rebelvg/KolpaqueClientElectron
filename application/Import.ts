@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { config } from './SettingsFile';
 import { Channel } from './ChannelClass';
 import { twitchClient, ITwitchFollowedChannel, TWITCH_CHUNK_LIMIT } from './ApiClients';
+import { sleep } from './ChannelCheck';
 
 ipcMain.on('config_twitchImport', async (event, channelName) => {
   return twitchImport(channelName);
@@ -43,7 +44,7 @@ async function twitchImportChannels(
   };
 }
 
-async function twitchImportBase(channelName: string): Promise<number> {
+async function twitchImportBase(channelName: string, emitEvent: boolean): Promise<number> {
   if (!channelName) {
     return 0;
   }
@@ -93,13 +94,15 @@ async function twitchImportBase(channelName: string): Promise<number> {
 
   channelsAdded.forEach(channelObj => channelsAddedAll.push(channelObj));
 
-  config.emit('channel_added_channels', channelsAddedAll);
+  if (emitEvent) {
+    config.emit('channel_added_channels', channelsAddedAll);
+  }
 
   return channelsAddedAll.length;
 }
 
 async function twitchImport(channelName: string) {
-  let res = await twitchImportBase(channelName);
+  let res = await twitchImportBase(channelName, true);
 
   if (res !== null) {
     dialog.showMessageBox({
@@ -118,14 +121,22 @@ async function twitchImport(channelName: string) {
   }
 }
 
-function autoTwitchImport() {
-  _.forEach(config.settings.twitchImport, async channelName => {
-    await twitchImportBase(channelName);
-  });
+async function autoTwitchImport(emitEvent: boolean) {
+  await Promise.all(
+    _.map(config.settings.twitchImport, async channelName => {
+      await twitchImportBase(channelName, emitEvent);
+    })
+  );
 }
 
-function importLoop() {
-  autoTwitchImport();
+async function importLoop() {
+  let emitEvent = false;
 
-  setInterval(autoTwitchImport, 10 * 60 * 1000);
+  while (true) {
+    await autoTwitchImport(emitEvent);
+
+    await sleep(10 * 60 * 1000);
+
+    emitEvent = true;
+  }
 }

@@ -151,7 +151,7 @@ export class Config extends EventEmitter {
       let parseJson = JSON.parse(file);
 
       _.forEach(parseJson.channels, channelObj => {
-        let channel = this.addChannelLink(channelObj.link);
+        let channel = this.addChannelLink(channelObj.link, false);
 
         if (channel !== false) channel.update(channelObj);
       });
