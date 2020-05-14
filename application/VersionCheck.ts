@@ -4,92 +4,113 @@ import * as _ from 'lodash';
 import { printNotification } from './Notifications';
 import { addLogs } from './Logs';
 import { githubClient } from './ApiClients';
+import { sleep } from './ChannelCheck';
 
 const { version } = require('../package.json');
 
-const updates = {
-  client: {
-    releaseLink: 'https://github.com/rebelvg/KolpaqueClientElectron/releases',
-    interval: null
+const SERVICES = [
+  {
+    name: 'client',
+    link: 'https://github.com/rebelvg/KolpaqueClientElectron/releases'
   },
-  streamlink: {
-    releaseLink: 'https://github.com/streamlink/streamlink/releases',
-    interval: null
+  {
+    name: 'streamlink',
+    link: 'https://github.com/streamlink/streamlink/releases'
   }
-};
+];
 
-const infoArray = [];
+const UPDATES: string[] = [];
 
-ipcMain.on('client_getInfo', (event, info) => {
-  _.forEach(infoArray, value => {
-    if (updates.hasOwnProperty(value)) {
-      shell.openExternal(updates[value].releaseLink);
-    }
-  });
+ipcMain.on('client_getInfo', async (event, info) => {
+  await Promise.all(
+    SERVICES.map(service => {
+      if (UPDATES.includes(service.name)) {
+        shell.openExternal(service.link);
+      }
+    })
+  );
 });
 
 ipcMain.on('client_getVersion', event => (event.returnValue = version));
 
 ipcMain.once('client_ready', checkLoop);
 
-function sendInfo(update) {
-  infoArray.push(update);
+function sendInfo(update: string) {
+  UPDATES.push(update);
 
-  printNotification(`${_.capitalize(update)} Update Available`, updates[update].releaseLink);
+  const service = _.find(SERVICES, { name: update });
 
-  app['mainWindow'].webContents.send('client_showInfo', infoArray.map(_.capitalize).join(' & ') + ' Update Available');
-}
-
-async function clientVersionCheck() {
-  if (infoArray.includes('client')) {
-    return clearInterval(updates['client'].interval);
+  if (!service) {
+    return;
   }
 
+  printNotification(`${_.capitalize(update)} Update Available`, service.link);
+
+  app['mainWindow'].webContents.send('client_showInfo', UPDATES.map(_.capitalize).join(' & ') + ' Update Available');
+}
+
+async function clientVersionCheck(): Promise<boolean> {
   const versionData = await githubClient.getLatestVersion();
 
   if (!versionData) {
-    return;
+    return false;
   }
 
   const newVersion = versionData.tag_name;
 
   if (newVersion !== version) {
-    sendInfo('client');
-
-    return;
+    return true;
   }
 }
 
-function streamlinkVersionCheck() {
-  if (infoArray.includes('streamlink')) {
-    return clearInterval(updates['streamlink'].interval);
-  }
+async function streamlinkVersionCheck() {
+  return new Promise(resolve => {
+    execFile('streamlink', ['--version-check'], function(err: any, data, stderr) {
+      if (err) {
+        addLogs(err);
 
-  execFile('streamlink', ['--version-check'], function(err: any, data, stderr) {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        sendInfo('streamlink');
+        if (err.code === 'ENOENT') {
+          return resolve(true);
+        }
+
+        return resolve(false);
       }
 
-      addLogs(err);
+      const regExp = new RegExp(/A new version of Streamlink \((.*)\) is available!/gi);
 
-      return;
-    }
-
-    const regExp = new RegExp(/A new version of Streamlink \((.*)\) is available!/gi);
-
-    if (regExp.test(data)) {
-      sendInfo('streamlink');
-
-      return;
-    }
+      if (regExp.test(data)) {
+        return resolve(true);
+      }
+    });
   });
 }
 
-function checkLoop() {
-  clientVersionCheck();
-  streamlinkVersionCheck();
+async function checkLoop() {
+  (async () => {
+    while (true) {
+      const hasUpdate = await clientVersionCheck();
 
-  updates['client'].interval = setInterval(clientVersionCheck, 30 * 60 * 1000);
-  updates['streamlink'].interval = setInterval(streamlinkVersionCheck, 30 * 60 * 1000);
+      if (hasUpdate) {
+        sendInfo('client');
+
+        break;
+      }
+
+      await sleep(30 * 60 * 1000);
+    }
+  })();
+
+  (async () => {
+    while (true) {
+      const hasUpdate = await streamlinkVersionCheck();
+
+      if (hasUpdate) {
+        sendInfo('streamlink');
+
+        break;
+      }
+
+      await sleep(30 * 60 * 1000);
+    }
+  })();
 }
