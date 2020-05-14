@@ -82,6 +82,8 @@ class TwitchClient {
     this.accessToken = user.accessToken;
     this.setRefreshToken(user.refreshToken);
 
+    addLogs('twitch_new_access_token');
+
     return true;
   }
 
@@ -185,6 +187,8 @@ class TwitchClient {
     addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
 
     if (error?.response?.status === 401) {
+      addLogs('twitch_access_token_fail');
+
       this.accessToken = null;
     }
   }
@@ -258,6 +262,8 @@ class YoutubeClient {
     this.accessToken = user.accessToken;
     this.setRefreshToken(user.refreshToken);
 
+    addLogs('youtube_new_access_token');
+
     return true;
   }
 
@@ -325,6 +331,8 @@ class YoutubeClient {
     addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
 
     if (error?.response?.status === 401) {
+      addLogs('youtube_access_token_fail');
+
       this.accessToken = null;
     }
   }

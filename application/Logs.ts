@@ -21,7 +21,7 @@ export function addLogs(...log: any[]) {
   const logLine = log
     .filter(logItem => logItem !== undefined)
     .map(logItem => {
-      return util.inspect(logItem, { depth: 2 });
+      return util.inspect(logItem, { depth: 3 });
     })
     .join(' ');
 
