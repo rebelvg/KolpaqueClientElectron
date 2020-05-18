@@ -272,6 +272,8 @@ class YoutubeClient {
       return;
     }
 
+    return klpqServiceClient.getYoutubeChannels(channelName);
+
     await this.refreshAccessToken();
 
     if (!this.accessToken) {
@@ -300,6 +302,8 @@ class YoutubeClient {
     if (!config.settings.youtubeTosConsent) {
       return;
     }
+
+    return klpqServiceClient.getYoutubeStreams(channelId);
 
     await this.refreshAccessToken();
 
@@ -453,6 +457,56 @@ class KlpqServiceClient {
 
       return;
     }
+  }
+
+  public async getYoutubeChannels(channelName: string): Promise<IYoutubeChannels> {
+    await this.refreshJwtToken();
+
+    if (!this.jwtToken) {
+      return;
+    }
+
+    const url = `${this.baseUrl}/youtube/channels?channelName=${channelName}`;
+
+    try {
+      const { data } = await axios.get<IYoutubeChannels>(url, {
+        headers: { jwt: this.jwtToken }
+      });
+
+      return data;
+    } catch (error) {
+      this.handleError(error);
+
+      return;
+    }
+  }
+
+  public async getYoutubeStreams(channelId: string): Promise<IYoutubeStreams> {
+    await this.refreshJwtToken();
+
+    if (!this.jwtToken) {
+      return;
+    }
+
+    const url = `${this.baseUrl}/youtube/streams?channelId=${channelId}`;
+
+    try {
+      const { data } = await axios.get<IYoutubeStreams>(url, {
+        headers: { jwt: this.jwtToken }
+      });
+
+      return data;
+    } catch (error) {
+      this.handleError(error);
+
+      return;
+    }
+  }
+
+  private handleError(error: AxiosError): void {
+    addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
+
+    this.jwtToken = null;
   }
 }
 
