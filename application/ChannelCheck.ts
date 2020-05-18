@@ -139,9 +139,7 @@ async function getKlpqVpsStats(channelObjs: Channel[], printBalloon: boolean) {
 }
 
 async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
-  if (channelObjs.length === 0) {
-    return;
-  }
+  await twitchClient.refreshAccessToken();
 
   const chunkedChannels = _.chunk(channelObjs, TWITCH_CHUNK_LIMIT);
 
@@ -210,6 +208,8 @@ async function getYoutubeStatsBase(channelId: string) {
 }
 
 async function getYoutubeStatsUser(channelObjs: Channel[], printBalloon: boolean) {
+  await youtubeClient.refreshAccessToken();
+
   await Promise.all(
     channelObjs.map(async channelObj => {
       const data = await youtubeClient.getChannels(channelObj.name);
@@ -234,6 +234,8 @@ async function getYoutubeStatsUser(channelObjs: Channel[], printBalloon: boolean
 }
 
 async function getYoutubeStatsChannel(channelObjs: Channel[], printBalloon: boolean) {
+  await youtubeClient.refreshAccessToken();
+
   await Promise.all(
     channelObjs.map(async channelObj => {
       const channelStatus = await getYoutubeStatsBase(channelObj.name);

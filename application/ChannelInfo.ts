@@ -24,6 +24,8 @@ config.on('channel_added_channels', async (channels: Channel[]) => {
 });
 
 async function getTwitchInfoAsync(channelObjs: Channel[]) {
+  await twitchClient.refreshAccessToken();
+
   const filteredChannels = _.filter(channelObjs, channelObj => !channelObj._icon);
 
   if (filteredChannels.length === 0) {

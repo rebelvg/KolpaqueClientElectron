@@ -45,6 +45,8 @@ async function twitchImportChannels(
 }
 
 async function twitchImportBase(channelName: string, emitEvent: boolean): Promise<number> {
+  await twitchClient.refreshAccessToken();
+
   if (!channelName) {
     return 0;
   }
