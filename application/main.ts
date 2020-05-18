@@ -28,7 +28,7 @@ addLogs('isDev', isDev);
 let forceQuit = false;
 
 ipcMain.once('client_ready', () => {
-  addLogs('client ready.');
+  addLogs('client_ready');
 });
 
 let iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
