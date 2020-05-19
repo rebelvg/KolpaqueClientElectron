@@ -208,7 +208,7 @@ async function getYoutubeStatsBase(channelId: string) {
 }
 
 async function getYoutubeStatsUser(channelObjs: Channel[], printBalloon: boolean) {
-  await youtubeClient.refreshAccessToken();
+  // await youtubeClient.refreshAccessToken();
 
   await Promise.all(
     channelObjs.map(async channelObj => {
@@ -234,7 +234,7 @@ async function getYoutubeStatsUser(channelObjs: Channel[], printBalloon: boolean
 }
 
 async function getYoutubeStatsChannel(channelObjs: Channel[], printBalloon: boolean) {
-  await youtubeClient.refreshAccessToken();
+  // await youtubeClient.refreshAccessToken();
 
   await Promise.all(
     channelObjs.map(async channelObj => {
