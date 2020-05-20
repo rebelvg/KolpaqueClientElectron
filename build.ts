@@ -3,6 +3,7 @@ import * as readlineSync from 'readline-sync';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import * as archiver from 'archiver';
 
 let platformOption = readlineSync.question(
   `select platform. all - for all platforms or win32, darwin, linux. (empty will default to current platform)${os.EOL}`
@@ -19,7 +20,7 @@ process.on('unhandledRejection', error => {
     tmpdir: false,
     icon: './icons/icon',
     arch: 'x64',
-    ignore: ['.git', '.vscode', '.idea', 'node_modules/application', 'node_modules/src'],
+    ignore: [/.git/, /.vscode/, /.idea/, /node_modules\/application/, /node_modules\/src/],
     overwrite: true,
     win32metadata: {
       ProductName: 'KolpaqueClientElectron',
@@ -28,7 +29,6 @@ process.on('unhandledRejection', error => {
       OriginalFilename: 'KolpaqueClientElectron.exe'
     },
     asar: true,
-    packageManager: 'yarn',
     prune: true,
     out: null
   };
@@ -51,15 +51,32 @@ process.on('unhandledRejection', error => {
 
   pathOption = path.join(pathOption, 'KolpaqueClientElectron');
 
-  options.out = pathOption;
-
   console.log(options);
 
   for (const platform of platforms) {
     const appPaths = await packager({
       ...options,
-      platform
+      platform,
+      out: pathOption
     });
+
+    for (const appPath of appPaths) {
+      const folderName = path.basename(appPath);
+
+      const archivePath = path.join(pathOption, `${folderName}.zip`);
+
+      const archiveStream = fs.createWriteStream(archivePath);
+
+      await new Promise(resolve => {
+        const archive = archiver('zip');
+
+        archive.directory(appPath, false);
+        archive.finalize();
+
+        archive.on('close', resolve);
+        archive.pipe(archiveStream);
+      });
+    }
 
     console.log(appPaths);
   }

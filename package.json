@@ -25,6 +25,7 @@
     "@types/lodash": "^4.14.120",
     "@types/socket.io-client": "^1.4.32",
     "@types/uuid": "^7.0.3",
+    "archiver": "^4.0.1",
     "cross-env": "^5.0.5",
     "electron": "8.2.3",
     "electron-devtools-installer": "^2.2.3",
