@@ -61,19 +61,17 @@ process.on('unhandledRejection', error => {
     });
 
     for (const appPath of appPaths) {
-      const folderName = path.basename(appPath);
-
-      const archivePath = path.join(pathOption, `${folderName}.zip`);
-
-      const archiveStream = fs.createWriteStream(archivePath);
-
       await new Promise(resolve => {
+        const folderName = path.basename(appPath);
+        const archivePath = path.join(pathOption, `${folderName}.zip`);
+
+        const archiveStream = fs.createWriteStream(archivePath);
         const archive = archiver('zip');
 
-        archive.directory(appPath, false);
+        archive.directory(appPath, folderName);
         archive.finalize();
 
-        archive.on('close', resolve);
+        archiveStream.on('close', resolve);
         archive.pipe(archiveStream);
       });
     }
