@@ -13,8 +13,6 @@ interface IServiceInfo {
 
 const SERVICES: IServiceInfo[] = [{ name: 'twitch', function: getTwitchInfoAsync }];
 
-ipcMain.once('client_ready', checkLoop);
-
 config.on('channel_added', async channel => {
   await checkChannels([channel]);
 });
@@ -75,7 +73,7 @@ async function checkChannels(channelObjs: Channel[]) {
   );
 }
 
-async function checkLoop() {
+export async function checkLoop() {
   await Promise.all(
     _.map(SERVICES, async service => {
       const channels = _.filter(config.channels, { service: service.name });

@@ -10,8 +10,6 @@ ipcMain.on('config_twitchImport', async (event, channelName) => {
   return twitchImport(channelName);
 });
 
-ipcMain.once('client_ready', importLoop);
-
 async function twitchImportChannels(
   channels: ITwitchFollowedChannel[]
 ): Promise<{
@@ -131,14 +129,14 @@ async function autoTwitchImport(emitEvent: boolean) {
   );
 }
 
-async function importLoop() {
-  let emitEvent = false;
+export async function importLoop() {
+  await autoTwitchImport(false);
 
-  while (true) {
-    await autoTwitchImport(emitEvent);
+  (async () => {
+    while (true) {
+      await autoTwitchImport(true);
 
-    await sleep(10 * 60 * 1000);
-
-    emitEvent = true;
-  }
+      await sleep(10 * 60 * 1000);
+    }
+  })();
 }

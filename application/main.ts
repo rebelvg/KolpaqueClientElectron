@@ -20,6 +20,7 @@ import './Import';
 import './VersionCheck';
 import './Logs';
 import { addLogs, crashLogPath } from './Logs';
+import { init } from './ClientInit';
 
 const isDev = process.env.NODE_ENV === 'dev';
 
@@ -27,8 +28,12 @@ addLogs('isDev', isDev);
 
 let forceQuit = false;
 
-ipcMain.once('client_ready', () => {
+ipcMain.once('client_ready', async () => {
   addLogs('client_ready');
+
+  await init();
+
+  addLogs('init_done');
 });
 
 let iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));

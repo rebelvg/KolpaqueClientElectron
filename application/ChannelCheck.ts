@@ -54,8 +54,6 @@ const SERVICES_INTERVALS: IServiceInterval[] = [
   }
 ];
 
-ipcMain.once('client_ready', checkLoop);
-
 config.on('channel_added', async channel => {
   await checkChannels([channel], false);
 });
@@ -337,7 +335,7 @@ export async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function checkLoop() {
+export async function checkLoop() {
   await Promise.all(_.map(SERVICES_INTERVALS, service => checkService(service, false)));
 
   _.forEach(SERVICES_INTERVALS, service => checkServiceLoop(service, true));

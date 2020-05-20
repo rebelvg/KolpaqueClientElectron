@@ -33,8 +33,6 @@ ipcMain.on('client_getInfo', async (event, info) => {
 
 ipcMain.on('client_getVersion', event => (event.returnValue = version));
 
-ipcMain.once('client_ready', checkLoop);
-
 function sendInfo(update: string) {
   UPDATES.push(update);
 
@@ -85,7 +83,7 @@ async function streamlinkVersionCheck() {
   });
 }
 
-async function checkLoop() {
+export async function checkLoop() {
   (async () => {
     while (true) {
       const hasUpdate = await clientVersionCheck();
