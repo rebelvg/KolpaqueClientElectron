@@ -4,6 +4,7 @@ import * as uuid from 'uuid';
 import { addLogs } from './Logs';
 import { twitchClient, klpqServiceClient, youtubeClient } from './ApiClients';
 import { klpqServiceUrl } from './Globals';
+import { printNotification } from './Notifications';
 
 export interface ITwitchUser {
   accessToken: string;
@@ -19,6 +20,8 @@ io.on('twitch_user', (user: ITwitchUser) => {
 
   twitchClient.setAccessToken(user.accessToken);
   twitchClient.setRefreshToken(user.refreshToken);
+
+  printNotification('Twitch', 'Login Successful');
 });
 
 io.on('youtube_user', (user: ITwitchUser) => {
@@ -26,12 +29,16 @@ io.on('youtube_user', (user: ITwitchUser) => {
 
   youtubeClient.setAccessToken(user.accessToken);
   youtubeClient.setRefreshToken(user.refreshToken);
+
+  printNotification('Youtube', 'Login Successful');
 });
 
 io.on('klpq_user', (signedJwt: string) => {
   addLogs('socket_got_klpq_user', signedJwt);
 
   klpqServiceClient.setUser(signedJwt);
+
+  printNotification('KLPQ Service', 'Login Successful');
 });
 
 io.on('connect', () => {
