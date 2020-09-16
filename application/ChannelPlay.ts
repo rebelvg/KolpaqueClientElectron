@@ -146,7 +146,7 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
 
   const childProcess = execFile(
     'streamlink',
-    [playLink, 'best', '--twitch-disable-hosting'].concat(params),
+    [playLink, 'best', '--twitch-disable-hosting', '--twitch-disable-ads'].concat(params),
     (err, data, stderr) => {
       addLogs(err, data, 'streamlink exited.');
 
