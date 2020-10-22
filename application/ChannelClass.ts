@@ -3,29 +3,30 @@ import { createHash } from 'crypto';
 import { URL } from 'url';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
+import { ChildProcess } from 'child_process';
 
-import { allowedProtocols, registeredServices, ProtocolsEnum } from './Globals';
+import { allowedProtocols, registeredServices, ProtocolsEnum, IStreamService } from './Globals';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
 export class Channel extends EventEmitter {
-  public id = null;
+  public id: string = null;
   public service = 'custom';
-  public serviceObj = null;
-  public name = null;
-  public link = null;
+  public serviceObj: IStreamService = null;
+  public name: string = null;
+  public link: string = null;
   public protocol: ProtocolsEnum = null;
   public isLive = false;
   public onAutoRestart = false;
   public lastUpdated = 0;
-  public _processes = [];
+  public _processes: ChildProcess[] = [];
   public _icon: Buffer = null;
   public _autoRestartAttempts = 0;
   public _startTime = 0;
   public _offlineConfirmations = 0;
   public _windows = [];
-  public _customPlayUrl = null;
-  public visibleName = null;
+  public _customPlayUrl: string = null;
+  public visibleName: string = null;
   public isPinned = false;
   public autoStart = false;
   public autoRestart = false;

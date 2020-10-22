@@ -122,7 +122,7 @@ function launchPlayerObj(channelObj: Channel, altQuality = false, autoRestart = 
   let params = [];
 
   if (LQ) {
-    const onLQ = channelObj.serviceObj?.onLQ();
+    const onLQ = channelObj.serviceObj.onLQ(playLink, params);
 
     playLink = onLQ.playLink;
     params = onLQ.params;

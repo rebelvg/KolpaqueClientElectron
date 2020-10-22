@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { Channel } from './ChannelClass';
 
 export enum ProtocolsEnum {
   RTMP = 'rtmp:',
@@ -7,15 +8,28 @@ export enum ProtocolsEnum {
   HTTPS = 'https:'
 }
 
+export interface IStreamService {
+  protocols: ProtocolsEnum[];
+  hosts: string[];
+  paths: string[];
+  name: number;
+  embed: (channelObj: Channel) => string;
+  chat: (channelObj: Channel) => string;
+  icon: Buffer;
+  onLQ: (playLink: string, params: string[]) => { playLink: string; params: string[] };
+}
+
 export const allowedProtocols = [...Object.values(ProtocolsEnum)];
 
-export const registeredServices = {
+export const registeredServices: {
+  [serviceName: string]: IStreamService;
+} = {
   'klpq-vps': {
     protocols: [ProtocolsEnum.RTMP],
     hosts: ['vps.klpq.men', 'stream.klpq.men'],
     paths: ['/live/'],
     name: 2,
-    embed: channelObj => {
+    embed: (channelObj: Channel) => {
       return `http://stream.klpq.men/${channelObj.name}`;
     },
     chat: channelObj => {
@@ -42,6 +56,10 @@ export const registeredServices = {
     },
     icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'twitch.png')), {
       encoding: null
+    }),
+    onLQ: (playLink, params) => ({
+      playLink,
+      params
     })
   },
   'youtube-user': {
@@ -53,6 +71,10 @@ export const registeredServices = {
     chat: null,
     icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'youtube.png')), {
       encoding: null
+    }),
+    onLQ: (playLink, params) => ({
+      playLink,
+      params
     })
   },
   'youtube-channel': {
@@ -64,6 +86,10 @@ export const registeredServices = {
     chat: null,
     icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'youtube.png')), {
       encoding: null
+    }),
+    onLQ: (playLink, params) => ({
+      playLink,
+      params
     })
   },
   chaturbate: {
@@ -73,7 +99,11 @@ export const registeredServices = {
     name: 1,
     embed: null,
     chat: null,
-    icon: null
+    icon: null,
+    onLQ: (playLink, params) => ({
+      playLink,
+      params
+    })
   },
   custom: {
     protocols: [],
@@ -82,7 +112,11 @@ export const registeredServices = {
     name: 0,
     embed: null,
     chat: null,
-    icon: null
+    icon: null,
+    onLQ: (playLink, params) => ({
+      playLink,
+      params
+    })
   }
 };
 
