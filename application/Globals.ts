@@ -40,7 +40,7 @@ export const registeredServices: {
     }),
     onLQ: (playLink: string, params: string[]) => {
       return {
-        playLink: playLink.replace('/live/', '/restream/'),
+        playLink: playLink.replace('/live/', '/encode/'),
         params
       };
     }
