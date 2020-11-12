@@ -1,7 +1,7 @@
 import { app, Menu, nativeImage, MenuItem } from 'electron';
 import * as _ from 'lodash';
 
-import { config } from './SettingsFile';
+import { config } from './settings-file';
 import { registeredServices } from './Globals';
 import { contextMenuTemplate } from './main';
 

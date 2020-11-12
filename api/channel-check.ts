@@ -2,9 +2,9 @@ import { ipcMain, dialog } from 'electron';
 import * as _ from 'lodash';
 import * as childProcess from 'child_process';
 
-import { config } from './SettingsFile';
+import { config } from './settings-file';
 import { printNotification } from './Notifications';
-import { Channel } from './ChannelClass';
+import { Channel } from './channel-class';
 import { addLogs } from './Logs';
 import {
   twitchClient,
@@ -12,7 +12,7 @@ import {
   youtubeClient,
   chaturbateClient,
   TWITCH_CHUNK_LIMIT,
-} from './ApiClients';
+} from './api-clients';
 
 interface IServiceInterval {
   name: string;

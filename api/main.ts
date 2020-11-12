@@ -19,9 +19,9 @@ import * as os from 'os';
 
 fixPath();
 
-import { config } from './SettingsFile';
-import { launchPlayerLink } from './ChannelPlay';
-import { rebuildIconMenu } from './TrayIcon';
+import { config } from './settings-file';
+import { launchPlayerLink } from './channel-play';
+import { rebuildIconMenu } from './tray-icon';
 import './SocketClient';
 import './ChannelInfo';
 
@@ -30,7 +30,7 @@ import './Import';
 import './VersionCheck';
 import './Logs';
 import { addLogs, crashLogPath } from './Logs';
-import { init } from './ClientInit';
+import { init } from './client-init';
 
 const isDev = process.env.NODE_ENV === 'dev';
 

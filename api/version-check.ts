@@ -3,8 +3,8 @@ import { execFile } from 'child_process';
 import * as _ from 'lodash';
 import { printNotification } from './Notifications';
 import { addLogs } from './Logs';
-import { githubClient } from './ApiClients';
-import { sleep } from './ChannelCheck';
+import { githubClient } from './api-clients';
+import { sleep } from './channel-check';
 
 const { version } = require('../package.json');
 

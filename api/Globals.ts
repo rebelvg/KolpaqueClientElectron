@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Channel } from './ChannelClass';
+import { Channel } from './channel-class';
 
 export enum ProtocolsEnum {
   RTMP = 'rtmp:',

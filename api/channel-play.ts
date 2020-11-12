@@ -2,10 +2,10 @@ import { app, ipcMain, dialog, shell, BrowserWindow } from 'electron';
 import { execFile } from 'child_process';
 import * as _ from 'lodash';
 
-import { config } from './SettingsFile';
-import { Config } from './ConfigClass';
+import { config } from './settings-file';
+import { Config } from './config-class';
 import { printNotification } from './Notifications';
-import { Channel } from './ChannelClass';
+import { Channel } from './channel-class';
 import { addLogs } from './Logs';
 import { ProtocolsEnum } from './Globals';
 

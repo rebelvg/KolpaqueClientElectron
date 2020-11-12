@@ -1,8 +1,8 @@
 import { app, BrowserWindow, ipcMain, shell, clipboard } from 'electron';
 import * as _ from 'lodash';
 
-import { Config } from './ConfigClass';
-import { Channel } from './ChannelClass';
+import { Config } from './config-class';
+import { Channel } from './channel-class';
 
 export const config = new Config();
 

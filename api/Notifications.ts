@@ -1,7 +1,7 @@
 import { app, shell, Notification, nativeImage, NativeImage } from 'electron';
 import * as _ from 'lodash';
 
-import { config } from './SettingsFile';
+import { config } from './settings-file';
 import { registeredServices } from './Globals';
 import { addLogs } from './Logs';
 import { iconPathBalloon } from './main';

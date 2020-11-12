@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 
-import { Channel } from './ChannelClass';
+import { Channel } from './channel-class';
 import { addLogs } from './Logs';
 
 const oldSettingsPath = path.join(

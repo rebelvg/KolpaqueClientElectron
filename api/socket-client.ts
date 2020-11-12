@@ -2,7 +2,7 @@ import * as SocketClient from 'socket.io-client';
 import * as uuid from 'uuid';
 
 import { addLogs } from './Logs';
-import { twitchClient, klpqServiceClient, youtubeClient } from './ApiClients';
+import { twitchClient, klpqServiceClient, youtubeClient } from './api-clients';
 import { klpqServiceUrl } from './Globals';
 import { printNotification } from './Notifications';
 

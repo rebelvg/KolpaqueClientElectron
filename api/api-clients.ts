@@ -1,11 +1,11 @@
 import axios, { AxiosError } from 'axios';
 import { addLogs } from './Logs';
 import { klpqServiceUrl } from './Globals';
-import { config } from './SettingsFile';
+import { config } from './settings-file';
 import * as qs from 'querystring';
 import { shell, ipcMain } from 'electron';
 
-import { SOCKET_CLIENT_ID, ITwitchUser } from './SocketClient';
+import { SOCKET_CLIENT_ID, ITwitchUser } from './socket-client';
 
 const twitchClientId = 'dk330061dv4t81s21utnhhdona0a91x';
 

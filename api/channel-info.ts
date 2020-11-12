@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 
-import { Channel } from './ChannelClass';
+import { Channel } from './channel-class';
 import { addLogs } from './Logs';
-import { twitchClient, commonClient, TWITCH_CHUNK_LIMIT } from './ApiClients';
-import { config } from './SettingsFile';
+import { twitchClient, commonClient, TWITCH_CHUNK_LIMIT } from './api-clients';
+import { config } from './settings-file';
 import { ipcMain } from 'electron';
 
 interface IServiceInfo {

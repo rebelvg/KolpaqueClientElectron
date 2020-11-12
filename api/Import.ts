@@ -1,14 +1,14 @@
 import { ipcMain, dialog } from 'electron';
 import * as _ from 'lodash';
 
-import { config } from './SettingsFile';
-import { Channel } from './ChannelClass';
+import { config } from './settings-file';
+import { Channel } from './channel-class';
 import {
   twitchClient,
   ITwitchFollowedChannel,
   TWITCH_CHUNK_LIMIT,
-} from './ApiClients';
-import { sleep } from './ChannelCheck';
+} from './api-clients';
+import { sleep } from './channel-check';
 
 ipcMain.on('config_twitchImport', async (event, channelName) => {
   return twitchImport(channelName);
