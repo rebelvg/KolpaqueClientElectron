@@ -27,7 +27,7 @@ process.on('unhandledRejection', error => {
       /.vscode/,
       /.idea/,
       /node_modules\/api/,
-      /node_modules\/src/,
+      /node_modules\/app/,
     ],
     overwrite: true,
     win32metadata: {

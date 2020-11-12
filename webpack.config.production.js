@@ -4,13 +4,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './app/index.js',
   module: {
     rules: [
       {
         test: /.js/,
         exclude: /node_modules/,
-        include: [path.resolve(__dirname, 'src')],
+        include: [path.resolve(__dirname, 'app')],
         use: {
           loader: 'babel-loader',
           options: {
@@ -44,7 +44,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      src: path.resolve(__dirname, './src'),
+      src: path.resolve(__dirname, './app'),
       static: path.resolve(__dirname, './static'),
     },
   },
@@ -57,6 +57,6 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     publicPath: './',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist-app'),
   },
 };

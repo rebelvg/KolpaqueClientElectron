@@ -7,14 +7,14 @@ module.exports = {
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:10000',
     'webpack/hot/only-dev-server',
-    './src/index.js',
+    './app/index.js',
   ],
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
         exclude: /(node_modules|bower_components)/,
-        include: [path.resolve(__dirname, 'src')],
+        include: [path.resolve(__dirname, 'app')],
         use: {
           loader: 'babel-loader',
           options: {
@@ -62,7 +62,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      src: path.resolve(__dirname, './src'),
+      src: path.resolve(__dirname, './app'),
     },
   },
   node: {
@@ -71,6 +71,6 @@ module.exports = {
   output: {
     filename: 'dev_bundle.js',
     publicPath: '/',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist-app'),
   },
 };

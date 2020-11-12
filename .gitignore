@@ -1,6 +1,6 @@
 .vscode/
 .idea/
 dist-api/
-dist/
+dist-app/
 node_modules/
 *.log
