@@ -2,7 +2,9 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
+    "sourceMap": true,
+    "declaration": true,
     "outDir": "./dist-api"
   },
-  "include": ["./application/**/*"]
+  "include": ["./api/**/*"]
 }

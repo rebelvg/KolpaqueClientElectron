@@ -18,7 +18,7 @@
   "license": "CC0-1.0",
   "private": true,
   "workspaces": [
-    "application",
+    "api",
     "src"
   ],
   "devDependencies": {

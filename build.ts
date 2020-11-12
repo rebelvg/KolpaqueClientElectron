@@ -20,7 +20,7 @@ process.on('unhandledRejection', error => {
     tmpdir: false,
     icon: './icons/icon',
     arch: 'x64',
-    ignore: [/.git/, /.vscode/, /.idea/, /node_modules\/application/, /node_modules\/src/],
+    ignore: [/.git/, /.vscode/, /.idea/, /node_modules\/api/, /node_modules\/src/],
     overwrite: true,
     win32metadata: {
       ProductName: 'KolpaqueClientElectron',
