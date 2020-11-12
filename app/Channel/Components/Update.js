@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { getUpdate, sendInfo } from 'src/redux/channel';
+import { getUpdate, sendInfo } from '../../redux/channel';
 
 @connect(
   state => ({

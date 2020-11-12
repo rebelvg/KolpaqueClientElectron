@@ -1,11 +1,14 @@
 import React, { PureComponent } from 'react';
 import styled, { withTheme } from 'styled-components';
 import { connect } from 'react-redux';
-import Channel from 'src/Channel/Components/Channel';
-import { getChannelsList, getUpdate, updateData } from 'src/redux/channel';
-import { getSortType } from 'src/redux/settings';
-import { changeSetting, openChannelMenu } from 'src/Channel/Helpers/IPCHelpers';
-import { getShowTooltips } from 'src/redux/settings';
+import Channel from '../../Channel/Components/Channel';
+import { getChannelsList, getUpdate, updateData } from '../../redux/channel';
+import { getSortType } from '../../redux/settings';
+import {
+  changeSetting,
+  openChannelMenu,
+} from '../../Channel/Helpers/IPCHelpers';
+import { getShowTooltips } from '../../redux/settings';
 import ReactList from 'react-list';
 
 @withTheme

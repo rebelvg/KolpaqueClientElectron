@@ -5,19 +5,19 @@ import { cog } from 'react-icons-kit/fa/cog';
 import { Link } from 'react-router-dom';
 import styled, { withTheme } from 'styled-components';
 import { Form } from 'react-final-form';
-import Update from 'src/Channel/Components/Update';
-import SearchForm from 'src/Channel/Forms/SearchForm/SearchForm';
-import Footer from 'src/Channel/Components/Footer';
-import Tabs from 'src/Channel/Components/Tabs';
-import Loading from 'src/Shared/Loading';
-import Channels from 'src/Channel/Components/Channels';
+import Update from '../../Channel/Components/Update';
+import SearchForm from '../../Channel/Forms/SearchForm/SearchForm';
+import Footer from '../../Channel/Components/Footer';
+import Tabs from '../../Channel/Components/Tabs';
+import Loading from '../../Shared/Loading';
+import Channels from '../../Channel/Components/Channels';
 import {
   getLoaded,
   getFilter,
   updateData,
   getUpdate,
   getChannelsList,
-} from 'src/redux/channel';
+} from '../../redux/channel';
 
 @withTheme
 @connect(

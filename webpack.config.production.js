@@ -42,12 +42,7 @@ module.exports = {
       },
     ],
   },
-  resolve: {
-    alias: {
-      src: path.resolve(__dirname, './app'),
-      static: path.resolve(__dirname, './static'),
-    },
-  },
+  resolve: {},
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Kolpaque Client',

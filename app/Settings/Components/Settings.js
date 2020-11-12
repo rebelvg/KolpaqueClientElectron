@@ -4,9 +4,9 @@ import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import { Form } from 'react-final-form';
 
-import SettingsForm from 'src/Settings/Forms/SettingsForm';
-import ImportForm from 'src/Settings/Forms/ImportForm';
-import Logs from 'src/Settings/Forms/LogsForm';
+import SettingsForm from '../../Settings/Forms/SettingsForm';
+import ImportForm from '../../Settings/Forms/ImportForm';
+import Logs from '../../Settings/Forms/LogsForm';
 
 const options = [
   { value: 'general', label: 'General Settings' },

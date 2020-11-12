@@ -8,9 +8,9 @@ import {
   changeSettingsResponse,
   importChannel,
   getSettings,
-} from 'src/redux/settings';
-import { updateData } from 'src/redux/channel';
-import Settings from 'src/Settings/Components/Settings';
+} from '../../redux/settings';
+import { updateData } from '../../redux/channel';
+import Settings from '../../Settings/Components/Settings';
 
 const { remote, ipcRenderer } = window.require('electron');
 

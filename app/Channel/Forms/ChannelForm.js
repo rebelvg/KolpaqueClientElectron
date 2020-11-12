@@ -3,7 +3,7 @@ import styled, { withTheme } from 'styled-components';
 import { Field } from 'react-final-form';
 import Icon from 'react-icons-kit';
 import { plus } from 'react-icons-kit/fa/plus';
-import { template } from 'src/Channel/constants';
+import { template } from '../../Channel/constants';
 
 const { remote } = window.require('electron');
 const { Menu } = remote;

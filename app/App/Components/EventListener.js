@@ -9,8 +9,8 @@ import {
   updateData,
   getInfo,
   getLoaded,
-} from 'src/redux/channel';
-import { initSettings } from 'src/redux/settings';
+} from '../../redux/channel';
+import { initSettings } from '../../redux/settings';
 
 const { ipcRenderer } = window.require('electron');
 

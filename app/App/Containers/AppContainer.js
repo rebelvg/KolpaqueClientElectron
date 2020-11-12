@@ -4,10 +4,10 @@ import { ThemeProvider } from 'styled-components';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
-import Routes from 'src/App/Components/Routes';
-import EventListener from 'src/App/Components/EventListener';
-import { themes } from 'src/Themes';
-import { getTheme } from 'src/redux/settings';
+import Routes from '../../App/Components/Routes';
+import EventListener from '../../App/Components/EventListener';
+import { themes } from '../../Themes';
+import { getTheme } from '../../redux/settings';
 
 @connect(state => ({
   nightMode: getTheme(state),

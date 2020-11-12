@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import Icon from 'react-icons-kit';
 import { loadC } from 'react-icons-kit/ionicons/loadC';
-import { getVersion } from 'src/Channel/Helpers/IPCHelpers';
+import { getVersion } from '../Channel/Helpers/IPCHelpers';
 
 const version = getVersion();
 

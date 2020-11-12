@@ -60,11 +60,7 @@ module.exports = {
     publicPath: '/',
     port: 10000,
   },
-  resolve: {
-    alias: {
-      src: path.resolve(__dirname, './app'),
-    },
-  },
+  resolve: {},
   node: {
     fs: 'empty',
   },

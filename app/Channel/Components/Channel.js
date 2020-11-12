@@ -1,15 +1,15 @@
 import React, { PureComponent } from 'react';
 import styled, { withTheme } from 'styled-components';
 
-import { playChannel, changeSetting } from 'src/Channel/Helpers/IPCHelpers';
-import EditForm from 'src/Channel/Forms/EditForm';
+import { playChannel, changeSetting } from '../../Channel/Helpers/IPCHelpers';
+import EditForm from '../../Channel/Forms/EditForm';
 import {
   AutoStart,
   AutoRestart,
   Pinned,
   ServiceIcon,
   PinButton,
-} from 'src/Shared/Icons';
+} from '../../Shared/Icons';
 
 @withTheme
 class Channel extends PureComponent {

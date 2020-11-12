@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { TABS } from 'src/Channel/constants';
+import { TABS } from '../../Channel/constants';
 
-import { getCount, getActiveTab, updateData } from 'src/redux/channel';
+import { getCount, getActiveTab, updateData } from '../../redux/channel';
 
 @connect(
   state => ({
