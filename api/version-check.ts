@@ -92,7 +92,7 @@ async function streamlinkVersionCheck() {
   });
 }
 
-export async function checkLoop() {
+export async function loop() {
   (async () => {
     while (true) {
       const hasUpdate = await clientVersionCheck();

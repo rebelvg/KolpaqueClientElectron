@@ -82,7 +82,7 @@ async function checkChannels(channelObjs: Channel[]) {
   );
 }
 
-export async function checkLoop() {
+export async function loop() {
   await Promise.all(
     _.map(SERVICES, async service => {
       const channels = _.filter(config.channels, { service: service.name });

@@ -149,14 +149,14 @@ async function autoTwitchImport(emitEvent: boolean) {
   );
 }
 
-export async function importLoop() {
+export async function loop() {
   await autoTwitchImport(false);
 
   (async () => {
     while (true) {
-      await autoTwitchImport(true);
-
       await sleep(10 * 60 * 1000);
+
+      await autoTwitchImport(true);
     }
   })();
 }

@@ -355,9 +355,9 @@ async function checkServiceLoop(
   printBalloon: boolean,
 ) {
   while (true) {
-    await checkService(service, printBalloon);
-
     await sleep(service.check * 1000);
+
+    await checkService(service, printBalloon);
   }
 }
 
@@ -365,7 +365,7 @@ export async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function checkLoop() {
+export async function loop() {
   await Promise.all(
     _.map(SERVICES_INTERVALS, service => checkService(service, false)),
   );

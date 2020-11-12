@@ -22,12 +22,12 @@ fixPath();
 import { config } from './settings-file';
 import { launchPlayerLink } from './channel-play';
 import { rebuildIconMenu } from './tray-icon';
-import './SocketClient';
-import './ChannelInfo';
+import './socket-client';
+import './channel-info';
 
-import './ChannelCheck';
+import './channel-check';
 import './Import';
-import './VersionCheck';
+import './version-check';
 import './Logs';
 import { addLogs, crashLogPath } from './Logs';
 import { init } from './client-init';

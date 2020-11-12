@@ -1,11 +1,11 @@
-import { checkLoop as channelCheckLoop } from './channel-check';
-import { checkLoop as infoCheckLoop } from './channel-info';
-import { importLoop } from './Import';
-import { checkLoop as versionCheckLoop } from './version-check';
+import { loop as channelLoop } from './channel-check';
+import { loop as infoLoop } from './channel-info';
+import { loop as importLoop } from './Import';
+import { loop as versionLoop } from './version-check';
 
 export async function init() {
   await importLoop();
-  await channelCheckLoop();
-  await infoCheckLoop();
-  await versionCheckLoop();
+  await channelLoop();
+  await infoLoop();
+  await versionLoop();
 }
