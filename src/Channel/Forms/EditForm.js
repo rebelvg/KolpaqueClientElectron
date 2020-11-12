@@ -8,23 +8,23 @@ let template = [
   {
     label: 'Cut',
     accelerator: 'CmdOrCtrl+X',
-    role: 'cut'
+    role: 'cut',
   },
   {
     label: 'Copy',
     accelerator: 'CmdOrCtrl+C',
-    role: 'copy'
+    role: 'copy',
   },
   {
     label: 'Paste',
     accelerator: 'CmdOrCtrl+V',
-    role: 'paste'
+    role: 'paste',
   },
   {
     label: 'Select All',
     accelerator: 'CmdOrCtrl+A',
-    role: 'selectall'
-  }
+    role: 'selectall',
+  },
 ];
 
 const openMenu = () => {
@@ -36,7 +36,7 @@ export default class EditForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.channel.visibleName
+      value: props.channel.visibleName,
     };
   }
 

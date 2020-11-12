@@ -18,7 +18,10 @@ export default class Footer extends Component {
   render() {
     return (
       <FooterWrapper>
-        <Form onSubmit={this.submit} render={props => <ChannelForm {...props} />} />
+        <Form
+          onSubmit={this.submit}
+          render={props => <ChannelForm {...props} />}
+        />
       </FooterWrapper>
     );
   }

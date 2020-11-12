@@ -11,7 +11,9 @@ interface IServiceInfo {
   function: (channels: Channel[]) => {};
 }
 
-const SERVICES: IServiceInfo[] = [{ name: 'twitch', function: getTwitchInfoAsync }];
+const SERVICES: IServiceInfo[] = [
+  { name: 'twitch', function: getTwitchInfoAsync },
+];
 
 config.on('channel_added', async channel => {
   await checkChannels([channel]);
@@ -24,7 +26,10 @@ config.on('channel_added_channels', async (channels: Channel[]) => {
 async function getTwitchInfoAsync(channelObjs: Channel[]) {
   await twitchClient.refreshAccessToken();
 
-  const filteredChannels = _.filter(channelObjs, channelObj => !channelObj._icon);
+  const filteredChannels = _.filter(
+    channelObjs,
+    channelObj => !channelObj._icon,
+  );
 
   if (filteredChannels.length === 0) {
     return;
@@ -34,7 +39,9 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
 
   await Promise.all(
     chunkedChannels.map(async channelObjs => {
-      const userData = await twitchClient.getUsersByLogin(channelObjs.map(channel => channel.name));
+      const userData = await twitchClient.getUsersByLogin(
+        channelObjs.map(channel => channel.name),
+      );
 
       await Promise.all(
         channelObjs.map(async channelObj => {
@@ -50,16 +57,18 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
                 return;
               }
 
-              const logoBuffer = await commonClient.getContentAsBuffer(profileImageUrl);
+              const logoBuffer = await commonClient.getContentAsBuffer(
+                profileImageUrl,
+              );
 
               if (logoBuffer) {
                 channelObj._icon = logoBuffer;
               }
-            })
+            }),
           );
-        })
+        }),
       );
-    })
+    }),
   );
 }
 
@@ -69,7 +78,7 @@ async function checkChannels(channelObjs: Channel[]) {
       const channels = _.filter(channelObjs, { service: service.name });
 
       await service.function(channels);
-    })
+    }),
   );
 }
 
@@ -79,6 +88,6 @@ export async function checkLoop() {
       const channels = _.filter(config.channels, { service: service.name });
 
       await service.function(channels);
-    })
+    }),
   );
 }

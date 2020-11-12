@@ -8,7 +8,7 @@ class PinButton extends Component {
   onClick = e => {
     const {
       channel: { isPinned, id },
-      toggle
+      toggle,
     } = this.props;
     e.preventDefault();
     e.stopPropagation();
@@ -18,11 +18,14 @@ class PinButton extends Component {
   render() {
     const {
       channel: { isPinned },
-      theme
+      theme,
     } = this.props;
     return (
       <Wrapper onClick={this.onClick}>
-        <PinnedIcon icon={star} color={!isPinned ? '#979797' : theme.client.color} />
+        <PinnedIcon
+          icon={star}
+          color={!isPinned ? '#979797' : theme.client.color}
+        />
       </Wrapper>
     );
   }

@@ -6,9 +6,11 @@ import * as os from 'os';
 import * as archiver from 'archiver';
 
 let platformOption = readlineSync.question(
-  `select platform. all - for all platforms or win32, darwin, linux. (empty will default to current platform)${os.EOL}`
+  `select platform. all - for all platforms or win32, darwin, linux. (empty will default to current platform)${os.EOL}`,
 );
-let pathOption = readlineSync.question(`select output folder. (empty will default to home dir)${os.EOL}`);
+let pathOption = readlineSync.question(
+  `select output folder. (empty will default to home dir)${os.EOL}`,
+);
 
 process.on('unhandledRejection', error => {
   throw error;
@@ -20,17 +22,23 @@ process.on('unhandledRejection', error => {
     tmpdir: false,
     icon: './icons/icon',
     arch: 'x64',
-    ignore: [/.git/, /.vscode/, /.idea/, /node_modules\/api/, /node_modules\/src/],
+    ignore: [
+      /.git/,
+      /.vscode/,
+      /.idea/,
+      /node_modules\/api/,
+      /node_modules\/src/,
+    ],
     overwrite: true,
     win32metadata: {
       ProductName: 'KolpaqueClientElectron',
       InternalName: 'KolpaqueClientElectron',
       FileDescription: 'KolpaqueClientElectron',
-      OriginalFilename: 'KolpaqueClientElectron.exe'
+      OriginalFilename: 'KolpaqueClientElectron.exe',
     },
     asar: true,
     prune: true,
-    out: null
+    out: null,
   };
 
   let platforms;
@@ -57,7 +65,7 @@ process.on('unhandledRejection', error => {
     const appPaths = await packager({
       ...options,
       platform,
-      out: pathOption
+      out: pathOption,
     });
 
     for (const appPath of appPaths) {

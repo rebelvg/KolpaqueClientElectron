@@ -3,7 +3,13 @@ import styled, { withTheme } from 'styled-components';
 
 import { playChannel, changeSetting } from 'src/Channel/Helpers/IPCHelpers';
 import EditForm from 'src/Channel/Forms/EditForm';
-import { AutoStart, AutoRestart, Pinned, ServiceIcon, PinButton } from 'src/Shared/Icons';
+import {
+  AutoStart,
+  AutoRestart,
+  Pinned,
+  ServiceIcon,
+  PinButton,
+} from 'src/Shared/Icons';
 
 @withTheme
 class Channel extends PureComponent {
@@ -11,9 +17,11 @@ class Channel extends PureComponent {
     super();
   }
 
-  contextMenu = (name, channel) => !name && this.props.handleAction('OPEN_MENU', [channel]);
+  contextMenu = (name, channel) =>
+    !name && this.props.handleAction('OPEN_MENU', [channel]);
 
-  selectChannel = (name, which, channel) => !name && this.props.handleAction('SELECT', [which, channel]);
+  selectChannel = (name, which, channel) =>
+    !name && this.props.handleAction('SELECT', [which, channel]);
 
   renameChannel = (value, id) => this.props.handleAction('RENAME', [value, id]);
 
@@ -26,9 +34,13 @@ class Channel extends PureComponent {
 
     return (
       <ChannelWrapper
-        onMouseDown={({ target: { name }, button }) => this.selectChannel(name, button, channel)}
+        onMouseDown={({ target: { name }, button }) =>
+          this.selectChannel(name, button, channel)
+        }
         selected={selected}
-        onContextMenu={({ target: { name } }) => this.contextMenu(name, channel)}
+        onContextMenu={({ target: { name } }) =>
+          this.contextMenu(name, channel)
+        }
         pinned={pinned}
       >
         <ChannelData onDoubleClick={() => !editMode && playChannel(channel)}>
@@ -37,9 +49,17 @@ class Channel extends PureComponent {
           </StyledIcon>
 
           {editMode ? (
-            <EditForm onSubmit={this.renameChannel} channel={channel} nameChange={this.renameChannel} />
+            <EditForm
+              onSubmit={this.renameChannel}
+              channel={channel}
+              nameChange={this.renameChannel}
+            />
           ) : (
-            <StyledName title={showTooltips ? `${channel.visibleName} (${channel.link})` : ''}>
+            <StyledName
+              title={
+                showTooltips ? `${channel.visibleName} (${channel.link})` : ''
+              }
+            >
               {/*{channel.isPinned && <Pinned/>}*/}
               {channel.visibleName || channel.link}{' '}
             </StyledName>
@@ -66,7 +86,10 @@ const ChannelWrapper = styled.div`
   flex-direction: row;
   font-size: 14px;
   height: 20px;
-  background-color: ${props => (!props.selected ? `${props.theme.channel.bg}` : `${props.theme.channelSelected.bg}`)};
+  background-color: ${props =>
+    !props.selected
+      ? `${props.theme.channel.bg}`
+      : `${props.theme.channelSelected.bg}`};
   border-bottom: 1px solid ${props => props.theme.outline};
 `;
 

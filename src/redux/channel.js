@@ -11,7 +11,7 @@ const defaultState = {
   filter: '',
   loading: true,
   loaded: false,
-  activeTab: 'online'
+  activeTab: 'online',
 };
 
 //ACTIONS
@@ -33,7 +33,15 @@ export const updateData = (filter = null, activeTab = null) => {
   };
 };
 
-export const { initStart, initEnd, updateView, changeTab, getInfo, sendInfo, setFilter } = createActions({
+export const {
+  initStart,
+  initEnd,
+  updateView,
+  changeTab,
+  getInfo,
+  sendInfo,
+  setFilter,
+} = createActions({
   INIT_START: () => {
     ipcRenderer.send('client_ready');
     return {};
@@ -51,26 +59,29 @@ export const { initStart, initEnd, updateView, changeTab, getInfo, sendInfo, set
     return { info };
   },
 
-  SET_FILTER: filter => ({ filter })
+  SET_FILTER: filter => ({ filter }),
 });
 
 //REDUCER
 export const reducer = handleActions(
   {
     INIT_START: (state, action) => ({
-      ...state
+      ...state,
     }),
     INIT_END: (state, action) => ({
       ...state,
-      loaded: true
+      loaded: true,
     }),
 
     UPDATE_VIEW: (state, action) => ({
       ...state,
-      ...action.payload
+      ...action.payload,
     }),
 
-    CHANGE_TAB: (state, action) => ({ ...state, activeTab: action.payload.tab }),
+    CHANGE_TAB: (state, action) => ({
+      ...state,
+      activeTab: action.payload.tab,
+    }),
 
     GET_INFO: (state, action) => ({ ...state, update: action.payload.info }),
 
@@ -78,9 +89,9 @@ export const reducer = handleActions(
 
     SET_FILTER: (state, action) => {
       return { ...state, filter: action.payload.filter };
-    }
+    },
   },
-  defaultState
+  defaultState,
 );
 
 //SELECTORS

@@ -10,7 +10,7 @@ import { themes } from 'src/Themes';
 import { getTheme } from 'src/redux/settings';
 
 @connect(state => ({
-  nightMode: getTheme(state)
+  nightMode: getTheme(state),
 }))
 export default class AppContainer extends Component {
   constructor() {

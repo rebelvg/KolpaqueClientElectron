@@ -5,7 +5,12 @@ import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 import { ChildProcess } from 'child_process';
 
-import { allowedProtocols, registeredServices, ProtocolsEnum, IStreamService } from './Globals';
+import {
+  allowedProtocols,
+  registeredServices,
+  ProtocolsEnum,
+  IStreamService,
+} from './Globals';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
@@ -60,7 +65,10 @@ export class Channel extends EventEmitter {
     }
 
     _.forEach(registeredServices, (serviceObj, serviceName) => {
-      if (serviceObj.protocols.includes(protocol) && serviceObj.hosts.includes(channelURL.host.toLowerCase())) {
+      if (
+        serviceObj.protocols.includes(protocol) &&
+        serviceObj.hosts.includes(channelURL.host.toLowerCase())
+      ) {
         const nameArray = _.split(channelURL.pathname, '/');
 
         if (nameArray[serviceObj.name]) {
@@ -72,7 +80,8 @@ export class Channel extends EventEmitter {
 
               channelURL.protocol = serviceObj.protocols[0];
               channelURL.host = serviceObj.hosts[0];
-              channelURL.pathname = serviceObj.paths[0] + nameArray[serviceObj.name];
+              channelURL.pathname =
+                serviceObj.paths[0] + nameArray[serviceObj.name];
 
               this.link = channelURL.href;
             }
@@ -82,7 +91,9 @@ export class Channel extends EventEmitter {
     });
 
     if (this.service === 'custom') {
-      const pathname = _.endsWith(channelURL.pathname, '/') ? channelURL.pathname.slice(0, -1) : channelURL.pathname;
+      const pathname = _.endsWith(channelURL.pathname, '/')
+        ? channelURL.pathname.slice(0, -1)
+        : channelURL.pathname;
 
       this.name = this.link;
       this.visibleName = `${channelURL.host}${pathname}`;
@@ -142,7 +153,7 @@ export class Channel extends EventEmitter {
       visibleName: this.visibleName,
       isPinned: this.isPinned,
       autoStart: this.autoStart,
-      autoRestart: this.autoRestart
+      autoRestart: this.autoRestart,
     };
   }
 }

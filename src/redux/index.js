@@ -5,7 +5,7 @@ import { reducer as settings } from 'src/redux/settings';
 
 const reducers = combineReducers({
   channel,
-  settings
+  settings,
 });
 
 export default reducers;

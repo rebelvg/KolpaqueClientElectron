@@ -7,7 +7,7 @@ module.exports = {
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:10000',
     'webpack/hot/only-dev-server',
-    './src/index.js'
+    './src/index.js',
   ],
   module: {
     rules: [
@@ -19,34 +19,38 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['env', 'react', 'stage-0', 'es2015', 'es2016', 'es2017'],
-            plugins: ['react-hot-loader/babel', 'transform-class-properties', 'transform-decorators-legacy']
-          }
-        }
+            plugins: [
+              'react-hot-loader/babel',
+              'transform-class-properties',
+              'transform-decorators-legacy',
+            ],
+          },
+        },
       },
       {
         test: /\.(jpe?g|gif|png|wav|mp3)$/,
         loader: 'url-loader',
         options: {
-          limit: 8192
-        }
+          limit: 8192,
+        },
       },
       {
         test: /\.(woff|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         include: [path.resolve(__dirname, 'static')],
-        loader: 'file-loader'
+        loader: 'file-loader',
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      }
-    ]
+        use: ['style-loader', 'css-loader'],
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.IgnorePlugin(new RegExp('^(fs|ipc)$'))
+    new webpack.IgnorePlugin(new RegExp('^(fs|ipc)$')),
   ],
   devtool: 'source-map',
   devServer: {
@@ -54,19 +58,19 @@ module.exports = {
     host: 'localhost',
     historyApiFallback: true,
     publicPath: '/',
-    port: 10000
+    port: 10000,
   },
   resolve: {
     alias: {
-      src: path.resolve(__dirname, './src')
-    }
+      src: path.resolve(__dirname, './src'),
+    },
   },
   node: {
-    fs: 'empty'
+    fs: 'empty',
   },
   output: {
     filename: 'dev_bundle.js',
     publicPath: '/',
-    path: path.resolve(__dirname, 'dist')
-  }
+    path: path.resolve(__dirname, 'dist'),
+  },
 };

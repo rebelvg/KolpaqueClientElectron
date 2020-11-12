@@ -3,7 +3,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled, { withTheme } from 'styled-components';
 
-import { changeSettings, changeSettingsResponse, importChannel, getSettings } from 'src/redux/settings';
+import {
+  changeSettings,
+  changeSettingsResponse,
+  importChannel,
+  getSettings,
+} from 'src/redux/settings';
 import { updateData } from 'src/redux/channel';
 import Settings from 'src/Settings/Components/Settings';
 
@@ -12,9 +17,9 @@ const { remote, ipcRenderer } = window.require('electron');
 @withTheme
 @connect(
   state => ({
-    settings: getSettings(state)
+    settings: getSettings(state),
   }),
-  { changeSettings, changeSettingsResponse, importChannel, updateData }
+  { changeSettings, changeSettingsResponse, importChannel, updateData },
 )
 export default class SettingsContainer extends Component {
   constructor() {
@@ -23,7 +28,7 @@ export default class SettingsContainer extends Component {
     const version = ipcRenderer.sendSync('client_getVersion');
 
     this.state = {
-      version
+      version,
     };
   }
 

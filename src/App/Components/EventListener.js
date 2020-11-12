@@ -3,29 +3,35 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { debounce } from 'lodash';
 
-import { initStart, initEnd, updateData, getInfo, getLoaded } from 'src/redux/channel';
+import {
+  initStart,
+  initEnd,
+  updateData,
+  getInfo,
+  getLoaded,
+} from 'src/redux/channel';
 import { initSettings } from 'src/redux/settings';
 
 const { ipcRenderer } = window.require('electron');
 
 @connect(
   state => ({
-    loaded: getLoaded(state)
+    loaded: getLoaded(state),
   }),
   {
     initSettings,
     getInfo,
     initStart,
     initEnd,
-    updateData
-  }
+    updateData,
+  },
 )
 class EventListener extends Component {
   constructor() {
     super();
 
     this.state = {
-      queue: []
+      queue: [],
     };
 
     this.empty = debounce(this.emptyQueue, 0);
@@ -37,7 +43,7 @@ class EventListener extends Component {
 
     this.setState(
       {
-        queue: []
+        queue: [],
       },
       () => {
         updateData();
@@ -45,7 +51,7 @@ class EventListener extends Component {
         if (!loaded) {
           initEnd();
         }
-      }
+      },
     );
   };
 

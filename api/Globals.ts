@@ -5,7 +5,7 @@ import { Channel } from './ChannelClass';
 export enum ProtocolsEnum {
   RTMP = 'rtmp:',
   HTTP = 'http:',
-  HTTPS = 'https:'
+  HTTPS = 'https:',
 }
 
 export interface IStreamService {
@@ -16,7 +16,10 @@ export interface IStreamService {
   embed: (channelObj: Channel) => string;
   chat: (channelObj: Channel) => string;
   icon: Buffer;
-  onLQ: (playLink: string, params: string[]) => { playLink: string; params: string[] };
+  onLQ: (
+    playLink: string,
+    params: string[],
+  ) => { playLink: string; params: string[] };
 }
 
 export const allowedProtocols = [...Object.values(ProtocolsEnum)];
@@ -35,15 +38,18 @@ export const registeredServices: {
     chat: channelObj => {
       return `http://stream.klpq.men/chat`;
     },
-    icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'klpq_vps.png')), {
-      encoding: null
-    }),
+    icon: fs.readFileSync(
+      path.normalize(path.join(__dirname, '../icons', 'klpq_vps.png')),
+      {
+        encoding: null,
+      },
+    ),
     onLQ: (playLink: string, params: string[]) => {
       return {
         playLink: playLink.replace('/live/', '/encode/'),
-        params
+        params,
       };
-    }
+    },
   },
   twitch: {
     protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
@@ -54,13 +60,16 @@ export const registeredServices: {
     chat: channelObj => {
       return `https://www.twitch.tv/${channelObj.name}/chat`;
     },
-    icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'twitch.png')), {
-      encoding: null
-    }),
+    icon: fs.readFileSync(
+      path.normalize(path.join(__dirname, '../icons', 'twitch.png')),
+      {
+        encoding: null,
+      },
+    ),
     onLQ: (playLink, params) => ({
       playLink,
-      params
-    })
+      params,
+    }),
   },
   'youtube-user': {
     protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
@@ -69,13 +78,16 @@ export const registeredServices: {
     name: 2,
     embed: null,
     chat: null,
-    icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'youtube.png')), {
-      encoding: null
-    }),
+    icon: fs.readFileSync(
+      path.normalize(path.join(__dirname, '../icons', 'youtube.png')),
+      {
+        encoding: null,
+      },
+    ),
     onLQ: (playLink, params) => ({
       playLink,
-      params
-    })
+      params,
+    }),
   },
   'youtube-channel': {
     protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
@@ -84,13 +96,16 @@ export const registeredServices: {
     name: 2,
     embed: null,
     chat: null,
-    icon: fs.readFileSync(path.normalize(path.join(__dirname, '../icons', 'youtube.png')), {
-      encoding: null
-    }),
+    icon: fs.readFileSync(
+      path.normalize(path.join(__dirname, '../icons', 'youtube.png')),
+      {
+        encoding: null,
+      },
+    ),
     onLQ: (playLink, params) => ({
       playLink,
-      params
-    })
+      params,
+    }),
   },
   chaturbate: {
     protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
@@ -102,8 +117,8 @@ export const registeredServices: {
     icon: null,
     onLQ: (playLink, params) => ({
       playLink,
-      params
-    })
+      params,
+    }),
   },
   custom: {
     protocols: [],
@@ -115,9 +130,9 @@ export const registeredServices: {
     icon: null,
     onLQ: (playLink, params) => ({
       playLink,
-      params
-    })
-  }
+      params,
+    }),
+  },
 };
 
 export const klpqServiceUrl = 'https://client-api.klpq.men';

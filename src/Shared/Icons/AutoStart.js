@@ -10,7 +10,7 @@ class AutoStart extends Component {
   onClick = e => {
     const {
       channel: { autoStart, id },
-      toggle
+      toggle,
     } = this.props;
     e.preventDefault();
     e.stopPropagation();
@@ -20,7 +20,7 @@ class AutoStart extends Component {
   getIcon = () => {
     const {
       channel: { autoStart },
-      theme
+      theme,
     } = this.props;
     if (autoStart) {
       return theme.nightMode ? AUTOSTART_ON_INVERT : AUTOSTART_ON;

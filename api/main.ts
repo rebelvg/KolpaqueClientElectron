@@ -1,4 +1,14 @@
-import { app, BrowserWindow, clipboard, shell, ipcMain, Menu, Tray, nativeImage, MenuItem } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  clipboard,
+  shell,
+  ipcMain,
+  Menu,
+  Tray,
+  nativeImage,
+  MenuItem,
+} from 'electron';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as url from 'url';
@@ -37,14 +47,20 @@ ipcMain.once('client_ready', async () => {
 });
 
 let iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
-let iconPathTray = path.normalize(path.join(__dirname, '../icons', 'icon32.png'));
-export let iconPathBalloon = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
+let iconPathTray = path.normalize(
+  path.join(__dirname, '../icons', 'icon32.png'),
+);
+export let iconPathBalloon = path.normalize(
+  path.join(__dirname, '../icons', 'icon.png'),
+);
 
 if (process.platform === 'darwin') {
   app.dock.setIcon(iconPath);
   app.dock.hide();
 
-  iconPathTray = path.normalize(path.join(__dirname, '../icons', 'iconTemplate.png'));
+  iconPathTray = path.normalize(
+    path.join(__dirname, '../icons', 'iconTemplate.png'),
+  );
 }
 
 let mainWindow: BrowserWindow;
@@ -72,8 +88,8 @@ function createWindow() {
     fullscreenable: false,
     icon: iconPath,
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+    },
   });
 
   app['mainWindow'] = mainWindow;
@@ -81,7 +97,11 @@ function createWindow() {
   mainWindow.setMenu(null);
 
   if (isDev) {
-    const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer');
+    const {
+      default: installExtension,
+      REACT_DEVELOPER_TOOLS,
+      REDUX_DEVTOOLS,
+    } = require('electron-devtools-installer');
 
     mainWindow.loadURL('http://localhost:10000');
 
@@ -98,8 +118,8 @@ function createWindow() {
       url.format({
         pathname: path.join(__dirname, '../dist/index.html'),
         protocol: 'file:',
-        slashes: true
-      })
+        slashes: true,
+      }),
     );
   }
 
@@ -158,19 +178,19 @@ export const contextMenuTemplate = [
     visible: process.platform === 'linux',
     click: () => {
       mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
-    }
+    },
   },
   {
     label: 'Online Channels',
     type: 'submenu',
-    submenu: []
+    submenu: [],
   },
   {
     label: 'Play / Clipboard',
     type: 'normal',
     click: (menuItem, browserWindow, event) => {
       launchPlayerLink(clipboard.readText(), event.ctrlKey);
-    }
+    },
   },
   {
     label: 'Notifications',
@@ -178,7 +198,7 @@ export const contextMenuTemplate = [
     click: menuItem => {
       config.changeSetting('showNotifications', menuItem.checked);
     },
-    checked: config.settings.showNotifications
+    checked: config.settings.showNotifications,
   },
   {
     label: 'Quit Client',
@@ -186,8 +206,8 @@ export const contextMenuTemplate = [
     click: () => {
       forceQuit = true;
       app.quit();
-    }
-  }
+    },
+  },
 ];
 
 function toggleHideClient() {

@@ -8,7 +8,7 @@ class AutoRestart extends Component {
   onClick = e => {
     const {
       channel: { id, onAutoRestart, autoRestart },
-      toggle
+      toggle,
     } = this.props;
 
     e.preventDefault();
@@ -23,7 +23,7 @@ class AutoRestart extends Component {
   getColor = () => {
     const {
       theme,
-      channel: { onAutoRestart, autoRestart }
+      channel: { onAutoRestart, autoRestart },
     } = this.props;
     if (onAutoRestart) {
       return '#119400';

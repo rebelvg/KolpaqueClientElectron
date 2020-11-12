@@ -3,7 +3,11 @@ import * as _ from 'lodash';
 
 import { config } from './SettingsFile';
 import { Channel } from './ChannelClass';
-import { twitchClient, ITwitchFollowedChannel, TWITCH_CHUNK_LIMIT } from './ApiClients';
+import {
+  twitchClient,
+  ITwitchFollowedChannel,
+  TWITCH_CHUNK_LIMIT,
+} from './ApiClients';
 import { sleep } from './ChannelCheck';
 
 ipcMain.on('config_twitchImport', async (event, channelName) => {
@@ -11,7 +15,7 @@ ipcMain.on('config_twitchImport', async (event, channelName) => {
 });
 
 async function twitchImportChannels(
-  channels: ITwitchFollowedChannel[]
+  channels: ITwitchFollowedChannel[],
 ): Promise<{
   channelsAdded: Channel[];
 }> {
@@ -21,28 +25,36 @@ async function twitchImportChannels(
 
   await Promise.all(
     chunkedChannels.map(async channels => {
-      const userData = await twitchClient.getUsersById(channels.map(channel => channel.to_id));
+      const userData = await twitchClient.getUsersById(
+        channels.map(channel => channel.to_id),
+      );
 
       if (!userData) {
         return;
       }
 
       for (const channel of userData.data) {
-        let channelObj = config.addChannelLink(`https://twitch.tv/${channel.login}`, false);
+        let channelObj = config.addChannelLink(
+          `https://twitch.tv/${channel.login}`,
+          false,
+        );
 
         if (channelObj) {
           channelsAdded.push(channelObj);
         }
       }
-    })
+    }),
   );
 
   return {
-    channelsAdded
+    channelsAdded,
   };
 }
 
-async function twitchImportBase(channelName: string, emitEvent: boolean): Promise<number> {
+async function twitchImportBase(
+  channelName: string,
+  emitEvent: boolean,
+): Promise<number> {
   await twitchClient.refreshAccessToken();
 
   if (!channelName) {
@@ -59,7 +71,10 @@ async function twitchImportBase(channelName: string, emitEvent: boolean): Promis
 
   const channelsAddedAll: Channel[] = [];
 
-  const addedChannel = config.addChannelLink(`https://www.twitch.tv/${channelName}`, false);
+  const addedChannel = config.addChannelLink(
+    `https://www.twitch.tv/${channelName}`,
+    false,
+  );
 
   if (addedChannel) {
     channelsAddedAll.push(addedChannel);
@@ -72,7 +87,10 @@ async function twitchImportBase(channelName: string, emitEvent: boolean): Promis
       let cursor: string = '';
 
       while (true) {
-        const followedChannelsData = await twitchClient.getFollowedChannels(id, cursor);
+        const followedChannelsData = await twitchClient.getFollowedChannels(
+          id,
+          cursor,
+        );
 
         if (!followedChannelsData) {
           break;
@@ -85,9 +103,11 @@ async function twitchImportBase(channelName: string, emitEvent: boolean): Promis
           break;
         }
 
-        followedChannels.forEach(followedChannel => channelsToAdd.push(followedChannel));
+        followedChannels.forEach(followedChannel =>
+          channelsToAdd.push(followedChannel),
+        );
       }
-    })
+    }),
   );
 
   const { channelsAdded } = await twitchImportChannels(channelsToAdd);
@@ -107,14 +127,14 @@ async function twitchImport(channelName: string) {
   if (res !== null) {
     dialog.showMessageBox({
       type: 'info',
-      message: `Import done ${res} channels added.`
+      message: `Import done ${res} channels added.`,
     });
 
     return true;
   } else {
     dialog.showMessageBox({
       type: 'error',
-      message: 'Import error.'
+      message: 'Import error.',
     });
 
     return false;
@@ -125,7 +145,7 @@ async function autoTwitchImport(emitEvent: boolean) {
   await Promise.all(
     _.map(config.settings.twitchImport, async channelName => {
       await twitchImportBase(channelName, emitEvent);
-    })
+    }),
   );
 }
 

@@ -14,11 +14,11 @@ import ReactList from 'react-list';
     update: getUpdate(state),
     sortType: getSortType(state),
     channels: getChannelsList(state),
-    showTooltips: getShowTooltips(state)
+    showTooltips: getShowTooltips(state),
   }),
   {
-    updateData
-  }
+    updateData,
+  },
 )
 class Channels extends PureComponent {
   constructor() {
@@ -26,7 +26,7 @@ class Channels extends PureComponent {
 
     this.state = {
       selected: null,
-      edit: null
+      edit: null,
     };
   }
 
@@ -58,7 +58,7 @@ class Channels extends PureComponent {
     const actions = {
       RENAME: () => this.renameChannel(...data),
       OPEN_MENU: () => this.openMenu(...data),
-      SELECT: () => this.selectChannel(...data)
+      SELECT: () => this.selectChannel(...data),
     };
 
     if (actions[type]) {

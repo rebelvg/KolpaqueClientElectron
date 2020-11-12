@@ -7,14 +7,26 @@ import { EventEmitter } from 'events';
 import { Channel } from './ChannelClass';
 import { addLogs } from './Logs';
 
-const oldSettingsPath = path.join(app.getPath('documents'), 'KolpaqueClient.json');
-const settingsPath = path.join(app.getPath('documents'), 'KolpaqueClientElectron.json');
+const oldSettingsPath = path.join(
+  app.getPath('documents'),
+  'KolpaqueClient.json',
+);
+const settingsPath = path.join(
+  app.getPath('documents'),
+  'KolpaqueClientElectron.json',
+);
 
 if (fs.existsSync(oldSettingsPath)) {
   fs.renameSync(oldSettingsPath, settingsPath);
 }
 
-const channelSave = ['link', 'visibleName', 'isPinned', 'autoStart', 'autoRestart'];
+const channelSave = [
+  'link',
+  'visibleName',
+  'isPinned',
+  'autoStart',
+  'autoRestart',
+];
 
 const filterChannel = (channelObj: Channel, filter: string): boolean => {
   filter = filter.trim();
@@ -28,19 +40,22 @@ const filterChannel = (channelObj: Channel, filter: string): boolean => {
   let searchFilters = _.map(filters, filter => {
     return {
       pattern: filter,
-      found: false
+      found: false,
     };
   });
 
-  _.forEach([channelObj.link, channelObj.name, channelObj.visibleName], searchString => {
-    _.forEach(searchFilters, filter => {
-      let regExp = new RegExp(filter.pattern, 'gi');
+  _.forEach(
+    [channelObj.link, channelObj.name, channelObj.visibleName],
+    searchString => {
+      _.forEach(searchFilters, filter => {
+        let regExp = new RegExp(filter.pattern, 'gi');
 
-      if (regExp.test(searchString)) {
-        filter.found = true;
-      }
-    });
-  });
+        if (regExp.test(searchString)) {
+          filter.found = true;
+        }
+      });
+    },
+  );
 
   return _.filter(searchFilters, 'found').length === filters.length;
 };
@@ -61,7 +76,11 @@ const filterChannels = (channels: Channel[], filter: string): Channel[] => {
   return filteredChannels;
 };
 
-const sortChannels = (channels: Channel[], sortType: string, isReversed: boolean = false): Channel[] => {
+const sortChannels = (
+  channels: Channel[],
+  sortType: string,
+  isReversed: boolean = false,
+): Channel[] => {
   let sortedChannels = [];
 
   switch (sortType) {
@@ -113,7 +132,7 @@ export class Config extends EventEmitter {
     useStreamlinkForCustomChannels: false,
     twitchRefreshToken: '',
     youtubeTosConsent: false,
-    youtubeRefreshToken: ''
+    youtubeRefreshToken: '',
   };
 
   constructor() {
@@ -136,11 +155,18 @@ export class Config extends EventEmitter {
     });
 
     this.on('setting_changed', (settingName, settingValue) => {
-      app['mainWindow'].webContents.send('config_changeSetting', settingName, settingValue);
+      app['mainWindow'].webContents.send(
+        'config_changeSetting',
+        settingName,
+        settingValue,
+      );
     });
 
     this.on('setting_changed', () => {
-      app['mainWindow'].webContents.send('config_changeSettingSync', this.settings);
+      app['mainWindow'].webContents.send(
+        'config_changeSettingSync',
+        this.settings,
+      );
     });
   }
 
@@ -247,7 +273,7 @@ export class Config extends EventEmitter {
   find(query: any = {}): any {
     const sort = {
       type: this.settings.sortType,
-      isReversed: this.settings.sortReverse
+      isReversed: this.settings.sortReverse,
     };
 
     let filteredChannels = this.channels;
@@ -256,14 +282,18 @@ export class Config extends EventEmitter {
       filteredChannels = filterChannels(filteredChannels, query.filter);
     }
 
-    filteredChannels = sortChannels(filteredChannels, sort.type, sort.isReversed);
+    filteredChannels = sortChannels(
+      filteredChannels,
+      sort.type,
+      sort.isReversed,
+    );
 
     return {
       channels: _.filter(filteredChannels, { isLive: query.isLive }),
       count: {
         offline: _.filter(filteredChannels, { isLive: false }).length,
-        online: _.filter(filteredChannels, { isLive: true }).length
-      }
+        online: _.filter(filteredChannels, { isLive: true }).length,
+      },
     };
   }
 
@@ -283,7 +313,7 @@ export class Config extends EventEmitter {
 
       const saveConfig = {
         channels,
-        settings: this.settings
+        settings: this.settings,
       };
 
       fs.writeFileSync(settingsPath, JSON.stringify(saveConfig, null, 2));

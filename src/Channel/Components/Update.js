@@ -5,9 +5,9 @@ import { getUpdate, sendInfo } from 'src/redux/channel';
 
 @connect(
   state => ({
-    update: getUpdate(state)
+    update: getUpdate(state),
   }),
-  { sendInfo }
+  { sendInfo },
 )
 export default class Update extends Component {
   constructor() {

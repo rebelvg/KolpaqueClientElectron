@@ -4,32 +4,32 @@ const defaultColors = {
   outline: '#979797',
   client: {
     color: '#000',
-    bg: '#d8d8d8'
+    bg: '#d8d8d8',
   },
   clientSecondary: {
     color: '#000',
-    bg: '#ffffff'
+    bg: '#ffffff',
   },
   channel: {
     color: '#000000',
-    bg: '#fff'
+    bg: '#fff',
   },
   channelSelected: {
     color: '#000',
-    bg: '#ece8e8'
+    bg: '#ece8e8',
   },
   tab: {
     color: '#000',
-    bg: '#eae9e9'
+    bg: '#eae9e9',
   },
   tabSelected: {
     color: '#000',
-    bg: '#fff'
+    bg: '#fff',
   },
   input: {
     color: '#000',
-    bg: '#fff'
-  }
+    bg: '#fff',
+  },
 };
 
 export default defaultColors;

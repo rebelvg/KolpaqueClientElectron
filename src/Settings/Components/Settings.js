@@ -13,21 +13,21 @@ const options = [
   { value: 'import', label: 'Import Settings' },
   {
     value: 'logs',
-    label: 'Logs'
-  }
+    label: 'Logs',
+  },
 ];
 
 export default class Settings extends Component {
   constructor() {
     super();
     this.state = {
-      activeKey: 'general'
+      activeKey: 'general',
     };
   }
 
   changeWindow = selected => {
     this.setState({
-      activeKey: selected.value
+      activeKey: selected.value,
     });
   };
 

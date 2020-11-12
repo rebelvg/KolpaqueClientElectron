@@ -10,28 +10,28 @@ const Services = {
     asset: twitch,
     isImage: false,
     padding: 1,
-    color: '#6441a5'
+    color: '#6441a5',
   },
   'klpq-vps': {
     asset: './static/icons/klpq_vps.svg',
     isImage: true,
-    color: null
+    color: null,
   },
   'youtube-user': {
     asset: youtubePlay,
     isImage: false,
-    color: '#E62117'
+    color: '#E62117',
   },
   'youtube-channel': {
     asset: youtubePlay,
     isImage: false,
-    color: '#E62117'
+    color: '#E62117',
   },
   default: {
     asset: eye,
     isImage: false,
-    color: 'darkgreen'
-  }
+    color: 'darkgreen',
+  },
 };
 
 @withTheme
@@ -47,7 +47,11 @@ class ServiceIcon extends Component {
   );
 
   renderSVG = ({ asset, color, padding }) => (
-    <IconWithService style={{ paddingTop: padding || 0 }} icon={asset} color={color} />
+    <IconWithService
+      style={{ paddingTop: padding || 0 }}
+      icon={asset}
+      color={color}
+    />
   );
 
   renderIcon = icon => {

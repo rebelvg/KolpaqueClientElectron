@@ -12,7 +12,7 @@ export default class LogsForm extends Component {
     this.getLogsInterval;
 
     this.state = {
-      logs: []
+      logs: [],
     };
   }
 
@@ -20,14 +20,14 @@ export default class LogsForm extends Component {
     const logs = ipcRenderer.sendSync('config_logs');
 
     this.setState({
-      logs
+      logs,
     });
 
     this.getLogsInterval = setInterval(() => {
       const logs = ipcRenderer.sendSync('config_logs');
 
       this.setState({
-        logs
+        logs,
       });
     }, 1000);
   }

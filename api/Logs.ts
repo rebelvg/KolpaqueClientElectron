@@ -27,7 +27,10 @@ export function addLogs(...log: any[]) {
 
   console.log(logLine);
 
-  fs.appendFileSync(appLogPath, `${new Date().toLocaleString()} - ${logLine}${os.EOL}`);
+  fs.appendFileSync(
+    appLogPath,
+    `${new Date().toLocaleString()} - ${logLine}${os.EOL}`,
+  );
 
   logs.push(logLine);
 

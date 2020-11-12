@@ -32,20 +32,27 @@ function setChannelEvents(channelObj) {
   });
 }
 
-ipcMain.on('channel_play', (event, id, altQuality = false, autoRestart = null) => {
-  let channelObj = config.findById(id);
+ipcMain.on(
+  'channel_play',
+  (event, id, altQuality = false, autoRestart = null) => {
+    let channelObj = config.findById(id);
 
-  if (!channelObj) return false;
+    if (!channelObj) return false;
 
-  channelObj.emit('play', altQuality, autoRestart);
-});
+    channelObj.emit('play', altQuality, autoRestart);
+  },
+);
 
 ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
   let channelObj = config.findById(id);
 
   if (!channelObj) return false;
 
-  if (channelObj._processes.length > 0 && settingName === 'autoRestart' && settingValue) {
+  if (
+    channelObj._processes.length > 0 &&
+    settingName === 'autoRestart' &&
+    settingValue
+  ) {
     channelObj.changeSetting('onAutoRestart', true);
   }
 });
@@ -85,8 +92,8 @@ function playInWindow(channelObj) {
       width: 1280,
       height: 720,
       webPreferences: {
-        nodeIntegration: false
-      }
+        nodeIntegration: false,
+      },
     });
 
     window.loadURL(link);
@@ -109,7 +116,11 @@ function playInWindow(channelObj) {
   return !!window;
 }
 
-function launchPlayerObj(channelObj: Channel, altQuality = false, autoRestart = null) {
+function launchPlayerObj(
+  channelObj: Channel,
+  altQuality = false,
+  autoRestart = null,
+) {
   const LQ = !altQuality ? config.settings.LQ : !config.settings.LQ;
 
   if (autoRestart === null) {
@@ -146,7 +157,12 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
 
   const childProcess = execFile(
     'streamlink',
-    [playLink, 'best', '--twitch-disable-hosting', '--twitch-disable-ads'].concat(params),
+    [
+      playLink,
+      'best',
+      '--twitch-disable-hosting',
+      '--twitch-disable-ads',
+    ].concat(params),
     (err, data, stderr) => {
       addLogs(err, data, 'streamlink exited.');
 
@@ -154,12 +170,14 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
         if (err.code === 'ENOENT') {
           dialog.showMessageBox({
             type: 'error',
-            message: 'Streamlink not found.'
+            message: 'Streamlink not found.',
           });
 
           channelObj.changeSetting('onAutoRestart', false);
 
-          return shell.openExternal(`https://github.com/streamlink/streamlink/releases`);
+          return shell.openExternal(
+            `https://github.com/streamlink/streamlink/releases`,
+          );
         } else {
           if (firstStart) printNotification('Error', err.message);
         }
@@ -177,14 +195,18 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
         channelObj._autoRestartAttempts = 0;
       }
 
-      if (channelObj.isLive && channelObj.onAutoRestart && channelObj._autoRestartAttempts < AUTO_RESTART_ATTEMPTS) {
+      if (
+        channelObj.isLive &&
+        channelObj.onAutoRestart &&
+        channelObj._autoRestartAttempts < AUTO_RESTART_ATTEMPTS
+      ) {
         launchStreamlink(playLink, params, channelObj, false);
       } else {
         channelObj.changeSetting('onAutoRestart', false);
 
         channelObj._autoRestartAttempts = 0;
       }
-    }
+    },
   );
 
   channelObj._processes.push(childProcess);

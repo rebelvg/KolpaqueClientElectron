@@ -13,25 +13,31 @@ config.on('setting_changed', (settingName, settingValue) => {
 
 export function rebuildIconMenu() {
   const onlineChannels = config.find({
-    isLive: true
+    isLive: true,
   }).channels;
 
   contextMenuTemplate[1]['submenu'] = onlineChannels.map(channelObj => {
     if (!channelObj._trayIcon) {
-      const iconBuffer = channelObj._icon ? channelObj._icon : registeredServices[channelObj.service].icon;
+      const iconBuffer = channelObj._icon
+        ? channelObj._icon
+        : registeredServices[channelObj.service].icon;
 
       if (iconBuffer) {
-        channelObj._trayIcon = nativeImage.createFromBuffer(iconBuffer).resize({ height: 16 });
+        channelObj._trayIcon = nativeImage
+          .createFromBuffer(iconBuffer)
+          .resize({ height: 16 });
       }
     }
 
     return {
-      label: !config.settings.LQ ? channelObj.visibleName : `${channelObj.visibleName} (LQ)`,
+      label: !config.settings.LQ
+        ? channelObj.visibleName
+        : `${channelObj.visibleName} (LQ)`,
       type: 'normal',
       click: (menuItem, browserWindow, event) => {
         channelObj.emit('play', event.ctrlKey, event.shiftKey ? true : null);
       },
-      icon: channelObj._trayIcon
+      icon: channelObj._trayIcon,
     };
   });
 

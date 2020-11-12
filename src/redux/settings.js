@@ -3,10 +3,15 @@ import { createActions, handleActions } from 'redux-actions';
 const { ipcRenderer } = window.require('electron');
 
 const defaultState = {
-  list: {}
+  list: {},
 };
 
-export const { initSettings, importChannel, changeSettings, changeSettingsResponse } = createActions({
+export const {
+  initSettings,
+  importChannel,
+  changeSettings,
+  changeSettingsResponse,
+} = createActions({
   INIT_SETTINGS: () => {
     const list = ipcRenderer.sendSync('getSettings');
     return { list };
@@ -21,35 +26,39 @@ export const { initSettings, importChannel, changeSettings, changeSettingsRespon
   },
   CHANGE_SETTINGS_RESPONSE: (name, value) => ({
     name,
-    value
-  })
+    value,
+  }),
 });
 
 export const reducer = handleActions(
   {
     INIT_SETTINGS: (state, action) => ({
       ...state,
-      list: action.payload.list
+      list: action.payload.list,
     }),
     IMPORT_CHANNEL: (state, action) => ({
-      ...state
+      ...state,
     }),
     CHANGE_SETTINGS: (state, action) => ({
-      ...state
+      ...state,
     }),
     CHANGE_SETTINGS_RESPONSE: (state, action) => ({
       ...state,
       list: {
         ...state.list,
-        [action.payload.name]: action.payload.value
-      }
-    })
+        [action.payload.name]: action.payload.value,
+      },
+    }),
   },
-  defaultState
+  defaultState,
 );
 
-export const getSortType = state => state.settings && state.settings.list.sortType;
-export const getReversed = state => state.settings && state.settings.list.sortReverse;
+export const getSortType = state =>
+  state.settings && state.settings.list.sortType;
+export const getReversed = state =>
+  state.settings && state.settings.list.sortReverse;
 export const getSettings = state => state.settings && state.settings.list;
-export const getTheme = state => state.settings && state.settings.list && state.settings.list.nightMode;
-export const getShowTooltips = state => state.settings && state.settings.list && state.settings.list.showTooltips;
+export const getTheme = state =>
+  state.settings && state.settings.list && state.settings.list.nightMode;
+export const getShowTooltips = state =>
+  state.settings && state.settings.list && state.settings.list.showTooltips;

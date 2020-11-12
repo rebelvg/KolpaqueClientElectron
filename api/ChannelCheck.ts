@@ -6,7 +6,13 @@ import { config } from './SettingsFile';
 import { printNotification } from './Notifications';
 import { Channel } from './ChannelClass';
 import { addLogs } from './Logs';
-import { twitchClient, klpqStreamClient, youtubeClient, chaturbateClient, TWITCH_CHUNK_LIMIT } from './ApiClients';
+import {
+  twitchClient,
+  klpqStreamClient,
+  youtubeClient,
+  chaturbateClient,
+  TWITCH_CHUNK_LIMIT,
+} from './ApiClients';
 
 interface IServiceInterval {
   name: string;
@@ -20,38 +26,38 @@ const SERVICES_INTERVALS: IServiceInterval[] = [
     name: 'klpq-vps',
     check: 5,
     confirmations: 0,
-    function: getKlpqVpsStats
+    function: getKlpqVpsStats,
   },
   {
     name: 'twitch',
     check: 30,
     confirmations: 3,
-    function: getTwitchStats
+    function: getTwitchStats,
   },
   {
     name: 'youtube-user',
     check: 120,
     confirmations: 3,
-    function: getYoutubeStatsUser
+    function: getYoutubeStatsUser,
   },
   {
     name: 'youtube-channel',
     check: 120,
     confirmations: 3,
-    function: getYoutubeStatsChannel
+    function: getYoutubeStatsChannel,
   },
   {
     name: 'chaturbate',
     check: 120,
     confirmations: 3,
-    function: getChaturbateStats
+    function: getChaturbateStats,
   },
   {
     name: 'custom',
     check: 120,
     confirmations: 3,
-    function: getCustomStats
-  }
+    function: getCustomStats,
+  },
 ];
 
 config.on('channel_added', async channel => {
@@ -73,14 +79,18 @@ async function isOnline(channelObj: Channel, printBalloon: boolean) {
     printNotification('Stream is Live', channelObj.visibleName, channelObj);
   }
 
-  if (printBalloon && config.settings.showNotifications && channelObj.autoStart) {
+  if (
+    printBalloon &&
+    config.settings.showNotifications &&
+    channelObj.autoStart
+  ) {
     if (channelObj._processes.length === 0) {
       if (config.settings.confirmAutoStart) {
         dialog
           .showMessageBox({
             type: 'none',
             message: `${channelObj.link} is trying to auto-start. Confirm?`,
-            buttons: ['Ok', 'Cancel']
+            buttons: ['Ok', 'Cancel'],
           })
           .then(({ response }) => {
             if (response === 0) {
@@ -95,7 +105,7 @@ async function isOnline(channelObj: Channel, printBalloon: boolean) {
 
   channelObj.changeSettings({
     lastUpdated: Date.now(),
-    isLive: true
+    isLive: true,
   });
 }
 
@@ -104,13 +114,17 @@ function isOffline(channelObj: Channel) {
 
   channelObj._offlineConfirmations++;
 
-  if (channelObj._offlineConfirmations < _.get(SERVICES_INTERVALS, [channelObj.service, 'confirmations'], 0)) return;
+  if (
+    channelObj._offlineConfirmations <
+    _.get(SERVICES_INTERVALS, [channelObj.service, 'confirmations'], 0)
+  )
+    return;
 
   addLogs(`${channelObj.link} went offline.`);
 
   channelObj.changeSettings({
     lastUpdated: Date.now(),
-    isLive: false
+    isLive: false,
   });
 }
 
@@ -132,7 +146,7 @@ async function getKlpqVpsStats(channelObjs: Channel[], printBalloon: boolean) {
   await Promise.all(
     channelObjs.map(channelObj => {
       return getKlpqStatsBase(channelObj, printBalloon);
-    })
+    }),
   );
 }
 
@@ -146,11 +160,13 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
       const channels = channelObjs.map(channelObj => {
         return {
           channelObj,
-          userId: null
+          userId: null,
         };
       });
 
-      const userData = await twitchClient.getUsersByLogin(channelObjs.map(channel => channel.name));
+      const userData = await twitchClient.getUsersByLogin(
+        channelObjs.map(channel => channel.name),
+      );
 
       if (!userData) {
         return;
@@ -174,7 +190,9 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
         return;
       }
 
-      const streamData = await twitchClient.getStreams(existingChannels.map(({ userId }) => userId));
+      const streamData = await twitchClient.getStreams(
+        existingChannels.map(({ userId }) => userId),
+      );
 
       if (!streamData) {
         return;
@@ -187,7 +205,7 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
           isOffline(channelObj);
         }
       });
-    })
+    }),
   );
 }
 
@@ -205,7 +223,10 @@ async function getYoutubeStatsBase(channelId: string) {
   return true;
 }
 
-async function getYoutubeStatsUser(channelObjs: Channel[], printBalloon: boolean) {
+async function getYoutubeStatsUser(
+  channelObjs: Channel[],
+  printBalloon: boolean,
+) {
   // await youtubeClient.refreshAccessToken();
 
   await Promise.all(
@@ -219,7 +240,7 @@ async function getYoutubeStatsUser(channelObjs: Channel[], printBalloon: boolean
       const channelStatuses = await Promise.all(
         data.items.map(({ id }) => {
           return getYoutubeStatsBase(id);
-        })
+        }),
       );
 
       if (_.some(channelStatuses)) {
@@ -227,11 +248,14 @@ async function getYoutubeStatsUser(channelObjs: Channel[], printBalloon: boolean
       } else {
         isOffline(channelObj);
       }
-    })
+    }),
   );
 }
 
-async function getYoutubeStatsChannel(channelObjs: Channel[], printBalloon: boolean) {
+async function getYoutubeStatsChannel(
+  channelObjs: Channel[],
+  printBalloon: boolean,
+) {
   // await youtubeClient.refreshAccessToken();
 
   await Promise.all(
@@ -243,11 +267,14 @@ async function getYoutubeStatsChannel(channelObjs: Channel[], printBalloon: bool
       } else {
         isOffline(channelObj);
       }
-    })
+    }),
   );
 }
 
-async function getChaturbateStats(channelObjs: Channel[], printBalloon: boolean) {
+async function getChaturbateStats(
+  channelObjs: Channel[],
+  printBalloon: boolean,
+) {
   await Promise.all(
     channelObjs.map(async channelObj => {
       const data = await chaturbateClient.getChannel(channelObj.name);
@@ -261,7 +288,7 @@ async function getChaturbateStats(channelObjs: Channel[], printBalloon: boolean)
 
         isOffline(channelObj);
       }
-    })
+    }),
   );
 }
 
@@ -278,27 +305,27 @@ async function getCustomStats(channels: Channel[], printBalloon: boolean) {
     await Promise.all(
       channelObjs.map(async channelObj => {
         return new Promise(resolve => {
-          childProcess.execFile('streamlink', [channelObj.link, 'best', '--twitch-disable-hosting', '--json'], function(
-            err,
-            stdout,
-            stderr
-          ) {
-            try {
-              const res = JSON.parse(stdout);
+          childProcess.execFile(
+            'streamlink',
+            [channelObj.link, 'best', '--twitch-disable-hosting', '--json'],
+            function(err, stdout, stderr) {
+              try {
+                const res = JSON.parse(stdout);
 
-              if (!res.error) {
-                isOnline(channelObj, printBalloon);
-              } else {
-                isOffline(channelObj);
+                if (!res.error) {
+                  isOnline(channelObj, printBalloon);
+                } else {
+                  isOffline(channelObj);
+                }
+              } catch (error) {
+                addLogs(error);
               }
-            } catch (error) {
-              addLogs(error);
-            }
 
-            resolve();
-          });
+              resolve();
+            },
+          );
         });
-      })
+      }),
     );
   }
 }
@@ -309,7 +336,7 @@ async function checkChannels(channelObjs: Channel[], printBalloon: boolean) {
       const channels = _.filter(channelObjs, { service: service.name });
 
       await service.function(channels, printBalloon);
-    })
+    }),
   );
 }
 
@@ -323,7 +350,10 @@ async function checkService(service: IServiceInterval, printBalloon: boolean) {
   }
 }
 
-async function checkServiceLoop(service: IServiceInterval, printBalloon: boolean) {
+async function checkServiceLoop(
+  service: IServiceInterval,
+  printBalloon: boolean,
+) {
   while (true) {
     await checkService(service, printBalloon);
 
@@ -336,7 +366,9 @@ export async function sleep(ms: number) {
 }
 
 export async function checkLoop() {
-  await Promise.all(_.map(SERVICES_INTERVALS, service => checkService(service, false)));
+  await Promise.all(
+    _.map(SERVICES_INTERVALS, service => checkService(service, false)),
+  );
 
   _.forEach(SERVICES_INTERVALS, service => checkServiceLoop(service, true));
 }

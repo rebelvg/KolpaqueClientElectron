@@ -2,42 +2,43 @@ export const getTab = tab => {
   return TABS.find(t => t.value === tab);
 };
 
-export const visibleByTab = (channel, tab) => channel[tab.filter] === tab.filterValue;
+export const visibleByTab = (channel, tab) =>
+  channel[tab.filter] === tab.filterValue;
 
 export const TABS = [
   {
     name: 'Online',
     value: 'online',
     filter: 'isLive',
-    filterValue: true
+    filterValue: true,
   },
   {
     name: 'Offline',
     value: 'offline',
     filter: 'isLive',
-    filterValue: false
-  }
+    filterValue: false,
+  },
 ];
 
 export const template = [
   {
     label: 'Cut',
     accelerator: 'CmdOrCtrl+X',
-    role: 'cut'
+    role: 'cut',
   },
   {
     label: 'Copy',
     accelerator: 'CmdOrCtrl+C',
-    role: 'copy'
+    role: 'copy',
   },
   {
     label: 'Paste',
     accelerator: 'CmdOrCtrl+V',
-    role: 'paste'
+    role: 'paste',
   },
   {
     label: 'Select All',
     accelerator: 'CmdOrCtrl+A',
-    role: 'selectall'
-  }
+    role: 'selectall',
+  },
 ];

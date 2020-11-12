@@ -16,7 +16,9 @@ function printNewNotification(title, content, channelObj) {
   let icon: string | NativeImage = iconPathBalloon;
 
   if (channelObj) {
-    let iconBuffer = channelObj._icon ? channelObj._icon : registeredServices[channelObj.service].icon;
+    let iconBuffer = channelObj._icon
+      ? channelObj._icon
+      : registeredServices[channelObj.service].icon;
 
     if (iconBuffer) {
       icon = nativeImage.createFromBuffer(iconBuffer);
@@ -26,7 +28,7 @@ function printNewNotification(title, content, channelObj) {
   let notification = new Notification({
     icon: icon,
     title: title,
-    body: content
+    body: content,
   });
 
   notification.on('click', function(event) {

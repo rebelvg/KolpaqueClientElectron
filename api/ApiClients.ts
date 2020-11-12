@@ -87,7 +87,9 @@ class TwitchClient {
     return true;
   }
 
-  public async getUsersByLogin(channelNames: string[]): Promise<ITwitchClientUsers> {
+  public async getUsersByLogin(
+    channelNames: string[],
+  ): Promise<ITwitchClientUsers> {
     await this.refreshAccessToken();
 
     if (!this.accessToken) {
@@ -100,10 +102,15 @@ class TwitchClient {
 
     try {
       const { data: userData } = await axios.get<ITwitchClientUsers>(
-        `${this.baseUrl}/users?${channelNames.map(channelName => `login=${channelName}`).join('&')}`,
+        `${this.baseUrl}/users?${channelNames
+          .map(channelName => `login=${channelName}`)
+          .join('&')}`,
         {
-          headers: { Authorization: `Bearer ${this.accessToken}`, 'Client-ID': twitchClientId }
-        }
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+            'Client-ID': twitchClientId,
+          },
+        },
       );
 
       return userData;
@@ -127,8 +134,11 @@ class TwitchClient {
       const { data: userData } = await axios.get<ITwitchClientUsers>(
         `${this.baseUrl}/users?${ids.map(id => `id=${id}`).join('&')}`,
         {
-          headers: { Authorization: `Bearer ${this.accessToken}`, 'Client-ID': twitchClientId }
-        }
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+            'Client-ID': twitchClientId,
+          },
+        },
       );
 
       return userData;
@@ -150,8 +160,15 @@ class TwitchClient {
 
     try {
       const { data: streamData } = await axios.get<ITwitchClientStreams>(
-        `${this.baseUrl}/streams/?${userIds.map(userId => `user_id=${userId}`).join('&')}`,
-        { headers: { Authorization: `Bearer ${this.accessToken}`, 'Client-ID': twitchClientId } }
+        `${this.baseUrl}/streams/?${userIds
+          .map(userId => `user_id=${userId}`)
+          .join('&')}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+            'Client-ID': twitchClientId,
+          },
+        },
       );
 
       return streamData;
@@ -160,7 +177,10 @@ class TwitchClient {
     }
   }
 
-  public async getFollowedChannels(userId: string, after: string): Promise<ITwitchFollowedChannels> {
+  public async getFollowedChannels(
+    userId: string,
+    after: string,
+  ): Promise<ITwitchFollowedChannels> {
     await this.refreshAccessToken();
 
     if (!this.accessToken) {
@@ -174,7 +194,10 @@ class TwitchClient {
 
     try {
       const { data } = await axios.get<ITwitchFollowedChannels>(url.href, {
-        headers: { Authorization: `Bearer ${this.accessToken}`, 'Client-ID': twitchClientId }
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          'Client-ID': twitchClientId,
+        },
       });
 
       return data;
@@ -184,7 +207,11 @@ class TwitchClient {
   }
 
   private handleError(error: AxiosError): void {
-    addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
+    addLogs(
+      new Error(error.message),
+      error?.response?.status,
+      error?.response?.data,
+    );
 
     if (error?.response?.status === 401) {
       addLogs('twitch_access_token_fail');
@@ -209,7 +236,11 @@ class KlpqStreamClient {
 
       return data;
     } catch (error) {
-      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
+      addLogs(
+        new Error(error.message),
+        error?.response?.status,
+        error?.response?.data,
+      );
 
       return;
     }
@@ -287,7 +318,7 @@ class YoutubeClient {
 
     try {
       const { data } = await axios.get<IYoutubeChannels>(channelsUrl.href, {
-        headers: { Authorization: `Bearer ${this.accessToken}` }
+        headers: { Authorization: `Bearer ${this.accessToken}` },
       });
 
       return data;
@@ -320,7 +351,7 @@ class YoutubeClient {
 
     try {
       const { data } = await axios.get<IYoutubeStreams>(searchUrl.href, {
-        headers: { Authorization: `Bearer ${this.accessToken}` }
+        headers: { Authorization: `Bearer ${this.accessToken}` },
       });
 
       return data;
@@ -332,7 +363,11 @@ class YoutubeClient {
   }
 
   private handleError(error: AxiosError): void {
-    addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
+    addLogs(
+      new Error(error.message),
+      error?.response?.status,
+      error?.response?.data,
+    );
 
     if (error?.response?.status === 401) {
       addLogs('youtube_access_token_fail');
@@ -355,7 +390,7 @@ class ChaturbateClient {
 
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'X-Requested-With': 'XMLHttpRequest'
+      'X-Requested-With': 'XMLHttpRequest',
     };
 
     try {
@@ -363,16 +398,20 @@ class ChaturbateClient {
         url,
         qs.stringify({
           room_slug: channelName,
-          bandwidth: 'high'
+          bandwidth: 'high',
         }),
         {
-          headers
-        }
+          headers,
+        },
       );
 
       return data;
     } catch (error) {
-      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
+      addLogs(
+        new Error(error.message),
+        error?.response?.status,
+        error?.response?.data,
+      );
 
       return;
     }
@@ -392,11 +431,15 @@ class KlpqServiceClient {
   }
 
   public async getTwitchUser() {
-    await shell.openExternal(`${this.baseUrl}/auth/twitch?requestId=${SOCKET_CLIENT_ID}`);
+    await shell.openExternal(
+      `${this.baseUrl}/auth/twitch?requestId=${SOCKET_CLIENT_ID}`,
+    );
   }
 
   public async getYoutubeUser() {
-    await shell.openExternal(`${this.baseUrl}/auth/google?requestId=${SOCKET_CLIENT_ID}`);
+    await shell.openExternal(
+      `${this.baseUrl}/auth/google?requestId=${SOCKET_CLIENT_ID}`,
+    );
   }
 
   public async refreshJwtToken(): Promise<boolean> {
@@ -425,7 +468,11 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
+      addLogs(
+        new Error(error.message),
+        error?.response?.status,
+        error?.response?.data,
+      );
 
       return;
     }
@@ -439,7 +486,11 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
+      addLogs(
+        new Error(error.message),
+        error?.response?.status,
+        error?.response?.data,
+      );
 
       return;
     }
@@ -453,13 +504,19 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
+      addLogs(
+        new Error(error.message),
+        error?.response?.status,
+        error?.response?.data,
+      );
 
       return;
     }
   }
 
-  public async getYoutubeChannels(channelName: string): Promise<IYoutubeChannels> {
+  public async getYoutubeChannels(
+    channelName: string,
+  ): Promise<IYoutubeChannels> {
     await this.refreshJwtToken();
 
     if (!this.jwtToken) {
@@ -470,7 +527,7 @@ class KlpqServiceClient {
 
     try {
       const { data } = await axios.get<IYoutubeChannels>(url, {
-        headers: { jwt: this.jwtToken }
+        headers: { jwt: this.jwtToken },
       });
 
       return data;
@@ -492,7 +549,7 @@ class KlpqServiceClient {
 
     try {
       const { data } = await axios.get<IYoutubeStreams>(url, {
-        headers: { jwt: this.jwtToken }
+        headers: { jwt: this.jwtToken },
       });
 
       return data;
@@ -504,7 +561,11 @@ class KlpqServiceClient {
   }
 
   private handleError(error: AxiosError): void {
-    addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
+    addLogs(
+      new Error(error.message),
+      error?.response?.status,
+      error?.response?.data,
+    );
 
     this.jwtToken = null;
   }
@@ -514,12 +575,16 @@ class CommonClient {
   public async getContentAsBuffer(url: string): Promise<Buffer> {
     try {
       const { data } = await axios.get<Buffer>(url, {
-        responseType: 'arraybuffer'
+        responseType: 'arraybuffer',
       });
 
       return data;
     } catch (error) {
-      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
+      addLogs(
+        new Error(error.message),
+        error?.response?.status,
+        error?.response?.data,
+      );
 
       return;
     }
@@ -539,13 +604,17 @@ class GithubClient {
     try {
       const { data } = await axios.get<IGithubLatestVersion>(url, {
         headers: {
-          'user-agent': 'KolpaqueClientElectron'
-        }
+          'user-agent': 'KolpaqueClientElectron',
+        },
       });
 
       return data;
     } catch (error) {
-      addLogs(new Error(error.message), error?.response?.status, error?.response?.data);
+      addLogs(
+        new Error(error.message),
+        error?.response?.status,
+        error?.response?.data,
+      );
 
       return;
     }

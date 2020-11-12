@@ -39,7 +39,11 @@ export default class ImportForm extends Component {
 
     return (
       <Form onSubmit={this.submit}>
-        <Field name="member" placeholder="Enter twitch nickname..." component={TextField} />
+        <Field
+          name="member"
+          placeholder="Enter twitch nickname..."
+          component={TextField}
+        />
         <BtnWrap>
           <AddBtn type="button" onClick={this.addMember}>
             Import Channels Once

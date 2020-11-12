@@ -11,10 +11,15 @@ const sortTypes = [
   { value: 'lastAdded', label: 'Last Added' },
   { value: 'lastUpdated', label: 'Last Changed Status' },
   { value: 'service_visibleName', label: 'By Service and Name' },
-  { value: 'visibleName', label: 'By Name' }
+  { value: 'visibleName', label: 'By Name' },
 ];
 
-const ToggleAdapter = ({ input: { onChange, name, value }, toggle, label, ...rest }) => (
+const ToggleAdapter = ({
+  input: { onChange, name, value },
+  toggle,
+  label,
+  ...rest
+}) => (
   <Toggle
     value={value}
     onToggle={value => {
@@ -53,7 +58,14 @@ const ReactSelectAdapter = ({ input, select, ...rest }) => (
   />
 );
 
-const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting, values }) => (
+const SettingsForm = ({
+  handleSubmit,
+  pristine,
+  reset,
+  submitting,
+  changeSetting,
+  values,
+}) => (
   <Form onSubmit={handleSubmit}>
     <FieldWrapper>
       <Label>LQ</Label>
@@ -65,49 +77,77 @@ const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting
     <FieldWrapper>
       <Label>Show Notifications</Label>
       <InputWrapper>
-        <Field name="showNotifications" component={ToggleAdapter} toggle={changeSetting} />
+        <Field
+          name="showNotifications"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
       </InputWrapper>
     </FieldWrapper>
 
     <FieldWrapper>
       <Label>Start Minimized</Label>
       <InputWrapper>
-        <Field name="minimizeAtStart" component={ToggleAdapter} toggle={changeSetting} />
+        <Field
+          name="minimizeAtStart"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
       </InputWrapper>
     </FieldWrapper>
 
     <FieldWrapper>
       <Label>Play on Balloon Click</Label>
       <InputWrapper>
-        <Field name="launchOnBalloonClick" component={ToggleAdapter} toggle={changeSetting} />
+        <Field
+          name="launchOnBalloonClick"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
       </InputWrapper>
     </FieldWrapper>
 
     <FieldWrapper>
       <Label>Night Mode </Label>
       <InputWrapper>
-        <Field name="nightMode" component={ToggleAdapter} toggle={changeSetting} />
+        <Field
+          name="nightMode"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
       </InputWrapper>
     </FieldWrapper>
 
     <FieldWrapper>
       <Label>Show Tooltips</Label>
       <InputWrapper>
-        <Field name="showTooltips" component={ToggleAdapter} toggle={changeSetting} />
+        <Field
+          name="showTooltips"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
       </InputWrapper>
     </FieldWrapper>
 
     <FieldWrapper>
       <Label>Confirm Auto-Start</Label>
       <InputWrapper>
-        <Field name="confirmAutoStart" component={ToggleAdapter} toggle={changeSetting} />
+        <Field
+          name="confirmAutoStart"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
       </InputWrapper>
     </FieldWrapper>
 
     <FieldWrapper>
       <Label>Play In Window</Label>
       <InputWrapper>
-        <Field name="playInWindow" component={ToggleAdapter} toggle={changeSetting} />
+        <Field
+          name="playInWindow"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
       </InputWrapper>
     </FieldWrapper>
 
@@ -115,13 +155,22 @@ const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting
 
     <SelectWrapper>
       <Label>Sort Mode</Label>
-      <SelectField name="sortType" component={ReactSelectAdapter} options={sortTypes} select={changeSetting} />
+      <SelectField
+        name="sortType"
+        component={ReactSelectAdapter}
+        options={sortTypes}
+        select={changeSetting}
+      />
     </SelectWrapper>
 
     <FieldWrapper>
       <Label>Reversed Sort</Label>
       <InputWrapper>
-        <Field name="sortReverse" component={ToggleAdapter} toggle={changeSetting} />
+        <Field
+          name="sortReverse"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
       </InputWrapper>
     </FieldWrapper>
 
@@ -141,14 +190,22 @@ const SettingsForm = ({ handleSubmit, pristine, reset, submitting, changeSetting
         Consent
       </Label>
       <InputWrapper>
-        <Field name="youtubeTosConsent" component={ToggleAdapter} toggle={changeSetting} />
+        <Field
+          name="youtubeTosConsent"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
       </InputWrapper>
     </FieldWrapper>
 
     <FieldWrapper>
       <Label>Use Streamlink To Check Custom Channels</Label>
       <InputWrapper>
-        <Field name="useStreamlinkForCustomChannels" component={ToggleAdapter} toggle={changeSetting} />
+        <Field
+          name="useStreamlinkForCustomChannels"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
       </InputWrapper>
     </FieldWrapper>
 

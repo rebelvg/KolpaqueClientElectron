@@ -11,12 +11,12 @@ const { version } = require('../package.json');
 const SERVICES = [
   {
     name: 'client',
-    link: 'https://github.com/rebelvg/KolpaqueClientElectron/releases'
+    link: 'https://github.com/rebelvg/KolpaqueClientElectron/releases',
   },
   {
     name: 'streamlink',
-    link: 'https://github.com/streamlink/streamlink/releases'
-  }
+    link: 'https://github.com/streamlink/streamlink/releases',
+  },
 ];
 
 const UPDATES: string[] = [];
@@ -27,7 +27,7 @@ ipcMain.on('client_getInfo', async (event, info) => {
       if (UPDATES.includes(service.name)) {
         shell.openExternal(service.link);
       }
-    })
+    }),
   );
 });
 
@@ -44,7 +44,10 @@ function sendInfo(update: string) {
 
   printNotification(`${_.capitalize(update)} Update Available`, service.link);
 
-  app['mainWindow'].webContents.send('client_showInfo', UPDATES.map(_.capitalize).join(' & ') + ' Update Available');
+  app['mainWindow'].webContents.send(
+    'client_showInfo',
+    UPDATES.map(_.capitalize).join(' & ') + ' Update Available',
+  );
 }
 
 async function clientVersionCheck(): Promise<boolean> {
@@ -63,7 +66,11 @@ async function clientVersionCheck(): Promise<boolean> {
 
 async function streamlinkVersionCheck() {
   return new Promise(resolve => {
-    execFile('streamlink', ['--version-check'], function(err: any, data, stderr) {
+    execFile('streamlink', ['--version-check'], function(
+      err: any,
+      data,
+      stderr,
+    ) {
       if (err) {
         addLogs(err);
 
@@ -74,7 +81,9 @@ async function streamlinkVersionCheck() {
         return resolve(false);
       }
 
-      const regExp = new RegExp(/A new version of Streamlink \((.*)\) is available!/gi);
+      const regExp = new RegExp(
+        /A new version of Streamlink \((.*)\) is available!/gi,
+      );
 
       if (regExp.test(data)) {
         return resolve(true);

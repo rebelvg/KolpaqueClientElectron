@@ -8,9 +8,9 @@ import { getCount, getActiveTab, updateData } from 'src/redux/channel';
 @connect(
   state => ({
     active: getActiveTab(state),
-    count: getCount(state)
+    count: getCount(state),
   }),
-  { updateData }
+  { updateData },
 )
 class Tabs extends Component {
   constructor() {
@@ -24,7 +24,11 @@ class Tabs extends Component {
     return (
       <TabList>
         {TABS.map(tab => (
-          <Tab active={active === tab.value} onClick={() => this.onChange(tab.value)} key={tab.value}>
+          <Tab
+            active={active === tab.value}
+            onClick={() => this.onChange(tab.value)}
+            key={tab.value}
+          >
             {tab.name} ({count[tab.value]})
           </Tab>
         ))}

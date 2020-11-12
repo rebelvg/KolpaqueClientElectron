@@ -11,18 +11,24 @@ import Footer from 'src/Channel/Components/Footer';
 import Tabs from 'src/Channel/Components/Tabs';
 import Loading from 'src/Shared/Loading';
 import Channels from 'src/Channel/Components/Channels';
-import { getLoaded, getFilter, updateData, getUpdate, getChannelsList } from 'src/redux/channel';
+import {
+  getLoaded,
+  getFilter,
+  updateData,
+  getUpdate,
+  getChannelsList,
+} from 'src/redux/channel';
 
 @withTheme
 @connect(
   state => ({
     loaded: getLoaded(state),
     filter: getFilter(state),
-    update: getUpdate(state)
+    update: getUpdate(state),
   }),
   {
-    updateData
-  }
+    updateData,
+  },
 )
 class ChannelContainer extends PureComponent {
   constructor() {
@@ -30,7 +36,7 @@ class ChannelContainer extends PureComponent {
 
     this.state = {
       selected: null,
-      editChannel: null
+      editChannel: null,
     };
   }
 
