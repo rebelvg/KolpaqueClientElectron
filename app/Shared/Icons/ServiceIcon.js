@@ -12,7 +12,12 @@ const Services = {
     padding: 1,
     color: '#6441a5',
   },
-  'klpq-vps': {
+  'klpq-vps-rtmp': {
+    asset: './static/icons/klpq_vps.svg',
+    isImage: true,
+    color: null,
+  },
+  'klpq-vps-http': {
     asset: './static/icons/klpq_vps.svg',
     isImage: true,
     color: null,

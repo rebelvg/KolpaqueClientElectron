@@ -156,4 +156,12 @@ export class Channel extends EventEmitter {
       autoRestart: this.autoRestart,
     };
   }
+
+  public getPlayLink() {
+    return this.serviceObj.playUrl(this);
+  }
+
+  public getLqParams(playLink: string, params) {
+    return this.serviceObj.onLQ(playLink, params);
+  }
 }

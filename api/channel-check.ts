@@ -23,7 +23,13 @@ interface IServiceInterval {
 
 const SERVICES_INTERVALS: IServiceInterval[] = [
   {
-    name: 'klpq-vps',
+    name: 'klpq-vps-rtmp',
+    check: 5,
+    confirmations: 0,
+    function: getKlpqVpsStats,
+  },
+  {
+    name: 'klpq-vps-http',
     check: 5,
     confirmations: 0,
     function: getKlpqVpsStats,
@@ -129,7 +135,10 @@ function isOffline(channelObj: Channel) {
 }
 
 async function getKlpqStatsBase(channelObj: Channel, printBalloon: boolean) {
-  const channelData = await klpqStreamClient.getChannel(channelObj.name);
+  const channelData = await klpqStreamClient.getChannel(
+    channelObj.name,
+    channelObj.serviceObj.hosts[0],
+  );
 
   if (!channelData) {
     return;

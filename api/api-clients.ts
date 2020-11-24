@@ -228,7 +228,10 @@ export interface IKlpqStreamChannel {
 class KlpqStreamClient {
   private baseUrl = 'https://stats.klpq.men/api';
 
-  public async getChannel(channelName: string): Promise<IKlpqStreamChannel> {
+  public async getChannel(
+    channelName: string,
+    host: string,
+  ): Promise<IKlpqStreamChannel> {
     const url = `${this.baseUrl}/channels/nms/live/${channelName}`;
 
     try {

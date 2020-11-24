@@ -129,22 +129,18 @@ function launchPlayerObj(
     channelObj.changeSetting('onAutoRestart', autoRestart);
   }
 
-  let playLink = channelObj._customPlayUrl || channelObj.link;
+  let playLink = channelObj.getPlayLink();
   let params = [];
 
   if (LQ) {
-    const onLQ = channelObj.serviceObj.onLQ(playLink, params);
+    const onLQ = channelObj.getLqParams(playLink, params);
 
     playLink = onLQ.playLink;
     params = onLQ.params;
   }
 
   if (channelObj.protocol === ProtocolsEnum.RTMP) {
-    playLink = `${playLink} live=1`;
-  } else {
-    if (LQ) {
-      params = params.concat(['--stream-sorting-excludes', '>=720p,>=high']);
-    }
+    playLink = `${playLink} best`;
   }
 
   launchStreamlink(playLink, params, channelObj);

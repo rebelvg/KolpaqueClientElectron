@@ -16,6 +16,7 @@ export interface IStreamService {
   embed: (channelObj: Channel) => string;
   chat: (channelObj: Channel) => string;
   icon: Buffer;
+  playUrl: (channelObj: Channel) => string;
   onLQ: (
     playLink: string,
     params: string[],
@@ -27,29 +28,53 @@ export const allowedProtocols = [...Object.values(ProtocolsEnum)];
 export const registeredServices: {
   [serviceName: string]: IStreamService;
 } = {
-  'klpq-vps': {
+  'klpq-vps-rtmp': {
     protocols: [ProtocolsEnum.RTMP],
-    hosts: ['vps.klpq.men', 'stream.klpq.men'],
+    hosts: ['mediaserver.klpq.men', 'stream.klpq.men', 'vps.klpq.men'],
     paths: ['/live/'],
     name: 2,
     embed: (channelObj: Channel) => {
-      return `http://stream.klpq.men/${channelObj.name}`;
+      return `http://klpq.men/stream/${channelObj.name}`;
     },
-    chat: channelObj => {
-      return `http://stream.klpq.men/chat`;
-    },
+    chat: null,
     icon: fs.readFileSync(
       path.normalize(path.join(__dirname, '../icons', 'klpq_vps.png')),
       {
         encoding: null,
       },
     ),
+    playUrl: (channelObj: Channel) => {
+      return `rtmp://mediaserver.klpq.men/live/${channelObj.name}`;
+    },
     onLQ: (playLink: string, params: string[]) => {
       return {
         playLink: playLink.replace('/live/', '/encode/'),
         params,
       };
     },
+  },
+  'klpq-vps-http': {
+    protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
+    hosts: ['klpq.men'],
+    paths: ['/stream/'],
+    name: 2,
+    embed: (channelObj: Channel) => {
+      return `http://klpq.men/stream/${channelObj.name}`;
+    },
+    chat: null,
+    icon: fs.readFileSync(
+      path.normalize(path.join(__dirname, '../icons', 'klpq_vps.png')),
+      {
+        encoding: null,
+      },
+    ),
+    playUrl: (channelObj: Channel) => {
+      return `https://encode.klpq.men/mpd/${channelObj.name}/index.mpd`;
+    },
+    onLQ: (playLink, params) => ({
+      playLink,
+      params,
+    }),
   },
   twitch: {
     protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
@@ -66,9 +91,12 @@ export const registeredServices: {
         encoding: null,
       },
     ),
+    playUrl: (channelObj: Channel) => {
+      return channelObj._customPlayUrl || channelObj.link;
+    },
     onLQ: (playLink, params) => ({
       playLink,
-      params,
+      params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     }),
   },
   'youtube-user': {
@@ -84,9 +112,12 @@ export const registeredServices: {
         encoding: null,
       },
     ),
+    playUrl: (channelObj: Channel) => {
+      return channelObj._customPlayUrl || channelObj.link;
+    },
     onLQ: (playLink, params) => ({
       playLink,
-      params,
+      params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     }),
   },
   'youtube-channel': {
@@ -102,9 +133,12 @@ export const registeredServices: {
         encoding: null,
       },
     ),
+    playUrl: (channelObj: Channel) => {
+      return channelObj._customPlayUrl || channelObj.link;
+    },
     onLQ: (playLink, params) => ({
       playLink,
-      params,
+      params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     }),
   },
   chaturbate: {
@@ -115,6 +149,9 @@ export const registeredServices: {
     embed: null,
     chat: null,
     icon: null,
+    playUrl: (channelObj: Channel) => {
+      return channelObj._customPlayUrl || channelObj.link;
+    },
     onLQ: (playLink, params) => ({
       playLink,
       params,
@@ -128,6 +165,9 @@ export const registeredServices: {
     embed: null,
     chat: null,
     icon: null,
+    playUrl: (channelObj: Channel) => {
+      return channelObj._customPlayUrl || channelObj.link;
+    },
     onLQ: (playLink, params) => ({
       playLink,
       params,
