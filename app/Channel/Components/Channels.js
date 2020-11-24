@@ -13,7 +13,7 @@ import ReactList from 'react-list';
 
 @withTheme
 @connect(
-  state => ({
+  (state) => ({
     update: getUpdate(state),
     sortType: getSortType(state),
     channels: getChannelsList(state),
@@ -33,11 +33,11 @@ class Channels extends PureComponent {
     };
   }
 
-  edit = channel => {
+  edit = (channel) => {
     this.setState({ edit: channel });
   };
 
-  openMenu = channel => {
+  openMenu = (channel) => {
     openChannelMenu(channel, () => this.edit(channel));
   };
 

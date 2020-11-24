@@ -13,9 +13,10 @@ import {
   chaturbateClient,
   TWITCH_CHUNK_LIMIT,
 } from './api-clients';
+import { ServiceNamesEnum } from './Globals';
 
 interface IServiceInterval {
-  name: string;
+  name: ServiceNamesEnum;
   check: number;
   confirmations: number;
   function: (channels: Channel[], printBalloon: boolean) => {};
@@ -23,50 +24,50 @@ interface IServiceInterval {
 
 const SERVICES_INTERVALS: IServiceInterval[] = [
   {
-    name: 'klpq-vps-rtmp',
+    name: ServiceNamesEnum.KLPQ_VPS_RTMP,
     check: 5,
     confirmations: 0,
     function: getKlpqVpsStats,
   },
   {
-    name: 'klpq-vps-http',
+    name: ServiceNamesEnum.KLPQ_VPS_HTTP,
     check: 5,
     confirmations: 0,
     function: getKlpqVpsStats,
   },
   {
-    name: 'twitch',
+    name: ServiceNamesEnum.TWITCH,
     check: 30,
     confirmations: 3,
     function: getTwitchStats,
   },
   {
-    name: 'youtube-user',
+    name: ServiceNamesEnum.YOUTUBE_USER,
     check: 120,
     confirmations: 3,
     function: getYoutubeStatsUser,
   },
   {
-    name: 'youtube-channel',
+    name: ServiceNamesEnum.YOUTUBE_CHANNEL,
     check: 120,
     confirmations: 3,
     function: getYoutubeStatsChannel,
   },
   {
-    name: 'chaturbate',
+    name: ServiceNamesEnum.CHATURBATE,
     check: 120,
     confirmations: 3,
     function: getChaturbateStats,
   },
   {
-    name: 'custom',
+    name: ServiceNamesEnum.CUSTOM,
     check: 120,
     confirmations: 3,
     function: getCustomStats,
   },
 ];
 
-config.on('channel_added', async channel => {
+config.on('channel_added', async (channel) => {
   await checkChannels([channel], false);
 });
 
@@ -153,7 +154,7 @@ async function getKlpqStatsBase(channelObj: Channel, printBalloon: boolean) {
 
 async function getKlpqVpsStats(channelObjs: Channel[], printBalloon: boolean) {
   await Promise.all(
-    channelObjs.map(channelObj => {
+    channelObjs.map((channelObj) => {
       return getKlpqStatsBase(channelObj, printBalloon);
     }),
   );
@@ -165,8 +166,8 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
   const chunkedChannels = _.chunk(channelObjs, TWITCH_CHUNK_LIMIT);
 
   await Promise.all(
-    chunkedChannels.map(async channelObjs => {
-      const channels = channelObjs.map(channelObj => {
+    chunkedChannels.map(async (channelObjs) => {
+      const channels = channelObjs.map((channelObj) => {
         return {
           channelObj,
           userId: null,
@@ -174,22 +175,22 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
       });
 
       const userData = await twitchClient.getUsersByLogin(
-        channelObjs.map(channel => channel.name),
+        channelObjs.map((channel) => channel.name),
       );
 
       if (!userData) {
         return;
       }
 
-      _.forEach(channels, channel => {
-        _.forEach(userData.data, user => {
+      _.forEach(channels, (channel) => {
+        _.forEach(userData.data, (user) => {
           if (user.login === channel.channelObj.name) {
             channel.userId = user.id;
           }
         });
       });
 
-      const existingChannels = channels.filter(channel => !!channel.userId);
+      const existingChannels = channels.filter((channel) => !!channel.userId);
 
       if (existingChannels.length === 0) {
         _.forEach(channels, ({ channelObj }) => {
@@ -239,7 +240,7 @@ async function getYoutubeStatsUser(
   // await youtubeClient.refreshAccessToken();
 
   await Promise.all(
-    channelObjs.map(async channelObj => {
+    channelObjs.map(async (channelObj) => {
       const data = await youtubeClient.getChannels(channelObj.name);
 
       if (!data) {
@@ -268,7 +269,7 @@ async function getYoutubeStatsChannel(
   // await youtubeClient.refreshAccessToken();
 
   await Promise.all(
-    channelObjs.map(async channelObj => {
+    channelObjs.map(async (channelObj) => {
       const channelStatus = await getYoutubeStatsBase(channelObj.name);
 
       if (channelStatus) {
@@ -285,7 +286,7 @@ async function getChaturbateStats(
   printBalloon: boolean,
 ) {
   await Promise.all(
-    channelObjs.map(async channelObj => {
+    channelObjs.map(async (channelObj) => {
       const data = await chaturbateClient.getChannel(channelObj.name);
 
       if (data.room_status === 'public') {
@@ -312,12 +313,12 @@ async function getCustomStats(channels: Channel[], printBalloon: boolean) {
 
   for (const channelObjs of chunkedChannels) {
     await Promise.all(
-      channelObjs.map(async channelObj => {
-        return new Promise(resolve => {
+      channelObjs.map(async (channelObj) => {
+        return new Promise<void>((resolve) => {
           childProcess.execFile(
             'streamlink',
             [channelObj.link, 'best', '--twitch-disable-hosting', '--json'],
-            function(err, stdout, stderr) {
+            function (err, stdout, stderr) {
               try {
                 const res = JSON.parse(stdout);
 
@@ -341,8 +342,10 @@ async function getCustomStats(channels: Channel[], printBalloon: boolean) {
 
 async function checkChannels(channelObjs: Channel[], printBalloon: boolean) {
   await Promise.all(
-    SERVICES_INTERVALS.map(async service => {
-      const channels = _.filter(channelObjs, { service: service.name });
+    SERVICES_INTERVALS.map(async (service) => {
+      const channels = _.filter(channelObjs, {
+        service: service.name,
+      });
 
       await service.function(channels, printBalloon);
     }),
@@ -351,7 +354,9 @@ async function checkChannels(channelObjs: Channel[], printBalloon: boolean) {
 
 async function checkService(service: IServiceInterval, printBalloon: boolean) {
   try {
-    const channels = _.filter(config.channels, { service: service.name });
+    const channels = _.filter(config.channels, {
+      service: service.name,
+    });
 
     await service.function(channels, printBalloon);
   } catch (error) {
@@ -371,13 +376,13 @@ async function checkServiceLoop(
 }
 
 export async function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export async function loop() {
   await Promise.all(
-    _.map(SERVICES_INTERVALS, service => checkService(service, false)),
+    _.map(SERVICES_INTERVALS, (service) => checkService(service, false)),
   );
 
-  _.forEach(SERVICES_INTERVALS, service => checkServiceLoop(service, true));
+  _.forEach(SERVICES_INTERVALS, (service) => checkServiceLoop(service, true));
 }

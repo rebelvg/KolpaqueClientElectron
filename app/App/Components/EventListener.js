@@ -15,7 +15,7 @@ import { initSettings } from '../../redux/settings';
 const { ipcRenderer } = window.require('electron');
 
 @connect(
-  state => ({
+  (state) => ({
     loaded: getLoaded(state),
   }),
   {
@@ -59,10 +59,10 @@ class EventListener extends Component {
     const { initSettings, updateData, loaded, getInfo, initStart } = this.props;
 
     if (!loaded) {
-      ipcRenderer.on('channel_changeSettingSync', event => updateData());
-      ipcRenderer.on('channel_addSync', event => updateData());
+      ipcRenderer.on('channel_changeSettingSync', (event) => updateData());
+      ipcRenderer.on('channel_addSync', (event) => updateData());
       ipcRenderer.on('client_showInfo', (event, info) => getInfo(info));
-      ipcRenderer.on('channel_removeSync', event => updateData());
+      ipcRenderer.on('channel_removeSync', (event) => updateData());
 
       initStart();
       initSettings();

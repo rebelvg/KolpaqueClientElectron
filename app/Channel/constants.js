@@ -1,5 +1,5 @@
-export const getTab = tab => {
-  return TABS.find(t => t.value === tab);
+export const getTab = (tab) => {
+  return TABS.find((t) => t.value === tab);
 };
 
 export const visibleByTab = (channel, tab) =>

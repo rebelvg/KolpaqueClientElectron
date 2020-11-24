@@ -12,9 +12,9 @@ export default class ImportForm extends Component {
     super();
   }
 
-  removeMember = member => {
+  removeMember = (member) => {
     const { members, submit } = this.props;
-    submit([...members.filter(m => m !== member)]);
+    submit([...members.filter((m) => m !== member)]);
   };
 
   addMember = () => {
@@ -24,7 +24,7 @@ export default class ImportForm extends Component {
     reset();
   };
 
-  submit = data => {
+  submit = (data) => {
     const { handleSubmit, values, reset, submit, members } = this.props;
     const member = values.member;
     if (member) {
@@ -72,17 +72,17 @@ export default class ImportForm extends Component {
 }
 
 const MemberInput = styled.input`
-  background-color: ${props => props.theme.input.bg};
-  color: ${props => props.theme.input.color};
+  background-color: ${(props) => props.theme.input.bg};
+  color: ${(props) => props.theme.input.color};
   border: none;
   padding: 5px;
-  outline: 1px solid ${props => props.theme.outline};
+  outline: 1px solid ${(props) => props.theme.outline};
 `;
 
 const AddBtn = styled.button`
   background-color: transparent;
-  border: 1px solid ${props => props.theme.klpq};
-  color: ${props => props.theme.klpq};
+  border: 1px solid ${(props) => props.theme.klpq};
+  color: ${(props) => props.theme.klpq};
   margin: 5px 0px;
   cursor: pointer;
   width: 50%;
@@ -100,7 +100,7 @@ const BtnWrap = styled.div`
 `;
 
 const MemberTitle = styled.div`
-  color: ${props => props.theme.client.color};
+  color: ${(props) => props.theme.client.color};
   font-size: 18px;
   font-weight: bold;
   text-align: center;
@@ -116,9 +116,9 @@ const MemberWrap = styled.div`
 `;
 
 const Member = styled.div`
-  color: ${props => props.theme.client.color};
+  color: ${(props) => props.theme.client.color};
   display: flex;
   align-items: center;
-  border-top: 1px solid ${props => props.theme.outline};
+  border-top: 1px solid ${(props) => props.theme.outline};
   padding: 5px 20px;
 `;

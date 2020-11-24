@@ -37,7 +37,7 @@ const filterChannel = (channelObj: Channel, filter: string): boolean => {
 
   const filters = filter.split(/\s+/gi);
 
-  let searchFilters = _.map(filters, filter => {
+  let searchFilters = _.map(filters, (filter) => {
     return {
       pattern: filter,
       found: false,
@@ -46,8 +46,8 @@ const filterChannel = (channelObj: Channel, filter: string): boolean => {
 
   _.forEach(
     [channelObj.link, channelObj.name, channelObj.visibleName],
-    searchString => {
-      _.forEach(searchFilters, filter => {
+    (searchString) => {
+      _.forEach(searchFilters, (filter) => {
         let regExp = new RegExp(filter.pattern, 'gi');
 
         if (regExp.test(searchString)) {
@@ -69,7 +69,7 @@ const filterChannels = (channels: Channel[], filter: string): Channel[] => {
 
   let filteredChannels = [];
 
-  filteredChannels = _.filter(channels, channelObj => {
+  filteredChannels = _.filter(channels, (channelObj) => {
     return filterChannel(channelObj, filter);
   });
 
@@ -109,7 +109,7 @@ const sortChannels = (
     sortedChannels.reverse();
   }
 
-  sortedChannels = _.sortBy(sortedChannels, [channel => !channel.isPinned]);
+  sortedChannels = _.sortBy(sortedChannels, [(channel) => !channel.isPinned]);
 
   return sortedChannels;
 };
@@ -176,7 +176,7 @@ export class Config extends EventEmitter {
 
       let parseJson = JSON.parse(file);
 
-      _.forEach(parseJson.channels, channelObj => {
+      _.forEach(parseJson.channels, (channelObj) => {
         let channel = this.addChannelLink(channelObj.link, false);
 
         if (channel !== false) channel.update(channelObj);
@@ -251,7 +251,7 @@ export class Config extends EventEmitter {
   }
 
   findById(id) {
-    let channel = this.channels.find(channel => {
+    let channel = this.channels.find((channel) => {
       return channel.id === id;
     });
 
@@ -261,7 +261,7 @@ export class Config extends EventEmitter {
   }
 
   findChannelByLink(channelLink) {
-    let channel = this.channels.find(channel => {
+    let channel = this.channels.find((channel) => {
       return channel.link === channelLink;
     });
 
@@ -299,10 +299,10 @@ export class Config extends EventEmitter {
 
   saveFile() {
     try {
-      const channels = _.map(this.channels, channelObj => {
+      const channels = _.map(this.channels, (channelObj) => {
         let channel = {};
 
-        _.forEach(channelSave, settingName => {
+        _.forEach(channelSave, (settingName) => {
           if (channelObj.hasOwnProperty(settingName)) {
             channel[settingName] = channelObj[settingName];
           }

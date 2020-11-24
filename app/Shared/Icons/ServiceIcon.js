@@ -41,11 +41,11 @@ const Services = {
 
 @withTheme
 class ServiceIcon extends Component {
-  getIcon = serviceName => {
+  getIcon = (serviceName) => {
     return Services[serviceName] ? Services[serviceName] : Services['default'];
   };
 
-  renderImage = asset => (
+  renderImage = (asset) => (
     <IconWithImage>
       <img src={asset} />
     </IconWithImage>
@@ -59,7 +59,7 @@ class ServiceIcon extends Component {
     />
   );
 
-  renderIcon = icon => {
+  renderIcon = (icon) => {
     if (icon.isImage) {
       return this.renderImage(icon.asset);
     } else {
@@ -87,5 +87,5 @@ const IconWithImage = styled.div`
 const IconWithService = styled(Icon)`
   width: 16px;
   height: 16px;
-  color: ${props => (!!props.color ? props.color : 'darkgreen')};
+  color: ${(props) => (!!props.color ? props.color : 'darkgreen')};
 `;

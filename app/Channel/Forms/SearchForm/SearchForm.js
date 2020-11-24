@@ -56,17 +56,17 @@ const Form = styled.div`
   position: relative;
   z-index: 100000;
   padding: 2px 0px;
-  background-color: ${props => props.theme.client.bg};
+  background-color: ${(props) => props.theme.client.bg};
   & button {
     -webkit-appearance: none;
     border: none;
     padding: 0;
     margin: 0;
     cursor: pointer;
-    background-color: ${props => props.theme.input.bg};
+    background-color: ${(props) => props.theme.input.bg};
     display: flex !important;
     box-sizing: border-box;
-    border: 1px solid ${props => props.theme.outline};
+    border: 1px solid ${(props) => props.theme.outline};
     border-left: 0px;
     width: 20px;
     height: 20px;
@@ -92,9 +92,9 @@ const InputWrapper = styled.div`
   display: flex;
   align-items: center;
   & > input {
-    background-color: ${props => props.theme.input.bg};
-    color: ${props => props.theme.input.color};
-    border: 1px solid ${props => props.theme.outline};
+    background-color: ${(props) => props.theme.input.bg};
+    color: ${(props) => props.theme.input.color};
+    border: 1px solid ${(props) => props.theme.outline};
     border-right: none;
     width: 100%;
     height: 20px;
@@ -105,5 +105,5 @@ const InputWrapper = styled.div`
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${props => props.theme.input.color};
+  color: ${(props) => props.theme.input.color};
 `;

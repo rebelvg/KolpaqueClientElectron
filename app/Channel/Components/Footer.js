@@ -20,7 +20,7 @@ export default class Footer extends Component {
       <FooterWrapper>
         <Form
           onSubmit={this.submit}
-          render={props => <ChannelForm {...props} />}
+          render={(props) => <ChannelForm {...props} />}
         />
       </FooterWrapper>
     );
@@ -28,7 +28,7 @@ export default class Footer extends Component {
 }
 
 const FooterWrapper = styled.div`
-  background-color: ${props => props.theme.client.bg};
+  background-color: ${(props) => props.theme.client.bg};
   color: white;
   position: fixed;
   bottom: 0px;

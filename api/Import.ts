@@ -24,9 +24,9 @@ async function twitchImportChannels(
   const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
 
   await Promise.all(
-    chunkedChannels.map(async channels => {
+    chunkedChannels.map(async (channels) => {
       const userData = await twitchClient.getUsersById(
-        channels.map(channel => channel.to_id),
+        channels.map((channel) => channel.to_id),
       );
 
       if (!userData) {
@@ -103,7 +103,7 @@ async function twitchImportBase(
           break;
         }
 
-        followedChannels.forEach(followedChannel =>
+        followedChannels.forEach((followedChannel) =>
           channelsToAdd.push(followedChannel),
         );
       }
@@ -112,7 +112,7 @@ async function twitchImportBase(
 
   const { channelsAdded } = await twitchImportChannels(channelsToAdd);
 
-  channelsAdded.forEach(channelObj => channelsAddedAll.push(channelObj));
+  channelsAdded.forEach((channelObj) => channelsAddedAll.push(channelObj));
 
   if (emitEvent) {
     config.emit('channel_added_channels', channelsAddedAll);
@@ -143,7 +143,7 @@ async function twitchImport(channelName: string) {
 
 async function autoTwitchImport(emitEvent: boolean) {
   await Promise.all(
-    _.map(config.settings.twitchImport, async channelName => {
+    _.map(config.settings.twitchImport, async (channelName) => {
       await twitchImportBase(channelName, emitEvent);
     }),
   );

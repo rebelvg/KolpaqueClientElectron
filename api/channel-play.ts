@@ -14,7 +14,7 @@ const AUTO_RESTART_TIMEOUT = 60;
 function setChannelEvents(channelObj) {
   channelObj.on('setting_changed', (settingName, settingValue) => {
     if (settingName === 'isLive' && !settingValue) {
-      _.forEach(channelObj._windows, window => window.close());
+      _.forEach(channelObj._windows, (window) => window.close());
 
       channelObj._windows = [];
     }
@@ -61,7 +61,7 @@ _.forEach(config.channels, setChannelEvents);
 config.on('channel_added', setChannelEvents);
 
 config.on('channel_added_channels', async (channels: Channel[]) => {
-  channels.forEach(channel => {
+  channels.forEach((channel) => {
     setChannelEvents(channel);
   });
 });

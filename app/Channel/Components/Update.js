@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { getUpdate, sendInfo } from '../../redux/channel';
 
 @connect(
-  state => ({
+  (state) => ({
     update: getUpdate(state),
   }),
   { sendInfo },
@@ -14,7 +14,7 @@ export default class Update extends Component {
     super();
   }
 
-  sendInfo = info => this.props.sendInfo(info);
+  sendInfo = (info) => this.props.sendInfo(info);
 
   render() {
     const { update } = this.props;
@@ -45,13 +45,13 @@ const UpdateWrapper = styled.div`
   z-index: 0;
   left: 17px;
   padding: 5px 0px;
-  border: 1px solid ${props => props.theme.outline};
+  border: 1px solid ${(props) => props.theme.outline};
   cursor: pointer;
-  background-color: ${props => props.theme.clientSecondary.bg};
+  background-color: ${(props) => props.theme.clientSecondary.bg};
 `;
 
 const FooterWrapper = styled.div`
-  background-color: ${props => props.theme.client.bg};
+  background-color: ${(props) => props.theme.client.bg};
   color: white;
   position: fixed;
   bottom: 0px;

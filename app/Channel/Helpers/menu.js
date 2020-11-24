@@ -4,7 +4,7 @@ const { app, Menu, shell, BrowserWindow, MenuItem } = remote;
 const menuTemplate = (channel, edit) => [
   new MenuItem({
     label: 'Play',
-    click: function(menuItem, browserWindow, event) {
+    click: function (menuItem, browserWindow, event) {
       ipcRenderer.send(
         'channel_play',
         channel.id,
@@ -16,31 +16,31 @@ const menuTemplate = (channel, edit) => [
   }),
   new MenuItem({
     label: 'Open Page',
-    click: function() {
+    click: function () {
       ipcRenderer.send('channel_openPage', channel.id);
     },
   }),
   new MenuItem({
     label: 'Open Chat',
-    click: function() {
+    click: function () {
       ipcRenderer.send('channel_openChat', channel.id);
     },
   }),
   new MenuItem({
     label: 'Rename Channel',
-    click: function() {
+    click: function () {
       edit(channel);
     },
   }),
   new MenuItem({
     label: 'Copy to Clipboard',
-    click: function() {
+    click: function () {
       ipcRenderer.send('channel_copyClipboard', channel.link);
     },
   }),
   new MenuItem({
     label: 'Remove Channel',
-    click: function() {
+    click: function () {
       ipcRenderer.send('channel_remove', channel.id);
     },
   }),

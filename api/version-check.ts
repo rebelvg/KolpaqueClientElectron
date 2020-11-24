@@ -23,7 +23,7 @@ const UPDATES: string[] = [];
 
 ipcMain.on('client_getInfo', async (event, info) => {
   await Promise.all(
-    SERVICES.map(service => {
+    SERVICES.map((service) => {
       if (UPDATES.includes(service.name)) {
         shell.openExternal(service.link);
       }
@@ -31,7 +31,7 @@ ipcMain.on('client_getInfo', async (event, info) => {
   );
 });
 
-ipcMain.on('client_getVersion', event => (event.returnValue = version));
+ipcMain.on('client_getVersion', (event) => (event.returnValue = version));
 
 function sendInfo(update: string) {
   UPDATES.push(update);
@@ -65,30 +65,30 @@ async function clientVersionCheck(): Promise<boolean> {
 }
 
 async function streamlinkVersionCheck() {
-  return new Promise(resolve => {
-    execFile('streamlink', ['--version-check'], function(
-      err: any,
-      data,
-      stderr,
-    ) {
-      if (err) {
-        addLogs(err);
+  return new Promise((resolve) => {
+    execFile(
+      'streamlink',
+      ['--version-check'],
+      function (err: any, data, stderr) {
+        if (err) {
+          addLogs(err);
 
-        if (err.code === 'ENOENT') {
-          return resolve(true);
+          if (err.code === 'ENOENT') {
+            return resolve(true);
+          }
+
+          return resolve(false);
         }
 
-        return resolve(false);
-      }
+        const regExp = new RegExp(
+          /A new version of Streamlink \((.*)\) is available!/gi,
+        );
 
-      const regExp = new RegExp(
-        /A new version of Streamlink \((.*)\) is available!/gi,
-      );
-
-      if (regExp.test(data)) {
-        return resolve(true);
-      }
-    });
+        if (regExp.test(data)) {
+          return resolve(true);
+        }
+      },
+    );
   });
 }
 

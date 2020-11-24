@@ -10,13 +10,14 @@ import {
   registeredServices,
   ProtocolsEnum,
   IStreamService,
+  ServiceNamesEnum,
 } from './Globals';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
 export class Channel extends EventEmitter {
   public id: string = null;
-  public service = 'custom';
+  public service: ServiceNamesEnum = ServiceNamesEnum.CUSTOM;
   public serviceObj: IStreamService = null;
   public name: string = null;
   public link: string = null;
@@ -35,6 +36,7 @@ export class Channel extends EventEmitter {
   public isPinned = false;
   public autoStart = false;
   public autoRestart = false;
+  public _trayIcon: Electron.NativeImage;
 
   constructor(channelLink: string) {
     super();
@@ -42,9 +44,7 @@ export class Channel extends EventEmitter {
     channelLink = channelLink.trim();
 
     this.link = channelLink;
-    this.id = createHash('md5')
-      .update(this.link)
-      .digest('hex');
+    this.id = createHash('md5').update(this.link).digest('hex');
 
     const channelURL = new URL(channelLink);
 
@@ -64,7 +64,7 @@ export class Channel extends EventEmitter {
       throw Error(`Pathname can't be empty.`);
     }
 
-    _.forEach(registeredServices, (serviceObj, serviceName) => {
+    _.forEach(registeredServices, (serviceObj) => {
       if (
         serviceObj.protocols.includes(protocol) &&
         serviceObj.hosts.includes(channelURL.host.toLowerCase())
@@ -72,9 +72,10 @@ export class Channel extends EventEmitter {
         const nameArray = _.split(channelURL.pathname, '/');
 
         if (nameArray[serviceObj.name]) {
-          _.forEach(serviceObj.paths, path => {
+          _.forEach(serviceObj.paths, (path) => {
             if (channelURL.pathname.toLowerCase().indexOf(path) === 0) {
-              this.service = serviceName;
+              this.service = serviceObj.serviceName;
+              this.serviceObj = serviceObj;
               this.name = nameArray[serviceObj.name];
               this.visibleName = this.name;
 
@@ -90,7 +91,7 @@ export class Channel extends EventEmitter {
       }
     });
 
-    if (this.service === 'custom') {
+    if (this.service === ServiceNamesEnum.CUSTOM) {
       const pathname = _.endsWith(channelURL.pathname, '/')
         ? channelURL.pathname.slice(0, -1)
         : channelURL.pathname;
@@ -99,13 +100,11 @@ export class Channel extends EventEmitter {
       this.visibleName = `${channelURL.host}${pathname}`;
     }
 
-    this.serviceObj = registeredServices[this.service];
-
     this.on('setting_changed', (settingName, settingValue, send) => {
       if (send) app['mainWindow'].webContents.send('channel_changeSettingSync');
     });
 
-    this.on('settings_changed', send => {
+    this.on('settings_changed', (send) => {
       if (send) app['mainWindow'].webContents.send('channel_changeSettingSync');
     });
   }

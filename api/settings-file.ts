@@ -123,9 +123,9 @@ ipcMain.on('channel_copyClipboard', (event, channelLink) => {
   return true;
 });
 
-ipcMain.once('getChannels', event => (event.returnValue = config.channels));
+ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));
 
-ipcMain.once('getSettings', event => (event.returnValue = config.settings));
+ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
 
 ipcMain.on('getSettingSync', (event, settingName) => {
   if (!config.settings.hasOwnProperty(settingName))

@@ -5,7 +5,7 @@ import { refresh } from 'react-icons-kit/fa/refresh';
 
 @withTheme
 class AutoRestart extends Component {
-  onClick = e => {
+  onClick = (e) => {
     const {
       channel: { id, onAutoRestart, autoRestart },
       toggle,

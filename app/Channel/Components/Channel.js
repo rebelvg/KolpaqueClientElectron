@@ -86,11 +86,11 @@ const ChannelWrapper = styled.div`
   flex-direction: row;
   font-size: 14px;
   height: 20px;
-  background-color: ${props =>
+  background-color: ${(props) =>
     !props.selected
       ? `${props.theme.channel.bg}`
       : `${props.theme.channelSelected.bg}`};
-  border-bottom: 1px solid ${props => props.theme.outline};
+  border-bottom: 1px solid ${(props) => props.theme.outline};
 `;
 
 const Icons = styled.div`
@@ -102,7 +102,7 @@ const Icons = styled.div`
 const ChannelData = styled.div`
   flex-grow: 2;
   display: flex;
-  color: ${props => props.theme.channel.color};
+  color: ${(props) => props.theme.channel.color};
   flex-direction: row;
 `;
 
@@ -119,7 +119,7 @@ const StyledName = styled.div`
   height: 20px;
   font-size: 14px;
   display: flex;
-  color: ${props => props.theme.channel.color};
+  color: ${(props) => props.theme.channel.color};
   align-items: center;
   font-weight: bold;
   overflow: hidden;

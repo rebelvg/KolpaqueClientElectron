@@ -6,7 +6,7 @@ import { TABS } from '../../Channel/constants';
 import { getCount, getActiveTab, updateData } from '../../redux/channel';
 
 @connect(
-  state => ({
+  (state) => ({
     active: getActiveTab(state),
     count: getCount(state),
   }),
@@ -17,13 +17,13 @@ class Tabs extends Component {
     super();
   }
 
-  onChange = value => this.props.updateData(null, value);
+  onChange = (value) => this.props.updateData(null, value);
 
   render() {
     const { active, count } = this.props;
     return (
       <TabList>
-        {TABS.map(tab => (
+        {TABS.map((tab) => (
           <Tab
             active={active === tab.value}
             onClick={() => this.onChange(tab.value)}
@@ -58,13 +58,13 @@ const Tab = styled.div`
   transform: rotate(180deg);
   font-size: 12px;
   height: 105px;
-  color: ${props => props.theme.tab.color};
-  outline: 1px solid ${props => props.theme.outline};
+  color: ${(props) => props.theme.tab.color};
+  outline: 1px solid ${(props) => props.theme.outline};
   position: relative;
   cursor: pointer;
   align-items: center;
   box-sizing: content-box;
-  ${props =>
+  ${(props) =>
     props.active
       ? `background-color: ${props.theme.tabSelected.bg}; width: 24px; z-index: 200`
       : `background-color: ${props.theme.tab.bg}; width: 20px;`}

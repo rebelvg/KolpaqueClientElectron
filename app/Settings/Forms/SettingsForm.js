@@ -22,7 +22,7 @@ const ToggleAdapter = ({
 }) => (
   <Toggle
     value={value}
-    onToggle={value => {
+    onToggle={(value) => {
       toggle(!value, name);
       onChange(!value);
     }}
@@ -36,7 +36,7 @@ const TextField = ({ input, changeSetting, ...rest }) => (
   <InputField
     {...input}
     type="password"
-    onBlur={e => {
+    onBlur={(e) => {
       const value = e.target.value;
       const name = input.name;
       input.onBlur(value);
@@ -49,7 +49,7 @@ const ReactSelectAdapter = ({ input, select, ...rest }) => (
   <Select
     {...input}
     {...rest}
-    onChange={selected => {
+    onChange={(selected) => {
       input.onChange(selected.value);
       select(selected.value, input.name);
     }}
@@ -178,7 +178,7 @@ const SettingsForm = ({
       <Label>
         Youtube{' '}
         <Link
-          onClick={e => {
+          onClick={(e) => {
             e.preventDefault();
 
             shell.openExternal(`https://www.youtube.com/t/terms`);
@@ -238,7 +238,7 @@ const SelectField = styled(Field)`
 
 const FieldWrapper = styled.div`
   display: flex;
-  flex-direction: ${props => (!!props.full ? 'column' : 'row')};
+  flex-direction: ${(props) => (!!props.full ? 'column' : 'row')};
   justify-content: space-between;
   margin: 2px 20px;
 `;
@@ -246,7 +246,7 @@ const FieldWrapper = styled.div`
 const Label = styled.label`
   font-weight: bold;
   font-size: 15px;
-  color: ${props => props.theme.client.color};
+  color: ${(props) => props.theme.client.color};
   padding-bottom: 10px;
 `;
 

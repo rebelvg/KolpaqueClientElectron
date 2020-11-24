@@ -5,7 +5,7 @@ import { star } from 'react-icons-kit/fa/star';
 
 @withTheme
 class PinButton extends Component {
-  onClick = e => {
+  onClick = (e) => {
     const {
       channel: { isPinned, id },
       toggle,
@@ -43,5 +43,5 @@ const Wrapper = styled.div`
 const PinnedIcon = styled(Icon)`
   width: 13px;
   height: 13px;
-  color: ${props => (!!props.color ? props.color : 'darkgreen')};
+  color: ${(props) => (!!props.color ? props.color : 'darkgreen')};
 `;

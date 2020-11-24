@@ -2,9 +2,9 @@ import { app, shell, Notification, nativeImage, NativeImage } from 'electron';
 import * as _ from 'lodash';
 
 import { config } from './settings-file';
-import { registeredServices } from './Globals';
 import { addLogs } from './Logs';
 import { iconPathBalloon } from './main';
+import { Channel } from './channel-class';
 
 export function printNotification(title, content, channelObj = null) {
   if (!config.settings.showNotifications) return;
@@ -12,13 +12,13 @@ export function printNotification(title, content, channelObj = null) {
   printNewNotification(title, content, channelObj);
 }
 
-function printNewNotification(title, content, channelObj) {
+function printNewNotification(title, content, channelObj: Channel) {
   let icon: string | NativeImage = iconPathBalloon;
 
   if (channelObj) {
     let iconBuffer = channelObj._icon
       ? channelObj._icon
-      : registeredServices[channelObj.service].icon;
+      : channelObj.serviceObj.icon;
 
     if (iconBuffer) {
       icon = nativeImage.createFromBuffer(iconBuffer);
@@ -31,7 +31,7 @@ function printNewNotification(title, content, channelObj) {
     body: content,
   });
 
-  notification.on('click', function(event) {
+  notification.on('click', function (event) {
     onBalloonClick(title, content, channelObj);
   });
 

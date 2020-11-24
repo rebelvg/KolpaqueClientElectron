@@ -40,11 +40,11 @@ export default class EditForm extends Component {
     };
   }
 
-  onChange = v => {
+  onChange = (v) => {
     this.setState({ value: v });
   };
 
-  renameChannel = e => {
+  renameChannel = (e) => {
     const { value } = this.state;
     const { channel } = this.props;
     this.props.nameChange(value, channel.id);
@@ -59,10 +59,10 @@ export default class EditForm extends Component {
           component="input"
           type="text"
           value={value}
-          onContextMenu={e => {
+          onContextMenu={(e) => {
             openMenu();
           }}
-          onChange={e => this.onChange(e.target.value)}
+          onChange={(e) => this.onChange(e.target.value)}
           onBlur={(e, v) => this.renameChannel()}
         />
       </Form>
@@ -87,7 +87,7 @@ const StyledField = styled.input`
   margin: 0px;
   position: relative;
   z-index: 100000;
-  background-color: ${props => props.theme.input.bg};
-  color: ${props => props.theme.input.color};
-  border: 1px solid ${props => props.theme.outline};
+  background-color: ${(props) => props.theme.input.bg};
+  color: ${(props) => props.theme.input.color};
+  border: 1px solid ${(props) => props.theme.outline};
 `;

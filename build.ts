@@ -12,7 +12,7 @@ let pathOption = readlineSync.question(
   `select output folder. (empty will default to home dir)${os.EOL}`,
 );
 
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', (error) => {
   throw error;
 });
 
@@ -69,7 +69,7 @@ process.on('unhandledRejection', error => {
     });
 
     for (const appPath of appPaths) {
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         const folderName = path.basename(appPath);
         const archivePath = path.join(pathOption, `${folderName}.zip`);
 

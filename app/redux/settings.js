@@ -16,7 +16,7 @@ export const {
     const list = ipcRenderer.sendSync('getSettings');
     return { list };
   },
-  IMPORT_CHANNEL: name => {
+  IMPORT_CHANNEL: (name) => {
     ipcRenderer.send('config_twitchImport', name);
     return {};
   },
@@ -53,12 +53,12 @@ export const reducer = handleActions(
   defaultState,
 );
 
-export const getSortType = state =>
+export const getSortType = (state) =>
   state.settings && state.settings.list.sortType;
-export const getReversed = state =>
+export const getReversed = (state) =>
   state.settings && state.settings.list.sortReverse;
-export const getSettings = state => state.settings && state.settings.list;
-export const getTheme = state =>
+export const getSettings = (state) => state.settings && state.settings.list;
+export const getTheme = (state) =>
   state.settings && state.settings.list && state.settings.list.nightMode;
-export const getShowTooltips = state =>
+export const getShowTooltips = (state) =>
   state.settings && state.settings.list && state.settings.list.showTooltips;

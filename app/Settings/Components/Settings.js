@@ -25,17 +25,17 @@ export default class Settings extends Component {
     };
   }
 
-  changeWindow = selected => {
+  changeWindow = (selected) => {
     this.setState({
       activeKey: selected.value,
     });
   };
 
-  submitImports = members => {
+  submitImports = (members) => {
     this.props.changeSettings('twitchImport', members);
   };
 
-  importChannel = name => this.props.importChannel(name);
+  importChannel = (name) => this.props.importChannel(name);
 
   changeSetting = (value, name, text = false) => {
     if (!text) {
@@ -47,7 +47,7 @@ export default class Settings extends Component {
     this.props.changeSettings(name, value);
   };
 
-  submit = values => values;
+  submit = (values) => values;
 
   render() {
     const { settings } = this.props;
@@ -68,7 +68,7 @@ export default class Settings extends Component {
             onSubmit={this.submit}
             changeSetting={this.changeSetting}
             initialValues={{ ...settings }}
-            render={props => <SettingsForm {...props} />}
+            render={(props) => <SettingsForm {...props} />}
           />
         )}
 
@@ -78,11 +78,13 @@ export default class Settings extends Component {
             onSubmit={this.submit}
             submit={this.submitImports}
             importChannel={this.importChannel}
-            render={props => <ImportForm {...props} />}
+            render={(props) => <ImportForm {...props} />}
           />
         )}
 
-        {activeKey === 'logs' && <Form render={props => <Logs {...props} />} />}
+        {activeKey === 'logs' && (
+          <Form render={(props) => <Logs {...props} />} />
+        )}
       </Container>
     );
   }
@@ -95,6 +97,6 @@ const SettingSelect = styled(Select)`
 const Container = styled.div`
   width: 100%;
   height: 100%;
-  background-color: ${props => props.theme.channel.bg};
+  background-color: ${(props) => props.theme.channel.bg};
   overflow-y: scroll;
 `;

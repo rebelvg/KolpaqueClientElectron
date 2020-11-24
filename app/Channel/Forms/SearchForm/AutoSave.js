@@ -25,6 +25,6 @@ class AutoSave extends React.Component {
   }
 }
 
-export default props => (
+export default (props) => (
   <FormSpy {...props} subscription={{ values: true }} component={AutoSave} />
 );

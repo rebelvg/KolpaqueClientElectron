@@ -16,7 +16,7 @@ const { remote, ipcRenderer } = window.require('electron');
 
 @withTheme
 @connect(
-  state => ({
+  (state) => ({
     settings: getSettings(state),
   }),
   { changeSettings, changeSettingsResponse, importChannel, updateData },
@@ -63,7 +63,7 @@ const StyledFooter = styled.div`
   position: absolute;
   bottom: 0px;
   display: flex;
-  background-color: ${props => props.theme.client.bg};
+  background-color: ${(props) => props.theme.client.bg};
   padding: 5px 0px;
   width: 100%;
   justify-content: space-between;
@@ -74,11 +74,11 @@ const Container = styled.div`
 `;
 const Version = styled.div`
   margin-right: 10px;
-  color: ${props => props.theme.client.color};
+  color: ${(props) => props.theme.client.color};
 `;
 const StyledLink = styled(Link)`
   margin-left: 10px;
-  color: ${props => props.theme.client.color};
+  color: ${(props) => props.theme.client.color};
   text-decoration: none;
   cursor: pointer;
 `;

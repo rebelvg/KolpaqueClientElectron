@@ -108,11 +108,11 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
 
     installExtension(REACT_DEVELOPER_TOOLS)
-      .then(name => addLogs('Extension added', name))
-      .catch(err => addLogs('An error occurred', err));
+      .then((name) => addLogs('Extension added', name))
+      .catch((err) => addLogs('An error occurred', err));
     installExtension(REDUX_DEVTOOLS)
-      .then(name => addLogs('Extension added', name))
-      .catch(err => addLogs('An error occurred', err));
+      .then((name) => addLogs('Extension added', name))
+      .catch((err) => addLogs('An error occurred', err));
   } else {
     mainWindow.loadURL(
       url.format({
@@ -123,15 +123,15 @@ function createWindow() {
     );
   }
 
-  mainWindow.on('minimize', function() {
+  mainWindow.on('minimize', function () {
     mainWindow.hide();
   });
 
-  mainWindow.on('close', function() {
+  mainWindow.on('close', function () {
     config.saveFile();
   });
 
-  mainWindow.on('close', function(e) {
+  mainWindow.on('close', function (e) {
     addLogs('forceQuit', forceQuit);
 
     if (forceQuit) return;
@@ -142,30 +142,30 @@ function createWindow() {
     }
   });
 
-  mainWindow.on('resize', function() {
+  mainWindow.on('resize', function () {
     config.settings.size = mainWindow.getSize();
   });
 
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', function () {
     mainWindow = null;
   });
 }
 
 app.on('ready', createWindow);
 
-app.on('window-all-closed', function() {
+app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-app.on('activate', function() {
+app.on('activate', function () {
   if (mainWindow === null) {
     createWindow();
   }
 });
 
-app.on('ready', function() {
+app.on('ready', function () {
   if (!config.settings.minimizeAtStart) return;
 
   mainWindow.hide();
@@ -195,7 +195,7 @@ export const contextMenuTemplate = [
   {
     label: 'Notifications',
     type: 'checkbox',
-    click: menuItem => {
+    click: (menuItem) => {
       config.changeSetting('showNotifications', menuItem.checked);
     },
     checked: config.settings.showNotifications,
@@ -254,13 +254,13 @@ app.on('ready', () => {
   }
 });
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
   addLogs('unhandledRejection', err);
 
   throw err;
 });
 
-process.on('uncaughtException', err => {
+process.on('uncaughtException', (err) => {
   addLogs('uncaughtException', err);
 
   fs.appendFileSync(crashLogPath, `${err.stack}${os.EOL}`);

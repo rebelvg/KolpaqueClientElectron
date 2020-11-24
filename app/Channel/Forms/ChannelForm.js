@@ -15,7 +15,7 @@ const openMenu = () => {
 
 @withTheme
 export default class ChannelForm extends Component {
-  handleSubmit = data => {
+  handleSubmit = (data) => {
     const { handleSubmit, reset } = this.props;
     handleSubmit(data);
     reset();
@@ -52,10 +52,10 @@ const StyledChannelFormWrap = styled.div`
     padding: 0;
     margin: 0;
     cursor: pointer;
-    background-color: ${props => props.theme.input.bg};
+    background-color: ${(props) => props.theme.input.bg};
     display: flex !important;
     box-sizing: border-box;
-    border: 1px solid ${props => props.theme.outline};
+    border: 1px solid ${(props) => props.theme.outline};
     border-left: 0px;
     width: 20px;
     height: 20px;
@@ -68,13 +68,13 @@ const StyledInput = styled(Field)`
   flex-grow: 2;
   width: 100%;
   display: flex;
-  background-color: ${props => props.theme.input.bg};
-  color: ${props => props.theme.input.color};
+  background-color: ${(props) => props.theme.input.bg};
+  color: ${(props) => props.theme.input.color};
   background-image: none;
   background-clip: padding-box;
   height: 20px;
   border: none;
-  border: 1px solid ${props => props.theme.outline};
+  border: 1px solid ${(props) => props.theme.outline};
   border-right: none;
   box-shadow: none;
   box-sizing: border-box;
@@ -83,5 +83,5 @@ const StyledInput = styled(Field)`
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${props => props.theme.input.color};
+  color: ${(props) => props.theme.input.color};
 `;

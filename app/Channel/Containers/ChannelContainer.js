@@ -21,7 +21,7 @@ import {
 
 @withTheme
 @connect(
-  state => ({
+  (state) => ({
     loaded: getLoaded(state),
     filter: getFilter(state),
     update: getUpdate(state),
@@ -40,9 +40,9 @@ class ChannelContainer extends PureComponent {
     };
   }
 
-  sendInfo = info => this.props.sendInfo(info);
+  sendInfo = (info) => this.props.sendInfo(info);
 
-  setFilter = value => {
+  setFilter = (value) => {
     const filter = value.filter ? value.filter : '';
     this.props.updateData(filter, null);
   };
@@ -60,7 +60,7 @@ class ChannelContainer extends PureComponent {
           onSubmit={this.setFilter}
           save={this.setFilter}
           initialValues={{ filter }}
-          render={props => <SearchForm {...props} />}
+          render={(props) => <SearchForm {...props} />}
           subscription={{}}
         />
 
@@ -86,7 +86,7 @@ class ChannelContainer extends PureComponent {
 const ChannelSearchForm = styled(Form)``;
 
 const CogIcon = styled(Icon)`
-  color: ${props => props.theme.clientSecondary.color};
+  color: ${(props) => props.theme.clientSecondary.color};
   padding-left: 1px;
 `;
 
@@ -101,8 +101,8 @@ const TabPanel = styled.div`
   display: block;
   max-height: 100vh;
   margin-right: 3px;
-  background-color: ${props => props.theme.clientSecondary.bg};
-  border: 1px solid ${props => props.theme.outline};
+  background-color: ${(props) => props.theme.clientSecondary.bg};
+  border: 1px solid ${(props) => props.theme.outline};
   border-left: none;
 `;
 
@@ -115,16 +115,16 @@ const ContainerWrapper = styled.div`
   display: flex;
   width: 100%;
   height: 100%;
-  background-color: ${props => props.theme.client.bg};
+  background-color: ${(props) => props.theme.client.bg};
 `;
 
 const TabWrapper = styled.div`
   height: 100%;
-  background-color: ${props => props.theme.client.bg};
+  background-color: ${(props) => props.theme.client.bg};
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  border-right: 1px solid ${props => props.theme.outline};
+  border-right: 1px solid ${(props) => props.theme.outline};
   position: relative;
   z-index: 2;
   align-items: center;

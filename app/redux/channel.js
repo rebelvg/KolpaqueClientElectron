@@ -48,18 +48,18 @@ export const {
   },
   INIT_END: () => ({}),
 
-  UPDATE_VIEW: data => ({ ...data }),
+  UPDATE_VIEW: (data) => ({ ...data }),
 
-  CHANGE_TAB: tab => ({ tab }),
+  CHANGE_TAB: (tab) => ({ tab }),
 
-  GET_INFO: info => ({ info }),
+  GET_INFO: (info) => ({ info }),
 
-  SEND_INFO: info => {
+  SEND_INFO: (info) => {
     ipcRenderer.send('client_getInfo', info);
     return { info };
   },
 
-  SET_FILTER: filter => ({ filter }),
+  SET_FILTER: (filter) => ({ filter }),
 });
 
 //REDUCER
@@ -95,10 +95,10 @@ export const reducer = handleActions(
 );
 
 //SELECTORS
-export const getChannelsList = state => state.channel.channels;
-export const getCount = state => state.channel.count;
-export const getFilter = state => state.channel.filter;
-export const getActiveTab = state => state.channel.activeTab;
-export const getUpdate = state => state.channel.update;
-export const getLoading = state => state.channel.loading;
-export const getLoaded = state => state.channel.loaded;
+export const getChannelsList = (state) => state.channel.channels;
+export const getCount = (state) => state.channel.count;
+export const getFilter = (state) => state.channel.filter;
+export const getActiveTab = (state) => state.channel.activeTab;
+export const getUpdate = (state) => state.channel.update;
+export const getLoading = (state) => state.channel.loading;
+export const getLoaded = (state) => state.channel.loaded;

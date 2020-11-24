@@ -7,7 +7,7 @@ const AUTOSTART_OFF = './static/icons/autostart_off.svg';
 
 @withTheme
 class AutoStart extends Component {
-  onClick = e => {
+  onClick = (e) => {
     const {
       channel: { autoStart, id },
       toggle,

@@ -5,17 +5,18 @@ import { addLogs } from './Logs';
 import { twitchClient, commonClient, TWITCH_CHUNK_LIMIT } from './api-clients';
 import { config } from './settings-file';
 import { ipcMain } from 'electron';
+import { ServiceNamesEnum } from './Globals';
 
 interface IServiceInfo {
-  name: string;
+  name: ServiceNamesEnum;
   function: (channels: Channel[]) => {};
 }
 
 const SERVICES: IServiceInfo[] = [
-  { name: 'twitch', function: getTwitchInfoAsync },
+  { name: ServiceNamesEnum.TWITCH, function: getTwitchInfoAsync },
 ];
 
-config.on('channel_added', async channel => {
+config.on('channel_added', async (channel) => {
   await checkChannels([channel]);
 });
 
@@ -28,7 +29,7 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
 
   const filteredChannels = _.filter(
     channelObjs,
-    channelObj => !channelObj._icon,
+    (channelObj) => !channelObj._icon,
   );
 
   if (filteredChannels.length === 0) {
@@ -38,15 +39,15 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
   const chunkedChannels = _.chunk(filteredChannels, TWITCH_CHUNK_LIMIT);
 
   await Promise.all(
-    chunkedChannels.map(async channelObjs => {
+    chunkedChannels.map(async (channelObjs) => {
       const userData = await twitchClient.getUsersByLogin(
-        channelObjs.map(channel => channel.name),
+        channelObjs.map((channel) => channel.name),
       );
 
       await Promise.all(
-        channelObjs.map(async channelObj => {
+        channelObjs.map(async (channelObj) => {
           await Promise.all(
-            _.map(userData?.data, async user => {
+            _.map(userData?.data, async (user) => {
               if (user.login !== channelObj.name) {
                 return;
               }
@@ -74,7 +75,7 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
 
 async function checkChannels(channelObjs: Channel[]) {
   await Promise.all(
-    SERVICES.map(async service => {
+    SERVICES.map(async (service) => {
       const channels = _.filter(channelObjs, { service: service.name });
 
       await service.function(channels);
@@ -84,7 +85,7 @@ async function checkChannels(channelObjs: Channel[]) {
 
 export async function loop() {
   await Promise.all(
-    _.map(SERVICES, async service => {
+    _.map(SERVICES, async (service) => {
       const channels = _.filter(config.channels, { service: service.name });
 
       await service.function(channels);

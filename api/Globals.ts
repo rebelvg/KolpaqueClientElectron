@@ -9,7 +9,18 @@ export enum ProtocolsEnum {
   HTTPS = 'https:',
 }
 
+export enum ServiceNamesEnum {
+  KLPQ_VPS_RTMP = 'klpq-vps-rtmp',
+  KLPQ_VPS_HTTP = 'klpq-vps-http',
+  TWITCH = 'twitch',
+  YOUTUBE_USER = 'youtube-user',
+  YOUTUBE_CHANNEL = 'youtube_channel',
+  CHATURBATE = 'chaturbate',
+  CUSTOM = 'custom',
+}
+
 export interface IStreamService {
+  serviceName: ServiceNamesEnum;
   protocols: ProtocolsEnum[];
   hosts: string[];
   paths: string[];
@@ -26,10 +37,9 @@ export interface IStreamService {
 
 export const allowedProtocols = [...Object.values(ProtocolsEnum)];
 
-export const registeredServices: {
-  [serviceName: string]: IStreamService;
-} = {
-  'klpq-vps-rtmp': {
+export const registeredServices: IStreamService[] = [
+  {
+    serviceName: ServiceNamesEnum.KLPQ_VPS_RTMP,
     protocols: [ProtocolsEnum.RTMP],
     hosts: ['mediaserver.klpq.men', 'stream.klpq.men', 'vps.klpq.men'],
     paths: ['/live/'],
@@ -57,7 +67,8 @@ export const registeredServices: {
       };
     },
   },
-  'klpq-vps-http': {
+  {
+    serviceName: ServiceNamesEnum.KLPQ_VPS_HTTP,
     protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
     hosts: ['klpq.men'],
     paths: ['/stream/'],
@@ -83,13 +94,14 @@ export const registeredServices: {
       params,
     }),
   },
-  twitch: {
+  {
+    serviceName: ServiceNamesEnum.TWITCH,
     protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
     hosts: ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'],
     paths: ['/'],
     name: 1,
     embed: null,
-    chat: channelObj => {
+    chat: (channelObj) => {
       return `https://www.twitch.tv/${channelObj.name}/chat`;
     },
     icon: fs.readFileSync(
@@ -109,7 +121,8 @@ export const registeredServices: {
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     }),
   },
-  'youtube-user': {
+  {
+    serviceName: ServiceNamesEnum.YOUTUBE_USER,
     protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
     hosts: ['www.youtube.com', 'youtube.com'],
     paths: ['/user/'],
@@ -133,7 +146,8 @@ export const registeredServices: {
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     }),
   },
-  'youtube-channel': {
+  {
+    serviceName: ServiceNamesEnum.YOUTUBE_CHANNEL,
     protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
     hosts: ['www.youtube.com', 'youtube.com'],
     paths: ['/channel/'],
@@ -157,7 +171,8 @@ export const registeredServices: {
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     }),
   },
-  chaturbate: {
+  {
+    serviceName: ServiceNamesEnum.CHATURBATE,
     protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
     hosts: ['www.chaturbate.com', 'chaturbate.com'],
     paths: ['/'],
@@ -176,7 +191,8 @@ export const registeredServices: {
       params,
     }),
   },
-  custom: {
+  {
+    serviceName: ServiceNamesEnum.CUSTOM,
     protocols: [],
     hosts: [],
     paths: [],
@@ -195,6 +211,6 @@ export const registeredServices: {
       params,
     }),
   },
-};
+];
 
 export const klpqServiceUrl = 'https://client-api.klpq.men';

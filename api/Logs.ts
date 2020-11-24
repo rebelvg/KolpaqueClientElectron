@@ -13,14 +13,14 @@ export const crashLogPath = path.join(clientAppDataPath, 'crash.log');
 
 let logs: string[] = [];
 
-ipcMain.on('config_logs', event => {
+ipcMain.on('config_logs', (event) => {
   event.returnValue = logs.slice().reverse();
 });
 
 export function addLogs(...log: any[]) {
   const logLine = log
-    .filter(logItem => logItem !== undefined)
-    .map(logItem => {
+    .filter((logItem) => logItem !== undefined)
+    .map((logItem) => {
       return util.inspect(logItem, { depth: 3 });
     })
     .join(' ');

@@ -9,7 +9,7 @@ import EventListener from '../../App/Components/EventListener';
 import { themes } from '../../Themes';
 import { getTheme } from '../../redux/settings';
 
-@connect(state => ({
+@connect((state) => ({
   nightMode: getTheme(state),
 }))
 export default class AppContainer extends Component {

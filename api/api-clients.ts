@@ -103,7 +103,7 @@ class TwitchClient {
     try {
       const { data: userData } = await axios.get<ITwitchClientUsers>(
         `${this.baseUrl}/users?${channelNames
-          .map(channelName => `login=${channelName}`)
+          .map((channelName) => `login=${channelName}`)
           .join('&')}`,
         {
           headers: {
@@ -132,7 +132,7 @@ class TwitchClient {
 
     try {
       const { data: userData } = await axios.get<ITwitchClientUsers>(
-        `${this.baseUrl}/users?${ids.map(id => `id=${id}`).join('&')}`,
+        `${this.baseUrl}/users?${ids.map((id) => `id=${id}`).join('&')}`,
         {
           headers: {
             Authorization: `Bearer ${this.accessToken}`,
@@ -161,7 +161,7 @@ class TwitchClient {
     try {
       const { data: streamData } = await axios.get<ITwitchClientStreams>(
         `${this.baseUrl}/streams/?${userIds
-          .map(userId => `user_id=${userId}`)
+          .map((userId) => `user_id=${userId}`)
           .join('&')}`,
         {
           headers: {
