@@ -7,7 +7,6 @@ import { Config } from './config-class';
 import { printNotification } from './Notifications';
 import { Channel } from './channel-class';
 import { addLogs } from './Logs';
-import { ProtocolsEnum } from './Globals';
 
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
@@ -129,18 +128,13 @@ function launchPlayerObj(
     channelObj.changeSetting('onAutoRestart', autoRestart);
   }
 
-  let playLink = channelObj.getPlayLink();
-  let params = [];
+  let { playLink, params } = channelObj.getPlayLink();
 
   if (LQ) {
     const onLQ = channelObj.getLqParams(playLink, params);
 
     playLink = onLQ.playLink;
     params = onLQ.params;
-  }
-
-  if (channelObj.protocol === ProtocolsEnum.RTMP) {
-    playLink = `${playLink} best`;
   }
 
   launchStreamlink(playLink, params, channelObj);
@@ -153,12 +147,7 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
 
   const childProcess = execFile(
     'streamlink',
-    [
-      playLink,
-      'best',
-      '--twitch-disable-hosting',
-      '--twitch-disable-ads',
-    ].concat(params),
+    [playLink, 'best', ...params],
     (err, data, stderr) => {
       addLogs(err, data, 'streamlink exited.');
 

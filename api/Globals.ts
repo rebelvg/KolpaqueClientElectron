@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+
 import { Channel } from './channel-class';
 
 export enum ProtocolsEnum {
@@ -16,7 +17,7 @@ export interface IStreamService {
   embed: (channelObj: Channel) => string;
   chat: (channelObj: Channel) => string;
   icon: Buffer;
-  playUrl: (channelObj: Channel) => string;
+  playUrl: (channelObj: Channel) => { playLink: string; params: string[] };
   onLQ: (
     playLink: string,
     params: string[],
@@ -44,7 +45,10 @@ export const registeredServices: {
       },
     ),
     playUrl: (channelObj: Channel) => {
-      return `rtmp://mediaserver.klpq.men/live/${channelObj.name}`;
+      return {
+        playLink: `rtmp://mediaserver.klpq.men/live/${channelObj.name}`,
+        params: [],
+      };
     },
     onLQ: (playLink: string, params: string[]) => {
       return {
@@ -69,7 +73,10 @@ export const registeredServices: {
       },
     ),
     playUrl: (channelObj: Channel) => {
-      return `https://encode.klpq.men/mpd/${channelObj.name}/index.mpd`;
+      return {
+        playLink: `https://encode.klpq.men/mpd/${channelObj.name}/index.mpd`,
+        params: [],
+      };
     },
     onLQ: (playLink, params) => ({
       playLink,
@@ -92,7 +99,10 @@ export const registeredServices: {
       },
     ),
     playUrl: (channelObj: Channel) => {
-      return channelObj._customPlayUrl || channelObj.link;
+      return {
+        playLink: channelObj._customPlayUrl || channelObj.link,
+        params: ['--twitch-disable-hosting', '--twitch-disable-ads'],
+      };
     },
     onLQ: (playLink, params) => ({
       playLink,
@@ -113,7 +123,10 @@ export const registeredServices: {
       },
     ),
     playUrl: (channelObj: Channel) => {
-      return channelObj._customPlayUrl || channelObj.link;
+      return {
+        playLink: channelObj._customPlayUrl || channelObj.link,
+        params: [],
+      };
     },
     onLQ: (playLink, params) => ({
       playLink,
@@ -134,7 +147,10 @@ export const registeredServices: {
       },
     ),
     playUrl: (channelObj: Channel) => {
-      return channelObj._customPlayUrl || channelObj.link;
+      return {
+        playLink: channelObj._customPlayUrl || channelObj.link,
+        params: [],
+      };
     },
     onLQ: (playLink, params) => ({
       playLink,
@@ -150,7 +166,10 @@ export const registeredServices: {
     chat: null,
     icon: null,
     playUrl: (channelObj: Channel) => {
-      return channelObj._customPlayUrl || channelObj.link;
+      return {
+        playLink: channelObj._customPlayUrl || channelObj.link,
+        params: [],
+      };
     },
     onLQ: (playLink, params) => ({
       playLink,
@@ -166,7 +185,10 @@ export const registeredServices: {
     chat: null,
     icon: null,
     playUrl: (channelObj: Channel) => {
-      return channelObj._customPlayUrl || channelObj.link;
+      return {
+        playLink: channelObj._customPlayUrl || channelObj.link,
+        params: [],
+      };
     },
     onLQ: (playLink, params) => ({
       playLink,
