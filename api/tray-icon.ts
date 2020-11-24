@@ -1,4 +1,4 @@
-import { app, Menu, nativeImage, MenuItem } from 'electron';
+import { Menu, nativeImage } from 'electron';
 import * as _ from 'lodash';
 
 import { config } from './settings-file';

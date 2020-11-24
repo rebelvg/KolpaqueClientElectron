@@ -7,7 +7,6 @@ import {
   Menu,
   Tray,
   nativeImage,
-  MenuItem,
 } from 'electron';
 import * as _ from 'lodash';
 import * as path from 'path';
@@ -46,11 +45,12 @@ ipcMain.once('client_ready', async () => {
   addLogs('init_done');
 });
 
-let iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
+const iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
 let iconPathTray = path.normalize(
   path.join(__dirname, '../icons', 'icon32.png'),
 );
-export let iconPathBalloon = path.normalize(
+
+export const iconPathBalloon = path.normalize(
   path.join(__dirname, '../icons', 'icon.png'),
 );
 
@@ -123,18 +123,20 @@ function createWindow() {
     );
   }
 
-  mainWindow.on('minimize', function () {
+  mainWindow.on('minimize', () => {
     mainWindow.hide();
   });
 
-  mainWindow.on('close', function () {
+  mainWindow.on('close', () => {
     config.saveFile();
   });
 
-  mainWindow.on('close', function (e) {
+  mainWindow.on('close', (e) => {
     addLogs('forceQuit', forceQuit);
 
-    if (forceQuit) return;
+    if (forceQuit) {
+      return;
+    }
 
     if (process.platform === 'darwin') {
       e.preventDefault();
@@ -142,31 +144,33 @@ function createWindow() {
     }
   });
 
-  mainWindow.on('resize', function () {
+  mainWindow.on('resize', () => {
     config.settings.size = mainWindow.getSize();
   });
 
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed', () => {
     mainWindow = null;
   });
 }
 
 app.on('ready', createWindow);
 
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-app.on('activate', function () {
+app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
 });
 
-app.on('ready', function () {
-  if (!config.settings.minimizeAtStart) return;
+app.on('ready', () => {
+  if (!config.settings.minimizeAtStart) {
+    return;
+  }
 
   mainWindow.hide();
 });

@@ -10,7 +10,7 @@ import {
 } from './api-clients';
 import { sleep } from './channel-check';
 
-ipcMain.on('config_twitchImport', async (event, channelName) => {
+ipcMain.on('config_twitchImport', (event, channelName) => {
   return twitchImport(channelName);
 });
 
@@ -34,7 +34,7 @@ async function twitchImportChannels(
       }
 
       for (const channel of userData.data) {
-        let channelObj = config.addChannelLink(
+        const channelObj = config.addChannelLink(
           `https://twitch.tv/${channel.login}`,
           false,
         );
@@ -86,6 +86,7 @@ async function twitchImportBase(
     userData.data.map(async ({ id }) => {
       let cursor: string = '';
 
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         const followedChannelsData = await twitchClient.getFollowedChannels(
           id,
@@ -97,6 +98,7 @@ async function twitchImportBase(
         }
 
         const followedChannels = followedChannelsData.data;
+
         cursor = followedChannelsData.pagination.cursor;
 
         if (followedChannels.length === 0) {
@@ -122,7 +124,7 @@ async function twitchImportBase(
 }
 
 async function twitchImport(channelName: string) {
-  let res = await twitchImportBase(channelName, true);
+  const res = await twitchImportBase(channelName, true);
 
   if (res !== null) {
     dialog.showMessageBox({
@@ -153,6 +155,7 @@ export async function loop() {
   await autoTwitchImport(false);
 
   (async () => {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       await sleep(10 * 60 * 1000);
 

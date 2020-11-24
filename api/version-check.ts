@@ -64,36 +64,33 @@ async function clientVersionCheck(): Promise<boolean> {
   }
 }
 
-async function streamlinkVersionCheck() {
+function streamlinkVersionCheck() {
   return new Promise((resolve) => {
-    execFile(
-      'streamlink',
-      ['--version-check'],
-      function (err: any, data, stderr) {
-        if (err) {
-          addLogs(err);
+    execFile('streamlink', ['--version-check'], (err: any, data, stderr) => {
+      if (err) {
+        addLogs(err);
 
-          if (err.code === 'ENOENT') {
-            return resolve(true);
-          }
-
-          return resolve(false);
-        }
-
-        const regExp = new RegExp(
-          /A new version of Streamlink \((.*)\) is available!/gi,
-        );
-
-        if (regExp.test(data)) {
+        if (err.code === 'ENOENT') {
           return resolve(true);
         }
-      },
-    );
+
+        return resolve(false);
+      }
+
+      const regExp = new RegExp(
+        /A new version of Streamlink \((.*)\) is available!/gi,
+      );
+
+      if (regExp.test(data)) {
+        return resolve(true);
+      }
+    });
   });
 }
 
-export async function loop() {
+export function loop() {
   (async () => {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const hasUpdate = await clientVersionCheck();
 
@@ -108,6 +105,7 @@ export async function loop() {
   })();
 
   (async () => {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const hasUpdate = await streamlinkVersionCheck();
 

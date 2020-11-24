@@ -34,18 +34,22 @@ function setChannelEvents(channelObj) {
 ipcMain.on(
   'channel_play',
   (event, id, altQuality = false, autoRestart = null) => {
-    let channelObj = config.findById(id);
+    const channelObj = config.findById(id);
 
-    if (!channelObj) return false;
+    if (!channelObj) {
+      return false;
+    }
 
     channelObj.emit('play', altQuality, autoRestart);
   },
 );
 
 ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
-  let channelObj = config.findById(id);
+  const channelObj = config.findById(id);
 
-  if (!channelObj) return false;
+  if (!channelObj) {
+    return false;
+  }
 
   if (
     channelObj._processes.length > 0 &&
@@ -60,16 +64,18 @@ _.forEach(config.channels, setChannelEvents);
 
 config.on('channel_added', setChannelEvents);
 
-config.on('channel_added_channels', async (channels: Channel[]) => {
+config.on('channel_added_channels', (channels: Channel[]) => {
   channels.forEach((channel) => {
     setChannelEvents(channel);
   });
 });
 
 export function launchPlayerLink(channelLink, LQ = null) {
-  let channelObj = Config.buildChannelObj(channelLink);
+  const channelObj = Config.buildChannelObj(channelLink);
 
-  if (channelObj === false) return false;
+  if (channelObj === false) {
+    return false;
+  }
 
   launchPlayerObj(channelObj, LQ);
 }
@@ -164,14 +170,18 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
             `https://github.com/streamlink/streamlink/releases`,
           );
         } else {
-          if (firstStart) printNotification('Error', err.message);
+          if (firstStart) {
+            printNotification('Error', err.message);
+          }
         }
       }
 
       if (data.indexOf('error: ') >= 0) {
         const error = data.split('error: ');
 
-        if (firstStart) printNotification('Error', error[1]);
+        if (firstStart) {
+          printNotification('Error', error[1]);
+        }
       }
 
       if (Date.now() - channelObj._startTime < AUTO_RESTART_TIMEOUT * 1000) {

@@ -301,68 +301,20 @@ class YoutubeClient {
     return true;
   }
 
-  public async getChannels(channelName: string): Promise<IYoutubeChannels> {
+  public getChannels(channelName: string): Promise<IYoutubeChannels> {
     if (!config.settings.youtubeTosConsent) {
       return;
     }
 
     return klpqServiceClient.getYoutubeChannels(channelName);
-
-    await this.refreshAccessToken();
-
-    if (!this.accessToken) {
-      return;
-    }
-
-    const channelsUrl = new URL(`${this.baseUrl}/channels`);
-
-    channelsUrl.searchParams.set('forUsername', channelName);
-    channelsUrl.searchParams.set('part', 'id');
-
-    try {
-      const { data } = await axios.get<IYoutubeChannels>(channelsUrl.href, {
-        headers: { Authorization: `Bearer ${this.accessToken}` },
-      });
-
-      return data;
-    } catch (error) {
-      this.handleError(error);
-
-      return;
-    }
   }
 
-  public async getStreams(channelId: string): Promise<IYoutubeStreams> {
+  public getStreams(channelId: string): Promise<IYoutubeStreams> {
     if (!config.settings.youtubeTosConsent) {
       return;
     }
 
     return klpqServiceClient.getYoutubeStreams(channelId);
-
-    await this.refreshAccessToken();
-
-    if (!this.accessToken) {
-      return;
-    }
-
-    const searchUrl = new URL(`${this.baseUrl}/search`);
-
-    searchUrl.searchParams.set('channelId', channelId);
-    searchUrl.searchParams.set('part', 'snippet');
-    searchUrl.searchParams.set('type', 'video');
-    searchUrl.searchParams.set('eventType', 'live');
-
-    try {
-      const { data } = await axios.get<IYoutubeStreams>(searchUrl.href, {
-        headers: { Authorization: `Bearer ${this.accessToken}` },
-      });
-
-      return data;
-    } catch (error) {
-      this.handleError(error);
-
-      return;
-    }
   }
 
   private handleError(error: AxiosError): void {

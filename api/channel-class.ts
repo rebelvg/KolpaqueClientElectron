@@ -101,18 +101,24 @@ export class Channel extends EventEmitter {
     }
 
     this.on('setting_changed', (settingName, settingValue, send) => {
-      if (send) app['mainWindow'].webContents.send('channel_changeSettingSync');
+      if (send) {
+        app['mainWindow'].webContents.send('channel_changeSettingSync');
+      }
     });
 
     this.on('settings_changed', (send) => {
-      if (send) app['mainWindow'].webContents.send('channel_changeSettingSync');
+      if (send) {
+        app['mainWindow'].webContents.send('channel_changeSettingSync');
+      }
     });
   }
 
   public update(channelConfig) {
     _.forEach(channelConfig, (settingValue, settingName) => {
       if (channelValidate.includes(settingName)) {
-        if (settingName === 'visibleName' && !settingValue) return;
+        if (settingName === 'visibleName' && !settingValue) {
+          return;
+        }
 
         this[settingName] = settingValue;
       }
@@ -120,7 +126,9 @@ export class Channel extends EventEmitter {
   }
 
   public changeSetting(settingName, settingValue, send = true) {
-    if (!this.hasOwnProperty(settingName)) return false;
+    if (!this.hasOwnProperty(settingName)) {
+      return false;
+    }
 
     this[settingName] = settingValue;
 

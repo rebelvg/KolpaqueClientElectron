@@ -1,4 +1,4 @@
-import { ipcMain, dialog } from 'electron';
+import { dialog } from 'electron';
 import * as _ from 'lodash';
 import * as childProcess from 'child_process';
 
@@ -75,10 +75,12 @@ config.on('channel_added_channels', async (channels: Channel[]) => {
   await checkChannels(channels, false);
 });
 
-async function isOnline(channelObj: Channel, printBalloon: boolean) {
+function isOnline(channelObj: Channel, printBalloon: boolean) {
   channelObj._offlineConfirmations = 0;
 
-  if (channelObj.isLive) return;
+  if (channelObj.isLive) {
+    return;
+  }
 
   addLogs(`${channelObj.link} went online.`);
 
@@ -117,15 +119,18 @@ async function isOnline(channelObj: Channel, printBalloon: boolean) {
 }
 
 function isOffline(channelObj: Channel) {
-  if (!channelObj.isLive) return;
+  if (!channelObj.isLive) {
+    return;
+  }
 
   channelObj._offlineConfirmations++;
 
   if (
     channelObj._offlineConfirmations <
     _.get(SERVICES_INTERVALS, [channelObj.service, 'confirmations'], 0)
-  )
+  ) {
     return;
+  }
 
   addLogs(`${channelObj.link} went offline.`);
 
@@ -313,12 +318,12 @@ async function getCustomStats(channels: Channel[], printBalloon: boolean) {
 
   for (const channelObjs of chunkedChannels) {
     await Promise.all(
-      channelObjs.map(async (channelObj) => {
+      channelObjs.map((channelObj) => {
         return new Promise<void>((resolve) => {
           childProcess.execFile(
             'streamlink',
             [channelObj.link, 'best', '--twitch-disable-hosting', '--json'],
-            function (err, stdout, stderr) {
+            (err, stdout, stderr) => {
               try {
                 const res = JSON.parse(stdout);
 
@@ -368,6 +373,7 @@ async function checkServiceLoop(
   service: IServiceInterval,
   printBalloon: boolean,
 ) {
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     await sleep(service.check * 1000);
 
@@ -375,7 +381,7 @@ async function checkServiceLoop(
   }
 }
 
-export async function sleep(ms: number) {
+export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 

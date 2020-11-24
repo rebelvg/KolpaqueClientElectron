@@ -1,4 +1,4 @@
-import { app, shell, Notification, nativeImage, NativeImage } from 'electron';
+import { shell, Notification, nativeImage, NativeImage } from 'electron';
 import * as _ from 'lodash';
 
 import { config } from './settings-file';
@@ -7,7 +7,9 @@ import { iconPathBalloon } from './main';
 import { Channel } from './channel-class';
 
 export function printNotification(title, content, channelObj = null) {
-  if (!config.settings.showNotifications) return;
+  if (!config.settings.showNotifications) {
+    return;
+  }
 
   printNewNotification(title, content, channelObj);
 }
@@ -16,7 +18,7 @@ function printNewNotification(title, content, channelObj: Channel) {
   let icon: string | NativeImage = iconPathBalloon;
 
   if (channelObj) {
-    let iconBuffer = channelObj._icon
+    const iconBuffer = channelObj._icon
       ? channelObj._icon
       : channelObj.serviceObj.icon;
 
@@ -25,13 +27,13 @@ function printNewNotification(title, content, channelObj: Channel) {
     }
   }
 
-  let notification = new Notification({
+  const notification = new Notification({
     icon: icon,
     title: title,
     body: content,
   });
 
-  notification.on('click', function (event) {
+  notification.on('click', (event) => {
     onBalloonClick(title, content, channelObj);
   });
 
@@ -41,7 +43,9 @@ function printNewNotification(title, content, channelObj: Channel) {
 function onBalloonClick(title, content, channelObj) {
   addLogs('balloon was clicked.');
 
-  if (!config.settings.launchOnBalloonClick) return;
+  if (!config.settings.launchOnBalloonClick) {
+    return;
+  }
 
   if (title.indexOf('Stream is Live') === 0) {
     channelObj.emit('play');

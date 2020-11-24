@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as archiver from 'archiver';
 
-let platformOption = readlineSync.question(
+const platformOption = readlineSync.question(
   `select platform. all - for all platforms or win32, darwin, linux. (empty will default to current platform)${os.EOL}`,
 );
 let pathOption = readlineSync.question(

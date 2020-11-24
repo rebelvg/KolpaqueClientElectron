@@ -37,7 +37,7 @@ const filterChannel = (channelObj: Channel, filter: string): boolean => {
 
   const filters = filter.split(/\s+/gi);
 
-  let searchFilters = _.map(filters, (filter) => {
+  const searchFilters = _.map(filters, (filter) => {
     return {
       pattern: filter,
       found: false,
@@ -48,7 +48,7 @@ const filterChannel = (channelObj: Channel, filter: string): boolean => {
     [channelObj.link, channelObj.name, channelObj.visibleName],
     (searchString) => {
       _.forEach(searchFilters, (filter) => {
-        let regExp = new RegExp(filter.pattern, 'gi');
+        const regExp = new RegExp(filter.pattern, 'gi');
 
         if (regExp.test(searchString)) {
           filter.found = true;
@@ -172,14 +172,16 @@ export class Config extends EventEmitter {
 
   private readFile() {
     try {
-      let file = fs.readFileSync(settingsPath, 'utf8');
+      const file = fs.readFileSync(settingsPath, 'utf8');
 
-      let parseJson = JSON.parse(file);
+      const parseJson = JSON.parse(file);
 
       _.forEach(parseJson.channels, (channelObj) => {
-        let channel = this.addChannelLink(channelObj.link, false);
+        const channel = this.addChannelLink(channelObj.link, false);
 
-        if (channel !== false) channel.update(channelObj);
+        if (channel !== false) {
+          channel.update(channelObj);
+        }
       });
 
       _.forEach(this.settings, (settingValue, settingName) => {
@@ -199,13 +201,17 @@ export class Config extends EventEmitter {
   }
 
   addChannelLink(channelLink: string, emitEvent: boolean = true) {
-    let channelObj = Config.buildChannelObj(channelLink);
+    const channelObj = Config.buildChannelObj(channelLink);
 
-    if (channelObj === false) return false;
+    if (channelObj === false) {
+      return false;
+    }
 
-    let res = this.findChannelByLink(channelObj.link);
+    const res = this.findChannelByLink(channelObj.link);
 
-    if (res !== null) return false;
+    if (res !== null) {
+      return false;
+    }
 
     channelObj.lastUpdated = Date.now();
 
@@ -229,9 +235,11 @@ export class Config extends EventEmitter {
   }
 
   removeChannelById(id) {
-    let channelObj = this.findById(id);
+    const channelObj = this.findById(id);
 
-    if (!this.channels.includes(channelObj)) return true;
+    if (!this.channels.includes(channelObj)) {
+      return true;
+    }
 
     _.pull(this.channels, channelObj);
 
@@ -241,7 +249,9 @@ export class Config extends EventEmitter {
   }
 
   changeSetting(settingName, settingValue) {
-    if (!this.settings.hasOwnProperty(settingName)) return false;
+    if (!this.settings.hasOwnProperty(settingName)) {
+      return false;
+    }
 
     this.settings[settingName] = settingValue;
 
@@ -251,21 +261,25 @@ export class Config extends EventEmitter {
   }
 
   findById(id) {
-    let channel = this.channels.find((channel) => {
+    const channel = this.channels.find((channel) => {
       return channel.id === id;
     });
 
-    if (!channel) return null;
+    if (!channel) {
+      return null;
+    }
 
     return channel;
   }
 
   findChannelByLink(channelLink) {
-    let channel = this.channels.find((channel) => {
+    const channel = this.channels.find((channel) => {
       return channel.link === channelLink;
     });
 
-    if (!channel) return null;
+    if (!channel) {
+      return null;
+    }
 
     return channel;
   }
@@ -300,7 +314,7 @@ export class Config extends EventEmitter {
   saveFile() {
     try {
       const channels = _.map(this.channels, (channelObj) => {
-        let channel = {};
+        const channel = {};
 
         _.forEach(channelSave, (settingName) => {
           if (channelObj.hasOwnProperty(settingName)) {
