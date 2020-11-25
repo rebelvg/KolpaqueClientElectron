@@ -6,8 +6,8 @@ import { EventEmitter } from 'events';
 import { ChildProcess } from 'child_process';
 
 import {
-  allowedProtocols,
-  registeredServices,
+  ALLOWED_PROTOCOLS,
+  REGISTERED_SERVICES,
   ProtocolsEnum,
   IStreamService,
   ServiceNamesEnum,
@@ -50,8 +50,8 @@ export class Channel extends EventEmitter {
 
     const protocol = channelURL.protocol.toLowerCase() as ProtocolsEnum;
 
-    if (!allowedProtocols.includes(protocol)) {
-      throw Error(`Only [${allowedProtocols}] are allowed.`);
+    if (!ALLOWED_PROTOCOLS.includes(protocol)) {
+      throw Error(`Only [${ALLOWED_PROTOCOLS}] are allowed.`);
     }
 
     this.protocol = protocol;
@@ -64,7 +64,7 @@ export class Channel extends EventEmitter {
       throw Error(`Pathname can't be empty.`);
     }
 
-    _.forEach(registeredServices, (serviceObj) => {
+    _.forEach(REGISTERED_SERVICES, (serviceObj) => {
       if (
         serviceObj.protocols.includes(protocol) &&
         serviceObj.hosts.includes(channelURL.host.toLowerCase())

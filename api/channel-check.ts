@@ -67,7 +67,7 @@ const SERVICES_INTERVALS: IServiceInterval[] = [
   },
 ];
 
-config.on('channel_added', async (channel) => {
+config.on('channel_added', async (channel: Channel) => {
   await checkChannels([channel], false);
 });
 
@@ -242,8 +242,6 @@ async function getYoutubeStatsUser(
   channelObjs: Channel[],
   printBalloon: boolean,
 ) {
-  // await youtubeClient.refreshAccessToken();
-
   await Promise.all(
     channelObjs.map(async (channelObj) => {
       const data = await youtubeClient.getChannels(channelObj.name);
@@ -271,8 +269,6 @@ async function getYoutubeStatsChannel(
   channelObjs: Channel[],
   printBalloon: boolean,
 ) {
-  // await youtubeClient.refreshAccessToken();
-
   await Promise.all(
     channelObjs.map(async (channelObj) => {
       const channelStatus = await getYoutubeStatsBase(channelObj.name);

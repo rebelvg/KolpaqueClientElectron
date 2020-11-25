@@ -1,13 +1,11 @@
 import axios, { AxiosError } from 'axios';
 import { addLogs } from './Logs';
-import { klpqServiceUrl } from './Globals';
+import { klpqServiceUrl, TWITCH_CLIENT_ID } from './Globals';
 import { config } from './settings-file';
 import * as qs from 'querystring';
 import { shell, ipcMain } from 'electron';
 
 import { SOCKET_CLIENT_ID, ITwitchUser } from './socket-client';
-
-const twitchClientId = 'dk330061dv4t81s21utnhhdona0a91x';
 
 ipcMain.on('twitch_login', () => {
   klpqServiceClient.getTwitchUser();
@@ -108,7 +106,7 @@ class TwitchClient {
         {
           headers: {
             Authorization: `Bearer ${this.accessToken}`,
-            'Client-ID': twitchClientId,
+            'Client-ID': TWITCH_CLIENT_ID,
           },
         },
       );
@@ -136,7 +134,7 @@ class TwitchClient {
         {
           headers: {
             Authorization: `Bearer ${this.accessToken}`,
-            'Client-ID': twitchClientId,
+            'Client-ID': TWITCH_CLIENT_ID,
           },
         },
       );
@@ -166,7 +164,7 @@ class TwitchClient {
         {
           headers: {
             Authorization: `Bearer ${this.accessToken}`,
-            'Client-ID': twitchClientId,
+            'Client-ID': TWITCH_CLIENT_ID,
           },
         },
       );
@@ -196,7 +194,7 @@ class TwitchClient {
       const { data } = await axios.get<ITwitchFollowedChannels>(url.href, {
         headers: {
           Authorization: `Bearer ${this.accessToken}`,
-          'Client-ID': twitchClientId,
+          'Client-ID': TWITCH_CLIENT_ID,
         },
       });
 
@@ -259,7 +257,6 @@ export interface IYoutubeStreams {
 }
 
 class YoutubeClient {
-  private baseUrl = 'https://www.googleapis.com/youtube/v3';
   private accessToken: string = null;
 
   private get refreshToken() {
@@ -315,20 +312,6 @@ class YoutubeClient {
     }
 
     return klpqServiceClient.getYoutubeStreams(channelId);
-  }
-
-  private handleError(error: AxiosError): void {
-    addLogs(
-      new Error(error.message),
-      error?.response?.status,
-      error?.response?.data,
-    );
-
-    if (error?.response?.status === 401) {
-      addLogs('youtube_access_token_fail');
-
-      this.accessToken = null;
-    }
   }
 }
 

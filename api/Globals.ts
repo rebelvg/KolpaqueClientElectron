@@ -4,6 +4,8 @@ import * as path from 'path';
 
 import { Channel } from './channel-class';
 
+export const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
+
 export enum ProtocolsEnum {
   RTMP = 'rtmp:',
   HTTP = 'http:',
@@ -36,9 +38,9 @@ export interface IStreamService {
   ) => { playLink: string; params: string[] };
 }
 
-export const allowedProtocols = [...Object.values(ProtocolsEnum)];
+export const ALLOWED_PROTOCOLS = [...Object.values(ProtocolsEnum)];
 
-export const registeredServices: IStreamService[] = [
+export const REGISTERED_SERVICES: IStreamService[] = [
   {
     serviceName: ServiceNamesEnum.KLPQ_VPS_RTMP,
     protocols: [ProtocolsEnum.RTMP],
