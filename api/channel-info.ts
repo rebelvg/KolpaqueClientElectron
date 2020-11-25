@@ -7,7 +7,7 @@ import { ServiceNamesEnum } from './Globals';
 
 interface IServiceInfo {
   name: ServiceNamesEnum;
-  function: (channels: Channel[]) => {};
+  function: (channels: Channel[]) => Promise<void>;
 }
 
 const SERVICES: IServiceInfo[] = [
@@ -81,7 +81,7 @@ async function checkChannels(channelObjs: Channel[]) {
   );
 }
 
-export async function loop() {
+export async function loop(): Promise<void> {
   await Promise.all(
     _.map(SERVICES, async (service) => {
       const channels = _.filter(config.channels, { service: service.name });

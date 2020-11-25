@@ -3,7 +3,7 @@ import { loop as infoLoop } from './channel-info';
 import { loop as importLoop } from './Import';
 import { loop as versionLoop } from './version-check';
 
-export async function init() {
+export async function init(): Promise<void> {
   await importLoop();
   await channelLoop();
   await infoLoop();

@@ -79,7 +79,7 @@ const filterChannels = (channels: Channel[], filter: string): Channel[] => {
 const sortChannels = (
   channels: Channel[],
   sortType: string,
-  isReversed: boolean = false,
+  isReversed = false,
 ): Channel[] => {
   let sortedChannels = [];
 
@@ -179,7 +179,7 @@ export class Config extends EventEmitter {
       _.forEach(parseJson.channels, (channelObj) => {
         const channel = this.addChannelLink(channelObj.link, false);
 
-        if (channel !== false) {
+        if (!channel) {
           channel.update(channelObj);
         }
       });
@@ -200,17 +200,17 @@ export class Config extends EventEmitter {
     }, 5 * 60 * 1000);
   }
 
-  addChannelLink(channelLink: string, emitEvent: boolean = true) {
+  addChannelLink(channelLink: string, emitEvent = true): Channel {
     const channelObj = Config.buildChannelObj(channelLink);
 
-    if (channelObj === false) {
-      return false;
+    if (!channelObj) {
+      return null;
     }
 
     const res = this.findChannelByLink(channelObj.link);
 
     if (res !== null) {
-      return false;
+      return null;
     }
 
     channelObj.lastUpdated = Date.now();
@@ -224,17 +224,17 @@ export class Config extends EventEmitter {
     return channelObj;
   }
 
-  static buildChannelObj(channelLink) {
+  static buildChannelObj(channelLink: string): Channel {
     try {
       return new Channel(channelLink);
     } catch (e) {
       addLogs(e);
 
-      return false;
+      return null;
     }
   }
 
-  removeChannelById(id) {
+  removeChannelById(id: string): boolean {
     const channelObj = this.findById(id);
 
     if (!this.channels.includes(channelObj)) {
@@ -248,7 +248,7 @@ export class Config extends EventEmitter {
     return true;
   }
 
-  changeSetting(settingName, settingValue) {
+  changeSetting(settingName: string, settingValue: unknown): boolean {
     if (!this.settings.hasOwnProperty(settingName)) {
       return false;
     }
@@ -260,7 +260,7 @@ export class Config extends EventEmitter {
     return true;
   }
 
-  findById(id) {
+  findById(id: string): Channel {
     const channel = this.channels.find((channel) => {
       return channel.id === id;
     });
@@ -272,7 +272,7 @@ export class Config extends EventEmitter {
     return channel;
   }
 
-  findChannelByLink(channelLink) {
+  findChannelByLink(channelLink: string): Channel {
     const channel = this.channels.find((channel) => {
       return channel.link === channelLink;
     });
@@ -311,7 +311,7 @@ export class Config extends EventEmitter {
     };
   }
 
-  saveFile() {
+  saveFile(): boolean {
     try {
       const channels = _.map(this.channels, (channelObj) => {
         const channel = {};

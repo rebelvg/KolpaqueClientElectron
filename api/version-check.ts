@@ -6,7 +6,7 @@ import { addLogs } from './Logs';
 import { githubClient } from './api-clients';
 import { sleep } from './channel-check';
 
-const { version } = require('../package.json');
+import { version } from '../package.json';
 
 const SERVICES = [
   {
@@ -21,7 +21,7 @@ const SERVICES = [
 
 const UPDATES: string[] = [];
 
-ipcMain.on('client_getInfo', async (event, info) => {
+ipcMain.on('client_getInfo', async () => {
   await Promise.all(
     SERVICES.map((service) => {
       if (UPDATES.includes(service.name)) {
@@ -66,7 +66,7 @@ async function clientVersionCheck(): Promise<boolean> {
 
 function streamlinkVersionCheck() {
   return new Promise((resolve) => {
-    execFile('streamlink', ['--version-check'], (err: any, data, stderr) => {
+    execFile('streamlink', ['--version-check'], (err: any, data) => {
       if (err) {
         addLogs(err);
 
@@ -88,7 +88,7 @@ function streamlinkVersionCheck() {
   });
 }
 
-export function loop() {
+export function loop(): void {
   (async () => {
     // eslint-disable-next-line no-constant-condition
     while (true) {

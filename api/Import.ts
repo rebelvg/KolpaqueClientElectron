@@ -84,7 +84,7 @@ async function twitchImportBase(
 
   await Promise.all(
     userData.data.map(async ({ id }) => {
-      let cursor: string = '';
+      let cursor = '';
 
       // eslint-disable-next-line no-constant-condition
       while (true) {
@@ -151,7 +151,7 @@ async function autoTwitchImport(emitEvent: boolean) {
   );
 }
 
-export async function loop() {
+export async function loop(): Promise<void> {
   await autoTwitchImport(false);
 
   (async () => {

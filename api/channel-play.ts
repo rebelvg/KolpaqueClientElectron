@@ -70,14 +70,16 @@ config.on('channel_added_channels', (channels: Channel[]) => {
   });
 });
 
-export function launchPlayerLink(channelLink, LQ = null) {
+export function launchPlayerLink(channelLink: string, LQ = null): boolean {
   const channelObj = Config.buildChannelObj(channelLink);
 
-  if (channelObj === false) {
+  if (!channelObj) {
     return false;
   }
 
   launchPlayerObj(channelObj, LQ);
+
+  return true;
 }
 
 function playInWindow(channelObj) {
@@ -124,7 +126,7 @@ function playInWindow(channelObj) {
 function launchPlayerObj(
   channelObj: Channel,
   altQuality = false,
-  autoRestart = null,
+  autoRestart: boolean = null,
 ) {
   const LQ = !altQuality ? config.settings.LQ : !config.settings.LQ;
 
@@ -154,7 +156,7 @@ function launchStreamlink(playLink, params, channelObj, firstStart = true) {
   const childProcess = execFile(
     'streamlink',
     [playLink, 'best', ...params],
-    (err, data, stderr) => {
+    (err, data) => {
       addLogs(err, data, 'streamlink exited.');
 
       if (err) {

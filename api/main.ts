@@ -7,8 +7,8 @@ import {
   Menu,
   Tray,
   nativeImage,
+  MenuItem,
 } from 'electron';
-import * as _ from 'lodash';
 import * as path from 'path';
 import * as url from 'url';
 import * as fixPath from 'fix-path';
@@ -101,6 +101,7 @@ function createWindow() {
       default: installExtension,
       REACT_DEVELOPER_TOOLS,
       REDUX_DEVTOOLS,
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
     } = require('electron-devtools-installer');
 
     mainWindow.loadURL('http://localhost:10000');
@@ -175,12 +176,12 @@ app.on('ready', () => {
   mainWindow.hide();
 });
 
-export const contextMenuTemplate = [
+export const contextMenuTemplate: any[] = [
   {
     label: 'Toggle Client',
     type: 'normal',
     visible: process.platform === 'linux',
-    click: () => {
+    click: (): void => {
       mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
     },
   },
@@ -192,14 +193,18 @@ export const contextMenuTemplate = [
   {
     label: 'Play / Clipboard',
     type: 'normal',
-    click: (menuItem, browserWindow, event) => {
-      launchPlayerLink(clipboard.readText(), event.ctrlKey);
+    click: (
+      menuItem: MenuItem,
+      browserWindow: BrowserWindow,
+      event: unknown,
+    ): void => {
+      launchPlayerLink(clipboard.readText(), (event as any).ctrlKey);
     },
   },
   {
     label: 'Notifications',
     type: 'checkbox',
-    click: (menuItem) => {
+    click: (menuItem: MenuItem): void => {
       config.changeSetting('showNotifications', menuItem.checked);
     },
     checked: config.settings.showNotifications,
@@ -207,7 +212,7 @@ export const contextMenuTemplate = [
   {
     label: 'Quit Client',
     type: 'normal',
-    click: () => {
+    click: (): void => {
       forceQuit = true;
       app.quit();
     },

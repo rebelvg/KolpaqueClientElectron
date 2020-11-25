@@ -17,7 +17,7 @@ ipcMain.on('config_logs', (event) => {
   event.returnValue = logs.slice().reverse();
 });
 
-export function addLogs(...log: any[]) {
+export function addLogs(...log: any[]): void {
   const logLine = log
     .filter((logItem) => logItem !== undefined)
     .map((logItem) => {

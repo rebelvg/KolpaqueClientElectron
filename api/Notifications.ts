@@ -1,12 +1,15 @@
 import { shell, Notification, nativeImage, NativeImage } from 'electron';
-import * as _ from 'lodash';
 
 import { config } from './settings-file';
 import { addLogs } from './Logs';
 import { iconPathBalloon } from './main';
 import { Channel } from './channel-class';
 
-export function printNotification(title, content, channelObj = null) {
+export function printNotification(
+  title: string,
+  content: string,
+  channelObj: Channel = null,
+): void {
   if (!config.settings.showNotifications) {
     return;
   }
@@ -33,7 +36,7 @@ function printNewNotification(title, content, channelObj: Channel) {
     body: content,
   });
 
-  notification.on('click', (event) => {
+  notification.on('click', () => {
     onBalloonClick(title, content, channelObj);
   });
 

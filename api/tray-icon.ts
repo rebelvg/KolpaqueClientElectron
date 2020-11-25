@@ -1,5 +1,4 @@
 import { Menu, nativeImage } from 'electron';
-import * as _ from 'lodash';
 
 import { config } from './settings-file';
 import { contextMenuTemplate } from './main';
@@ -11,7 +10,7 @@ config.on('setting_changed', (settingName, settingValue) => {
   }
 });
 
-export function rebuildIconMenu() {
+export function rebuildIconMenu(): Menu {
   const onlineChannels = config.find({
     isLive: true,
   }).channels;

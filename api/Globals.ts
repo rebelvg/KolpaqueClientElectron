@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -47,7 +46,7 @@ export const REGISTERED_SERVICES: IStreamService[] = [
     hosts: ['mediaserver.klpq.men', 'stream.klpq.men', 'vps.klpq.men'],
     paths: ['/live/'],
     name: 2,
-    embed: (channelObj: Channel) => {
+    embed: (channelObj: Channel): string => {
       return `http://klpq.men/stream/${channelObj.name}`;
     },
     chat: null,
@@ -57,13 +56,13 @@ export const REGISTERED_SERVICES: IStreamService[] = [
         encoding: null,
       },
     ),
-    playUrl: (channelObj: Channel) => {
+    playUrl: (channelObj: Channel): any => {
       return {
         playLink: `rtmp://mediaserver.klpq.men/live/${channelObj.name}`,
         params: [],
       };
     },
-    onLQ: (playLink: string, params: string[]) => {
+    onLQ: (playLink: string, params: string[]): any => {
       return {
         playLink: playLink.replace('/live/', '/encode/'),
         params,
@@ -76,7 +75,7 @@ export const REGISTERED_SERVICES: IStreamService[] = [
     hosts: ['klpq.men'],
     paths: ['/stream/'],
     name: 2,
-    embed: (channelObj: Channel) => {
+    embed: (channelObj: Channel): string => {
       return `http://klpq.men/stream/${channelObj.name}`;
     },
     chat: null,
@@ -86,13 +85,13 @@ export const REGISTERED_SERVICES: IStreamService[] = [
         encoding: null,
       },
     ),
-    playUrl: (channelObj: Channel) => {
+    playUrl: (channelObj: Channel): any => {
       return {
         playLink: `https://encode.klpq.men/mpd/${channelObj.name}/index.mpd`,
         params: [],
       };
     },
-    onLQ: (playLink, params) => ({
+    onLQ: (playLink: string, params: string[]): any => ({
       playLink,
       params,
     }),
@@ -104,7 +103,7 @@ export const REGISTERED_SERVICES: IStreamService[] = [
     paths: ['/'],
     name: 1,
     embed: null,
-    chat: (channelObj) => {
+    chat: (channelObj: Channel): string => {
       return `https://www.twitch.tv/${channelObj.name}/chat`;
     },
     icon: fs.readFileSync(
@@ -113,13 +112,13 @@ export const REGISTERED_SERVICES: IStreamService[] = [
         encoding: null,
       },
     ),
-    playUrl: (channelObj: Channel) => {
+    playUrl: (channelObj: Channel): any => {
       return {
         playLink: channelObj._customPlayUrl || channelObj.link,
         params: ['--twitch-disable-hosting', '--twitch-disable-ads'],
       };
     },
-    onLQ: (playLink, params) => ({
+    onLQ: (playLink: string, params: string[]): any => ({
       playLink,
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     }),
@@ -138,13 +137,13 @@ export const REGISTERED_SERVICES: IStreamService[] = [
         encoding: null,
       },
     ),
-    playUrl: (channelObj: Channel) => {
+    playUrl: (channelObj: Channel): any => {
       return {
         playLink: channelObj._customPlayUrl || channelObj.link,
         params: [],
       };
     },
-    onLQ: (playLink, params) => ({
+    onLQ: (playLink: string, params: string[]): any => ({
       playLink,
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     }),
@@ -163,13 +162,13 @@ export const REGISTERED_SERVICES: IStreamService[] = [
         encoding: null,
       },
     ),
-    playUrl: (channelObj: Channel) => {
+    playUrl: (channelObj: Channel): any => {
       return {
         playLink: channelObj._customPlayUrl || channelObj.link,
         params: [],
       };
     },
-    onLQ: (playLink, params) => ({
+    onLQ: (playLink: string, params: string[]): any => ({
       playLink,
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     }),
@@ -183,13 +182,13 @@ export const REGISTERED_SERVICES: IStreamService[] = [
     embed: null,
     chat: null,
     icon: null,
-    playUrl: (channelObj: Channel) => {
+    playUrl: (channelObj: Channel): any => {
       return {
         playLink: channelObj._customPlayUrl || channelObj.link,
         params: [],
       };
     },
-    onLQ: (playLink, params) => ({
+    onLQ: (playLink: string, params: string[]): any => ({
       playLink,
       params,
     }),
@@ -203,13 +202,13 @@ export const REGISTERED_SERVICES: IStreamService[] = [
     embed: null,
     chat: null,
     icon: null,
-    playUrl: (channelObj: Channel) => {
+    playUrl: (channelObj: Channel): any => {
       return {
         playLink: channelObj._customPlayUrl || channelObj.link,
         params: [],
       };
     },
-    onLQ: (playLink, params) => ({
+    onLQ: (playLink: string, params: string[]): any => ({
       playLink,
       params,
     }),

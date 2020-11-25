@@ -113,7 +113,7 @@ export class Channel extends EventEmitter {
     });
   }
 
-  public update(channelConfig) {
+  public update(channelConfig: Record<string, unknown>): void {
     _.forEach(channelConfig, (settingValue, settingName) => {
       if (channelValidate.includes(settingName)) {
         if (settingName === 'visibleName' && !settingValue) {
@@ -125,7 +125,11 @@ export class Channel extends EventEmitter {
     });
   }
 
-  public changeSetting(settingName, settingValue, send = true) {
+  public changeSetting(
+    settingName: string,
+    settingValue: unknown,
+    send = true,
+  ): boolean {
     if (!this.hasOwnProperty(settingName)) {
       return false;
     }
@@ -137,7 +141,10 @@ export class Channel extends EventEmitter {
     return true;
   }
 
-  public changeSettings(settings, send = true) {
+  public changeSettings(
+    settings: Record<string, unknown>,
+    send = true,
+  ): boolean {
     _.forEach(settings, (settingValue, settingName) => {
       this.changeSetting(settingName, settingValue, false);
     });
@@ -147,7 +154,7 @@ export class Channel extends EventEmitter {
     return true;
   }
 
-  public filterData() {
+  public filterData(): any {
     return {
       id: this.id,
       service: this.service,
@@ -164,11 +171,11 @@ export class Channel extends EventEmitter {
     };
   }
 
-  public getPlayLink() {
+  public getPlayLink(): any {
     return this.serviceObj.playUrl(this);
   }
 
-  public getLqParams(playLink: string, params) {
+  public getLqParams(playLink: string, params: string[]): any {
     return this.serviceObj.onLQ(playLink, params);
   }
 }

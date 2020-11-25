@@ -19,7 +19,7 @@ interface IServiceInterval {
   name: ServiceNamesEnum;
   check: number;
   confirmations: number;
-  function: (channels: Channel[], printBalloon: boolean) => {};
+  function: (channels: Channel[], printBalloon: boolean) => Promise<void>;
 }
 
 const SERVICES_INTERVALS: IServiceInterval[] = [
@@ -319,7 +319,7 @@ async function getCustomStats(channels: Channel[], printBalloon: boolean) {
           childProcess.execFile(
             'streamlink',
             [channelObj.link, 'best', '--twitch-disable-hosting', '--json'],
-            (err, stdout, stderr) => {
+            (err, stdout) => {
               try {
                 const res = JSON.parse(stdout);
 
@@ -377,11 +377,11 @@ async function checkServiceLoop(
   }
 }
 
-export function sleep(ms: number) {
+export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function loop() {
+export async function loop(): Promise<void> {
   await Promise.all(
     _.map(SERVICES_INTERVALS, (service) => checkService(service, false)),
   );

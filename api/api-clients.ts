@@ -7,12 +7,12 @@ import { shell, ipcMain } from 'electron';
 
 import { SOCKET_CLIENT_ID, ITwitchUser } from './socket-client';
 
-ipcMain.on('twitch_login', () => {
-  klpqServiceClient.getTwitchUser();
+ipcMain.on('twitch_login', async () => {
+  await klpqServiceClient.getTwitchUser();
 });
 
-ipcMain.on('youtube_login', () => {
-  klpqServiceClient.getYoutubeUser();
+ipcMain.on('youtube_login', async () => {
+  await klpqServiceClient.getYoutubeUser();
 });
 
 export interface ITwitchClientUsers {
@@ -230,7 +230,7 @@ class KlpqStreamClient {
     channelName: string,
     host: string,
   ): Promise<IKlpqStreamChannel> {
-    const url = `${this.baseUrl}/channels/nms/live/${channelName}`;
+    const url = `${this.baseUrl}/channels/${host}/live/${channelName}`;
 
     try {
       const { data } = await axios.get<IKlpqStreamChannel>(url);
