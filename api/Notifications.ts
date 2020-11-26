@@ -17,7 +17,7 @@ export function printNotification(
   printNewNotification(title, content, channelObj);
 }
 
-function printNewNotification(title, content, channelObj: Channel) {
+function printNewNotification(title, content, channelObj: Channel): void {
   let icon: string | NativeImage = iconPathBalloon;
 
   if (channelObj) {
@@ -43,7 +43,7 @@ function printNewNotification(title, content, channelObj: Channel) {
   notification.show();
 }
 
-function onBalloonClick(title, content, channelObj) {
+function onBalloonClick(title, content, channelObj): void {
   addLogs('balloon was clicked.');
 
   if (!config.settings.launchOnBalloonClick) {

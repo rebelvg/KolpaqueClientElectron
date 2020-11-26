@@ -109,7 +109,9 @@ const sortChannels = (
     sortedChannels.reverse();
   }
 
-  sortedChannels = _.sortBy(sortedChannels, [(channel) => !channel.isPinned]);
+  sortedChannels = _.sortBy(sortedChannels, [
+    (channel: Channel): boolean => !channel.isPinned,
+  ]);
 
   return sortedChannels;
 };
@@ -170,7 +172,7 @@ export class Config extends EventEmitter {
     });
   }
 
-  private readFile() {
+  private readFile(): void {
     try {
       const file = fs.readFileSync(settingsPath, 'utf8');
 
@@ -194,7 +196,7 @@ export class Config extends EventEmitter {
     }
   }
 
-  private saveLoop() {
+  private saveLoop(): void {
     setInterval(() => {
       this.saveFile();
     }, 5 * 60 * 1000);

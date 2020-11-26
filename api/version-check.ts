@@ -33,7 +33,7 @@ ipcMain.on('client_getInfo', async () => {
 
 ipcMain.on('client_getVersion', (event) => (event.returnValue = version));
 
-function sendInfo(update: string) {
+function sendInfo(update: string): void {
   UPDATES.push(update);
 
   const service = _.find(SERVICES, { name: update });
@@ -64,7 +64,7 @@ async function clientVersionCheck(): Promise<boolean> {
   }
 }
 
-function streamlinkVersionCheck() {
+function streamlinkVersionCheck(): Promise<boolean> {
   return new Promise((resolve) => {
     execFile('streamlink', ['--version-check'], (err: any, data) => {
       if (err) {
@@ -89,7 +89,7 @@ function streamlinkVersionCheck() {
 }
 
 export function loop(): void {
-  (async () => {
+  (async (): Promise<void> => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const hasUpdate = await clientVersionCheck();
@@ -104,7 +104,7 @@ export function loop(): void {
     }
   })();
 
-  (async () => {
+  (async (): Promise<void> => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const hasUpdate = await streamlinkVersionCheck();

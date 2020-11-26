@@ -1,5 +1,5 @@
 import { app, ipcMain, dialog, shell, BrowserWindow } from 'electron';
-import { execFile } from 'child_process';
+import { execFile, ChildProcess } from 'child_process';
 import * as _ from 'lodash';
 
 import { config } from './settings-file';
@@ -11,18 +11,18 @@ import { addLogs } from './Logs';
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
 
-function setChannelEvents(channelObj) {
+function setChannelEvents(channelObj: Channel): void {
   channelObj.on('setting_changed', (settingName, settingValue) => {
     if (settingName === 'isLive' && !settingValue) {
-      _.forEach(channelObj._windows, (window) => window.close());
+      _.forEach(channelObj._windows, (window: BrowserWindow) => window.close());
 
       channelObj._windows = [];
     }
   });
 
-  channelObj.on('play', (altQuality = false, autoRestart = null) => {
+  channelObj.on('play', async (altQuality = false, autoRestart = null) => {
     if (config.settings.playInWindow) {
-      if (!playInWindow(channelObj)) {
+      if (!(await playInWindow(channelObj))) {
         launchPlayerObj(channelObj, altQuality, autoRestart);
       }
     } else {
@@ -82,9 +82,9 @@ export function launchPlayerLink(channelLink: string, LQ = null): boolean {
   return true;
 }
 
-function playInWindow(channelObj) {
-  let link;
-  let window;
+async function playInWindow(channelObj: Channel): Promise<boolean> {
+  let link: string;
+  let window: BrowserWindow;
 
   if (channelObj.serviceObj.embed) {
     link = channelObj.serviceObj.embed(channelObj);
@@ -103,7 +103,7 @@ function playInWindow(channelObj) {
       },
     });
 
-    window.loadURL(link);
+    await window.loadURL(link);
 
     window.on('closed', () => {
       _.pull(channelObj._windows, window);
@@ -127,7 +127,7 @@ function launchPlayerObj(
   channelObj: Channel,
   altQuality = false,
   autoRestart: boolean = null,
-) {
+): void {
   const LQ = !altQuality ? config.settings.LQ : !config.settings.LQ;
 
   if (autoRestart === null) {
@@ -148,7 +148,12 @@ function launchPlayerObj(
   launchStreamlink(playLink, params, channelObj);
 }
 
-function launchStreamlink(playLink, params, channelObj, firstStart = true) {
+function launchStreamlink(
+  playLink,
+  params,
+  channelObj,
+  firstStart = true,
+): ChildProcess {
   addLogs(playLink, params);
 
   channelObj._startTime = Date.now();

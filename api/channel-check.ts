@@ -75,7 +75,7 @@ config.on('channel_added_channels', async (channels: Channel[]) => {
   await checkChannels(channels, false);
 });
 
-function isOnline(channelObj: Channel, printBalloon: boolean) {
+function isOnline(channelObj: Channel, printBalloon: boolean): void {
   channelObj._offlineConfirmations = 0;
 
   if (channelObj.isLive) {
@@ -118,7 +118,7 @@ function isOnline(channelObj: Channel, printBalloon: boolean) {
   });
 }
 
-function isOffline(channelObj: Channel) {
+function isOffline(channelObj: Channel): void {
   if (!channelObj.isLive) {
     return;
   }
@@ -140,7 +140,10 @@ function isOffline(channelObj: Channel) {
   });
 }
 
-async function getKlpqStatsBase(channelObj: Channel, printBalloon: boolean) {
+async function getKlpqStatsBase(
+  channelObj: Channel,
+  printBalloon: boolean,
+): Promise<void> {
   const channelData = await klpqStreamClient.getChannel(
     channelObj.name,
     channelObj.serviceObj.hosts[0],
@@ -157,7 +160,10 @@ async function getKlpqStatsBase(channelObj: Channel, printBalloon: boolean) {
   }
 }
 
-async function getKlpqVpsStats(channelObjs: Channel[], printBalloon: boolean) {
+async function getKlpqVpsStats(
+  channelObjs: Channel[],
+  printBalloon: boolean,
+): Promise<void> {
   await Promise.all(
     channelObjs.map((channelObj) => {
       return getKlpqStatsBase(channelObj, printBalloon);
@@ -165,7 +171,10 @@ async function getKlpqVpsStats(channelObjs: Channel[], printBalloon: boolean) {
   );
 }
 
-async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
+async function getTwitchStats(
+  channelObjs: Channel[],
+  printBalloon: boolean,
+): Promise<void> {
   await twitchClient.refreshAccessToken();
 
   const chunkedChannels = _.chunk(channelObjs, TWITCH_CHUNK_LIMIT);
@@ -224,7 +233,7 @@ async function getTwitchStats(channelObjs: Channel[], printBalloon: boolean) {
   );
 }
 
-async function getYoutubeStatsBase(channelId: string) {
+async function getYoutubeStatsBase(channelId: string): Promise<boolean> {
   const data = await youtubeClient.getStreams(channelId);
 
   if (!data) {
@@ -241,7 +250,7 @@ async function getYoutubeStatsBase(channelId: string) {
 async function getYoutubeStatsUser(
   channelObjs: Channel[],
   printBalloon: boolean,
-) {
+): Promise<void> {
   await Promise.all(
     channelObjs.map(async (channelObj) => {
       const data = await youtubeClient.getChannels(channelObj.name);
@@ -268,7 +277,7 @@ async function getYoutubeStatsUser(
 async function getYoutubeStatsChannel(
   channelObjs: Channel[],
   printBalloon: boolean,
-) {
+): Promise<void> {
   await Promise.all(
     channelObjs.map(async (channelObj) => {
       const channelStatus = await getYoutubeStatsBase(channelObj.name);
@@ -285,7 +294,7 @@ async function getYoutubeStatsChannel(
 async function getChaturbateStats(
   channelObjs: Channel[],
   printBalloon: boolean,
-) {
+): Promise<void> {
   await Promise.all(
     channelObjs.map(async (channelObj) => {
       const data = await chaturbateClient.getChannel(channelObj.name);
@@ -303,7 +312,10 @@ async function getChaturbateStats(
   );
 }
 
-async function getCustomStats(channels: Channel[], printBalloon: boolean) {
+async function getCustomStats(
+  channels: Channel[],
+  printBalloon: boolean,
+): Promise<void> {
   const { useStreamlinkForCustomChannels } = config.settings;
 
   if (!useStreamlinkForCustomChannels) {
@@ -341,7 +353,10 @@ async function getCustomStats(channels: Channel[], printBalloon: boolean) {
   }
 }
 
-async function checkChannels(channelObjs: Channel[], printBalloon: boolean) {
+async function checkChannels(
+  channelObjs: Channel[],
+  printBalloon: boolean,
+): Promise<void> {
   await Promise.all(
     SERVICES_INTERVALS.map(async (service) => {
       const channels = _.filter(channelObjs, {
@@ -353,7 +368,10 @@ async function checkChannels(channelObjs: Channel[], printBalloon: boolean) {
   );
 }
 
-async function checkService(service: IServiceInterval, printBalloon: boolean) {
+async function checkService(
+  service: IServiceInterval,
+  printBalloon: boolean,
+): Promise<void> {
   try {
     const channels = _.filter(config.channels, {
       service: service.name,
@@ -368,7 +386,7 @@ async function checkService(service: IServiceInterval, printBalloon: boolean) {
 async function checkServiceLoop(
   service: IServiceInterval,
   printBalloon: boolean,
-) {
+): Promise<void> {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     await sleep(service.check * 1000);

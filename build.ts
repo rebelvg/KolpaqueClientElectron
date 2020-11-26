@@ -16,7 +16,7 @@ process.on('unhandledRejection', (error) => {
   throw error;
 });
 
-(async () => {
+(async (): void => {
   const options = {
     dir: './',
     tmpdir: false,

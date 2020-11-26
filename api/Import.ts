@@ -123,7 +123,7 @@ async function twitchImportBase(
   return channelsAddedAll.length;
 }
 
-async function twitchImport(channelName: string) {
+async function twitchImport(channelName: string): Promise<boolean> {
   const res = await twitchImportBase(channelName, true);
 
   if (res !== null) {
@@ -143,7 +143,7 @@ async function twitchImport(channelName: string) {
   }
 }
 
-async function autoTwitchImport(emitEvent: boolean) {
+async function autoTwitchImport(emitEvent: boolean): Promise<void> {
   await Promise.all(
     _.map(config.settings.twitchImport, async (channelName) => {
       await twitchImportBase(channelName, emitEvent);
@@ -154,7 +154,7 @@ async function autoTwitchImport(emitEvent: boolean) {
 export async function loop(): Promise<void> {
   await autoTwitchImport(false);
 
-  (async () => {
+  (async (): Promise<void> => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       await sleep(10 * 60 * 1000);

@@ -12,7 +12,6 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    // 'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
   globals: {
     Electron: true,
@@ -57,5 +56,6 @@ module.exports = {
     ],
     'no-return-await': 'error',
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/explicit-function-return-type': ['error'],
   },
 };

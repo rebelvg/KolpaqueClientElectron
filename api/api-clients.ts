@@ -46,15 +46,15 @@ class TwitchClient {
   private baseUrl = 'https://api.twitch.tv/helix';
   private accessToken: string = null;
 
-  private get refreshToken() {
+  private get refreshToken(): string {
     return config.settings.twitchRefreshToken;
   }
 
-  public setAccessToken(accessToken: string) {
+  public setAccessToken(accessToken: string): void {
     this.accessToken = accessToken;
   }
 
-  public setRefreshToken(refreshToken: string) {
+  public setRefreshToken(refreshToken: string): void {
     config.settings.twitchRefreshToken = refreshToken;
   }
 
@@ -259,15 +259,15 @@ export interface IYoutubeStreams {
 class YoutubeClient {
   private accessToken: string = null;
 
-  private get refreshToken() {
+  private get refreshToken(): string {
     return config.settings.youtubeRefreshToken;
   }
 
-  public setAccessToken(accessToken: string) {
+  public setAccessToken(accessToken: string): void {
     this.accessToken = accessToken;
   }
 
-  public setRefreshToken(refreshToken: string) {
+  public setRefreshToken(refreshToken: string): void {
     config.settings.youtubeRefreshToken = refreshToken;
   }
 
@@ -364,17 +364,17 @@ class KlpqServiceClient {
   private baseUrl = klpqServiceUrl;
   private jwtToken: string = null;
 
-  public setUser(jwt: string) {
+  public setUser(jwt: string): void {
     this.jwtToken = jwt;
   }
 
-  public async getTwitchUser() {
+  public async getTwitchUser(): Promise<void> {
     await shell.openExternal(
       `${this.baseUrl}/auth/twitch?requestId=${SOCKET_CLIENT_ID}`,
     );
   }
 
-  public async getYoutubeUser() {
+  public async getYoutubeUser(): Promise<void> {
     await shell.openExternal(
       `${this.baseUrl}/auth/google?requestId=${SOCKET_CLIENT_ID}`,
     );

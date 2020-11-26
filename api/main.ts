@@ -77,7 +77,7 @@ if (!lockStatus) {
   app.quit();
 }
 
-function createWindow() {
+function createWindow(): void {
   mainWindow = new BrowserWindow({
     title: 'Kolpaque Client',
     minWidth: 300,
@@ -219,11 +219,11 @@ export const contextMenuTemplate: any[] = [
   },
 ];
 
-function toggleHideClient() {
+function toggleHideClient(): void {
   mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
 }
 
-function showTrayContextMenu() {
+function showTrayContextMenu(): void {
   const contextMenu = rebuildIconMenu();
 
   appIcon.popUpContextMenu(contextMenu);

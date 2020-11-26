@@ -7,14 +7,14 @@ import { ServiceNamesEnum } from './Globals';
 
 interface IServiceInfo {
   name: ServiceNamesEnum;
-  function: (channels: Channel[]) => Promise<void>;
+  function: (channels: Channel[]) => void;
 }
 
 const SERVICES: IServiceInfo[] = [
   { name: ServiceNamesEnum.TWITCH, function: getTwitchInfoAsync },
 ];
 
-config.on('channel_added', async (channel) => {
+config.on('channel_added', async (channel: Channel) => {
   await checkChannels([channel]);
 });
 
@@ -22,7 +22,7 @@ config.on('channel_added_channels', async (channels: Channel[]) => {
   await checkChannels(channels);
 });
 
-async function getTwitchInfoAsync(channelObjs: Channel[]) {
+async function getTwitchInfoAsync(channelObjs: Channel[]): Promise<void> {
   await twitchClient.refreshAccessToken();
 
   const filteredChannels = _.filter(
@@ -71,7 +71,7 @@ async function getTwitchInfoAsync(channelObjs: Channel[]) {
   );
 }
 
-async function checkChannels(channelObjs: Channel[]) {
+async function checkChannels(channelObjs: Channel[]): Promise<void> {
   await Promise.all(
     SERVICES.map(async (service) => {
       const channels = _.filter(channelObjs, { service: service.name });

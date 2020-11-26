@@ -1,4 +1,4 @@
-import { Menu, nativeImage } from 'electron';
+import { BrowserWindow, Menu, MenuItem, nativeImage } from 'electron';
 
 import { config } from './settings-file';
 import { contextMenuTemplate } from './main';
@@ -34,7 +34,11 @@ export function rebuildIconMenu(): Menu {
           ? channelObj.visibleName
           : `${channelObj.visibleName} (LQ)`,
         type: 'normal',
-        click: (menuItem, browserWindow, event) => {
+        click: (
+          menuItem: MenuItem,
+          browserWindow: BrowserWindow,
+          event: any,
+        ): void => {
           channelObj.emit('play', event.ctrlKey, event.shiftKey ? true : null);
         },
         icon: channelObj._trayIcon,
