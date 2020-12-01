@@ -9,5 +9,5 @@
     "jsx": "react",
     "outDir": "../dist-app"
   },
-  "include": ["./**/*"]
+  "include": ["./app/**/*"]
 }

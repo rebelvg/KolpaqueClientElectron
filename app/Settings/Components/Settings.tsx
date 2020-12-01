@@ -67,14 +67,17 @@ export default class Settings extends Component<any, any> {
         {activeKey === 'general' && (
           <Form
             onSubmit={this.submit}
+            // @ts-ignore
             changeSetting={this.changeSetting}
             initialValues={{ ...settings }}
+            // @ts-ignore
             render={(props) => <SettingsForm {...props} />}
           />
         )}
 
         {activeKey === 'import' && (
           <Form
+            // @ts-ignore
             members={settings.twitchImport}
             onSubmit={this.submit}
             submit={this.submitImports}
@@ -84,6 +87,7 @@ export default class Settings extends Component<any, any> {
         )}
 
         {activeKey === 'logs' && (
+          // @ts-ignore
           <Form render={(props) => <Logs {...props} />} />
         )}
       </Container>
