@@ -14,7 +14,7 @@ const openMenu = () => {
 };
 
 @withTheme
-export default class ChannelForm extends Component {
+export default class ChannelForm extends Component<any> {
   handleSubmit = (data) => {
     const { handleSubmit, reset } = this.props;
     handleSubmit(data);

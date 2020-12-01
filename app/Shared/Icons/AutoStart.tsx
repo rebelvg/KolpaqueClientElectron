@@ -6,7 +6,7 @@ const AUTOSTART_ON_INVERT = './static/icons/autostart_on_invert.svg';
 const AUTOSTART_OFF = './static/icons/autostart_off.svg';
 
 @withTheme
-class AutoStart extends Component {
+export class AutoStart extends Component<any> {
   onClick = (e) => {
     const {
       channel: { autoStart, id },
@@ -35,8 +35,6 @@ class AutoStart extends Component {
     );
   }
 }
-
-export default AutoStart;
 
 const Wrapper = styled.div`
   display: flex;

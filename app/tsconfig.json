@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "sourceMap": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "jsx": "react",
+    "outDir": "../dist-app"
+  },
+  "include": ["./**/*"]
+}

@@ -40,7 +40,7 @@ const Services = {
 };
 
 @withTheme
-class ServiceIcon extends Component {
+export class ServiceIcon extends Component<any> {
   getIcon = (serviceName) => {
     return Services[serviceName] ? Services[serviceName] : Services['default'];
   };
@@ -73,8 +73,6 @@ class ServiceIcon extends Component {
     return this.renderIcon(icon);
   }
 }
-
-export default ServiceIcon;
 
 const IconWithImage = styled.div`
   width: 16px;

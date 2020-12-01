@@ -9,11 +9,7 @@ import { getUpdate, sendInfo } from '../../redux/channel';
   }),
   { sendInfo },
 )
-export default class Update extends Component {
-  constructor() {
-    super();
-  }
-
+export default class Update extends Component<any> {
   sendInfo = (info) => this.props.sendInfo(info);
 
   render() {

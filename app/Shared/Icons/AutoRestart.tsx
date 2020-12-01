@@ -4,7 +4,7 @@ import styled, { withTheme } from 'styled-components';
 import { refresh } from 'react-icons-kit/fa/refresh';
 
 @withTheme
-class AutoRestart extends Component {
+export class AutoRestart extends Component<any> {
   onClick = (e) => {
     const {
       channel: { id, onAutoRestart, autoRestart },
@@ -40,8 +40,6 @@ class AutoRestart extends Component {
     );
   }
 }
-
-export default AutoRestart;
 
 const Wrapper = styled.div`
   display: flex;

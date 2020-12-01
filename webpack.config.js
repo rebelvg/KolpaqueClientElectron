@@ -7,25 +7,14 @@ module.exports = {
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:10000',
     'webpack/hot/only-dev-server',
-    './app/index.js',
+    './app/index.tsx',
   ],
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        exclude: /(node_modules|bower_components)/,
-        include: [path.resolve(__dirname, 'app')],
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['env', 'react', 'stage-0', 'es2015', 'es2016', 'es2017'],
-            plugins: [
-              'react-hot-loader/babel',
-              'transform-class-properties',
-              'transform-decorators-legacy',
-            ],
-          },
-        },
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
       },
       {
         test: /\.(jpe?g|gif|png|wav|mp3)$/,
@@ -60,7 +49,9 @@ module.exports = {
     publicPath: '/',
     port: 10000,
   },
-  resolve: {},
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
   node: {
     fs: 'empty',
   },

@@ -4,7 +4,7 @@ import styled, { withTheme } from 'styled-components';
 import { star } from 'react-icons-kit/fa/star';
 
 @withTheme
-class PinButton extends Component {
+export class PinButton extends Component<any> {
   onClick = (e) => {
     const {
       channel: { isPinned, id },
@@ -30,8 +30,6 @@ class PinButton extends Component {
     );
   }
 }
-
-export default PinButton;
 
 const Wrapper = styled.div`
   display: flex;

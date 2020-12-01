@@ -17,9 +17,10 @@ const options = [
   },
 ];
 
-export default class Settings extends Component {
-  constructor() {
-    super();
+export default class Settings extends Component<any, any> {
+  constructor(props) {
+    super(props);
+
     this.state = {
       activeKey: 'general',
     };

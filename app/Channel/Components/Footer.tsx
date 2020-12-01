@@ -5,10 +5,6 @@ import { addChannel } from '../../Channel/Helpers/IPCHelpers';
 import { Form } from 'react-final-form';
 
 export default class Footer extends Component {
-  constructor() {
-    super();
-  }
-
   submit = ({ channel }) => {
     if (channel) {
       addChannel(channel);

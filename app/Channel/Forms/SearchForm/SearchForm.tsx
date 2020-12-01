@@ -15,11 +15,7 @@ const openMenu = () => {
 };
 
 @withTheme
-class SearchForm extends Component {
-  constructor(props) {
-    super(props);
-  }
-
+class SearchForm extends Component<any> {
   render() {
     const { save } = this.props;
     return (

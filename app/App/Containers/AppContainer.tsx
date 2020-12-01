@@ -12,14 +12,11 @@ import { getTheme } from '../../redux/settings';
 @connect((state) => ({
   nightMode: getTheme(state),
 }))
-export default class AppContainer extends Component {
-  constructor() {
-    super();
-  }
-
+export default class AppContainer extends Component<any> {
   render() {
     const { nightMode } = this.props;
     const theme = nightMode ? themes['nightTheme'] : themes['defaultTheme'];
+
     return (
       <Container>
         <ThemeProvider theme={theme}>

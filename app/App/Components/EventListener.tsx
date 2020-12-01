@@ -26,9 +26,11 @@ const { ipcRenderer } = window.require('electron');
     updateData,
   },
 )
-class EventListener extends Component {
-  constructor() {
-    super();
+class EventListener extends Component<any> {
+  empty;
+
+  constructor(props) {
+    super(props);
 
     this.state = {
       queue: [],
@@ -38,7 +40,6 @@ class EventListener extends Component {
   }
 
   emptyQueue = () => {
-    const { queue } = this.state;
     const { initEnd, updateData, loaded } = this.props;
 
     this.setState(

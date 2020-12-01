@@ -4,13 +4,11 @@ import styled, { withTheme } from 'styled-components';
 import { thumbTack } from 'react-icons-kit/fa/thumbTack';
 
 @withTheme
-class Pinned extends Component {
+export class Pinned extends Component {
   render() {
     return <PinnedIcon icon={thumbTack} color={'#979797'} />;
   }
 }
-
-export default Pinned;
 
 const PinnedIcon = styled(Icon)`
   width: 16px;

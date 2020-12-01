@@ -5,9 +5,11 @@ import styled, { withTheme } from 'styled-components';
 import ReactJson from 'react-json-view';
 
 @withTheme
-export default class LogsForm extends Component {
-  constructor() {
-    super();
+export default class LogsForm extends Component<any, any> {
+  getLogsInterval;
+
+  constructor(props) {
+    super(props);
 
     this.getLogsInterval;
 

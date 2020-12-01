@@ -23,9 +23,9 @@ import ReactList from 'react-list';
     updateData,
   },
 )
-class Channels extends PureComponent {
-  constructor() {
-    super();
+class Channels extends PureComponent<any, any> {
+  constructor(props) {
+    super(props);
 
     this.state = {
       selected: null,
@@ -58,10 +58,12 @@ class Channels extends PureComponent {
   };
 
   handleAction = (type, data) => {
+    const [name, id] = data;
+
     const actions = {
-      RENAME: () => this.renameChannel(...data),
-      OPEN_MENU: () => this.openMenu(...data),
-      SELECT: () => this.selectChannel(...data),
+      RENAME: () => this.renameChannel(name, id),
+      OPEN_MENU: () => this.openMenu(name),
+      SELECT: () => this.selectChannel(name, id),
     };
 
     if (actions[type]) {

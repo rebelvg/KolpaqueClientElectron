@@ -7,11 +7,7 @@ import styled, { withTheme } from 'styled-components';
 const TextField = ({ input, ...rest }) => <MemberInput {...input} />;
 
 @withTheme
-export default class ImportForm extends Component {
-  constructor() {
-    super();
-  }
-
+export default class ImportForm extends Component<any> {
   removeMember = (member) => {
     const { members, submit } = this.props;
     submit([...members.filter((m) => m !== member)]);

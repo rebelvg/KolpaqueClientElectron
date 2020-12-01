@@ -32,7 +32,7 @@ const openMenu = () => {
   macMenu.popup(remote.getCurrentWindow());
 };
 @withTheme
-export default class EditForm extends Component {
+export default class EditForm extends Component<any, any> {
   constructor(props) {
     super(props);
     this.state = {
@@ -44,7 +44,7 @@ export default class EditForm extends Component {
     this.setState({ value: v });
   };
 
-  renameChannel = (e) => {
+  renameChannel = () => {
     const { value } = this.state;
     const { channel } = this.props;
     this.props.nameChange(value, channel.id);

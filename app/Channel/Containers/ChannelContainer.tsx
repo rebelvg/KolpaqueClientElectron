@@ -30,9 +30,9 @@ import {
     updateData,
   },
 )
-class ChannelContainer extends PureComponent {
-  constructor() {
-    super();
+class ChannelContainer extends PureComponent<any> {
+  constructor(props) {
+    super(props);
 
     this.state = {
       selected: null,

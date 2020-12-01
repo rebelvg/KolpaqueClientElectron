@@ -4,24 +4,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  entry: './app/index.js',
+  entry: './app/index.tsx',
   module: {
     rules: [
       {
-        test: /.js/,
+        test: /\.tsx?$/,
+        use: 'ts-loader',
         exclude: /node_modules/,
-        include: [path.resolve(__dirname, 'app')],
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['env', 'stage-0', 'react', 'es2015', 'es2016', 'es2017'],
-            plugins: [
-              'transform-class-properties',
-              'react-html-attrs',
-              'transform-decorators-legacy',
-            ],
-          },
-        },
       },
       {
         test: /\.css$/,
@@ -42,7 +31,9 @@ module.exports = {
       },
     ],
   },
-  resolve: {},
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Kolpaque Client',

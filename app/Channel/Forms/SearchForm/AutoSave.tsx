@@ -2,9 +2,12 @@ import React from 'react';
 import { FormSpy } from 'react-final-form';
 import { debounce, isEqual } from 'lodash';
 
-class AutoSave extends React.Component {
+class AutoSave extends React.Component<any, any> {
+  setFilter;
+
   constructor(props) {
     super(props);
+
     this.state = { values: props.values, submitting: false };
     this.setFilter = debounce(this.save, props.debounce);
   }

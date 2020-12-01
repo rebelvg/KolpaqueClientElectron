@@ -12,11 +12,7 @@ import {
 } from '../../Shared/Icons';
 
 @withTheme
-class Channel extends PureComponent {
-  constructor() {
-    super();
-  }
-
+class Channel extends PureComponent<any> {
   contextMenu = (name, channel) =>
     !name && this.props.handleAction('OPEN_MENU', [channel]);
 

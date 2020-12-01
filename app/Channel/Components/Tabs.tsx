@@ -12,11 +12,7 @@ import { getCount, getActiveTab, updateData } from '../../redux/channel';
   }),
   { updateData },
 )
-class Tabs extends Component {
-  constructor() {
-    super();
-  }
-
+class Tabs extends Component<any> {
   onChange = (value) => this.props.updateData(null, value);
 
   render() {

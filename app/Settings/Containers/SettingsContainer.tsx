@@ -21,9 +21,9 @@ const { remote, ipcRenderer } = window.require('electron');
   }),
   { changeSettings, changeSettingsResponse, importChannel, updateData },
 )
-export default class SettingsContainer extends Component {
-  constructor() {
-    super();
+export default class SettingsContainer extends Component<any, any> {
+  constructor(props) {
+    super(props);
 
     const version = ipcRenderer.sendSync('client_getVersion');
 
