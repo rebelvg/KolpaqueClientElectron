@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 
 import { Channel } from './channel-class';
-import { addLogs } from './Logs';
+import { addLogs } from './logs';
 
 const oldSettingsPath = path.join(
   app.getPath('documents'),

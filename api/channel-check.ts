@@ -3,9 +3,9 @@ import * as _ from 'lodash';
 import * as childProcess from 'child_process';
 
 import { config } from './settings-file';
-import { printNotification } from './Notifications';
+import { printNotification } from './notifications';
 import { Channel } from './channel-class';
-import { addLogs } from './Logs';
+import { addLogs } from './logs';
 import {
   twitchClient,
   klpqStreamClient,
@@ -13,7 +13,7 @@ import {
   chaturbateClient,
   TWITCH_CHUNK_LIMIT,
 } from './api-clients';
-import { ServiceNamesEnum } from './Globals';
+import { ServiceNamesEnum } from './globals';
 
 interface IServiceInterval {
   name: ServiceNamesEnum;

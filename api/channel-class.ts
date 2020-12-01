@@ -11,7 +11,7 @@ import {
   ProtocolsEnum,
   IStreamService,
   ServiceNamesEnum,
-} from './Globals';
+} from './globals';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 

@@ -4,9 +4,9 @@ import * as _ from 'lodash';
 
 import { config } from './settings-file';
 import { Config } from './config-class';
-import { printNotification } from './Notifications';
+import { printNotification } from './notifications';
 import { Channel } from './channel-class';
-import { addLogs } from './Logs';
+import { addLogs } from './logs';
 
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;

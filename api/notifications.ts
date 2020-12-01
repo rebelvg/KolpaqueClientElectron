@@ -1,7 +1,7 @@
 import { shell, Notification, nativeImage, NativeImage } from 'electron';
 
 import { config } from './settings-file';
-import { addLogs } from './Logs';
+import { addLogs } from './logs';
 import { iconPathBalloon } from './main';
 import { Channel } from './channel-class';
 

@@ -1,10 +1,10 @@
 import * as SocketClient from 'socket.io-client';
 import * as uuid from 'uuid';
 
-import { addLogs } from './Logs';
+import { addLogs } from './logs';
 import { twitchClient, klpqServiceClient, youtubeClient } from './api-clients';
-import { klpqServiceUrl } from './Globals';
-import { printNotification } from './Notifications';
+import { klpqServiceUrl } from './globals';
+import { printNotification } from './notifications';
 
 export interface ITwitchUser {
   accessToken: string;

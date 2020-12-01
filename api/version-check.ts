@@ -5,7 +5,7 @@ import { printNotification } from './Notifications';
 import { addLogs } from './Logs';
 import { githubClient } from './api-clients';
 import { sleep } from './channel-check';
-import { CLIENT_VERSION } from './Globals';
+import { CLIENT_VERSION } from './globals';
 
 const SERVICES = [
   {
@@ -22,7 +22,7 @@ const UPDATES: string[] = [];
 
 ipcMain.on('client_getInfo', async () => {
   await Promise.all(
-    SERVICES.map(service => {
+    SERVICES.map((service) => {
       if (UPDATES.includes(service.name)) {
         shell.openExternal(service.link);
       }
@@ -30,7 +30,10 @@ ipcMain.on('client_getInfo', async () => {
   );
 });
 
-ipcMain.on('client_getVersion', event => (event.returnValue = CLIENT_VERSION));
+ipcMain.on(
+  'client_getVersion',
+  (event) => (event.returnValue = CLIENT_VERSION),
+);
 
 function sendInfo(update: string): void {
   UPDATES.push(update);
@@ -64,7 +67,7 @@ async function clientVersionCheck(): Promise<boolean> {
 }
 
 function streamlinkVersionCheck(): Promise<boolean> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     execFile('streamlink', ['--version-check'], (err: any, data) => {
       if (err) {
         addLogs(err);

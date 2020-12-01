@@ -25,9 +25,9 @@ import './socket-client';
 import './channel-info';
 
 import './channel-check';
-import './Import';
+import './import';
 import './version-check';
-import './Logs';
+import './logs';
 import { addLogs, crashLogPath } from './Logs';
 import { init } from './client-init';
 

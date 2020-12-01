@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
-import { addLogs } from './Logs';
-import { klpqServiceUrl, TWITCH_CLIENT_ID } from './Globals';
+import { addLogs } from './logs';
+import { klpqServiceUrl, TWITCH_CLIENT_ID } from './globals';
 import { config } from './settings-file';
 import * as qs from 'querystring';
 import { shell, ipcMain } from 'electron';
