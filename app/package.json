@@ -39,8 +39,8 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
-    "style-loader": "^0.20.2",
-    "styled-components": "^3.1.6",
+    "style-loader": "^2.0.0",
+    "styled-components": "^5.2.1",
     "styled-components-theme": "^1.0.5"
   },
   "dependencies": {}
