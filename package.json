@@ -12,7 +12,7 @@
     "build": "yarn run build:api && yarn run build:app && ts-node build.ts",
     "start:api": "yarn build:api && cross-env NODE_ENV=dev electron .",
     "start:app": "webpack-dev-server",
-    "start:dev": "yarn run build:api && concurrently --kill-others \"cross-env NODE_ENV=dev electron .\" \"yarn run start:app\"",
+    "start:dev": "concurrently --kill-others \"yarn run start:api\" \"yarn run start:app\"",
     "start": "yarn run build:api && yarn run build:app && electron ."
   },
   "author": "KLPQ",
@@ -24,7 +24,6 @@
   ],
   "devDependencies": {
     "@types/lodash": "^4.14.120",
-    "@types/node": "^8.0.0",
     "@types/socket.io-client": "^1.4.32",
     "@types/uuid": "^7.0.3",
     "@typescript-eslint/eslint-plugin": "^4.7.0",
