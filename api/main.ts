@@ -89,7 +89,7 @@ function createWindow(): void {
     icon: iconPath,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
     },
   });
 
@@ -119,7 +119,7 @@ function createWindow(): void {
     config.saveFile();
   });
 
-  mainWindow.on('close', e => {
+  mainWindow.on('close', (e) => {
     addLogs('forceQuit', forceQuit);
 
     if (forceQuit) {
@@ -250,13 +250,13 @@ app.on('ready', () => {
   }
 });
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
   addLogs('unhandledRejection', err);
 
   throw err;
 });
 
-process.on('uncaughtException', err => {
+process.on('uncaughtException', (err) => {
   addLogs('uncaughtException', err);
 
   fs.appendFileSync(crashLogPath, `${err.stack}${os.EOL}`);
