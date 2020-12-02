@@ -60,10 +60,10 @@ class EventListener extends Component<any> {
     const { initSettings, updateData, loaded, getInfo, initStart } = this.props;
 
     if (!loaded) {
-      ipcRenderer.on('channel_changeSettingSync', (event) => updateData());
-      ipcRenderer.on('channel_addSync', (event) => updateData());
-      ipcRenderer.on('client_showInfo', (event, info) => getInfo(info));
-      ipcRenderer.on('channel_removeSync', (event) => updateData());
+      ipcRenderer.on('channel_changeSettingSync', () => updateData());
+      ipcRenderer.on('channel_addSync', () => updateData());
+      ipcRenderer.on('client_showInfo', (_event, info) => getInfo(info));
+      ipcRenderer.on('channel_removeSync', () => updateData());
 
       initStart();
       initSettings();

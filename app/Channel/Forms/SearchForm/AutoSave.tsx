@@ -14,6 +14,7 @@ class AutoSave extends React.Component<any, any> {
 
   save = () => {
     const { values, save } = this.props;
+
     if (!isEqual(this.state.values, values)) {
       save(values);
     }

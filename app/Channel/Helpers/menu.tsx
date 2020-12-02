@@ -1,5 +1,5 @@
 const { remote, ipcRenderer } = window.require('electron');
-const { app, Menu, shell, BrowserWindow, MenuItem } = remote;
+const { MenuItem } = remote;
 
 const menuTemplate = (channel, edit) => [
   new MenuItem({

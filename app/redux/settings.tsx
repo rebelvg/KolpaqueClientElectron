@@ -14,14 +14,17 @@ export const {
 } = createActions({
   INIT_SETTINGS: () => {
     const list = ipcRenderer.sendSync('getSettings');
+
     return { list };
   },
   IMPORT_CHANNEL: (name) => {
     ipcRenderer.send('config_twitchImport', name);
+
     return {};
   },
   CHANGE_SETTINGS: (name, value) => {
     ipcRenderer.send('config_changeSetting', name, value);
+
     return {};
   },
   CHANGE_SETTINGS_RESPONSE: (name, value) => ({
@@ -36,10 +39,10 @@ export const reducer = handleActions(
       ...state,
       list: action.payload.list,
     }),
-    IMPORT_CHANNEL: (state, action) => ({
+    IMPORT_CHANNEL: (state) => ({
       ...state,
     }),
-    CHANGE_SETTINGS: (state, action) => ({
+    CHANGE_SETTINGS: (state) => ({
       ...state,
     }),
     CHANGE_SETTINGS_RESPONSE: (state, action) => ({

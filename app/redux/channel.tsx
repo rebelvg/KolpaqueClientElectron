@@ -1,5 +1,4 @@
-import { createActions, handleActions, createAction } from 'redux-actions';
-import { createSelector } from 'reselect';
+import { createActions, handleActions } from 'redux-actions';
 import { getTab } from '../Channel/constants';
 
 const { ipcRenderer } = window.require('electron');
@@ -29,6 +28,7 @@ export const updateData = (filter = null, activeTab = null) => {
 
     const query = { filter, [tab.filter]: tab.filterValue };
     const data = ipcRenderer.sendSync('config_find', query);
+
     dispatch(updateView({ ...data, filter, activeTab }));
   };
 };
@@ -44,6 +44,7 @@ export const {
 } = createActions({
   INIT_START: () => {
     ipcRenderer.send('client_ready');
+
     return {};
   },
   INIT_END: () => ({}),
@@ -56,6 +57,7 @@ export const {
 
   SEND_INFO: (info) => {
     ipcRenderer.send('client_getInfo', info);
+
     return { info };
   },
 
@@ -65,10 +67,10 @@ export const {
 //REDUCER
 export const reducer = handleActions(
   {
-    INIT_START: (state, action) => ({
+    INIT_START: (state) => ({
       ...state,
     }),
-    INIT_END: (state, action) => ({
+    INIT_END: (state) => ({
       ...state,
       loaded: true,
     }),
@@ -85,7 +87,7 @@ export const reducer = handleActions(
 
     GET_INFO: (state, action) => ({ ...state, update: action.payload.info }),
 
-    SEND_INFO: (state, action) => ({ ...state }),
+    SEND_INFO: (state) => ({ ...state }),
 
     SET_FILTER: (state, action) => {
       return { ...state, filter: action.payload.filter };

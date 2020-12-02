@@ -11,6 +11,7 @@ const { Menu } = remote;
 
 const openMenu = () => {
   const macMenu = Menu.buildFromTemplate(template);
+
   macMenu.popup(remote.getCurrentWindow());
 };
 
@@ -18,6 +19,7 @@ const openMenu = () => {
 class SearchForm extends Component<any> {
   render() {
     const { save } = this.props;
+
     return (
       <Form>
         <InputWrapper>

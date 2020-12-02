@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
-import { Form, FormProps } from 'react-final-form';
+import { Form } from 'react-final-form';
 
 import SettingsForm from '../../Settings/Forms/SettingsForm';
 import ImportForm from '../../Settings/Forms/ImportForm';

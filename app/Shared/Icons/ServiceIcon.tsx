@@ -70,6 +70,7 @@ export class ServiceIcon extends Component<any> {
   render() {
     const { service } = this.props;
     const icon = this.getIcon(service);
+
     return this.renderIcon(icon);
   }
 }
@@ -85,5 +86,5 @@ const IconWithImage = styled.div`
 const IconWithService = styled(Icon)`
   width: 16px;
   height: 16px;
-  color: ${(props) => (!!props.color ? props.color : 'darkgreen')};
+  color: ${(props) => (props.color ? props.color : 'darkgreen')};
 `;

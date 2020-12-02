@@ -10,6 +10,7 @@ export class PinButton extends Component<any> {
       channel: { isPinned, id },
       toggle,
     } = this.props;
+
     e.preventDefault();
     e.stopPropagation();
     toggle(id, 'isPinned', !isPinned);
@@ -20,6 +21,7 @@ export class PinButton extends Component<any> {
       channel: { isPinned },
       theme,
     } = this.props;
+
     return (
       <Wrapper onClick={this.onClick}>
         <PinnedIcon
@@ -41,5 +43,5 @@ const Wrapper = styled.div`
 const PinnedIcon = styled(Icon)`
   width: 13px;
   height: 13px;
-  color: ${(props) => (!!props.color ? props.color : 'darkgreen')};
+  color: ${(props) => (props.color ? props.color : 'darkgreen')};
 `;

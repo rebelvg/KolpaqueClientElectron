@@ -12,7 +12,7 @@ import {
 import { updateData } from '../../redux/channel';
 import Settings from '../../Settings/Components/Settings';
 
-const { remote, ipcRenderer } = window.require('electron');
+const { ipcRenderer } = window.require('electron');
 
 @withTheme
 @connect(

@@ -12,6 +12,7 @@ export class AutoStart extends Component<any> {
       channel: { autoStart, id },
       toggle,
     } = this.props;
+
     e.preventDefault();
     e.stopPropagation();
     toggle(id, 'autoStart', !autoStart);
@@ -22,9 +23,12 @@ export class AutoStart extends Component<any> {
       channel: { autoStart },
       theme,
     } = this.props;
+
     if (autoStart) {
       return theme.nightMode ? AUTOSTART_ON_INVERT : AUTOSTART_ON;
-    } else return AUTOSTART_OFF;
+    } else {
+      return AUTOSTART_OFF;
+    }
   };
 
   render() {

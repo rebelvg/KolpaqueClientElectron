@@ -25,6 +25,7 @@ export class AutoRestart extends Component<any> {
       theme,
       channel: { onAutoRestart, autoRestart },
     } = this.props;
+
     if (onAutoRestart) {
       return '#119400';
     } else {

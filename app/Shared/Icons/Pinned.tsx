@@ -13,5 +13,5 @@ export class Pinned extends Component {
 const PinnedIcon = styled(Icon)`
   width: 16px;
   height: 16px;
-  color: ${(props) => (!!props.color ? props.color : 'darkgreen')};
+  color: ${(props) => (props.color ? props.color : 'darkgreen')};
 `;

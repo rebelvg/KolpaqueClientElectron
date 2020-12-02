@@ -58,4 +58,13 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-function-return-type': ['error'],
   },
+  overrides: [
+    {
+      files: ['app/**/*'],
+      rules: {
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/explicit-function-return-type': 'off',
+      },
+    },
+  ],
 };

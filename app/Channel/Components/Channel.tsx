@@ -6,7 +6,6 @@ import EditForm from '../../Channel/Forms/EditForm';
 import {
   AutoStart,
   AutoRestart,
-  Pinned,
   ServiceIcon,
   PinButton,
 } from '../../Shared/Icons';

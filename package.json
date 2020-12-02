@@ -5,8 +5,8 @@
   "main": "./dist-api/main.js",
   "scripts": {
     "prepush": "yarn run lint",
-    "lint": "eslint . --ext .ts && prettier --list-different \"**/*.{tsx,ts,js,json,css,md}\"",
-    "lint:fix": "eslint . --ext .ts --fix && prettier --write \"**/*.{tsx,ts,js,json,css,md}\"",
+    "lint": "eslint . --ext .tsx,.tx && prettier --list-different \"**/*.{tsx,ts,js,json,css,md}\"",
+    "lint:fix": "eslint . --ext .tsx,.tx --fix && prettier --write \"**/*.{tsx,ts,js,json,css,md}\"",
     "build:api": "tsc --project api/tsconfig.json",
     "build:app": "cross-env NODE_ENV=production webpack --config webpack.config.production",
     "build": "yarn run build:api && yarn run build:app && ts-node build.ts",

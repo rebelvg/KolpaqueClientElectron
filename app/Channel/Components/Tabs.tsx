@@ -17,6 +17,7 @@ class Tabs extends Component<any> {
 
   render() {
     const { active, count } = this.props;
+
     return (
       <TabList>
         {TABS.map((tab) => (

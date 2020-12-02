@@ -1,7 +1,7 @@
-const { remote, ipcRenderer } = window.require('electron');
+const { ipcRenderer } = window.require('electron');
 
 import React, { Component } from 'react';
-import styled, { withTheme } from 'styled-components';
+import { withTheme } from 'styled-components';
 import ReactJson from 'react-json-view';
 
 @withTheme

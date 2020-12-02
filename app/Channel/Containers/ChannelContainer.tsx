@@ -16,7 +16,6 @@ import {
   getFilter,
   updateData,
   getUpdate,
-  getChannelsList,
 } from '../../redux/channel';
 
 @withTheme
@@ -44,6 +43,7 @@ class ChannelContainer extends PureComponent<any> {
 
   setFilter = (value) => {
     const filter = value.filter ? value.filter : '';
+
     this.props.updateData(filter, null);
   };
 

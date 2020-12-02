@@ -4,7 +4,7 @@ import styled, { withTheme } from 'styled-components';
 const { remote } = window.require('electron');
 const { Menu } = remote;
 
-let template = [
+const template = [
   {
     label: 'Cut',
     accelerator: 'CmdOrCtrl+X',
@@ -29,8 +29,10 @@ let template = [
 
 const openMenu = () => {
   const macMenu = Menu.buildFromTemplate(template);
+
   macMenu.popup(remote.getCurrentWindow());
 };
+
 @withTheme
 export default class EditForm extends Component<any, any> {
   constructor(props) {
@@ -47,11 +49,13 @@ export default class EditForm extends Component<any, any> {
   renameChannel = () => {
     const { value } = this.state;
     const { channel } = this.props;
+
     this.props.nameChange(value, channel.id);
   };
 
   render() {
     const { value } = this.state;
+
     return (
       <Form onSubmit={this.renameChannel}>
         <StyledField
@@ -59,11 +63,11 @@ export default class EditForm extends Component<any, any> {
           component="input"
           type="text"
           value={value}
-          onContextMenu={(e) => {
+          onContextMenu={() => {
             openMenu();
           }}
           onChange={(e) => this.onChange(e.target.value)}
-          onBlur={(e, v) => this.renameChannel()}
+          onBlur={() => this.renameChannel()}
         />
       </Form>
     );

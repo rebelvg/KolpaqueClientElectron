@@ -10,6 +10,7 @@ const { Menu } = remote;
 
 const openMenu = () => {
   const macMenu = Menu.buildFromTemplate(template);
+
   macMenu.popup(remote.getCurrentWindow());
 };
 
@@ -17,12 +18,12 @@ const openMenu = () => {
 export default class ChannelForm extends Component<any> {
   handleSubmit = (data) => {
     const { handleSubmit, reset } = this.props;
+
     handleSubmit(data);
     reset();
   };
 
   render() {
-    const { theme } = this.props;
     return (
       <form onSubmit={this.handleSubmit}>
         <StyledChannelFormWrap>

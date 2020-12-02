@@ -4,18 +4,20 @@ import { close } from 'react-icons-kit/fa/close';
 import { Field } from 'react-final-form';
 import styled, { withTheme } from 'styled-components';
 
-const TextField = ({ input, ...rest }) => <MemberInput {...input} />;
+const TextField = ({ input }) => <MemberInput {...input} />;
 
 @withTheme
 export default class ImportForm extends Component<any> {
   removeMember = (member) => {
     const { members, submit } = this.props;
+
     submit([...members.filter((m) => m !== member)]);
   };
 
   addMember = () => {
     const { values, reset, importChannel } = this.props;
     const member = values.member;
+
     importChannel(member);
     reset();
   };
@@ -23,6 +25,7 @@ export default class ImportForm extends Component<any> {
   submit = (data) => {
     const { handleSubmit, values, reset, submit, members } = this.props;
     const member = values.member;
+
     if (member) {
       submit([...members, member]);
     }

@@ -48,6 +48,7 @@ class Channels extends PureComponent<any, any> {
 
   selectChannel = (button, channel) => {
     const { selected } = this.state;
+
     if (selected && channel.id === selected.id && button === 0) {
       this.setState({ selected: null });
     } else {
@@ -82,7 +83,7 @@ class Channels extends PureComponent<any, any> {
           length={channels.length}
           useStaticSize={true}
           threshold={600}
-          itemRenderer={(index, key) => (
+          itemRenderer={(index) => (
             <div key={channels[index].id}>
               <Channel
                 handleAction={this.handleAction}

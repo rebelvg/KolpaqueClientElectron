@@ -17,7 +17,6 @@ const sortTypes = [
 const ToggleAdapter: any = ({
   input: { onChange, name, value },
   toggle,
-  label,
   ...rest
 }) => (
   <Toggle
@@ -29,19 +28,6 @@ const ToggleAdapter: any = ({
     inactiveLabel={''}
     activeLabel={''}
     {...rest}
-  />
-);
-
-const TextField = ({ input, changeSetting, ...rest }) => (
-  <InputField
-    {...input}
-    type="password"
-    onBlur={(e) => {
-      const value = e.target.value;
-      const name = input.name;
-      input.onBlur(value);
-      changeSetting(value, name, true);
-    }}
   />
 );
 
@@ -58,14 +44,7 @@ const ReactSelectAdapter = ({ input, select, ...rest }) => (
   />
 );
 
-const SettingsForm: any = ({
-  handleSubmit,
-  pristine,
-  reset,
-  submitting,
-  changeSetting,
-  values,
-}) => (
+const SettingsForm: any = ({ handleSubmit, changeSetting }) => (
   <Form onSubmit={handleSubmit}>
     <FieldWrapper>
       <Label>LQ</Label>
@@ -238,7 +217,7 @@ const SelectField = styled(Field)`
 
 const FieldWrapper = styled.div`
   display: flex;
-  flex-direction: ${(props) => (!!props.full ? 'column' : 'row')};
+  flex-direction: ${(props) => (props.full ? 'column' : 'row')};
   justify-content: space-between;
   margin: 2px 20px;
 `;
@@ -251,9 +230,5 @@ const Label = styled.label`
 `;
 
 const InputWrapper = styled.div``;
-
-const InputField = styled.input`
-  width: 100%;
-`;
 
 export default SettingsForm;

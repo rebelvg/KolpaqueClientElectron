@@ -26,6 +26,7 @@ export const getVersion = () => {
 export const openChannelMenu = (channel, func) => {
   const menu = new Menu();
   const template = menuTemplate(channel, func);
+
   template.map((item) => menu.append(item));
   menu.popup(remote.getCurrentWindow());
 };
