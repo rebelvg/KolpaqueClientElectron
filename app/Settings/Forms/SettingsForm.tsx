@@ -14,7 +14,7 @@ const sortTypes = [
   { value: 'visibleName', label: 'By Name' },
 ];
 
-const ToggleAdapter = ({
+const ToggleAdapter: any = ({
   input: { onChange, name, value },
   toggle,
   label,
@@ -58,7 +58,7 @@ const ReactSelectAdapter = ({ input, select, ...rest }) => (
   />
 );
 
-const SettingsForm = ({
+const SettingsForm: any = ({
   handleSubmit,
   pristine,
   reset,
@@ -70,12 +70,7 @@ const SettingsForm = ({
     <FieldWrapper>
       <Label>LQ</Label>
       <InputWrapper>
-        <Field
-          name="LQ"
-          // @ts-ignore
-          component={ToggleAdapter}
-          toggle={changeSetting}
-        />
+        <Field name="LQ" component={ToggleAdapter} toggle={changeSetting} />
       </InputWrapper>
     </FieldWrapper>
 
@@ -84,7 +79,6 @@ const SettingsForm = ({
       <InputWrapper>
         <Field
           name="showNotifications"
-          // @ts-ignore
           component={ToggleAdapter}
           toggle={changeSetting}
         />
@@ -96,7 +90,6 @@ const SettingsForm = ({
       <InputWrapper>
         <Field
           name="minimizeAtStart"
-          // @ts-ignore
           component={ToggleAdapter}
           toggle={changeSetting}
         />
@@ -108,7 +101,6 @@ const SettingsForm = ({
       <InputWrapper>
         <Field
           name="launchOnBalloonClick"
-          // @ts-ignore
           component={ToggleAdapter}
           toggle={changeSetting}
         />
@@ -120,7 +112,6 @@ const SettingsForm = ({
       <InputWrapper>
         <Field
           name="nightMode"
-          // @ts-ignore
           component={ToggleAdapter}
           toggle={changeSetting}
         />
@@ -132,7 +123,6 @@ const SettingsForm = ({
       <InputWrapper>
         <Field
           name="showTooltips"
-          // @ts-ignore
           component={ToggleAdapter}
           toggle={changeSetting}
         />
@@ -144,7 +134,6 @@ const SettingsForm = ({
       <InputWrapper>
         <Field
           name="confirmAutoStart"
-          // @ts-ignore
           component={ToggleAdapter}
           toggle={changeSetting}
         />
@@ -156,7 +145,6 @@ const SettingsForm = ({
       <InputWrapper>
         <Field
           name="playInWindow"
-          // @ts-ignore
           component={ToggleAdapter}
           toggle={changeSetting}
         />
@@ -180,7 +168,6 @@ const SettingsForm = ({
       <InputWrapper>
         <Field
           name="sortReverse"
-          // @ts-ignore
           component={ToggleAdapter}
           toggle={changeSetting}
         />
@@ -205,7 +192,6 @@ const SettingsForm = ({
       <InputWrapper>
         <Field
           name="youtubeTosConsent"
-          // @ts-ignore
           component={ToggleAdapter}
           toggle={changeSetting}
         />
@@ -217,7 +203,6 @@ const SettingsForm = ({
       <InputWrapper>
         <Field
           name="useStreamlinkForCustomChannels"
-          // @ts-ignore
           component={ToggleAdapter}
           toggle={changeSetting}
         />

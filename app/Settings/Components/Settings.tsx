@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
-import { Form } from 'react-final-form';
+import { Form, FormProps } from 'react-final-form';
 
 import SettingsForm from '../../Settings/Forms/SettingsForm';
 import ImportForm from '../../Settings/Forms/ImportForm';
@@ -70,7 +70,6 @@ export default class Settings extends Component<any, any> {
             // @ts-ignore
             changeSetting={this.changeSetting}
             initialValues={{ ...settings }}
-            // @ts-ignore
             render={(props) => <SettingsForm {...props} />}
           />
         )}
