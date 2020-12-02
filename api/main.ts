@@ -89,6 +89,7 @@ function createWindow(): void {
     icon: iconPath,
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true
     },
   });
 
@@ -97,23 +98,9 @@ function createWindow(): void {
   mainWindow.setMenu(null);
 
   if (isDev) {
-    const {
-      default: installExtension,
-      REACT_DEVELOPER_TOOLS,
-      REDUX_DEVTOOLS,
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-    } = require('electron-devtools-installer');
-
     mainWindow.loadURL('http://localhost:10000');
 
     mainWindow.webContents.openDevTools();
-
-    installExtension(REACT_DEVELOPER_TOOLS)
-      .then((name) => addLogs('Extension added', name))
-      .catch((err) => addLogs('An error occurred', err));
-    installExtension(REDUX_DEVTOOLS)
-      .then((name) => addLogs('Extension added', name))
-      .catch((err) => addLogs('An error occurred', err));
   } else {
     mainWindow.loadURL(
       url.format({
@@ -132,7 +119,7 @@ function createWindow(): void {
     config.saveFile();
   });
 
-  mainWindow.on('close', (e) => {
+  mainWindow.on('close', e => {
     addLogs('forceQuit', forceQuit);
 
     if (forceQuit) {
@@ -263,13 +250,13 @@ app.on('ready', () => {
   }
 });
 
-process.on('unhandledRejection', (err) => {
+process.on('unhandledRejection', err => {
   addLogs('unhandledRejection', err);
 
   throw err;
 });
 
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', err => {
   addLogs('uncaughtException', err);
 
   fs.appendFileSync(crashLogPath, `${err.stack}${os.EOL}`);

@@ -12,7 +12,7 @@
     "build": "yarn run build:api && yarn run build:app && ts-node build.ts",
     "start:api": "yarn build:api && cross-env NODE_ENV=dev electron .",
     "start:app": "webpack-dev-server",
-    "start:dev": "yarn run build:api && concurrently \"cross-env NODE_ENV=dev electron .\" \"yarn run start:app\"",
+    "start:dev": "yarn run build:api && concurrently --kill-others \"cross-env NODE_ENV=dev electron .\" \"yarn run start:app\"",
     "start": "yarn run build:api && yarn run build:app && electron ."
   },
   "author": "KLPQ",
@@ -32,7 +32,7 @@
     "archiver": "^4.0.1",
     "concurrently": "^5.3.0",
     "cross-env": "^5.0.5",
-    "electron": "^8.2.3",
+    "electron": "^11.0.3",
     "electron-devtools-installer": "^2.2.3",
     "electron-packager": "^14.2.1",
     "eslint": "^7.13.0",
