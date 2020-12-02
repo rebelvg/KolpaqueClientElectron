@@ -28,7 +28,7 @@ import './channel-check';
 import './import';
 import './version-check';
 import './logs';
-import { addLogs, crashLogPath } from './Logs';
+import { addLogs, crashLogPath } from './logs';
 import { init } from './client-init';
 
 const isDev = process.env.NODE_ENV === 'dev';

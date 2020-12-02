@@ -4,7 +4,7 @@ import * as path from 'path';
 import { Channel } from './channel-class';
 
 export const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
-export const CLIENT_VERSION = '0.4.7';
+export const CLIENT_VERSION = '0.5.0';
 
 export enum ProtocolsEnum {
   RTMP = 'rtmp:',

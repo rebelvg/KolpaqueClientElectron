@@ -1,8 +1,8 @@
 import { app, ipcMain, shell } from 'electron';
 import { execFile } from 'child_process';
 import * as _ from 'lodash';
-import { printNotification } from './Notifications';
-import { addLogs } from './Logs';
+import { printNotification } from './notifications';
+import { addLogs } from './logs';
 import { githubClient } from './api-clients';
 import { sleep } from './channel-check';
 import { CLIENT_VERSION } from './globals';
