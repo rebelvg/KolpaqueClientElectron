@@ -5,6 +5,7 @@
     "sourceMap": true,
     "declaration": true,
     "resolveJsonModule": true,
+    "incremental": true,
     "outDir": "../dist-api"
   },
   "include": ["../api/**/*"]
