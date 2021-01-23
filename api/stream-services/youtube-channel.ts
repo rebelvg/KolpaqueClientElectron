@@ -1,9 +1,26 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { BaseStreamService } from './twitch';
-import { ProtocolsEnum, ServiceNamesEnum } from '../globals';
 import { Channel } from '../channel-class';
+import { getYoutubeStatsBase } from './youtube-user';
+import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
+
+async function getYoutubeStatsChannel(
+  channelObjs: Channel[],
+  printBalloon: boolean,
+): Promise<void> {
+  await Promise.all(
+    channelObjs.map(async (channelObj) => {
+      const channelStatus = await getYoutubeStatsBase(channelObj.name);
+
+      if (channelStatus) {
+        channelObj.setOnline(printBalloon);
+      } else {
+        channelObj.setOffline();
+      }
+    }),
+  );
+}
 
 export class YoutubeChannelStreamService implements BaseStreamService {
   public name = ServiceNamesEnum.YOUTUBE_CHANNEL;
@@ -35,4 +52,5 @@ export class YoutubeChannelStreamService implements BaseStreamService {
   };
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
+  public checkChannels = getYoutubeStatsChannel;
 }

@@ -1,9 +1,51 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import * as _ from 'lodash';
 
-import { BaseStreamService } from './twitch';
-import { ProtocolsEnum, ServiceNamesEnum } from '../globals';
 import { Channel } from '../channel-class';
+import { youtubeClient } from '../api-clients';
+import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
+
+export async function getYoutubeStatsBase(channelId: string): Promise<boolean> {
+  const data = await youtubeClient.getStreams(channelId);
+
+  if (!data) {
+    return;
+  }
+
+  if (data.items.length === 0) {
+    return false;
+  }
+
+  return true;
+}
+
+async function getYoutubeStatsUser(
+  channelObjs: Channel[],
+  printBalloon: boolean,
+): Promise<void> {
+  await Promise.all(
+    channelObjs.map(async (channelObj) => {
+      const data = await youtubeClient.getChannels(channelObj.name);
+
+      if (!data) {
+        return;
+      }
+
+      const channelStatuses = await Promise.all(
+        data.items.map(({ id }) => {
+          return getYoutubeStatsBase(id);
+        }),
+      );
+
+      if (_.some(channelStatuses)) {
+        channelObj.setOnline(printBalloon);
+      } else {
+        channelObj.setOffline();
+      }
+    }),
+  );
+}
 
 export class YoutubeUserStreamService implements BaseStreamService {
   public name = ServiceNamesEnum.YOUTUBE_USER;
@@ -35,4 +77,5 @@ export class YoutubeUserStreamService implements BaseStreamService {
   };
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
+  public checkChannels = getYoutubeStatsUser;
 }

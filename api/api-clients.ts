@@ -1,11 +1,14 @@
 import axios, { AxiosError } from 'axios';
 import { addLogs } from './logs';
-import { klpqServiceUrl, TWITCH_CLIENT_ID } from './globals';
 import { config } from './settings-file';
 import * as qs from 'querystring';
 import { shell, ipcMain } from 'electron';
 
 import { SOCKET_CLIENT_ID, ITwitchUser } from './socket-client';
+
+const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
+
+export const KLPQ_SERVICE_URL = 'https://client-api.klpq.men';
 
 ipcMain.on('twitch_login', async () => {
   await klpqServiceClient.getTwitchUser();
@@ -361,7 +364,7 @@ interface IKlpqUser {
 }
 
 class KlpqServiceClient {
-  private baseUrl = klpqServiceUrl;
+  private baseUrl = KLPQ_SERVICE_URL;
   private jwtToken: string = null;
 
   public setUser(jwt: string): void {

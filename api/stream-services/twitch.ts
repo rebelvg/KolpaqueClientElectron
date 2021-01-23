@@ -1,22 +1,71 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import * as _ from 'lodash';
 
 import { Channel } from '../channel-class';
-import { ProtocolsEnum, ServiceNamesEnum } from '../globals';
+import { twitchClient, TWITCH_CHUNK_LIMIT } from '../api-clients';
+import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 
-export abstract class BaseStreamService {
-  public name: ServiceNamesEnum;
-  public protocols: ProtocolsEnum[];
-  public hosts: string[];
-  public paths: string[];
-  public channelNamePath: number;
-  public embedLink: (channel: Channel) => string;
-  public chatLink: (channel: Channel) => string;
-  public icon: Buffer;
-  public play: (channel: Channel) => { playLink: string; params: string[] };
-  public playLQ: (channel: Channel) => { playLink: string; params: string[] };
-  public checkLiveTimeout = 0;
-  public checkLiveConfirmation = 0;
+async function getTwitchStats(
+  channelObjs: Channel[],
+  printBalloon: boolean,
+): Promise<void> {
+  await twitchClient.refreshAccessToken();
+
+  const chunkedChannels = _.chunk(channelObjs, TWITCH_CHUNK_LIMIT);
+
+  await Promise.all(
+    chunkedChannels.map(async (channelObjs) => {
+      const channels = channelObjs.map((channelObj) => {
+        return {
+          channelObj,
+          userId: null,
+        };
+      });
+
+      const userData = await twitchClient.getUsersByLogin(
+        channelObjs.map((channel) => channel.name),
+      );
+
+      if (!userData) {
+        return;
+      }
+
+      _.forEach(channels, (channel) => {
+        _.forEach(userData.data, (user) => {
+          if (user.login === channel.channelObj.name) {
+            channel.userId = user.id;
+          }
+        });
+      });
+
+      const existingChannels = channels.filter((channel) => !!channel.userId);
+
+      if (existingChannels.length === 0) {
+        _.forEach(channels, ({ channelObj }) => {
+          channelObj.setOffline();
+        });
+
+        return;
+      }
+
+      const streamData = await twitchClient.getStreams(
+        existingChannels.map(({ userId }) => userId),
+      );
+
+      if (!streamData) {
+        return;
+      }
+
+      _.forEach(channels, ({ channelObj, userId }) => {
+        if (_.find(streamData.data, { user_id: userId })) {
+          channelObj.setOnline(printBalloon);
+        } else {
+          channelObj.setOffline();
+        }
+      });
+    }),
+  );
 }
 
 export class TwitchStreamService implements BaseStreamService {
@@ -51,4 +100,5 @@ export class TwitchStreamService implements BaseStreamService {
   };
   public checkLiveTimeout = 30;
   public checkLiveConfirmation = 3;
+  public checkChannels = getTwitchStats;
 }

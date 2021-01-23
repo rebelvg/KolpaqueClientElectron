@@ -1,9 +1,9 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { BaseStreamService } from './twitch';
-import { ProtocolsEnum, ServiceNamesEnum } from '../globals';
 import { Channel } from '../channel-class';
+import { getKlpqVpsStats } from './kolpaque-vps-http';
+import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 
 export class KolpaqueVpsRtmpStreamService implements BaseStreamService {
   public name = ServiceNamesEnum.KLPQ_VPS_RTMP;
@@ -37,4 +37,5 @@ export class KolpaqueVpsRtmpStreamService implements BaseStreamService {
   };
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
+  public checkChannels = getKlpqVpsStats;
 }

@@ -1,9 +1,40 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { BaseStreamService } from './twitch';
-import { ProtocolsEnum, ServiceNamesEnum } from '../globals';
 import { Channel } from '../channel-class';
+import { klpqStreamClient } from '../api-clients';
+import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
+
+async function getKlpqStatsBase(
+  channelObj: Channel,
+  printBalloon: boolean,
+): Promise<void> {
+  const channelData = await klpqStreamClient.getChannel(
+    channelObj.name,
+    channelObj.host(),
+  );
+
+  if (!channelData) {
+    return;
+  }
+
+  if (channelData.isLive) {
+    channelObj.setOnline(printBalloon);
+  } else {
+    channelObj.setOffline();
+  }
+}
+
+export async function getKlpqVpsStats(
+  channelObjs: Channel[],
+  printBalloon: boolean,
+): Promise<void> {
+  await Promise.all(
+    channelObjs.map((channelObj) => {
+      return getKlpqStatsBase(channelObj, printBalloon);
+    }),
+  );
+}
 
 export class KolpaqueVpsHttpStreamService implements BaseStreamService {
   public name = ServiceNamesEnum.KLPQ_VPS_HTTP;
@@ -37,4 +68,5 @@ export class KolpaqueVpsHttpStreamService implements BaseStreamService {
   };
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
+  public checkChannels = getKlpqVpsStats;
 }

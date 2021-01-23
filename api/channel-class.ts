@@ -1,17 +1,20 @@
-import { app } from 'electron';
+import { app, dialog } from 'electron';
 import { createHash } from 'crypto';
 import { URL } from 'url';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 import { ChildProcess } from 'child_process';
 
+import { REGISTERED_SERVICES } from './globals';
+import { addLogs } from './logs';
+import { printNotification } from './notifications';
+import { config } from './settings-file';
 import {
   ALLOWED_PROTOCOLS,
-  REGISTERED_SERVICES,
+  BaseStreamService,
   ProtocolsEnum,
   ServiceNamesEnum,
-} from './globals';
-import { BaseStreamService } from './stream-services/twitch';
+} from './stream-services/_base';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
@@ -201,5 +204,67 @@ export class Channel extends EventEmitter {
 
   public chatLink() {
     return this.serviceObj.chatLink(this);
+  }
+
+  public checkLiveConfirmation() {
+    return this.serviceObj.checkLiveConfirmation;
+  }
+
+  public setOnline(printBalloon: boolean) {
+    this._offlineConfirmations = 0;
+
+    if (this.isLive) {
+      return;
+    }
+
+    addLogs(`${this.link} went online.`);
+
+    if (printBalloon) {
+      printNotification('Stream is Live', this.visibleName, this);
+    }
+
+    if (printBalloon && config.settings.showNotifications && this.autoStart) {
+      if (this._processes.length === 0) {
+        if (config.settings.confirmAutoStart) {
+          dialog
+            .showMessageBox({
+              type: 'none',
+              message: `${this.link} is trying to auto-start. Confirm?`,
+              buttons: ['Ok', 'Cancel'],
+            })
+            .then(({ response }) => {
+              if (response === 0) {
+                this.emit('play');
+              }
+            });
+        } else {
+          this.emit('play');
+        }
+      }
+    }
+
+    this.changeSettings({
+      lastUpdated: Date.now(),
+      isLive: true,
+    });
+  }
+
+  public setOffline() {
+    if (!this.isLive) {
+      return;
+    }
+
+    this._offlineConfirmations++;
+
+    if (this._offlineConfirmations < this.checkLiveConfirmation()) {
+      return;
+    }
+
+    addLogs(`${this.link} went offline.`);
+
+    this.changeSettings({
+      lastUpdated: Date.now(),
+      isLive: false,
+    });
   }
 }

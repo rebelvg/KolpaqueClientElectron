@@ -2,8 +2,12 @@ import * as SocketClient from 'socket.io-client';
 import * as uuid from 'uuid';
 
 import { addLogs } from './logs';
-import { twitchClient, klpqServiceClient, youtubeClient } from './api-clients';
-import { klpqServiceUrl } from './globals';
+import {
+  twitchClient,
+  klpqServiceClient,
+  youtubeClient,
+  KLPQ_SERVICE_URL,
+} from './api-clients';
 import { printNotification } from './notifications';
 
 export interface ITwitchUser {
@@ -11,7 +15,7 @@ export interface ITwitchUser {
   refreshToken: string;
 }
 
-const io = SocketClient(klpqServiceUrl);
+const io = SocketClient(KLPQ_SERVICE_URL);
 
 export const SOCKET_CLIENT_ID = uuid.v4();
 

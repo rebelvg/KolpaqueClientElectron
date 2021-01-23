@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { Channel } from './channel-class';
 import { twitchClient, commonClient, TWITCH_CHUNK_LIMIT } from './api-clients';
 import { config } from './settings-file';
-import { ServiceNamesEnum } from './globals';
+import { ServiceNamesEnum } from './stream-services/_base';
 
 interface IServiceInfo {
   name: ServiceNamesEnum;
