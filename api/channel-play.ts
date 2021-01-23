@@ -83,18 +83,11 @@ export function launchPlayerLink(channelLink: string, LQ = null): boolean {
 }
 
 async function playInWindow(channelObj: Channel): Promise<boolean> {
-  let link: string;
   let window: BrowserWindow;
 
-  if (channelObj.serviceObj.embed) {
-    link = channelObj.serviceObj.embed(channelObj);
-  } else {
-    if (['http:', 'https:'].includes(channelObj.protocol)) {
-      link = channelObj.link;
-    }
-  }
+  const embedLink = channelObj.embedLink();
 
-  if (link) {
+  if (embedLink) {
     window = new BrowserWindow({
       width: 1280,
       height: 720,
@@ -103,7 +96,7 @@ async function playInWindow(channelObj: Channel): Promise<boolean> {
       },
     });
 
-    await window.loadURL(link);
+    await window.loadURL(embedLink);
 
     window.on('closed', () => {
       _.pull(channelObj._windows, window);
@@ -136,22 +129,15 @@ function launchPlayerObj(
     channelObj.changeSetting('onAutoRestart', autoRestart);
   }
 
-  let { playLink, params } = channelObj.getPlayLink();
-
-  if (LQ) {
-    const onLQ = channelObj.getLqParams(playLink, params);
-
-    playLink = onLQ.playLink;
-    params = onLQ.params;
-  }
+  const { playLink, params } = !LQ ? channelObj.play() : channelObj.playLQ();
 
   launchStreamlink(playLink, params, channelObj);
 }
 
 function launchStreamlink(
-  playLink,
-  params,
-  channelObj,
+  playLink: string,
+  params: string[],
+  channelObj: Channel,
   firstStart = true,
 ): ChildProcess {
   addLogs(playLink, params);
@@ -165,7 +151,7 @@ function launchStreamlink(
       addLogs(err, data, 'streamlink exited.');
 
       if (err) {
-        if (err.code === 'ENOENT') {
+        if ((err as any).code === 'ENOENT') {
           dialog.showMessageBox({
             type: 'error',
             message: 'Streamlink not found.',

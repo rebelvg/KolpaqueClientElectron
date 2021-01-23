@@ -285,7 +285,7 @@ export class Config extends EventEmitter {
     return channel;
   }
 
-  find(query: any = {}): any {
+  find(query: any = {}) {
     const sort = {
       type: this.settings.sortType,
       isReversed: this.settings.sortReverse,

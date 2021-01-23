@@ -53,10 +53,9 @@ ipcMain.on(
       }
     }
 
-    return (event.returnValue = channelObj.changeSetting(
-      settingName,
-      settingValue,
-    ));
+    event.returnValue = channelObj.changeSetting(settingName, settingValue);
+
+    return;
   },
 );
 
@@ -67,12 +66,10 @@ ipcMain.on('channel_openPage', (event, id) => {
     return false;
   }
 
-  if (channelObj.serviceObj.embed) {
-    shell.openExternal(channelObj.serviceObj.embed(channelObj));
-  } else {
-    if (['http:', 'https:'].includes(channelObj.protocol)) {
-      shell.openExternal(channelObj.link);
-    }
+  const embedLink = channelObj.embedLink();
+
+  if (embedLink) {
+    shell.openExternal(embedLink);
   }
 
   return true;
@@ -85,18 +82,11 @@ ipcMain.on('channel_openChat', (event, id) => {
     return false;
   }
 
-  let link;
-  let window;
+  let window: BrowserWindow;
 
-  if (channelObj.serviceObj.chat) {
-    link = channelObj.serviceObj.chat(channelObj);
-  } else {
-    if (['http:', 'https:'].includes(channelObj.protocol)) {
-      link = `${channelObj.link}/chat`;
-    }
-  }
+  const chatLink = channelObj.chatLink();
 
-  if (link) {
+  if (chatLink) {
     if (config.settings.playInWindow) {
       window = new BrowserWindow({
         width: 405,
@@ -106,7 +96,7 @@ ipcMain.on('channel_openChat', (event, id) => {
         },
       });
 
-      window.loadURL(link);
+      window.loadURL(chatLink);
 
       window.on('closed', () => {
         window = null;
@@ -118,7 +108,7 @@ ipcMain.on('channel_openChat', (event, id) => {
         }
       });
     } else {
-      shell.openExternal(link);
+      shell.openExternal(chatLink);
     }
   }
 
@@ -146,9 +136,14 @@ ipcMain.on('getSettingSync', (event, settingName) => {
 ipcMain.on('config_find', (event, query) => {
   const find = config.find(query);
 
-  find.channels = _.map(find.channels, (channel: Channel) => {
-    return channel.filterData();
-  });
+  const res = {
+    channels: _.map(find.channels, (channel: Channel) => {
+      return channel.filterData();
+    }),
+    count: find.count,
+  };
 
-  return (event.returnValue = find);
+  event.returnValue = res;
+
+  return;
 });

@@ -17,13 +17,15 @@ export function printNotification(
   printNewNotification(title, content, channelObj);
 }
 
-function printNewNotification(title, content, channelObj: Channel): void {
+function printNewNotification(
+  title: string,
+  content: string,
+  channelObj: Channel,
+): void {
   let icon: string | NativeImage = iconPathBalloon;
 
   if (channelObj) {
-    const iconBuffer = channelObj._icon
-      ? channelObj._icon
-      : channelObj.serviceObj.icon;
+    const iconBuffer = channelObj._icon ? channelObj._icon : channelObj.icon();
 
     if (iconBuffer) {
       icon = nativeImage.createFromBuffer(iconBuffer);

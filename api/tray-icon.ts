@@ -20,7 +20,7 @@ export function rebuildIconMenu(): Menu {
       if (!channelObj._trayIcon) {
         const iconBuffer = channelObj._icon
           ? channelObj._icon
-          : channelObj.serviceObj.icon;
+          : channelObj.icon();
 
         if (iconBuffer) {
           channelObj._trayIcon = nativeImage

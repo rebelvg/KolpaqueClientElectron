@@ -1,7 +1,13 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
-import { Channel } from './channel-class';
+import { ChaturbateStreamService } from './stream-services/chaturbate';
+import { CustomStreamService } from './stream-services/custom';
+import { KolpaqueVpsHttpStreamService } from './stream-services/kolpaque-vps-http';
+import { KolpaqueVpsRtmpStreamService } from './stream-services/kolpaque-vps-rtmp';
+import {
+  BaseStreamService,
+  TwitchStreamService,
+} from './stream-services/twitch';
+import { YoutubeChannelStreamService } from './stream-services/youtube-channel';
+import { YoutubeUserStreamService } from './stream-services/youtube-user';
 
 export const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
 export const CLIENT_VERSION = '0.5.0';
@@ -22,198 +28,16 @@ export enum ServiceNamesEnum {
   CUSTOM = 'custom',
 }
 
-export interface IStreamService {
-  serviceName: ServiceNamesEnum;
-  protocols: ProtocolsEnum[];
-  hosts: string[];
-  paths: string[];
-  name: number;
-  embed: (channelObj: Channel) => string;
-  chat: (channelObj: Channel) => string;
-  icon: Buffer;
-  playUrl: (channelObj: Channel) => { playLink: string; params: string[] };
-  onLQ: (
-    playLink: string,
-    params: string[],
-  ) => { playLink: string; params: string[] };
-}
-
 export const ALLOWED_PROTOCOLS = [...Object.values(ProtocolsEnum)];
 
-export const REGISTERED_SERVICES: IStreamService[] = [
-  {
-    serviceName: ServiceNamesEnum.KLPQ_VPS_RTMP,
-    protocols: [ProtocolsEnum.RTMP],
-    hosts: ['mediaserver.klpq.men', 'stream.klpq.men', 'vps.klpq.men'],
-    paths: ['/live/'],
-    name: 2,
-    embed: (channelObj: Channel): string => {
-      return `http://klpq.men/stream/${channelObj.name}`;
-    },
-    chat: null,
-    icon: fs.readFileSync(
-      path.normalize(path.join(__dirname, '../icons', 'klpq_vps.png')),
-      {
-        encoding: null,
-      },
-    ),
-    playUrl: (channelObj: Channel): any => {
-      return {
-        playLink: `rtmp://mediaserver.klpq.men/live/${channelObj.name}`,
-        params: [],
-      };
-    },
-    onLQ: (playLink: string, params: string[]): any => {
-      return {
-        playLink: playLink.replace('/live/', '/encode/'),
-        params,
-      };
-    },
-  },
-  {
-    serviceName: ServiceNamesEnum.KLPQ_VPS_HTTP,
-    protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
-    hosts: ['klpq.men'],
-    paths: ['/stream/'],
-    name: 2,
-    embed: (channelObj: Channel): string => {
-      return `http://klpq.men/stream/${channelObj.name}`;
-    },
-    chat: null,
-    icon: fs.readFileSync(
-      path.normalize(path.join(__dirname, '../icons', 'klpq_vps.png')),
-      {
-        encoding: null,
-      },
-    ),
-    playUrl: (channelObj: Channel): any => {
-      return {
-        playLink: `https://encode.klpq.men/mpd/${channelObj.name}/index.mpd`,
-        params: [],
-      };
-    },
-    onLQ: (playLink: string, params: string[]): any => ({
-      playLink,
-      params,
-    }),
-  },
-  {
-    serviceName: ServiceNamesEnum.TWITCH,
-    protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
-    hosts: ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'],
-    paths: ['/'],
-    name: 1,
-    embed: null,
-    chat: (channelObj: Channel): string => {
-      return `https://www.twitch.tv/${channelObj.name}/chat`;
-    },
-    icon: fs.readFileSync(
-      path.normalize(path.join(__dirname, '../icons', 'twitch.png')),
-      {
-        encoding: null,
-      },
-    ),
-    playUrl: (channelObj: Channel): any => {
-      return {
-        playLink: channelObj._customPlayUrl || channelObj.link,
-        params: ['--twitch-disable-hosting', '--twitch-disable-ads'],
-      };
-    },
-    onLQ: (playLink: string, params: string[]): any => ({
-      playLink,
-      params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
-    }),
-  },
-  {
-    serviceName: ServiceNamesEnum.YOUTUBE_USER,
-    protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
-    hosts: ['www.youtube.com', 'youtube.com'],
-    paths: ['/user/'],
-    name: 2,
-    embed: null,
-    chat: null,
-    icon: fs.readFileSync(
-      path.normalize(path.join(__dirname, '../icons', 'youtube.png')),
-      {
-        encoding: null,
-      },
-    ),
-    playUrl: (channelObj: Channel): any => {
-      return {
-        playLink: channelObj._customPlayUrl || channelObj.link,
-        params: [],
-      };
-    },
-    onLQ: (playLink: string, params: string[]): any => ({
-      playLink,
-      params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
-    }),
-  },
-  {
-    serviceName: ServiceNamesEnum.YOUTUBE_CHANNEL,
-    protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
-    hosts: ['www.youtube.com', 'youtube.com'],
-    paths: ['/channel/'],
-    name: 2,
-    embed: null,
-    chat: null,
-    icon: fs.readFileSync(
-      path.normalize(path.join(__dirname, '../icons', 'youtube.png')),
-      {
-        encoding: null,
-      },
-    ),
-    playUrl: (channelObj: Channel): any => {
-      return {
-        playLink: channelObj._customPlayUrl || channelObj.link,
-        params: [],
-      };
-    },
-    onLQ: (playLink: string, params: string[]): any => ({
-      playLink,
-      params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
-    }),
-  },
-  {
-    serviceName: ServiceNamesEnum.CHATURBATE,
-    protocols: [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP],
-    hosts: ['www.chaturbate.com', 'chaturbate.com'],
-    paths: ['/'],
-    name: 1,
-    embed: null,
-    chat: null,
-    icon: null,
-    playUrl: (channelObj: Channel): any => {
-      return {
-        playLink: channelObj._customPlayUrl || channelObj.link,
-        params: [],
-      };
-    },
-    onLQ: (playLink: string, params: string[]): any => ({
-      playLink,
-      params,
-    }),
-  },
-  {
-    serviceName: ServiceNamesEnum.CUSTOM,
-    protocols: [],
-    hosts: [],
-    paths: [],
-    name: 0,
-    embed: null,
-    chat: null,
-    icon: null,
-    playUrl: (channelObj: Channel): any => {
-      return {
-        playLink: channelObj._customPlayUrl || channelObj.link,
-        params: [],
-      };
-    },
-    onLQ: (playLink: string, params: string[]): any => ({
-      playLink,
-      params,
-    }),
-  },
+export const REGISTERED_SERVICES: BaseStreamService[] = [
+  new KolpaqueVpsRtmpStreamService(),
+  new KolpaqueVpsHttpStreamService(),
+  new TwitchStreamService(),
+  new YoutubeUserStreamService(),
+  new YoutubeChannelStreamService(),
+  new ChaturbateStreamService(),
+  new CustomStreamService(),
 ];
 
 export const klpqServiceUrl = 'https://client-api.klpq.men';

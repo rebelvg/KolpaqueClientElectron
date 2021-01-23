@@ -146,7 +146,7 @@ async function getKlpqStatsBase(
 ): Promise<void> {
   const channelData = await klpqStreamClient.getChannel(
     channelObj.name,
-    channelObj.serviceObj.hosts[0],
+    channelObj.host(),
   );
 
   if (!channelData) {

@@ -9,30 +9,30 @@ import {
   ALLOWED_PROTOCOLS,
   REGISTERED_SERVICES,
   ProtocolsEnum,
-  IStreamService,
   ServiceNamesEnum,
 } from './globals';
+import { BaseStreamService } from './stream-services/twitch';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
 export class Channel extends EventEmitter {
-  public id: string = null;
+  public id: string;
   public service: ServiceNamesEnum = ServiceNamesEnum.CUSTOM;
-  public serviceObj: IStreamService = null;
-  public name: string = null;
-  public link: string = null;
-  public protocol: ProtocolsEnum = null;
+  private serviceObj: BaseStreamService;
+  public name: string;
+  public link: string;
+  public protocol: ProtocolsEnum;
   public isLive = false;
   public onAutoRestart = false;
   public lastUpdated = 0;
   public _processes: ChildProcess[] = [];
-  public _icon: Buffer = null;
+  public _icon: Buffer;
   public _autoRestartAttempts = 0;
   public _startTime = 0;
   public _offlineConfirmations = 0;
   public _windows = [];
-  public _customPlayUrl: string = null;
-  public visibleName: string = null;
+  public _customPlayUrl: string;
+  public visibleName: string;
   public isPinned = false;
   public autoStart = false;
   public autoRestart = false;
@@ -154,7 +154,7 @@ export class Channel extends EventEmitter {
     return true;
   }
 
-  public filterData(): any {
+  public filterData() {
     return {
       id: this.id,
       service: this.service,
@@ -171,11 +171,27 @@ export class Channel extends EventEmitter {
     };
   }
 
-  public getPlayLink(): any {
-    return this.serviceObj.playUrl(this);
+  public play() {
+    return this.serviceObj.play(this);
   }
 
-  public getLqParams(playLink: string, params: string[]): any {
-    return this.serviceObj.onLQ(playLink, params);
+  public playLQ() {
+    return this.serviceObj.playLQ(this);
+  }
+
+  public embedLink() {
+    return this.serviceObj.embedLink(this);
+  }
+
+  public host() {
+    return this.serviceObj.hosts[0];
+  }
+
+  public icon() {
+    return this.serviceObj.icon;
+  }
+
+  public chatLink() {
+    return this.serviceObj.chatLink(this);
   }
 }
