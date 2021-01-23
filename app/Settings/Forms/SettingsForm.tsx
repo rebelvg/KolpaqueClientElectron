@@ -98,17 +98,6 @@ const SettingsForm: any = ({ handleSubmit, changeSetting }) => (
     </FieldWrapper>
 
     <FieldWrapper>
-      <Label>Show Tooltips</Label>
-      <InputWrapper>
-        <Field
-          name="showTooltips"
-          component={ToggleAdapter}
-          toggle={changeSetting}
-        />
-      </InputWrapper>
-    </FieldWrapper>
-
-    <FieldWrapper>
       <Label>Confirm Auto-Start</Label>
       <InputWrapper>
         <Field

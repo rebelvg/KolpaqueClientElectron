@@ -25,7 +25,7 @@ class Channel extends PureComponent<any> {
   };
 
   render() {
-    const { channel, pinned, editMode, selected, showTooltips } = this.props;
+    const { channel, pinned, editMode, selected } = this.props;
 
     return (
       <ChannelWrapper
@@ -50,11 +50,7 @@ class Channel extends PureComponent<any> {
               nameChange={this.renameChannel}
             />
           ) : (
-            <StyledName
-              title={
-                showTooltips ? `${channel.visibleName} (${channel.link})` : ''
-              }
-            >
+            <StyledName title={`${channel.visibleName} (${channel.link})`}>
               {/*{channel.isPinned && <Pinned/>}*/}
               {channel.visibleName || channel.link}{' '}
             </StyledName>

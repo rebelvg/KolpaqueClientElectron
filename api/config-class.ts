@@ -128,7 +128,6 @@ export class Config extends EventEmitter {
     nightMode: false,
     sortType: 'lastAdded',
     sortReverse: false,
-    showTooltips: true,
     confirmAutoStart: true,
     playInWindow: false,
     useStreamlinkForCustomChannels: false,

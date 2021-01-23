@@ -8,7 +8,6 @@ import {
   changeSetting,
   openChannelMenu,
 } from '../../Channel/Helpers/IPCHelpers';
-import { getShowTooltips } from '../../redux/settings';
 import ReactList from 'react-list';
 
 @withTheme
@@ -17,7 +16,6 @@ import ReactList from 'react-list';
     update: getUpdate(state),
     sortType: getSortType(state),
     channels: getChannelsList(state),
-    showTooltips: getShowTooltips(state),
   }),
   {
     updateData,
@@ -73,7 +71,7 @@ class Channels extends PureComponent<any, any> {
   };
 
   render() {
-    const { channels, update, showTooltips } = this.props;
+    const { channels, update } = this.props;
     const { edit, selected } = this.state;
 
     return (
@@ -87,7 +85,6 @@ class Channels extends PureComponent<any, any> {
             <div key={channels[index].id}>
               <Channel
                 handleAction={this.handleAction}
-                showTooltips={!!showTooltips}
                 editMode={edit && edit.id === channels[index].id}
                 selected={selected && selected.link === channels[index].link}
                 channel={channels[index]}
