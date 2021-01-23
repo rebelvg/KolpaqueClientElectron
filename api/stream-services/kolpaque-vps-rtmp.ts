@@ -6,11 +6,11 @@ import { ProtocolsEnum, ServiceNamesEnum } from '../globals';
 import { Channel } from '../channel-class';
 
 export class KolpaqueVpsRtmpStreamService implements BaseStreamService {
-  public serviceName = ServiceNamesEnum.KLPQ_VPS_RTMP;
+  public name = ServiceNamesEnum.KLPQ_VPS_RTMP;
   public protocols = [ProtocolsEnum.RTMP];
   public hosts = ['mediaserver.klpq.men', 'stream.klpq.men', 'vps.klpq.men'];
   public paths = ['/live/'];
-  public name = 2;
+  public channelNamePath = 2;
   public embedLink = (channel: Channel): string => {
     return `http://klpq.men/stream/${channel.name}`;
   };
@@ -35,4 +35,6 @@ export class KolpaqueVpsRtmpStreamService implements BaseStreamService {
       params,
     };
   };
+  public checkLiveTimeout = 5;
+  public checkLiveConfirmation = 0;
 }

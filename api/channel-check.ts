@@ -127,7 +127,7 @@ function isOffline(channelObj: Channel): void {
 
   if (
     channelObj._offlineConfirmations <
-    _.get(SERVICES_INTERVALS, [channelObj.service, 'confirmations'], 0)
+    _.get(SERVICES_INTERVALS, [channelObj.serviceName, 'confirmations'], 0)
   ) {
     return;
   }
@@ -360,7 +360,7 @@ async function checkChannels(
   await Promise.all(
     SERVICES_INTERVALS.map(async (service) => {
       const channels = _.filter(channelObjs, {
-        service: service.name,
+        serviceName: service.name,
       });
 
       await service.function(channels, printBalloon);
@@ -374,7 +374,7 @@ async function checkService(
 ): Promise<void> {
   try {
     const channels = _.filter(config.channels, {
-      service: service.name,
+      serviceName: service.name,
     });
 
     await service.function(channels, printBalloon);

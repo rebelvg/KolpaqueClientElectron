@@ -74,7 +74,7 @@ async function getTwitchInfoAsync(channelObjs: Channel[]): Promise<void> {
 async function checkChannels(channelObjs: Channel[]): Promise<void> {
   await Promise.all(
     SERVICES.map(async (service) => {
-      const channels = _.filter(channelObjs, { service: service.name });
+      const channels = _.filter(channelObjs, { serviceName: service.name });
 
       await service.function(channels);
     }),
@@ -84,7 +84,7 @@ async function checkChannels(channelObjs: Channel[]): Promise<void> {
 export async function loop(): Promise<void> {
   await Promise.all(
     _.map(SERVICES, async (service) => {
-      const channels = _.filter(config.channels, { service: service.name });
+      const channels = _.filter(config.channels, { serviceName: service.name });
 
       await service.function(channels);
     }),

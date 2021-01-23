@@ -6,11 +6,11 @@ import { ProtocolsEnum, ServiceNamesEnum } from '../globals';
 import { Channel } from '../channel-class';
 
 export class YoutubeChannelStreamService implements BaseStreamService {
-  public serviceName = ServiceNamesEnum.YOUTUBE_CHANNEL;
+  public name = ServiceNamesEnum.YOUTUBE_CHANNEL;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.youtube.com', 'youtube.com'];
   public paths = ['/channel/'];
-  public name = 2;
+  public channelNamePath = 2;
   public embedLink = () => null;
   public chatLink = () => null;
   public icon = fs.readFileSync(
@@ -33,4 +33,6 @@ export class YoutubeChannelStreamService implements BaseStreamService {
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     };
   };
+  public checkLiveTimeout = 5;
+  public checkLiveConfirmation = 0;
 }

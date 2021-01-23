@@ -3,11 +3,11 @@ import { ServiceNamesEnum } from '../globals';
 import { Channel } from '../channel-class';
 
 export class CustomStreamService implements BaseStreamService {
-  public serviceName = ServiceNamesEnum.CUSTOM;
+  public name = ServiceNamesEnum.CUSTOM;
   public protocols = [];
   public hosts = [];
   public paths = [];
-  public name = 0;
+  public channelNamePath = 0;
   public embedLink = () => null;
   public chatLink = () => null;
   public icon = null;
@@ -25,4 +25,6 @@ export class CustomStreamService implements BaseStreamService {
       params,
     };
   };
+  public checkLiveTimeout = 120;
+  public checkLiveConfirmation = 3;
 }

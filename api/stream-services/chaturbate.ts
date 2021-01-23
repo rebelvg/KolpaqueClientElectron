@@ -3,11 +3,11 @@ import { ProtocolsEnum, ServiceNamesEnum } from '../globals';
 import { Channel } from '../channel-class';
 
 export class ChaturbateStreamService implements BaseStreamService {
-  public serviceName = ServiceNamesEnum.CHATURBATE;
+  public name = ServiceNamesEnum.CHATURBATE;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.chaturbate.com', 'chaturbate.com'];
   public paths = ['/'];
-  public name = 1;
+  public channelNamePath = 1;
   public embedLink = () => null;
   public chatLink = () => null;
   public icon = null;
@@ -25,4 +25,6 @@ export class ChaturbateStreamService implements BaseStreamService {
       params,
     };
   };
+  public checkLiveTimeout = 120;
+  public checkLiveConfirmation = 3;
 }

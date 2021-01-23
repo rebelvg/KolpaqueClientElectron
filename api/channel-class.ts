@@ -17,7 +17,7 @@ const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
 export class Channel extends EventEmitter {
   public id: string;
-  public service: ServiceNamesEnum = ServiceNamesEnum.CUSTOM;
+  public serviceName: ServiceNamesEnum = ServiceNamesEnum.CUSTOM;
   private serviceObj: BaseStreamService;
   public name: string;
   public link: string;
@@ -64,34 +64,42 @@ export class Channel extends EventEmitter {
       throw Error(`Pathname can't be empty.`);
     }
 
-    _.forEach(REGISTERED_SERVICES, (serviceObj) => {
-      if (
-        serviceObj.protocols.includes(protocol) &&
-        serviceObj.hosts.includes(channelURL.host.toLowerCase())
-      ) {
-        const nameArray = _.split(channelURL.pathname, '/');
-
-        if (nameArray[serviceObj.name]) {
-          _.forEach(serviceObj.paths, (path) => {
-            if (channelURL.pathname.toLowerCase().indexOf(path) === 0) {
-              this.service = serviceObj.serviceName;
-              this.serviceObj = serviceObj;
-              this.name = nameArray[serviceObj.name];
-              this.visibleName = this.name;
-
-              channelURL.protocol = serviceObj.protocols[0];
-              channelURL.host = serviceObj.hosts[0];
-              channelURL.pathname =
-                serviceObj.paths[0] + nameArray[serviceObj.name];
-
-              this.link = channelURL.href;
-            }
-          });
-        }
+    for (const serviceObj of REGISTERED_SERVICES) {
+      if (!serviceObj.protocols.includes(protocol)) {
+        continue;
       }
-    });
 
-    if (this.service === ServiceNamesEnum.CUSTOM) {
+      if (!serviceObj.hosts.includes(channelURL.host.toLowerCase())) {
+        continue;
+      }
+
+      const nameArray = _.split(channelURL.pathname, '/');
+
+      const channelName = nameArray[serviceObj.channelNamePath];
+
+      if (!channelName) {
+        continue;
+      }
+
+      _.forEach(serviceObj.paths, (path) => {
+        if (channelURL.pathname.toLowerCase().indexOf(path) !== 0) {
+          return;
+        }
+
+        this.serviceName = serviceObj.name;
+        this.serviceObj = serviceObj;
+        this.name = channelName;
+        this.visibleName = this.name;
+
+        channelURL.protocol = serviceObj.protocols[0];
+        channelURL.host = serviceObj.hosts[0];
+        channelURL.pathname = serviceObj.paths[0] + channelName;
+
+        this.link = channelURL.href;
+      });
+    }
+
+    if (this.serviceName === ServiceNamesEnum.CUSTOM) {
       const pathname = _.endsWith(channelURL.pathname, '/')
         ? channelURL.pathname.slice(0, -1)
         : channelURL.pathname;
@@ -157,7 +165,7 @@ export class Channel extends EventEmitter {
   public filterData() {
     return {
       id: this.id,
-      service: this.service,
+      service: this.serviceName,
       name: this.name,
       link: this.link,
       protocol: this.protocol,

@@ -5,24 +5,26 @@ import { Channel } from '../channel-class';
 import { ProtocolsEnum, ServiceNamesEnum } from '../globals';
 
 export abstract class BaseStreamService {
-  public serviceName: ServiceNamesEnum;
+  public name: ServiceNamesEnum;
   public protocols: ProtocolsEnum[];
   public hosts: string[];
   public paths: string[];
-  public name: number;
+  public channelNamePath: number;
   public embedLink: (channel: Channel) => string;
   public chatLink: (channel: Channel) => string;
   public icon: Buffer;
   public play: (channel: Channel) => { playLink: string; params: string[] };
   public playLQ: (channel: Channel) => { playLink: string; params: string[] };
+  public checkLiveTimeout = 0;
+  public checkLiveConfirmation = 0;
 }
 
 export class TwitchStreamService implements BaseStreamService {
-  public serviceName = ServiceNamesEnum.TWITCH;
+  public name = ServiceNamesEnum.TWITCH;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'];
   public paths = ['/'];
-  public name = 1;
+  public channelNamePath = 1;
   public embedLink = () => null;
   public chatLink = (channel: Channel): string => {
     return `https://www.twitch.tv/${channel.name}/chat`;
@@ -47,4 +49,6 @@ export class TwitchStreamService implements BaseStreamService {
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     };
   };
+  public checkLiveTimeout = 30;
+  public checkLiveConfirmation = 3;
 }
