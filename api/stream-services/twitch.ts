@@ -120,8 +120,7 @@ export class TwitchStreamService implements BaseStreamService {
   public name = ServiceNamesEnum.TWITCH;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'];
-  public paths = ['/'];
-  public channelNamePath = 1;
+  public paths = [/^\/(\S+)\/+/gi, /^\/(\S+)\/*/gi];
   public embedLink = (channel: Channel) => {
     return channel.link;
   };

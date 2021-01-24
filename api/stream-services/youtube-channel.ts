@@ -26,8 +26,7 @@ export class YoutubeChannelStreamService implements BaseStreamService {
   public name = ServiceNamesEnum.YOUTUBE_CHANNEL;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.youtube.com', 'youtube.com'];
-  public paths = ['/channel/'];
-  public channelNamePath = 2;
+  public paths = [/^\/channel\/(\S+)\/+/gi, /^\/channel\/(\S+)\/*/gi];
   public embedLink = (channel: Channel) => {
     return channel.link;
   };

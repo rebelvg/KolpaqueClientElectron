@@ -1,9 +1,9 @@
 import { app, dialog } from 'electron';
-import { createHash } from 'crypto';
 import { URL } from 'url';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 import { ChildProcess } from 'child_process';
+import * as uuid from 'uuid';
 
 import { REGISTERED_SERVICES } from './globals';
 import { addLogs } from './logs';
@@ -45,8 +45,9 @@ export class Channel extends EventEmitter {
 
     channelLink = channelLink.trim();
 
+    this.id = uuid.v4();
     this.link = channelLink;
-    this.id = createHash('md5').update(this.link).digest('hex');
+    this.name = this.link;
 
     const channelURL = new URL(channelLink);
 
@@ -54,7 +55,9 @@ export class Channel extends EventEmitter {
 
     this.protocol = protocol;
 
-    if (channelURL.host.length === 0) {
+    const host = channelURL.host.toLowerCase();
+
+    if (host.length === 0) {
       throw Error(`Hostname can't be empty.`);
     }
 
@@ -63,44 +66,32 @@ export class Channel extends EventEmitter {
         continue;
       }
 
-      if (!serviceObj.hosts.includes(channelURL.host.toLowerCase())) {
-        continue;
-      }
-
-      const nameArray = _.split(channelURL.pathname, '/');
-
-      const channelName = nameArray[serviceObj.channelNamePath];
-
-      if (!channelName) {
+      if (!serviceObj.hosts.includes(host)) {
         continue;
       }
 
       _.forEach(serviceObj.paths, (path) => {
-        if (channelURL.pathname.toLowerCase().indexOf(path) !== 0) {
+        const regRes = new RegExp(path).exec(channelURL.pathname);
+
+        if (!regRes) {
           return;
         }
+
+        const [, channelName] = regRes;
 
         this.serviceName = serviceObj.name;
         this.serviceObj = serviceObj;
         this.name = channelName;
-        this.visibleName = this.name;
 
-        channelURL.protocol = serviceObj.protocols[0];
-        channelURL.host = serviceObj.hosts[0];
-        channelURL.pathname = serviceObj.paths[0] + channelName;
+        const newChannelUrl = new URL(
+          `${serviceObj.protocols[0]}${serviceObj.hosts[0]}${channelURL.pathname}`,
+        );
 
-        this.link = channelURL.href;
+        this.link = newChannelUrl.href;
       });
     }
 
-    if (this.serviceName === ServiceNamesEnum.CUSTOM) {
-      const pathname = _.endsWith(channelURL.pathname, '/')
-        ? channelURL.pathname.slice(0, -1)
-        : channelURL.pathname;
-
-      this.name = this.link;
-      this.visibleName = `${channelURL.host}${pathname}`;
-    }
+    this.visibleName = this.name;
 
     this.on('setting_changed', (settingName, settingValue, send) => {
       if (send) {

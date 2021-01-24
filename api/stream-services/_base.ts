@@ -20,8 +20,7 @@ export abstract class BaseStreamService {
   public name: ServiceNamesEnum;
   public protocols: ProtocolsEnum[];
   public hosts: string[];
-  public paths: string[];
-  public channelNamePath: number;
+  public paths: RegExp[];
   public embedLink: (channel: Channel) => string;
   public chatLink: (channel: Channel) => string;
   public icon: Buffer;

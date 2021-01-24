@@ -5,8 +5,7 @@ export class KolpaqueVpsHttpStreamService extends KolpaqueVpsRtmpStreamService {
   public name = ServiceNamesEnum.KLPQ_VPS_HTTP;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['klpq.men', 'www.klpq.men'];
-  public paths = ['/stream/'];
-  public channelNamePath = 2;
+  public paths = [/^\/stream\/(\S+)\/+/gi, /^\/stream\/(\S+)\/*/gi];
 
   // public play = (channel: Channel) => {
   //   return {

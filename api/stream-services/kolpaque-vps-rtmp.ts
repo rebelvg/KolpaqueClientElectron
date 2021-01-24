@@ -39,9 +39,14 @@ export async function getKlpqVpsStats(
 export class KolpaqueVpsRtmpStreamService implements BaseStreamService {
   public name = ServiceNamesEnum.KLPQ_VPS_RTMP;
   public protocols = [ProtocolsEnum.RTMP];
-  public hosts = ['mediaserver.klpq.men', 'stream.klpq.men', 'vps.klpq.men'];
-  public paths = ['/live/'];
-  public channelNamePath = 2;
+  public hosts = [
+    'mediaserver.klpq.men',
+    'stream.klpq.men',
+    'vps.klpq.men',
+    'klpq.men',
+    'www.klpq.men',
+  ];
+  public paths = [/^\/live\/(\S+)\/+/gi, /^\/live\/(\S+)\/*/gi];
   public embedLink = (channel: Channel): string => {
     return `http://klpq.men/stream/${channel.name}`;
   };

@@ -27,8 +27,7 @@ export class ChaturbateStreamService implements BaseStreamService {
   public name = ServiceNamesEnum.CHATURBATE;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.chaturbate.com', 'chaturbate.com'];
-  public paths = ['/'];
-  public channelNamePath = 1;
+  public paths = [/^\/(\S+)\/+/gi, /^\/(\S+)\/*/gi];
   public embedLink = (channel: Channel) => {
     return channel.link;
   };
