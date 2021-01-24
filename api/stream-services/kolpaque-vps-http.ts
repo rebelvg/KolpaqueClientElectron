@@ -6,12 +6,12 @@ import { klpqStreamClient } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 
 async function getKlpqStatsBase(
-  channelObj: Channel,
+  channel: Channel,
   printBalloon: boolean,
 ): Promise<void> {
   const channelData = await klpqStreamClient.getChannel(
-    channelObj.name,
-    channelObj.host(),
+    channel.name,
+    channel.host(),
   );
 
   if (!channelData) {
@@ -19,19 +19,19 @@ async function getKlpqStatsBase(
   }
 
   if (channelData.isLive) {
-    channelObj.setOnline(printBalloon);
+    channel.setOnline(printBalloon);
   } else {
-    channelObj.setOffline();
+    channel.setOffline();
   }
 }
 
 export async function getKlpqVpsStats(
-  channelObjs: Channel[],
+  channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
   await Promise.all(
-    channelObjs.map((channelObj) => {
-      return getKlpqStatsBase(channelObj, printBalloon);
+    channels.map((channel) => {
+      return getKlpqStatsBase(channel, printBalloon);
     }),
   );
 }
@@ -69,4 +69,5 @@ export class KolpaqueVpsHttpStreamService implements BaseStreamService {
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
   public checkChannels = getKlpqVpsStats;
+  public getInfo = () => null;
 }

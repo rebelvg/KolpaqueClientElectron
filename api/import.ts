@@ -33,14 +33,14 @@ async function twitchImportChannels(
         return;
       }
 
-      for (const channel of userData.data) {
-        const channelObj = config.addChannelLink(
-          `https://twitch.tv/${channel.login}`,
+      for (const importedChannel of userData.data) {
+        const channel = config.addChannelLink(
+          `https://twitch.tv/${importedChannel.login}`,
           false,
         );
 
-        if (channelObj) {
-          channelsAdded.push(channelObj);
+        if (channel) {
+          channelsAdded.push(channel);
         }
       }
     }),
@@ -114,7 +114,7 @@ async function twitchImportBase(
 
   const { channelsAdded } = await twitchImportChannels(channelsToAdd);
 
-  channelsAdded.forEach((channelObj) => channelsAddedAll.push(channelObj));
+  channelsAdded.forEach((channel) => channelsAddedAll.push(channel));
 
   if (emitEvent) {
     config.emit('channel_added_channels', channelsAddedAll);

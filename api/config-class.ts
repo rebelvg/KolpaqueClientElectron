@@ -28,7 +28,7 @@ const channelSave = [
   'autoRestart',
 ];
 
-const filterChannel = (channelObj: Channel, filter: string): boolean => {
+const filterChannel = (channel: Channel, filter: string): boolean => {
   filter = filter.trim();
 
   if (!filter) {
@@ -45,7 +45,7 @@ const filterChannel = (channelObj: Channel, filter: string): boolean => {
   });
 
   _.forEach(
-    [channelObj.link, channelObj.name, channelObj.visibleName],
+    [channel.link, channel.name, channel.visibleName],
     (searchString) => {
       _.forEach(searchFilters, (filter) => {
         const regExp = new RegExp(filter.pattern, 'gi');
@@ -69,8 +69,8 @@ const filterChannels = (channels: Channel[], filter: string): Channel[] => {
 
   let filteredChannels = [];
 
-  filteredChannels = _.filter(channels, (channelObj) => {
-    return filterChannel(channelObj, filter);
+  filteredChannels = _.filter(channels, (channel) => {
+    return filterChannel(channel, filter);
   });
 
   return filteredChannels;
@@ -177,11 +177,11 @@ export class Config extends EventEmitter {
 
       const parseJson = JSON.parse(file);
 
-      _.forEach(parseJson.channels, (channelObj) => {
-        const channel = this.addChannelLink(channelObj.link, false);
+      _.forEach(parseJson.channels, (parsedChannel) => {
+        const channel = this.addChannelLink(parsedChannel.link, false);
 
-        if (!channel) {
-          channel.update(channelObj);
+        if (channel) {
+          channel.update(parsedChannel);
         }
       });
 
@@ -202,30 +202,30 @@ export class Config extends EventEmitter {
   }
 
   addChannelLink(channelLink: string, emitEvent = true): Channel {
-    const channelObj = Config.buildChannelObj(channelLink);
+    const channel = Config.buildChannel(channelLink);
 
-    if (!channelObj) {
+    if (!channel) {
       return null;
     }
 
-    const res = this.findChannelByLink(channelObj.link);
+    const res = this.findChannelByLink(channel.link);
 
     if (res !== null) {
       return null;
     }
 
-    channelObj.lastUpdated = Date.now();
+    channel.lastUpdated = Date.now();
 
-    this.channels.push(channelObj);
+    this.channels.push(channel);
 
     if (emitEvent) {
-      this.emit('channel_added', channelObj);
+      this.emit('channel_added', channel);
     }
 
-    return channelObj;
+    return channel;
   }
 
-  static buildChannelObj(channelLink: string): Channel {
+  static buildChannel(channelLink: string): Channel {
     try {
       return new Channel(channelLink);
     } catch (e) {
@@ -236,15 +236,15 @@ export class Config extends EventEmitter {
   }
 
   removeChannelById(id: string): boolean {
-    const channelObj = this.findById(id);
+    const channel = this.findById(id);
 
-    if (!this.channels.includes(channelObj)) {
+    if (!this.channels.includes(channel)) {
       return true;
     }
 
-    _.pull(this.channels, channelObj);
+    _.pull(this.channels, channel);
 
-    this.emit('channel_removed', channelObj);
+    this.emit('channel_removed', channel);
 
     return true;
   }
@@ -314,16 +314,16 @@ export class Config extends EventEmitter {
 
   saveFile(): boolean {
     try {
-      const channels = _.map(this.channels, (channelObj) => {
-        const channel = {};
+      const channels = _.map(this.channels, (channel) => {
+        const saveChannel = {};
 
         _.forEach(channelSave, (settingName) => {
-          if (channelObj.hasOwnProperty(settingName)) {
-            channel[settingName] = channelObj[settingName];
+          if (channel.hasOwnProperty(settingName)) {
+            saveChannel[settingName] = channel[settingName];
           }
         });
 
-        return channel;
+        return saveChannel;
       });
 
       const saveConfig = {

@@ -3,47 +3,49 @@ import * as fs from 'fs';
 import * as _ from 'lodash';
 
 import { Channel } from '../channel-class';
-import { twitchClient, TWITCH_CHUNK_LIMIT } from '../api-clients';
+import { commonClient, twitchClient, TWITCH_CHUNK_LIMIT } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 
 async function getTwitchStats(
-  channelObjs: Channel[],
+  channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
   await twitchClient.refreshAccessToken();
 
-  const chunkedChannels = _.chunk(channelObjs, TWITCH_CHUNK_LIMIT);
+  const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
 
   await Promise.all(
-    chunkedChannels.map(async (channelObjs) => {
-      const channels = channelObjs.map((channelObj) => {
+    chunkedChannels.map(async (channels) => {
+      const mappedChannels = channels.map((channel) => {
         return {
-          channelObj,
+          channel,
           userId: null,
         };
       });
 
       const userData = await twitchClient.getUsersByLogin(
-        channelObjs.map((channel) => channel.name),
+        channels.map((channel) => channel.name),
       );
 
       if (!userData) {
         return;
       }
 
-      _.forEach(channels, (channel) => {
+      _.forEach(mappedChannels, (channel) => {
         _.forEach(userData.data, (user) => {
-          if (user.login === channel.channelObj.name) {
+          if (user.login === channel.channel.name) {
             channel.userId = user.id;
           }
         });
       });
 
-      const existingChannels = channels.filter((channel) => !!channel.userId);
+      const existingChannels = mappedChannels.filter(
+        (channel) => !!channel.userId,
+      );
 
       if (existingChannels.length === 0) {
-        _.forEach(channels, ({ channelObj }) => {
-          channelObj.setOffline();
+        _.forEach(mappedChannels, ({ channel }) => {
+          channel.setOffline();
         });
 
         return;
@@ -57,13 +59,59 @@ async function getTwitchStats(
         return;
       }
 
-      _.forEach(channels, ({ channelObj, userId }) => {
+      _.forEach(mappedChannels, ({ channel, userId }) => {
         if (_.find(streamData.data, { user_id: userId })) {
-          channelObj.setOnline(printBalloon);
+          channel.setOnline(printBalloon);
         } else {
-          channelObj.setOffline();
+          channel.setOffline();
         }
       });
+    }),
+  );
+}
+
+async function getTwitchInfoAsync(channels: Channel[]): Promise<void> {
+  await twitchClient.refreshAccessToken();
+
+  const filteredChannels = _.filter(channels, (channel) => !channel._icon);
+
+  if (filteredChannels.length === 0) {
+    return;
+  }
+
+  const chunkedChannels = _.chunk(filteredChannels, TWITCH_CHUNK_LIMIT);
+
+  await Promise.all(
+    chunkedChannels.map(async (channels) => {
+      const userData = await twitchClient.getUsersByLogin(
+        channels.map((channel) => channel.name),
+      );
+
+      await Promise.all(
+        channels.map(async (channel) => {
+          await Promise.all(
+            _.map(userData?.data, async (user) => {
+              if (user.login !== channel.name) {
+                return;
+              }
+
+              const profileImageUrl = user?.profile_image_url;
+
+              if (!profileImageUrl) {
+                return;
+              }
+
+              const logoBuffer = await commonClient.getContentAsBuffer(
+                profileImageUrl,
+              );
+
+              if (logoBuffer) {
+                channel._icon = logoBuffer;
+              }
+            }),
+          );
+        }),
+      );
     }),
   );
 }
@@ -101,4 +149,5 @@ export class TwitchStreamService implements BaseStreamService {
   public checkLiveTimeout = 30;
   public checkLiveConfirmation = 3;
   public checkChannels = getTwitchStats;
+  public getInfo = getTwitchInfoAsync;
 }

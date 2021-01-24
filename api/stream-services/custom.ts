@@ -18,21 +18,21 @@ async function getCustomStats(
 
   const chunkedChannels = _.chunk(channels, 1);
 
-  for (const channelObjs of chunkedChannels) {
+  for (const channels of chunkedChannels) {
     await Promise.all(
-      channelObjs.map((channelObj) => {
+      channels.map((channel) => {
         return new Promise<void>((resolve) => {
           childProcess.execFile(
             'streamlink',
-            [channelObj.link, 'best', '--twitch-disable-hosting', '--json'],
+            [channel.link, 'best', '--twitch-disable-hosting', '--json'],
             (err, stdout) => {
               try {
                 const res = JSON.parse(stdout);
 
                 if (!res.error) {
-                  channelObj.setOnline(printBalloon);
+                  channel.setOnline(printBalloon);
                 } else {
-                  channelObj.setOffline();
+                  channel.setOffline();
                 }
               } catch (error) {
                 addLogs(error);
@@ -73,4 +73,5 @@ export class CustomStreamService implements BaseStreamService {
   public checkLiveTimeout = 120;
   public checkLiveConfirmation = 3;
   public checkChannels = getCustomStats;
+  public getInfo = () => null;
 }

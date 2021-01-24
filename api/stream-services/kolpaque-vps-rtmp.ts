@@ -38,4 +38,5 @@ export class KolpaqueVpsRtmpStreamService implements BaseStreamService {
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
   public checkChannels = getKlpqVpsStats;
+  public getInfo = () => null;
 }

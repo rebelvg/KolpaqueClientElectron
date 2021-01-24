@@ -8,24 +8,24 @@ import { Channel } from './channel-class';
 export function printNotification(
   title: string,
   content: string,
-  channelObj: Channel = null,
+  channel: Channel = null,
 ): void {
   if (!config.settings.showNotifications) {
     return;
   }
 
-  printNewNotification(title, content, channelObj);
+  printNewNotification(title, content, channel);
 }
 
 function printNewNotification(
   title: string,
   content: string,
-  channelObj: Channel,
+  channel: Channel,
 ): void {
   let icon: string | NativeImage = iconPathBalloon;
 
-  if (channelObj) {
-    const iconBuffer = channelObj._icon ? channelObj._icon : channelObj.icon();
+  if (channel) {
+    const iconBuffer = channel._icon ? channel._icon : channel.icon();
 
     if (iconBuffer) {
       icon = nativeImage.createFromBuffer(iconBuffer);
@@ -39,13 +39,17 @@ function printNewNotification(
   });
 
   notification.on('click', () => {
-    onBalloonClick(title, content, channelObj);
+    onBalloonClick(title, content, channel);
   });
 
   notification.show();
 }
 
-function onBalloonClick(title, content, channelObj): void {
+function onBalloonClick(
+  title: string,
+  content: string,
+  channel: Channel,
+): void {
   addLogs('balloon was clicked.');
 
   if (!config.settings.launchOnBalloonClick) {
@@ -53,7 +57,7 @@ function onBalloonClick(title, content, channelObj): void {
   }
 
   if (title.indexOf('Stream is Live') === 0) {
-    channelObj.emit('play');
+    channel.emit('play');
   }
 
   if (title.includes('Update Available')) {

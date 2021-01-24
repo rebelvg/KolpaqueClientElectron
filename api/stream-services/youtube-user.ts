@@ -21,12 +21,12 @@ export async function getYoutubeStatsBase(channelId: string): Promise<boolean> {
 }
 
 async function getYoutubeStatsUser(
-  channelObjs: Channel[],
+  channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
   await Promise.all(
-    channelObjs.map(async (channelObj) => {
-      const data = await youtubeClient.getChannels(channelObj.name);
+    channels.map(async (channel) => {
+      const data = await youtubeClient.getChannels(channel.name);
 
       if (!data) {
         return;
@@ -39,9 +39,9 @@ async function getYoutubeStatsUser(
       );
 
       if (_.some(channelStatuses)) {
-        channelObj.setOnline(printBalloon);
+        channel.setOnline(printBalloon);
       } else {
-        channelObj.setOffline();
+        channel.setOffline();
       }
     }),
   );
@@ -78,4 +78,5 @@ export class YoutubeUserStreamService implements BaseStreamService {
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
   public checkChannels = getYoutubeStatsUser;
+  public getInfo = () => null;
 }

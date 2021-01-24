@@ -3,21 +3,21 @@ import { chaturbateClient } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 
 async function getChaturbateStats(
-  channelObjs: Channel[],
+  channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
   await Promise.all(
-    channelObjs.map(async (channelObj) => {
-      const data = await chaturbateClient.getChannel(channelObj.name);
+    channels.map(async (channel) => {
+      const data = await chaturbateClient.getChannel(channel.name);
 
       if (data.room_status === 'public') {
-        channelObj._customPlayUrl = data.url;
+        channel._customPlayUrl = data.url;
 
-        channelObj.setOnline(printBalloon);
+        channel.setOnline(printBalloon);
       } else {
-        channelObj._customPlayUrl = null;
+        channel._customPlayUrl = null;
 
-        channelObj.setOffline();
+        channel.setOffline();
       }
     }),
   );
@@ -49,4 +49,5 @@ export class ChaturbateStreamService implements BaseStreamService {
   public checkLiveTimeout = 120;
   public checkLiveConfirmation = 3;
   public checkChannels = getChaturbateStats;
+  public getInfo = () => null;
 }

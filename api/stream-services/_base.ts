@@ -35,4 +35,5 @@ export abstract class BaseStreamService {
     channels: Channel[],
     printBalloon: boolean,
   ) => Promise<void>;
+  public getInfo: (channels: Channel[]) => Promise<void>;
 }

@@ -15,16 +15,16 @@ config.on('channel_added_channels', async (channels: Channel[]) => {
 });
 
 async function checkChannels(
-  channelObjs: Channel[],
+  channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
   await Promise.all(
     REGISTERED_SERVICES.map(async (service) => {
-      const channels = _.filter(channelObjs, {
+      const filteredChannels = _.filter(channels, {
         serviceName: service.name,
       });
 
-      await service.checkChannels(channels, printBalloon);
+      await service.checkChannels(filteredChannels, printBalloon);
     }),
   );
 }

@@ -23,50 +23,52 @@ ipcMain.on('channel_remove', (event, id) => {
 });
 
 ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
-  const channelObj = config.findById(id);
+  const channel = config.findById(id);
 
-  if (!channelObj) {
+  if (!channel) {
     return false;
   }
 
   if (settingName === 'visibleName') {
     if (!settingValue) {
-      settingValue = channelObj.name;
+      settingValue = channel.name;
     }
   }
 
-  return channelObj.changeSetting(settingName, settingValue);
+  channel.changeSetting(settingName, settingValue);
+
+  return;
 });
 
 ipcMain.on(
   'channel_changeSettingSync',
   (event, id, settingName, settingValue) => {
-    const channelObj = config.findById(id);
+    const channel = config.findById(id);
 
-    if (!channelObj) {
+    if (!channel) {
       return (event.returnValue = false);
     }
 
     if (settingName === 'visibleName') {
       if (!settingValue) {
-        settingValue = channelObj.name;
+        settingValue = channel.name;
       }
     }
 
-    event.returnValue = channelObj.changeSetting(settingName, settingValue);
+    event.returnValue = channel.changeSetting(settingName, settingValue);
 
     return;
   },
 );
 
 ipcMain.on('channel_openPage', (event, id) => {
-  const channelObj = config.findById(id);
+  const channel = config.findById(id);
 
-  if (channelObj === null) {
+  if (channel === null) {
     return false;
   }
 
-  const embedLink = channelObj.embedLink();
+  const embedLink = channel.embedLink();
 
   if (embedLink) {
     shell.openExternal(embedLink);
@@ -76,15 +78,15 @@ ipcMain.on('channel_openPage', (event, id) => {
 });
 
 ipcMain.on('channel_openChat', (event, id) => {
-  const channelObj = config.findById(id);
+  const channel = config.findById(id);
 
-  if (channelObj === null) {
+  if (!channel) {
     return false;
   }
 
   let window: BrowserWindow;
 
-  const chatLink = channelObj.chatLink();
+  const chatLink = channel.chatLink();
 
   if (chatLink) {
     if (config.settings.playInWindow) {

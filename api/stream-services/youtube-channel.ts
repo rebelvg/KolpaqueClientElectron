@@ -6,17 +6,17 @@ import { getYoutubeStatsBase } from './youtube-user';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 
 async function getYoutubeStatsChannel(
-  channelObjs: Channel[],
+  channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
   await Promise.all(
-    channelObjs.map(async (channelObj) => {
-      const channelStatus = await getYoutubeStatsBase(channelObj.name);
+    channels.map(async (channel) => {
+      const channelStatus = await getYoutubeStatsBase(channel.name);
 
       if (channelStatus) {
-        channelObj.setOnline(printBalloon);
+        channel.setOnline(printBalloon);
       } else {
-        channelObj.setOffline();
+        channel.setOffline();
       }
     }),
   );
@@ -53,4 +53,5 @@ export class YoutubeChannelStreamService implements BaseStreamService {
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
   public checkChannels = getYoutubeStatsChannel;
+  public getInfo = () => null;
 }
