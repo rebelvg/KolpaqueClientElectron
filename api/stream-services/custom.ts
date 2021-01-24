@@ -55,4 +55,7 @@ export class CustomStreamService extends BaseStreamService {
   public checkLiveTimeout = 120;
   public checkLiveConfirmation = 3;
   public getStats = getStats;
+  public buildChannelLink(channelName: string) {
+    return `${channelName}`;
+  }
 }

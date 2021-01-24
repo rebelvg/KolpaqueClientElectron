@@ -47,30 +47,33 @@ export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
     'www.klpq.men',
   ];
   public paths = [/^\/live\/(\S+)\/+/gi, /^\/live\/(\S+)\/*/gi];
-  public embedLink = (channel: Channel): string => {
-    return `http://klpq.men/stream/${channel.name}`;
-  };
+  public embedLink(channel: Channel): string {
+    return `https://klpq.men/stream/${channel.name}`;
+  }
   public icon = fs.readFileSync(
     path.normalize(path.join(__dirname, '../../icons', 'klpq_vps.png')),
     {
       encoding: null,
     },
   );
-  public play = (channel: Channel) => {
+  public play(channel: Channel) {
     return {
       playLink: `rtmp://mediaserver.klpq.men/live/${channel.name}`,
       params: [],
     };
-  };
-  public playLQ = (channel: Channel) => {
+  }
+  public playLQ(channel: Channel) {
     const { playLink, params } = this.play(channel);
 
     return {
       playLink: playLink.replace('/live/', '/encode/'),
       params,
     };
-  };
+  }
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
   public getStats = getStats;
+  public buildChannelLink(channelName: string) {
+    return `${this.protocols[0]}//klpq.men/stream/${channelName}`;
+  }
 }

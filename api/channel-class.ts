@@ -83,9 +83,7 @@ export class Channel extends EventEmitter {
         this.serviceObj = serviceObj;
         this.name = channelName;
 
-        const newChannelUrl = new URL(
-          `${serviceObj.protocols[0]}${serviceObj.hosts[0]}${channelURL.pathname}`,
-        );
+        const newChannelUrl = new URL(serviceObj.buildChannelLink(channelName));
 
         this.link = newChannelUrl.href;
       });

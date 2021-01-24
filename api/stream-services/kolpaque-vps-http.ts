@@ -1,5 +1,6 @@
 import { ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { KolpaqueVpsRtmpStreamService } from './kolpaque-vps-rtmp';
+// import { Channel } from '../channel-class';
 
 export class KolpaqueVpsHttpStreamService extends KolpaqueVpsRtmpStreamService {
   public name = ServiceNamesEnum.KLPQ_VPS_HTTP;
@@ -7,18 +8,18 @@ export class KolpaqueVpsHttpStreamService extends KolpaqueVpsRtmpStreamService {
   public hosts = ['klpq.men', 'www.klpq.men'];
   public paths = [/^\/stream\/(\S+)\/+/gi, /^\/stream\/(\S+)\/*/gi];
 
-  // public play = (channel: Channel) => {
+  // public play(channel: Channel) {
   //   return {
   //     playLink: `https://encode.klpq.men/mpd/live_${channel.name}/index.mpd`,
   //     params: [],
   //   };
-  // };
-  // public playLQ = (channel: Channel) => {
+  // }
+  // public playLQ(channel: Channel) {
   //   const { playLink, params } = this.play(channel);
 
   //   return {
   //     playLink,
   //     params,
   //   };
-  // };
+  // }
 }

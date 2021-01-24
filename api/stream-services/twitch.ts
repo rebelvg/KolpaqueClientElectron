@@ -176,7 +176,7 @@ async function importBase(
   const channelsAddedAll: Channel[] = [];
 
   const addedChannel = config.addChannelLink(
-    `https://www.twitch.tv/${channelName}`,
+    twitchStreamService.buildChannelLink(channelName),
     false,
   );
 
@@ -248,37 +248,42 @@ async function doImport(
   return channels;
 }
 
-export class TwitchStreamService extends BaseStreamService {
+class TwitchStreamService extends BaseStreamService {
   public name = ServiceNamesEnum.TWITCH;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'];
   public paths = [/^\/(\S+)\/+/gi, /^\/(\S+)\/*/gi];
-  public chatLink = (channel: Channel): string => {
+  public chatLink(channel: Channel): string {
     return `${this.embedLink(channel)}/chat`;
-  };
+  }
   public icon = fs.readFileSync(
     path.normalize(path.join(__dirname, '../../icons', 'twitch.png')),
     {
       encoding: null,
     },
   );
-  public play = (channel: Channel) => {
+  public play(channel: Channel) {
     return {
       playLink: channel._customPlayUrl || channel.link,
       params: ['--twitch-disable-hosting', '--twitch-disable-ads'],
     };
-  };
-  public playLQ = (channel: Channel) => {
+  }
+  public playLQ(channel: Channel) {
     const { playLink, params } = this.play(channel);
 
     return {
       playLink,
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     };
-  };
+  }
   public checkLiveTimeout = 30;
   public checkLiveConfirmation = 3;
   public getStats = getStats;
   public getInfo = getInfo;
   public doImport = doImport;
+  public buildChannelLink(channelName: string) {
+    return `${this.protocols[0]}//${this.hosts[0]}/${channelName}`;
+  }
 }
+
+export const twitchStreamService = new TwitchStreamService();

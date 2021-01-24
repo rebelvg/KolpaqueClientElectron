@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import { sleep } from './channel-check';
 import { Channel } from './channel-class';
 import { REGISTERED_SERVICES } from './globals';
-import { config } from './settings-file';
 import { ServiceNamesEnum } from './stream-services/_base';
 
 ipcMain.on('config_twitchImport', (event, channelName) => {
@@ -43,9 +42,7 @@ export async function loop(): Promise<void> {
   await Promise.all(
     REGISTERED_SERVICES.map(async (service) => {
       if (service.name === ServiceNamesEnum.TWITCH) {
-        const channelNames = config.settings.twitchImport;
-
-        await service.doImport(channelNames, false);
+        await service.doImportSettings(false);
       }
     }),
   );
@@ -58,9 +55,7 @@ export async function loop(): Promise<void> {
       await Promise.all(
         REGISTERED_SERVICES.map(async (service) => {
           if (service.name === ServiceNamesEnum.TWITCH) {
-            const channelNames = config.settings.twitchImport;
-
-            await service.doImport(channelNames, true);
+            await service.doImportSettings(true);
           }
         }),
       );

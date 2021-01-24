@@ -1,4 +1,5 @@
 import { Channel } from '../channel-class';
+import { config } from '../settings-file';
 
 export enum ServiceNamesEnum {
   KLPQ_VPS_RTMP = 'klpq-vps-rtmp',
@@ -17,26 +18,32 @@ export enum ProtocolsEnum {
 }
 
 abstract class AbstractStreamService {
-  public name: ServiceNamesEnum;
-  public protocols: ProtocolsEnum[];
-  public hosts: string[];
-  public paths: RegExp[];
-  public embedLink: (channel: Channel) => string;
-  public chatLink: (channel: Channel) => string;
-  public icon: Buffer;
-  public play: (channel: Channel) => { playLink: string; params: string[] };
-  public playLQ: (channel: Channel) => { playLink: string; params: string[] };
-  public checkLiveTimeout: number;
-  public checkLiveConfirmation: number;
-  public getStats: (
+  public abstract name: ServiceNamesEnum;
+  public abstract protocols: ProtocolsEnum[];
+  public abstract hosts: string[];
+  public abstract paths: RegExp[];
+  public abstract embedLink(channel: Channel): string;
+  public abstract chatLink(channel: Channel): string;
+  public abstract icon: Buffer;
+  public abstract play(
+    channel: Channel,
+  ): { playLink: string; params: string[] };
+  public abstract playLQ(
+    channel: Channel,
+  ): { playLink: string; params: string[] };
+  public abstract checkLiveTimeout: number;
+  public abstract checkLiveConfirmation: number;
+  public abstract getStats(
     channels: Channel[],
     printBalloon: boolean,
-  ) => Promise<void>;
-  public getInfo: (channels: Channel[]) => Promise<void>;
-  public doImport: (
+  ): Promise<void>;
+  public abstract getInfo(channels: Channel[]): Promise<void>;
+  public abstract doImport(
     channels: string[],
     emitEvent: boolean,
-  ) => Promise<Channel[]>;
+  ): Promise<Channel[]>;
+  public abstract doImportSettings(emitEvent: boolean): Promise<Channel[]>;
+  public abstract buildChannelLink(channelName: string): string;
 }
 
 export class BaseStreamService implements AbstractStreamService {
@@ -44,32 +51,47 @@ export class BaseStreamService implements AbstractStreamService {
   public protocols = [];
   public hosts = [];
   public paths = [];
-  public embedLink = (channel: Channel) => {
+  public embedLink(channel: Channel) {
     return channel.link;
-  };
-  public chatLink = (channel: Channel) => {
+  }
+  public chatLink(channel: Channel) {
     return this.embedLink(channel);
-  };
+  }
   public icon = null;
-  public play = (channel: Channel) => {
+  public play(channel: Channel) {
     return {
       playLink: channel._customPlayUrl || channel.link,
       params: [],
     };
-  };
-  public playLQ = (channel: Channel) => {
+  }
+  public playLQ(channel: Channel) {
     const { playLink, params } = this.play(channel);
 
     return {
       playLink,
       params,
     };
-  };
+  }
   public checkLiveTimeout = 0;
   public checkLiveConfirmation = 0;
-  public getStats = (channels: Channel[], printBalloon: boolean) => null;
-  public getInfo = (channels: Channel[]) => null;
-  public doImport = async (channels: string[], emitEvent: boolean) => {
+  public async getStats(
+    channels: Channel[],
+    printBalloon: boolean,
+  ): Promise<void> {
+    return await null;
+  }
+  public async getInfo(channels: Channel[]): Promise<void> {
+    return await null;
+  }
+  public async doImport(channels: string[], emitEvent: boolean) {
     return await [];
-  };
+  }
+  public doImportSettings(emitEvent: boolean) {
+    const channelNames = config.settings.twitchImport;
+
+    return this.doImport(channelNames, true);
+  }
+  public buildChannelLink(channelName: string): string {
+    throw 'not_implemented';
+  }
 }

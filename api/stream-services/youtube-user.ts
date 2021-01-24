@@ -58,15 +58,18 @@ export class YoutubeUserStreamService extends BaseStreamService {
       encoding: null,
     },
   );
-  public playLQ = (channel: Channel) => {
+  public playLQ(channel: Channel) {
     const { playLink, params } = this.play(channel);
 
     return {
       playLink,
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     };
-  };
+  }
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
   public getStats = getStats;
+  public buildChannelLink(channelName: string) {
+    return `${this.protocols[0]}//${this.hosts[0]}/user/${channelName}`;
+  }
 }
