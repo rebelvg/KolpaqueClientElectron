@@ -5,7 +5,7 @@ export enum ServiceNamesEnum {
   KLPQ_VPS_HTTP = 'klpq-vps-http',
   TWITCH = 'twitch',
   YOUTUBE_USER = 'youtube-user',
-  YOUTUBE_CHANNEL = 'youtube_channel',
+  YOUTUBE_CHANNEL = 'youtube-channel',
   CHATURBATE = 'chaturbate',
   CUSTOM = 'custom',
 }

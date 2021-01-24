@@ -53,10 +53,14 @@ export class YoutubeUserStreamService implements BaseStreamService {
   public hosts = ['www.youtube.com', 'youtube.com'];
   public paths = ['/user/'];
   public channelNamePath = 2;
-  public embedLink = () => null;
-  public chatLink = () => null;
+  public embedLink = (channel: Channel) => {
+    return channel.link;
+  };
+  public chatLink = (channel: Channel) => {
+    return channel.link;
+  };
   public icon = fs.readFileSync(
-    path.normalize(path.join(__dirname, '../../icons', 'youtube.png')),
+    path.normalize(path.join(process.cwd(), 'icons', 'youtube.png')),
     {
       encoding: null,
     },

@@ -29,7 +29,9 @@ export class ChaturbateStreamService implements BaseStreamService {
   public hosts = ['www.chaturbate.com', 'chaturbate.com'];
   public paths = ['/'];
   public channelNamePath = 1;
-  public embedLink = () => null;
+  public embedLink = (channel: Channel) => {
+    return channel.link;
+  };
   public chatLink = () => null;
   public icon = null;
   public play = (channel: Channel) => {

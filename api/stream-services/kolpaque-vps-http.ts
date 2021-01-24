@@ -47,7 +47,7 @@ export class KolpaqueVpsHttpStreamService implements BaseStreamService {
   };
   public chatLink = () => null;
   public icon = fs.readFileSync(
-    path.normalize(path.join(__dirname, '../../icons', 'klpq_vps.png')),
+    path.normalize(path.join(process.cwd(), 'icons', 'klpq_vps.png')),
     {
       encoding: null,
     },

@@ -122,12 +122,14 @@ export class TwitchStreamService implements BaseStreamService {
   public hosts = ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'];
   public paths = ['/'];
   public channelNamePath = 1;
-  public embedLink = () => null;
+  public embedLink = (channel: Channel) => {
+    return channel.link;
+  };
   public chatLink = (channel: Channel): string => {
     return `https://www.twitch.tv/${channel.name}/chat`;
   };
   public icon = fs.readFileSync(
-    path.normalize(path.join(__dirname, '../../icons', 'twitch.png')),
+    path.normalize(path.join(process.cwd(), 'icons', 'twitch.png')),
     {
       encoding: null,
     },

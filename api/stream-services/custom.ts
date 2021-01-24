@@ -53,7 +53,9 @@ export class CustomStreamService implements BaseStreamService {
   public hosts = [];
   public paths = [];
   public channelNamePath = 0;
-  public embedLink = () => null;
+  public embedLink = (channel: Channel) => {
+    return channel.link;
+  };
   public chatLink = () => null;
   public icon = null;
   public play = (channel: Channel) => {
