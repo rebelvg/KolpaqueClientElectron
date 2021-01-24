@@ -22,6 +22,11 @@ const Services = {
     isImage: true,
     color: null,
   },
+  'klpq-vps-mpd': {
+    asset: './static/icons/klpq_vps.svg',
+    isImage: true,
+    color: null,
+  },
   'youtube-user': {
     asset: youtubePlay,
     isImage: false,

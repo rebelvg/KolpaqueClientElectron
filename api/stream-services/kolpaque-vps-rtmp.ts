@@ -46,7 +46,7 @@ export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
     'klpq.men',
     'www.klpq.men',
   ];
-  public paths = [/^\/live\/(\S+)\/+/gi, /^\/live\/(\S+)\/*/gi];
+  public paths = [/^\/live\/(\S+)\/$/gi, /^\/live\/(\S+)$/gi];
   public embedLink(channel: Channel): string {
     return `https://klpq.men/stream/${channel.name}`;
   }
@@ -74,6 +74,6 @@ export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
   public checkLiveConfirmation = 0;
   public getStats = getStats;
   public buildChannelLink(channelName: string) {
-    return `${this.protocols[0]}//klpq.men/stream/${channelName}`;
+    return `${this.protocols[0]}//${this.hosts[0]}/live/${channelName}`;
   }
 }

@@ -2,8 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { ChaturbateStreamService } from './stream-services/chaturbate';
-import { CustomStreamService } from './stream-services/custom';
+import { customStreamService } from './stream-services/custom';
 import { KolpaqueVpsHttpStreamService } from './stream-services/kolpaque-vps-http';
+import { KolpaqueVpsMpdStreamService } from './stream-services/kolpaque-vps-mpd';
 import { KolpaqueVpsRtmpStreamService } from './stream-services/kolpaque-vps-rtmp';
 import { twitchStreamService } from './stream-services/twitch';
 import { YoutubeChannelStreamService } from './stream-services/youtube-channel';
@@ -16,14 +17,15 @@ const packageJson = JSON.parse(
   }),
 );
 
-export const CLIENT_VERSION = packageJson.version;
+export const CLIENT_VERSION: string = packageJson.version;
 
 export const REGISTERED_SERVICES: BaseStreamService[] = [
   new KolpaqueVpsRtmpStreamService(),
   new KolpaqueVpsHttpStreamService(),
+  new KolpaqueVpsMpdStreamService(),
   twitchStreamService,
   new YoutubeUserStreamService(),
   new YoutubeChannelStreamService(),
   new ChaturbateStreamService(),
-  new CustomStreamService(),
+  customStreamService,
 ];

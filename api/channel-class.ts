@@ -14,13 +14,14 @@ import {
   ProtocolsEnum,
   ServiceNamesEnum,
 } from './stream-services/_base';
+import { customStreamService } from './stream-services/custom';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
 export class Channel extends EventEmitter {
   public id: string;
   public serviceName: ServiceNamesEnum = ServiceNamesEnum.CUSTOM;
-  private serviceObj: BaseStreamService;
+  private serviceObj: BaseStreamService = customStreamService;
   public name: string;
   public link: string;
   public protocol: ProtocolsEnum;
@@ -86,6 +87,8 @@ export class Channel extends EventEmitter {
         const newChannelUrl = new URL(serviceObj.buildChannelLink(channelName));
 
         this.link = newChannelUrl.href;
+
+        return false;
       });
     }
 
