@@ -10,7 +10,6 @@ import { addLogs } from './logs';
 import { printNotification } from './notifications';
 import { config } from './settings-file';
 import {
-  ALLOWED_PROTOCOLS,
   BaseStreamService,
   ProtocolsEnum,
   ServiceNamesEnum,
@@ -53,18 +52,10 @@ export class Channel extends EventEmitter {
 
     const protocol = channelURL.protocol.toLowerCase() as ProtocolsEnum;
 
-    if (!ALLOWED_PROTOCOLS.includes(protocol)) {
-      throw Error(`Only [${ALLOWED_PROTOCOLS}] are allowed.`);
-    }
-
     this.protocol = protocol;
 
-    if (channelURL.host.length < 1) {
+    if (channelURL.host.length === 0) {
       throw Error(`Hostname can't be empty.`);
-    }
-
-    if (channelURL.pathname.length < 2) {
-      throw Error(`Pathname can't be empty.`);
     }
 
     for (const serviceObj of REGISTERED_SERVICES) {

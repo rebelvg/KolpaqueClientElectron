@@ -16,8 +16,6 @@ export enum ProtocolsEnum {
   HTTPS = 'https:',
 }
 
-export const ALLOWED_PROTOCOLS = [...Object.values(ProtocolsEnum)];
-
 export abstract class BaseStreamService {
   public name: ServiceNamesEnum;
   public protocols: ProtocolsEnum[];

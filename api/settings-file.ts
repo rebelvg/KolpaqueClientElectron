@@ -132,7 +132,9 @@ ipcMain.on('getSettingSync', (event, settingName) => {
     return (event.returnValue = null);
   }
 
-  return (event.returnValue = config.settings[settingName]);
+  event.returnValue = config.settings[settingName];
+
+  return;
 });
 
 ipcMain.on('config_find', (event, query) => {

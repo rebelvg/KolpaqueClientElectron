@@ -139,6 +139,10 @@ export class Config extends EventEmitter {
   constructor() {
     super();
 
+    this.run();
+  }
+
+  private run() {
     this.readFile();
 
     this.saveLoop();
@@ -192,6 +196,8 @@ export class Config extends EventEmitter {
       });
     } catch (error) {
       addLogs(error);
+
+      throw error;
     }
   }
 

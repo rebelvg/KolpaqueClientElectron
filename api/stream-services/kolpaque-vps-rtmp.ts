@@ -2,8 +2,39 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { Channel } from '../channel-class';
-import { getKlpqVpsStats } from './kolpaque-vps-http';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
+import { klpqStreamClient } from '../api-clients';
+
+async function getKlpqStatsBase(
+  channel: Channel,
+  printBalloon: boolean,
+): Promise<void> {
+  const channelData = await klpqStreamClient.getChannel(
+    channel.name,
+    channel.host(),
+  );
+
+  if (!channelData) {
+    return;
+  }
+
+  if (channelData.isLive) {
+    channel.setOnline(printBalloon);
+  } else {
+    channel.setOffline();
+  }
+}
+
+export async function getKlpqVpsStats(
+  channels: Channel[],
+  printBalloon: boolean,
+): Promise<void> {
+  await Promise.all(
+    channels.map((channel) => {
+      return getKlpqStatsBase(channel, printBalloon);
+    }),
+  );
+}
 
 export class KolpaqueVpsRtmpStreamService implements BaseStreamService {
   public name = ServiceNamesEnum.KLPQ_VPS_RTMP;
