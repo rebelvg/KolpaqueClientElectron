@@ -128,7 +128,7 @@ export class TwitchStreamService implements BaseStreamService {
     return `https://www.twitch.tv/${channel.name}/chat`;
   };
   public icon = fs.readFileSync(
-    path.normalize(path.join(process.cwd(), 'icons', 'twitch.png')),
+    path.normalize(path.join(__dirname, '../../icons', 'twitch.png')),
     {
       encoding: null,
     },

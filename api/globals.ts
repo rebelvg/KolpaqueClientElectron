@@ -11,7 +11,7 @@ import { YoutubeUserStreamService } from './stream-services/youtube-user';
 import { BaseStreamService } from './stream-services/_base';
 
 const packageJson = JSON.parse(
-  fs.readFileSync(path.resolve(process.cwd(), 'package.json'), {
+  fs.readFileSync(path.resolve(__dirname, '../package.json'), {
     encoding: 'utf-8',
   }),
 );

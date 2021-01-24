@@ -59,7 +59,7 @@ export class YoutubeUserStreamService implements BaseStreamService {
     return channel.link;
   };
   public icon = fs.readFileSync(
-    path.normalize(path.join(process.cwd(), 'icons', 'youtube.png')),
+    path.normalize(path.join(__dirname, '../../icons', 'youtube.png')),
     {
       encoding: null,
     },

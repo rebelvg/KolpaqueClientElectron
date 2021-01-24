@@ -45,13 +45,13 @@ ipcMain.once('client_ready', async () => {
   addLogs('init_done');
 });
 
-const iconPath = path.normalize(path.join(process.cwd(), 'icons', 'icon.png'));
+const iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
 let iconPathTray = path.normalize(
-  path.join(process.cwd(), 'icons', 'icon32.png'),
+  path.join(__dirname, '../icons', 'icon32.png'),
 );
 
 export const iconPathBalloon = path.normalize(
-  path.join(process.cwd(), 'icons', 'icon.png'),
+  path.join(__dirname, '../icons', 'icon.png'),
 );
 
 if (process.platform === 'darwin') {
@@ -59,7 +59,7 @@ if (process.platform === 'darwin') {
   app.dock.hide();
 
   iconPathTray = path.normalize(
-    path.join(process.cwd(), 'icons', 'iconTemplate.png'),
+    path.join(__dirname, '../icons', 'iconTemplate.png'),
   );
 }
 
@@ -104,7 +104,7 @@ function createWindow(): void {
   } else {
     mainWindow.loadURL(
       url.format({
-        pathname: path.join(process.cwd(), 'dist-app', 'index.html'),
+        pathname: path.join(__dirname, '../dist-app', 'index.html'),
         protocol: 'file:',
         slashes: true,
       }),
