@@ -6,7 +6,7 @@ import { Channel } from '../channel-class';
 import { youtubeClient } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 
-export async function getYoutubeStatsBase(channelId: string): Promise<boolean> {
+export async function getStatsBase(channelId: string): Promise<boolean> {
   const data = await youtubeClient.getStreams(channelId);
 
   if (!data) {
@@ -20,7 +20,7 @@ export async function getYoutubeStatsBase(channelId: string): Promise<boolean> {
   return true;
 }
 
-async function getYoutubeStatsUser(
+async function getStats(
   channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
@@ -34,7 +34,7 @@ async function getYoutubeStatsUser(
 
       const channelStatuses = await Promise.all(
         data.items.map(({ id }) => {
-          return getYoutubeStatsBase(id);
+          return getStatsBase(id);
         }),
       );
 
@@ -47,29 +47,17 @@ async function getYoutubeStatsUser(
   );
 }
 
-export class YoutubeUserStreamService implements BaseStreamService {
+export class YoutubeUserStreamService extends BaseStreamService {
   public name = ServiceNamesEnum.YOUTUBE_USER;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.youtube.com', 'youtube.com'];
   public paths = [/^\/user\/(\S+)\/+/gi, /^\/user\/(\S+)\/*/gi];
-  public embedLink = (channel: Channel) => {
-    return channel.link;
-  };
-  public chatLink = (channel: Channel) => {
-    return channel.link;
-  };
   public icon = fs.readFileSync(
     path.normalize(path.join(__dirname, '../../icons', 'youtube.png')),
     {
       encoding: null,
     },
   );
-  public play = (channel: Channel) => {
-    return {
-      playLink: channel._customPlayUrl || channel.link,
-      params: [],
-    };
-  };
   public playLQ = (channel: Channel) => {
     const { playLink, params } = this.play(channel);
 
@@ -80,6 +68,5 @@ export class YoutubeUserStreamService implements BaseStreamService {
   };
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
-  public checkChannels = getYoutubeStatsUser;
-  public getInfo = () => null;
+  public getStats = getStats;
 }

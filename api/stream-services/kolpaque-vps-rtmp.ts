@@ -5,7 +5,7 @@ import { Channel } from '../channel-class';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { klpqStreamClient } from '../api-clients';
 
-async function getKlpqStatsBase(
+async function getStatsBase(
   channel: Channel,
   printBalloon: boolean,
 ): Promise<void> {
@@ -25,18 +25,18 @@ async function getKlpqStatsBase(
   }
 }
 
-export async function getKlpqVpsStats(
+async function getStats(
   channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
   await Promise.all(
     channels.map((channel) => {
-      return getKlpqStatsBase(channel, printBalloon);
+      return getStatsBase(channel, printBalloon);
     }),
   );
 }
 
-export class KolpaqueVpsRtmpStreamService implements BaseStreamService {
+export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
   public name = ServiceNamesEnum.KLPQ_VPS_RTMP;
   public protocols = [ProtocolsEnum.RTMP];
   public hosts = [
@@ -50,7 +50,6 @@ export class KolpaqueVpsRtmpStreamService implements BaseStreamService {
   public embedLink = (channel: Channel): string => {
     return `http://klpq.men/stream/${channel.name}`;
   };
-  public chatLink = () => null;
   public icon = fs.readFileSync(
     path.normalize(path.join(__dirname, '../../icons', 'klpq_vps.png')),
     {
@@ -73,6 +72,5 @@ export class KolpaqueVpsRtmpStreamService implements BaseStreamService {
   };
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
-  public checkChannels = getKlpqVpsStats;
-  public getInfo = () => null;
+  public getStats = getStats;
 }

@@ -6,7 +6,7 @@ import { config } from '../settings-file';
 import { addLogs } from '../logs';
 import { BaseStreamService, ServiceNamesEnum } from './_base';
 
-async function getCustomStats(
+async function getStats(
   channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
@@ -47,33 +47,12 @@ async function getCustomStats(
   }
 }
 
-export class CustomStreamService implements BaseStreamService {
+export class CustomStreamService extends BaseStreamService {
   public name = ServiceNamesEnum.CUSTOM;
   public protocols = [];
   public hosts = [];
   public paths = [];
-  public channelNamePath = 0;
-  public embedLink = (channel: Channel) => {
-    return channel.link;
-  };
-  public chatLink = () => null;
-  public icon = null;
-  public play = (channel: Channel) => {
-    return {
-      playLink: channel._customPlayUrl || channel.link,
-      params: [],
-    };
-  };
-  public playLQ = (channel: Channel) => {
-    const { playLink, params } = this.play(channel);
-
-    return {
-      playLink,
-      params,
-    };
-  };
   public checkLiveTimeout = 120;
   public checkLiveConfirmation = 3;
-  public checkChannels = getCustomStats;
-  public getInfo = () => null;
+  public getStats = getStats;
 }

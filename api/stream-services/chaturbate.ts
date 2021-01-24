@@ -2,7 +2,7 @@ import { Channel } from '../channel-class';
 import { chaturbateClient } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 
-async function getChaturbateStats(
+async function getStats(
   channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
@@ -23,32 +23,12 @@ async function getChaturbateStats(
   );
 }
 
-export class ChaturbateStreamService implements BaseStreamService {
+export class ChaturbateStreamService extends BaseStreamService {
   public name = ServiceNamesEnum.CHATURBATE;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.chaturbate.com', 'chaturbate.com'];
   public paths = [/^\/(\S+)\/+/gi, /^\/(\S+)\/*/gi];
-  public embedLink = (channel: Channel) => {
-    return channel.link;
-  };
-  public chatLink = () => null;
-  public icon = null;
-  public play = (channel: Channel) => {
-    return {
-      playLink: channel._customPlayUrl || channel.link,
-      params: [],
-    };
-  };
-  public playLQ = (channel: Channel) => {
-    const { playLink, params } = this.play(channel);
-
-    return {
-      playLink,
-      params,
-    };
-  };
   public checkLiveTimeout = 120;
   public checkLiveConfirmation = 3;
-  public checkChannels = getChaturbateStats;
-  public getInfo = () => null;
+  public getStats = getStats;
 }

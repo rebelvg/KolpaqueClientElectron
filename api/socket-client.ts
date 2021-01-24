@@ -19,34 +19,36 @@ const io = SocketClient(KLPQ_SERVICE_URL);
 
 export const SOCKET_CLIENT_ID = uuid.v4();
 
-io.on('twitch_user', (user: ITwitchUser) => {
-  addLogs('socket_got_twitch_user', user);
+export function run() {
+  io.on('twitch_user', (user: ITwitchUser) => {
+    addLogs('socket_got_twitch_user', user);
 
-  twitchClient.setAccessToken(user.accessToken);
-  twitchClient.setRefreshToken(user.refreshToken);
+    twitchClient.setAccessToken(user.accessToken);
+    twitchClient.setRefreshToken(user.refreshToken);
 
-  printNotification('Twitch', 'Login Successful');
-});
+    printNotification('Twitch', 'Login Successful');
+  });
 
-io.on('youtube_user', (user: ITwitchUser) => {
-  addLogs('socket_got_youtube_user', user);
+  io.on('youtube_user', (user: ITwitchUser) => {
+    addLogs('socket_got_youtube_user', user);
 
-  youtubeClient.setAccessToken(user.accessToken);
-  youtubeClient.setRefreshToken(user.refreshToken);
+    youtubeClient.setAccessToken(user.accessToken);
+    youtubeClient.setRefreshToken(user.refreshToken);
 
-  printNotification('Youtube', 'Login Successful');
-});
+    printNotification('Youtube', 'Login Successful');
+  });
 
-io.on('klpq_user', (signedJwt: string) => {
-  addLogs('socket_got_klpq_user', signedJwt);
+  io.on('klpq_user', (signedJwt: string) => {
+    addLogs('socket_got_klpq_user', signedJwt);
 
-  klpqServiceClient.setUser(signedJwt);
+    klpqServiceClient.setUser(signedJwt);
 
-  printNotification('KLPQ Service', 'Login Successful');
-});
+    printNotification('KLPQ Service', 'Login Successful');
+  });
 
-io.on('connect', () => {
-  addLogs('socket_connected');
+  io.on('connect', () => {
+    addLogs('socket_connected');
 
-  io.emit('request_id', SOCKET_CLIENT_ID);
-});
+    io.emit('request_id', SOCKET_CLIENT_ID);
+  });
+}

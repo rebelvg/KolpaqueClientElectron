@@ -21,13 +21,7 @@ fixPath();
 import { config } from './settings-file';
 import { launchPlayerLink } from './channel-play';
 import { rebuildIconMenu } from './tray-icon';
-import './socket-client';
-import './channel-info';
 
-import './channel-check';
-import './import';
-import './version-check';
-import './logs';
 import { addLogs, crashLogPath } from './logs';
 import { init } from './client-init';
 

@@ -116,9 +116,27 @@ const sortChannels = (
   return sortedChannels;
 };
 
+interface ISettings {
+  LQ: boolean;
+  showNotifications: boolean;
+  minimizeAtStart: boolean;
+  launchOnBalloonClick: boolean;
+  size: number[];
+  twitchImport: string[];
+  nightMode: boolean;
+  sortType: string;
+  sortReverse: boolean;
+  confirmAutoStart: boolean;
+  playInWindow: boolean;
+  useStreamlinkForCustomChannels: boolean;
+  twitchRefreshToken: string;
+  youtubeTosConsent: boolean;
+  youtubeRefreshToken: string;
+}
+
 export class Config extends EventEmitter {
   public channels: Channel[] = [];
-  public settings = {
+  public settings: ISettings = {
     LQ: false,
     showNotifications: true,
     minimizeAtStart: false,

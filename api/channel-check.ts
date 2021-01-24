@@ -24,7 +24,7 @@ async function checkChannels(
         serviceName: service.name,
       });
 
-      await service.checkChannels(filteredChannels, printBalloon);
+      await service.getStats(filteredChannels, printBalloon);
     }),
   );
 }
@@ -38,7 +38,7 @@ async function checkService(
       serviceName: service.name,
     });
 
-    await service.checkChannels(channels, printBalloon);
+    await service.getStats(channels, printBalloon);
   } catch (error) {
     addLogs(error);
   }

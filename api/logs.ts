@@ -37,6 +37,8 @@ export function addLogs(...log: any[]): void {
   logs = _.takeRight(logs, 20);
 }
 
-setInterval(() => {
-  addLogs(`memory usage`, _.forEach(process.memoryUsage()));
-}, 100 * 1000);
+export function run() {
+  setInterval(() => {
+    addLogs(`memory usage`, _.forEach(process.memoryUsage()));
+  }, 100 * 1000);
+}

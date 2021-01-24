@@ -3,10 +3,16 @@ import * as fs from 'fs';
 import * as _ from 'lodash';
 
 import { Channel } from '../channel-class';
-import { commonClient, twitchClient, TWITCH_CHUNK_LIMIT } from '../api-clients';
+import {
+  commonClient,
+  ITwitchFollowedChannel,
+  twitchClient,
+  TWITCH_CHUNK_LIMIT,
+} from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
+import { config } from '../settings-file';
 
-async function getTwitchStats(
+async function getStats(
   channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
@@ -70,7 +76,7 @@ async function getTwitchStats(
   );
 }
 
-async function getTwitchInfoAsync(channels: Channel[]): Promise<void> {
+async function getInfo(channels: Channel[]): Promise<void> {
   await twitchClient.refreshAccessToken();
 
   const filteredChannels = _.filter(channels, (channel) => !channel._icon);
@@ -116,16 +122,139 @@ async function getTwitchInfoAsync(channels: Channel[]): Promise<void> {
   );
 }
 
-export class TwitchStreamService implements BaseStreamService {
+async function addImportedChannels(
+  channels: ITwitchFollowedChannel[],
+): Promise<Channel[]> {
+  const channelsAdded = [];
+
+  const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
+
+  await Promise.all(
+    chunkedChannels.map(async (channels) => {
+      const userData = await twitchClient.getUsersById(
+        channels.map((channel) => channel.to_id),
+      );
+
+      if (!userData) {
+        return;
+      }
+
+      for (const importedChannel of userData.data) {
+        const channel = config.addChannelLink(
+          `https://twitch.tv/${importedChannel.login}`,
+          false,
+        );
+
+        if (channel) {
+          channelsAdded.push(channel);
+        }
+      }
+    }),
+  );
+
+  return channelsAdded;
+}
+
+async function importBase(
+  channelName: string,
+  emitEvent: boolean,
+): Promise<Channel[]> {
+  await twitchClient.refreshAccessToken();
+
+  if (!channelName) {
+    return [];
+  }
+
+  channelName = channelName.trim();
+
+  const userData = await twitchClient.getUsersByLogin([channelName]);
+
+  if (!userData) {
+    return [];
+  }
+
+  const channelsAddedAll: Channel[] = [];
+
+  const addedChannel = config.addChannelLink(
+    `https://www.twitch.tv/${channelName}`,
+    false,
+  );
+
+  if (addedChannel) {
+    channelsAddedAll.push(addedChannel);
+  }
+
+  const channelsToAdd = [];
+
+  await Promise.all(
+    userData.data.map(async ({ id }) => {
+      let cursor = '';
+
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const followedChannelsData = await twitchClient.getFollowedChannels(
+          id,
+          cursor,
+        );
+
+        if (!followedChannelsData) {
+          break;
+        }
+
+        const followedChannels = followedChannelsData.data;
+
+        cursor = followedChannelsData.pagination.cursor;
+
+        if (followedChannels.length === 0) {
+          break;
+        }
+
+        followedChannels.forEach((followedChannel) =>
+          channelsToAdd.push(followedChannel),
+        );
+
+        if (!cursor) {
+          break;
+        }
+      }
+    }),
+  );
+
+  const channelsAdded = await addImportedChannels(channelsToAdd);
+
+  channelsAdded.forEach((channel) => channelsAddedAll.push(channel));
+
+  if (emitEvent) {
+    config.emit('channel_added_channels', channelsAddedAll);
+  }
+
+  return channelsAddedAll;
+}
+
+async function doImport(
+  channelNames: string[],
+  emitEvent: boolean,
+): Promise<Channel[]> {
+  const channels: Channel[] = [];
+
+  await Promise.all(
+    _.map(channelNames, async (channelName) => {
+      const importedChannels = await importBase(channelName, emitEvent);
+
+      channels.push(...importedChannels);
+    }),
+  );
+
+  return channels;
+}
+
+export class TwitchStreamService extends BaseStreamService {
   public name = ServiceNamesEnum.TWITCH;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'];
   public paths = [/^\/(\S+)\/+/gi, /^\/(\S+)\/*/gi];
-  public embedLink = (channel: Channel) => {
-    return channel.link;
-  };
   public chatLink = (channel: Channel): string => {
-    return `https://www.twitch.tv/${channel.name}/chat`;
+    return `${this.embedLink(channel)}/chat`;
   };
   public icon = fs.readFileSync(
     path.normalize(path.join(__dirname, '../../icons', 'twitch.png')),
@@ -149,6 +278,7 @@ export class TwitchStreamService implements BaseStreamService {
   };
   public checkLiveTimeout = 30;
   public checkLiveConfirmation = 3;
-  public checkChannels = getTwitchStats;
-  public getInfo = getTwitchInfoAsync;
+  public getStats = getStats;
+  public getInfo = getInfo;
+  public doImport = doImport;
 }

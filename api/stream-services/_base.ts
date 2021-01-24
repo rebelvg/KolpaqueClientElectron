@@ -16,7 +16,7 @@ export enum ProtocolsEnum {
   HTTPS = 'https:',
 }
 
-export abstract class BaseStreamService {
+abstract class AbstractStreamService {
   public name: ServiceNamesEnum;
   public protocols: ProtocolsEnum[];
   public hosts: string[];
@@ -26,11 +26,50 @@ export abstract class BaseStreamService {
   public icon: Buffer;
   public play: (channel: Channel) => { playLink: string; params: string[] };
   public playLQ: (channel: Channel) => { playLink: string; params: string[] };
-  public checkLiveTimeout = 0;
-  public checkLiveConfirmation = 0;
-  public checkChannels: (
+  public checkLiveTimeout: number;
+  public checkLiveConfirmation: number;
+  public getStats: (
     channels: Channel[],
     printBalloon: boolean,
   ) => Promise<void>;
   public getInfo: (channels: Channel[]) => Promise<void>;
+  public doImport: (
+    channels: string[],
+    emitEvent: boolean,
+  ) => Promise<Channel[]>;
+}
+
+export class BaseStreamService implements AbstractStreamService {
+  public name = ServiceNamesEnum.CUSTOM;
+  public protocols = [];
+  public hosts = [];
+  public paths = [];
+  public embedLink = (channel: Channel) => {
+    return channel.link;
+  };
+  public chatLink = (channel: Channel) => {
+    return this.embedLink(channel);
+  };
+  public icon = null;
+  public play = (channel: Channel) => {
+    return {
+      playLink: channel._customPlayUrl || channel.link,
+      params: [],
+    };
+  };
+  public playLQ = (channel: Channel) => {
+    const { playLink, params } = this.play(channel);
+
+    return {
+      playLink,
+      params,
+    };
+  };
+  public checkLiveTimeout = 0;
+  public checkLiveConfirmation = 0;
+  public getStats = (channels: Channel[], printBalloon: boolean) => null;
+  public getInfo = (channels: Channel[]) => null;
+  public doImport = async (channels: string[], emitEvent: boolean) => {
+    return await [];
+  };
 }
