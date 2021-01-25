@@ -1,5 +1,4 @@
 import { Channel } from '../channel-class';
-import { config } from '../settings-file';
 
 export enum ServiceNamesEnum {
   KLPQ_VPS_RTMP = 'klpq-vps-rtmp',
