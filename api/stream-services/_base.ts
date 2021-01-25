@@ -88,9 +88,7 @@ export class BaseStreamService implements AbstractStreamService {
     return await [];
   }
   public doImportSettings(emitEvent: boolean) {
-    const channelNames = config.settings.twitchImport;
-
-    return this.doImport(channelNames, true);
+    return this.doImport([], emitEvent);
   }
   public buildChannelLink(channelName: string): string {
     throw 'not_implemented';

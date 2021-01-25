@@ -226,6 +226,10 @@ export interface IKlpqStreamChannel {
   isLive: boolean;
 }
 
+export interface IKlpqChannelsList {
+  channels: string[];
+}
+
 class KlpqStreamClient {
   private baseUrl = 'https://stats.klpq.men/api';
 
@@ -237,6 +241,24 @@ class KlpqStreamClient {
 
     try {
       const { data } = await axios.get<IKlpqStreamChannel>(url);
+
+      return data;
+    } catch (error) {
+      addLogs(
+        new Error(error.message),
+        error?.response?.status,
+        error?.response?.data,
+      );
+
+      return;
+    }
+  }
+
+  public async getChannelsList(): Promise<IKlpqChannelsList> {
+    const url = `${this.baseUrl}/channels/list`;
+
+    try {
+      const { data } = await axios.get<IKlpqChannelsList>(url);
 
       return data;
     } catch (error) {

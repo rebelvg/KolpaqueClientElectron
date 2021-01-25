@@ -41,9 +41,7 @@ async function twitchImport(channelName: string): Promise<boolean> {
 export async function loop(): Promise<void> {
   await Promise.all(
     REGISTERED_SERVICES.map(async (service) => {
-      if (service.name === ServiceNamesEnum.TWITCH) {
-        await service.doImportSettings(false);
-      }
+      await service.doImportSettings(false);
     }),
   );
 
@@ -54,9 +52,7 @@ export async function loop(): Promise<void> {
 
       await Promise.all(
         REGISTERED_SERVICES.map(async (service) => {
-          if (service.name === ServiceNamesEnum.TWITCH) {
-            await service.doImportSettings(true);
-          }
+          await service.doImportSettings(true);
         }),
       );
     }

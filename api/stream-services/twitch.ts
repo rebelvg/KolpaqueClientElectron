@@ -141,7 +141,7 @@ async function addImportedChannels(
 
       for (const importedChannel of userData.data) {
         const channel = config.addChannelLink(
-          `https://twitch.tv/${importedChannel.login}`,
+          `${twitchStreamService.buildChannelLink(importedChannel.login)}`,
           false,
         );
 
@@ -281,6 +281,11 @@ class TwitchStreamService extends BaseStreamService {
   public getStats = getStats;
   public getInfo = getInfo;
   public doImport = doImport;
+  public doImportSettings(emitEvent: boolean) {
+    const channelNames = config.settings.twitchImport;
+
+    return this.doImport(channelNames, emitEvent);
+  }
   public buildChannelLink(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/${channelName}`;
   }

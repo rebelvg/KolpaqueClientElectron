@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { Channel } from '../channel-class';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { klpqStreamClient } from '../api-clients';
+import { config } from '../settings-file';
 
 async function getStatsBase(
   channel: Channel,
@@ -34,6 +35,39 @@ async function getStats(
       return getStatsBase(channel, printBalloon);
     }),
   );
+}
+
+async function doImport(
+  this: BaseStreamService,
+  channelNames: string[],
+  emitEvent: boolean,
+): Promise<Channel[]> {
+  const res = await klpqStreamClient.getChannelsList();
+
+  if (!res) {
+    return;
+  }
+
+  const { channels } = res;
+
+  const channelsAdded = [];
+
+  for (const channelName of channels) {
+    const channel = config.addChannelLink(
+      `${this.buildChannelLink(channelName)}`,
+      false,
+    );
+
+    if (channel) {
+      channelsAdded.push(channel);
+    }
+  }
+
+  if (emitEvent) {
+    config.emit('channel_added_channels', channelsAdded);
+  }
+
+  return channelsAdded;
 }
 
 export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
@@ -73,6 +107,7 @@ export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
   public getStats = getStats;
+  public doImport = doImport;
   public buildChannelLink(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/live/${channelName}`;
   }

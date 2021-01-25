@@ -24,6 +24,9 @@ export class KolpaqueVpsMpdStreamService extends KolpaqueVpsRtmpStreamService {
       params,
     };
   }
+  public doImport = async () => {
+    return await [];
+  };
   public buildChannelLink(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/stream/live/${channelName}/mpd`;
   }

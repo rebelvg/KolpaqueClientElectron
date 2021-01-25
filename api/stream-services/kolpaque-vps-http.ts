@@ -11,6 +11,9 @@ export class KolpaqueVpsHttpStreamService extends KolpaqueVpsRtmpStreamService {
     /^\/stream\/(\S+)\/$/gi,
     /^\/stream\/(\S+)$/gi,
   ];
+  public doImport = async () => {
+    return await [];
+  };
   public buildChannelLink(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/stream/${channelName}`;
   }
