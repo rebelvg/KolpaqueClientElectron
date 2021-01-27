@@ -1,33 +1,9 @@
 import * as _ from 'lodash';
 
 import { config } from './settings-file';
-import { Channel } from './channel-class';
 import { addLogs } from './logs';
 import { REGISTERED_SERVICES } from './globals';
 import { BaseStreamService } from './stream-services/_base';
-
-config.on('channel_added', async (channel: Channel) => {
-  await checkChannels([channel], false);
-});
-
-config.on('channel_added_channels', async (channels: Channel[]) => {
-  await checkChannels(channels, false);
-});
-
-async function checkChannels(
-  channels: Channel[],
-  printBalloon: boolean,
-): Promise<void> {
-  await Promise.all(
-    REGISTERED_SERVICES.map(async (service) => {
-      const filteredChannels = _.filter(channels, {
-        serviceName: service.name,
-      });
-
-      await service.getStats(filteredChannels, printBalloon);
-    }),
-  );
-}
 
 async function checkService(
   service: BaseStreamService,

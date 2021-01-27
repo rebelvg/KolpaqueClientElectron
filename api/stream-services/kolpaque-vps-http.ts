@@ -31,7 +31,7 @@ async function doImport(
   }
 
   if (emitEvent) {
-    config.emit('channel_added_channels', channelsAdded);
+    await config.addChannels(channelsAdded);
   }
 
   return channelsAdded;

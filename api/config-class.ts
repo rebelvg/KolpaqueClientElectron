@@ -165,14 +165,6 @@ export class Config extends EventEmitter {
 
     this.saveLoop();
 
-    this.on('channel_added', () => {
-      app['mainWindow'].webContents.send('channel_addSync');
-    });
-
-    this.on('channel_added_channels', () => {
-      app['mainWindow'].webContents.send('channel_addSync');
-    });
-
     this.on('channel_removed', () => {
       app['mainWindow'].webContents.send('channel_removeSync');
     });
@@ -193,19 +185,19 @@ export class Config extends EventEmitter {
     });
   }
 
-  private readFile(): void {
+  private async readFile(): Promise<void> {
     try {
       const file = fs.readFileSync(settingsPath, 'utf8');
 
       const parseJson = JSON.parse(file);
 
-      _.forEach(parseJson.channels, (parsedChannel) => {
-        const channel = this.addChannelLink(parsedChannel.link, false);
+      for (const parsedChannel of parseJson.channels) {
+        const channel = await this.addChannelLink(parsedChannel.link, false);
 
         if (channel) {
-          channel.update(parsedChannel);
+          await channel.update(parsedChannel);
         }
-      });
+      }
 
       _.forEach(this.settings, (settingValue, settingName) => {
         if (parseJson.settings.hasOwnProperty(settingName)) {
@@ -225,7 +217,10 @@ export class Config extends EventEmitter {
     }, 5 * 60 * 1000);
   }
 
-  addChannelLink(channelLink: string, emitEvent = true): Channel {
+  async addChannelLink(
+    channelLink: string,
+    emitEvent = true,
+  ): Promise<Channel> {
     const channel = Config.buildChannel(channelLink);
 
     if (!channel) {
@@ -243,7 +238,7 @@ export class Config extends EventEmitter {
     this.channels.push(channel);
 
     if (emitEvent) {
-      this.emit('channel_added', channel);
+      await this.addChannels([channel]);
     }
 
     return channel;
@@ -365,5 +360,13 @@ export class Config extends EventEmitter {
 
       return false;
     }
+  }
+
+  public async addChannels(channels: Channel[]) {
+    await Promise.all(channels.map((channel) => channel.getStats(false)));
+
+    await Promise.all(channels.map((channel) => channel.getInfo()));
+
+    app['mainWindow'].webContents.send('channel_addSync');
   }
 }

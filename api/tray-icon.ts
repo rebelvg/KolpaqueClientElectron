@@ -31,12 +31,12 @@ export function rebuildIconMenu(): Menu {
         ? channel.visibleName
         : `${channel.visibleName} (LQ)`,
       type: 'normal',
-      click: (
+      click: async (
         menuItem: MenuItem,
         browserWindow: BrowserWindow,
         event: any,
-      ): void => {
-        channel.emit('play', event.ctrlKey, event.shiftKey ? true : null);
+      ) => {
+        await channel.startPlaying(event.ctrlKey, event.shiftKey ? true : null);
       },
       icon: channel._trayIcon,
     };

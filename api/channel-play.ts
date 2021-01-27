@@ -11,64 +11,39 @@ import { addLogs } from './logs';
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
 
-function setChannelEvents(channel: Channel): void {
-  channel.on('setting_changed', (settingName, settingValue) => {
-    if (settingName === 'isLive' && !settingValue) {
-      _.forEach(channel._windows, (window: BrowserWindow) => window.close());
-
-      channel._windows = [];
-    }
-  });
-
-  channel.on('play', async (altQuality = false, autoRestart = null) => {
-    if (config.settings.playInWindow) {
-      if (!(await playInWindow(channel))) {
-        launchPlayerObj(channel, altQuality, autoRestart);
-      }
-    } else {
-      launchPlayerObj(channel, altQuality, autoRestart);
-    }
-  });
-}
-
 ipcMain.on(
   'channel_play',
-  (event, id, altQuality = false, autoRestart = null) => {
+  async (event, id, altQuality = false, autoRestart = null) => {
     const channel = config.findById(id);
 
     if (!channel) {
       return false;
     }
 
-    channel.emit('play', altQuality, autoRestart);
+    await channel.startPlaying(altQuality, autoRestart);
   },
 );
 
-ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
-  const channel = config.findById(id);
+ipcMain.on(
+  'channel_changeSettingSync',
+  (event, id, settingName, settingValue) => {
+    const channel = config.findById(id);
 
-  if (!channel) {
-    return false;
-  }
+    if (!channel) {
+      return false;
+    }
 
-  if (
-    channel._processes.length > 0 &&
-    settingName === 'autoRestart' &&
-    settingValue
-  ) {
-    channel.changeSetting('onAutoRestart', true);
-  }
-});
-
-_.forEach(config.channels, setChannelEvents);
-
-config.on('channel_added', setChannelEvents);
-
-config.on('channel_added_channels', (channels: Channel[]) => {
-  channels.forEach((channel) => {
-    setChannelEvents(channel);
-  });
-});
+    if (
+      channel._processes.length > 0 &&
+      settingName === 'autoRestart' &&
+      settingValue
+    ) {
+      channel.changeSettings({
+        onAutoRestart: true,
+      });
+    }
+  },
+);
 
 export function launchPlayerLink(channelLink: string, LQ = null): boolean {
   const channel = Config.buildChannel(channelLink);
@@ -82,7 +57,7 @@ export function launchPlayerLink(channelLink: string, LQ = null): boolean {
   return true;
 }
 
-async function playInWindow(channel: Channel): Promise<boolean> {
+export async function playInWindow(channel: Channel): Promise<boolean> {
   let window: BrowserWindow;
 
   const embedLink = channel.embedLink();
@@ -116,22 +91,26 @@ async function playInWindow(channel: Channel): Promise<boolean> {
   return !!window;
 }
 
-function launchPlayerObj(
+export function launchPlayerObj(
   channel: Channel,
   altQuality = false,
   autoRestart: boolean = null,
-): void {
+): ChildProcess {
   const LQ = !altQuality ? config.settings.LQ : !config.settings.LQ;
 
   if (autoRestart === null) {
-    channel.changeSetting('onAutoRestart', channel.autoRestart);
+    channel.changeSettings({
+      onAutoRestart: channel.autoRestart,
+    });
   } else {
-    channel.changeSetting('onAutoRestart', autoRestart);
+    channel.changeSettings({
+      onAutoRestart: autoRestart,
+    });
   }
 
   const { playLink, params } = !LQ ? channel.play() : channel.playLQ();
 
-  launchStreamlink(playLink, params, channel);
+  return launchStreamlink(playLink, params, channel);
 }
 
 function launchStreamlink(
@@ -157,7 +136,9 @@ function launchStreamlink(
             message: 'Streamlink not found.',
           });
 
-          channel.changeSetting('onAutoRestart', false);
+          channel.changeSettings({
+            onAutoRestart: false,
+          });
 
           return shell.openExternal(
             `https://github.com/streamlink/streamlink/releases`,
@@ -190,7 +171,9 @@ function launchStreamlink(
       ) {
         launchStreamlink(playLink, params, channel, false);
       } else {
-        channel.changeSetting('onAutoRestart', false);
+        channel.changeSettings({
+          onAutoRestart: false,
+        });
 
         channel._autoRestartAttempts = 0;
       }

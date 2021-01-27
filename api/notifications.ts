@@ -45,11 +45,11 @@ function printNewNotification(
   notification.show();
 }
 
-function onBalloonClick(
+async function onBalloonClick(
   title: string,
   content: string,
   channel: Channel,
-): void {
+) {
   addLogs('balloon was clicked.');
 
   if (!config.settings.launchOnBalloonClick) {
@@ -57,7 +57,7 @@ function onBalloonClick(
   }
 
   if (title.indexOf('Stream is Live') === 0) {
-    channel.emit('play');
+    await channel.startPlaying();
   }
 
   if (title.includes('Update Available')) {

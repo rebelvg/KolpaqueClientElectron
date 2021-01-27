@@ -22,40 +22,20 @@ ipcMain.on('channel_remove', (event, id) => {
   return config.removeChannelById(id);
 });
 
-ipcMain.on('channel_changeSetting', (event, id, settingName, settingValue) => {
-  const channel = config.findById(id);
-
-  if (!channel) {
-    return false;
-  }
-
-  if (settingName === 'visibleName') {
-    if (!settingValue) {
-      settingValue = channel.name;
-    }
-  }
-
-  channel.changeSetting(settingName, settingValue);
-
-  return;
-});
-
 ipcMain.on(
   'channel_changeSettingSync',
   (event, id, settingName, settingValue) => {
     const channel = config.findById(id);
 
     if (!channel) {
-      return (event.returnValue = false);
+      event.returnValue = false;
+
+      return;
     }
 
-    if (settingName === 'visibleName') {
-      if (!settingValue) {
-        settingValue = channel.name;
-      }
-    }
-
-    event.returnValue = channel.changeSetting(settingName, settingValue);
+    event.returnValue = channel.changeSettings({
+      [settingName]: settingValue,
+    });
 
     return;
   },

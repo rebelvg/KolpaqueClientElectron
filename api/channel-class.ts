@@ -1,4 +1,4 @@
-import { app, dialog } from 'electron';
+import { app, BrowserWindow, dialog } from 'electron';
 import { URL } from 'url';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
@@ -15,6 +15,7 @@ import {
   ServiceNamesEnum,
 } from './stream-services/_base';
 import { customStreamService } from './stream-services/custom';
+import { launchPlayerObj, playInWindow } from './channel-play';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
@@ -93,21 +94,9 @@ export class Channel extends EventEmitter {
     }
 
     this.visibleName = this.name;
-
-    this.on('setting_changed', (settingName, settingValue, send) => {
-      if (send) {
-        app['mainWindow'].webContents.send('channel_changeSettingSync');
-      }
-    });
-
-    this.on('settings_changed', (send) => {
-      if (send) {
-        app['mainWindow'].webContents.send('channel_changeSettingSync');
-      }
-    });
   }
 
-  public update(channelConfig: Record<string, unknown>): void {
+  public update(channelConfig: Partial<Channel>): void {
     _.forEach(channelConfig, (settingValue, settingName) => {
       if (channelValidate.includes(settingName)) {
         if (settingName === 'visibleName' && !settingValue) {
@@ -119,31 +108,26 @@ export class Channel extends EventEmitter {
     });
   }
 
-  public changeSetting(
-    settingName: string,
-    settingValue: unknown,
-    send = true,
-  ): boolean {
+  private changeSetting(settingName: string, settingValue: unknown): boolean {
     if (!this.hasOwnProperty(settingName)) {
       return false;
     }
 
     this[settingName] = settingValue;
 
-    this.emit('setting_changed', settingName, settingValue, send);
+    this.settingsActions(settingName, settingValue);
 
     return true;
   }
 
-  public changeSettings(
-    settings: Record<string, unknown>,
-    send = true,
-  ): boolean {
+  public changeSettings(settings: Partial<Channel>, send = true): boolean {
     _.forEach(settings, (settingValue, settingName) => {
-      this.changeSetting(settingName, settingValue, false);
+      this.changeSetting(settingName, settingValue);
     });
 
-    this.emit('settings_changed', send);
+    if (send) {
+      app['mainWindow'].webContents.send('channel_changeSettingSync');
+    }
 
     return true;
   }
@@ -193,7 +177,7 @@ export class Channel extends EventEmitter {
     return this.serviceObj.checkLiveConfirmation;
   }
 
-  public setOnline(printBalloon: boolean) {
+  public async setOnline(printBalloon: boolean) {
     this._offlineConfirmations = 0;
 
     if (this.isLive) {
@@ -215,13 +199,13 @@ export class Channel extends EventEmitter {
               message: `${this.link} is trying to auto-start. Confirm?`,
               buttons: ['Ok', 'Cancel'],
             })
-            .then(({ response }) => {
+            .then(async ({ response }) => {
               if (response === 0) {
-                this.emit('play');
+                await this.startPlaying();
               }
             });
         } else {
-          this.emit('play');
+          await this.startPlaying();
         }
       }
     }
@@ -249,5 +233,50 @@ export class Channel extends EventEmitter {
       lastUpdated: Date.now(),
       isLive: false,
     });
+  }
+
+  public async startPlaying(
+    altQuality = false,
+    autoRestart = null,
+  ): Promise<boolean> {
+    if (!config.settings.playInWindow) {
+      const childProcess = launchPlayerObj(this, altQuality, autoRestart);
+
+      return !!childProcess;
+    }
+
+    const wasWindowCreated = await playInWindow(this);
+
+    if (wasWindowCreated) {
+      return true;
+    }
+
+    const childProcess = launchPlayerObj(this, altQuality, autoRestart);
+
+    return !!childProcess;
+  }
+
+  private settingsActions(settingName: string, settingValue: unknown) {
+    if (settingName === 'visibleName') {
+      if (!settingValue) {
+        this[settingName] = this.name;
+      }
+    }
+
+    if (settingName === 'isLive') {
+      if (!settingValue) {
+        _.forEach(this._windows, (window: BrowserWindow) => window.close());
+
+        this._windows = [];
+      }
+    }
+  }
+
+  public async getStats(printBalloon: boolean) {
+    await this.serviceObj.getStats([this], printBalloon);
+  }
+
+  public async getInfo() {
+    await this.serviceObj.getInfo([this]);
   }
 }

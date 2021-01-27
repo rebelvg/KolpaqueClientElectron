@@ -175,7 +175,7 @@ async function importBase(
 
   const channelsAddedAll: Channel[] = [];
 
-  const addedChannel = config.addChannelLink(
+  const addedChannel = await config.addChannelLink(
     twitchStreamService.buildChannelLink(channelName),
     false,
   );
@@ -225,7 +225,7 @@ async function importBase(
   channelsAdded.forEach((channel) => channelsAddedAll.push(channel));
 
   if (emitEvent) {
-    config.emit('channel_added_channels', channelsAddedAll);
+    await config.addChannels(channelsAdded);
   }
 
   return channelsAddedAll;
