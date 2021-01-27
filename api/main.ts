@@ -57,12 +57,14 @@ if (process.platform === 'darwin') {
   );
 }
 
-let mainWindow: BrowserWindow;
+export const main: { mainWindow: BrowserWindow } = {
+  mainWindow: null,
+};
 
 app.setName('Kolpaque Client');
 
 app.on('second-instance', () => {
-  mainWindow.show();
+  main.mainWindow.show();
 });
 
 const lockStatus = app.requestSingleInstanceLock();
@@ -72,7 +74,7 @@ if (!lockStatus) {
 }
 
 function createWindow(): void {
-  mainWindow = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     title: 'Kolpaque Client',
     minWidth: 300,
     minHeight: 400,
@@ -87,7 +89,7 @@ function createWindow(): void {
     },
   });
 
-  app['mainWindow'] = mainWindow;
+  main.mainWindow = mainWindow;
 
   mainWindow.setMenu(null);
 
@@ -131,7 +133,7 @@ function createWindow(): void {
   });
 
   mainWindow.on('closed', () => {
-    mainWindow = null;
+    main.mainWindow = null;
   });
 }
 
@@ -144,7 +146,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (mainWindow === null) {
+  if (main.mainWindow === null) {
     createWindow();
   }
 });
@@ -154,7 +156,7 @@ app.on('ready', () => {
     return;
   }
 
-  mainWindow.hide();
+  main.mainWindow.hide();
 });
 
 export const contextMenuTemplate: any[] = [
@@ -163,7 +165,9 @@ export const contextMenuTemplate: any[] = [
     type: 'normal',
     visible: process.platform === 'linux',
     click: (): void => {
-      mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+      main.mainWindow.isVisible()
+        ? main.mainWindow.hide()
+        : main.mainWindow.show();
     },
   },
   {
@@ -201,7 +205,7 @@ export const contextMenuTemplate: any[] = [
 ];
 
 function toggleHideClient(): void {
-  mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+  main.mainWindow.isVisible() ? main.mainWindow.hide() : main.mainWindow.show();
 }
 
 function showTrayContextMenu(): void {

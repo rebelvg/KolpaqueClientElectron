@@ -1,4 +1,4 @@
-import { app, ipcMain, dialog, shell, BrowserWindow } from 'electron';
+import { ipcMain, dialog, shell, BrowserWindow } from 'electron';
 import { execFile } from 'child_process';
 import * as _ from 'lodash';
 
@@ -8,6 +8,7 @@ import { printNotification } from './notifications';
 import { Channel } from './channel-class';
 import { addLogs } from './logs';
 import { ServiceNamesEnum } from './stream-services/_base';
+import { main } from './main';
 
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
@@ -83,7 +84,7 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
       window = null;
     });
 
-    app['mainWindow'].on('closed', () => {
+    main.mainWindow.on('closed', () => {
       if (window) {
         window.close();
       }

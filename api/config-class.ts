@@ -6,7 +6,7 @@ import { EventEmitter } from 'events';
 
 import { Channel } from './channel-class';
 import { addLogs } from './logs';
-import { contextMenuTemplate } from './main';
+import { contextMenuTemplate, main } from './main';
 
 const oldSettingsPath = path.join(
   app.getPath('documents'),
@@ -245,7 +245,7 @@ export class Config extends EventEmitter {
 
     _.pull(this.channels, channel);
 
-    app['mainWindow'].webContents.send('channel_removeSync');
+    main.mainWindow.webContents.send('channel_removeSync');
 
     return true;
   }
@@ -349,7 +349,7 @@ export class Config extends EventEmitter {
 
     await Promise.all(channels.map((channel) => channel.getInfo()));
 
-    app['mainWindow'].webContents.send('channel_addSync');
+    main.mainWindow.webContents.send('channel_addSync');
   }
 
   public setSettings(settingName: string, settingValue: unknown) {
@@ -357,7 +357,7 @@ export class Config extends EventEmitter {
       contextMenuTemplate[3].checked = settingValue;
     }
 
-    app['mainWindow'].webContents.send(
+    main.mainWindow.webContents.send(
       'config_changeSetting',
       settingName,
       settingValue,

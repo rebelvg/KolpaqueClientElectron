@@ -1,4 +1,4 @@
-import { app, ipcMain, shell } from 'electron';
+import { ipcMain, shell } from 'electron';
 import { execFile } from 'child_process';
 import * as _ from 'lodash';
 import { printNotification } from './notifications';
@@ -6,6 +6,7 @@ import { addLogs } from './logs';
 import { githubClient } from './api-clients';
 import { sleep } from './channel-check';
 import { CLIENT_VERSION } from './globals';
+import { main } from './main';
 
 const SERVICES = [
   {
@@ -46,7 +47,7 @@ function sendInfo(update: string): void {
 
   printNotification(`${_.capitalize(update)} Update Available`, service.link);
 
-  app['mainWindow'].webContents.send(
+  main.mainWindow.webContents.send(
     'client_showInfo',
     UPDATES.map(_.capitalize).join(' & ') + ' Update Available',
   );

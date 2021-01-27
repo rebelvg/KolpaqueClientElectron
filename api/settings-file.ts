@@ -1,8 +1,9 @@
-import { app, BrowserWindow, ipcMain, shell, clipboard } from 'electron';
+import { BrowserWindow, ipcMain, shell, clipboard } from 'electron';
 import * as _ from 'lodash';
 
 import { Config } from './config-class';
 import { Channel } from './channel-class';
+import { main } from './main';
 
 export const config = new Config();
 
@@ -84,7 +85,7 @@ ipcMain.on('channel_openChat', (event, id) => {
         window = null;
       });
 
-      app['mainWindow'].on('closed', () => {
+      main.mainWindow.on('closed', () => {
         if (window) {
           window.close();
         }

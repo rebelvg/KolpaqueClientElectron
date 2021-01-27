@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog } from 'electron';
+import { BrowserWindow, dialog } from 'electron';
 import { URL } from 'url';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
@@ -15,6 +15,7 @@ import {
 } from './stream-services/_base';
 import { customStreamService } from './stream-services/custom';
 import { launchPlayerChannel, playInWindow } from './channel-play';
+import { main } from './main';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
@@ -123,7 +124,7 @@ export class Channel extends EventEmitter {
     });
 
     if (send) {
-      app['mainWindow'].webContents.send('channel_changeSettingSync');
+      main.mainWindow.webContents.send('channel_changeSettingSync');
     }
 
     return true;
