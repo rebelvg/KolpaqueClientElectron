@@ -11,7 +11,7 @@ export function rebuildIconMenu(): Menu {
 
   contextMenuTemplate[1]['submenu'] = onlineChannels.map((channel: Channel) => {
     if (!channel._trayIcon) {
-      const iconBuffer = channel._icon ? channel._icon : channel.icon();
+      const iconBuffer = channel.icon();
 
       if (iconBuffer) {
         channel._trayIcon = nativeImage

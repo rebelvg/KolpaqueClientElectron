@@ -161,8 +161,8 @@ export class Config extends EventEmitter {
     this.run();
   }
 
-  private run() {
-    this.readFile();
+  private async run() {
+    await this.readFile();
 
     this.saveLoop();
   }

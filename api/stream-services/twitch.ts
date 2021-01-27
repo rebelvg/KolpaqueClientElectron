@@ -125,7 +125,7 @@ async function getInfo(channels: Channel[]): Promise<void> {
 async function addImportedChannels(
   channels: ITwitchFollowedChannel[],
 ): Promise<Channel[]> {
-  const channelsAdded = [];
+  const channelsAdded: Channel[] = [];
 
   const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
 
@@ -140,7 +140,7 @@ async function addImportedChannels(
       }
 
       for (const importedChannel of userData.data) {
-        const channel = config.addChannelLink(
+        const channel = await config.addChannelLink(
           `${twitchStreamService.buildChannelLink(importedChannel.login)}`,
           false,
         );

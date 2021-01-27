@@ -25,7 +25,7 @@ function printNewNotification(
   let icon: string | NativeImage = iconPathBalloon;
 
   if (channel) {
-    const iconBuffer = channel._icon ? channel._icon : channel.icon();
+    const iconBuffer = channel.icon();
 
     if (iconBuffer) {
       icon = nativeImage.createFromBuffer(iconBuffer);

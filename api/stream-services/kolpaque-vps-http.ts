@@ -17,10 +17,10 @@ async function doImport(
 
   const { channels } = res;
 
-  const channelsAdded = [];
+  const channelsAdded: Channel[] = [];
 
   for (const channelName of channels) {
-    const channel = config.addChannelLink(
+    const channel = await config.addChannelLink(
       `${this.buildChannelLink(channelName)}`,
       false,
     );

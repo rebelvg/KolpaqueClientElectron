@@ -2,7 +2,6 @@ import { app, BrowserWindow, dialog } from 'electron';
 import { URL } from 'url';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
-import { ChildProcess } from 'child_process';
 import * as uuid from 'uuid';
 
 import { REGISTERED_SERVICES } from './globals';
@@ -15,7 +14,7 @@ import {
   ServiceNamesEnum,
 } from './stream-services/_base';
 import { customStreamService } from './stream-services/custom';
-import { launchPlayerObj, playInWindow } from './channel-play';
+import { launchPlayerChannel, playInWindow } from './channel-play';
 
 const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
 
@@ -29,18 +28,16 @@ export class Channel extends EventEmitter {
   public isLive = false;
   public onAutoRestart = false;
   public lastUpdated = 0;
-  public _processes: ChildProcess[] = [];
   public _icon: Buffer;
-  public _autoRestartAttempts = 0;
-  public _startTime = 0;
   public _offlineConfirmations = 0;
-  public _windows = [];
+  public _windows: BrowserWindow[] = [];
   public _customPlayUrl: string;
   public visibleName: string;
   public isPinned = false;
   public autoStart = false;
   public autoRestart = false;
   public _trayIcon: Electron.NativeImage;
+  public _playingProcesses = 0;
 
   constructor(channelLink: string) {
     super();
@@ -166,7 +163,7 @@ export class Channel extends EventEmitter {
   }
 
   public icon() {
-    return this.serviceObj.icon;
+    return this._icon ? this._icon : this.serviceObj.icon;
   }
 
   public chatLink() {
@@ -190,23 +187,26 @@ export class Channel extends EventEmitter {
       printNotification('Stream is Live', this.visibleName, this);
     }
 
-    if (printBalloon && config.settings.showNotifications && this.autoStart) {
-      if (this._processes.length === 0) {
-        if (config.settings.confirmAutoStart) {
-          dialog
-            .showMessageBox({
-              type: 'none',
-              message: `${this.link} is trying to auto-start. Confirm?`,
-              buttons: ['Ok', 'Cancel'],
-            })
-            .then(async ({ response }) => {
-              if (response === 0) {
-                await this.startPlaying();
-              }
-            });
-        } else {
-          await this.startPlaying();
-        }
+    if (
+      printBalloon &&
+      config.settings.showNotifications &&
+      this.autoStart &&
+      this._playingProcesses === 0
+    ) {
+      if (config.settings.confirmAutoStart) {
+        dialog
+          .showMessageBox({
+            type: 'none',
+            message: `${this.link} is trying to auto-start. Confirm?`,
+            buttons: ['Ok', 'Cancel'],
+          })
+          .then(async ({ response }) => {
+            if (response === 0) {
+              await this.startPlaying();
+            }
+          });
+      } else {
+        await this.startPlaying();
       }
     }
 
@@ -239,21 +239,17 @@ export class Channel extends EventEmitter {
     altQuality = false,
     autoRestart = null,
   ): Promise<boolean> {
-    if (!config.settings.playInWindow) {
-      const childProcess = launchPlayerObj(this, altQuality, autoRestart);
+    if (config.settings.playInWindow) {
+      const wasWindowCreated = await playInWindow(this);
 
-      return !!childProcess;
+      if (wasWindowCreated) {
+        return true;
+      }
     }
 
-    const wasWindowCreated = await playInWindow(this);
+    await launchPlayerChannel(this, altQuality, autoRestart);
 
-    if (wasWindowCreated) {
-      return true;
-    }
-
-    const childProcess = launchPlayerObj(this, altQuality, autoRestart);
-
-    return !!childProcess;
+    return true;
   }
 
   private settingsActions(settingName: string, settingValue: unknown) {
@@ -265,7 +261,7 @@ export class Channel extends EventEmitter {
 
     if (settingName === 'isLive') {
       if (!settingValue) {
-        _.forEach(this._windows, (window: BrowserWindow) => window.close());
+        _.forEach(this._windows, (window) => window.close());
 
         this._windows = [];
       }

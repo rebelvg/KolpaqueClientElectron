@@ -1,5 +1,5 @@
 import { app, ipcMain, dialog, shell, BrowserWindow } from 'electron';
-import { execFile, ChildProcess } from 'child_process';
+import { execFile } from 'child_process';
 import * as _ from 'lodash';
 
 import { config } from './settings-file';
@@ -7,6 +7,7 @@ import { Config } from './config-class';
 import { printNotification } from './notifications';
 import { Channel } from './channel-class';
 import { addLogs } from './logs';
+import { ServiceNamesEnum } from './stream-services/_base';
 
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
@@ -34,7 +35,7 @@ ipcMain.on(
     }
 
     if (
-      channel._processes.length > 0 &&
+      channel._playingProcesses > 0 &&
       settingName === 'autoRestart' &&
       settingValue
     ) {
@@ -45,14 +46,17 @@ ipcMain.on(
   },
 );
 
-export function launchPlayerLink(channelLink: string, LQ = null): boolean {
+export async function launchPlayerLink(
+  channelLink: string,
+  LQ = null,
+): Promise<boolean> {
   const channel = Config.buildChannel(channelLink);
 
   if (!channel) {
     return false;
   }
 
-  launchPlayerObj(channel, LQ);
+  await launchPlayerChannel(channel, LQ);
 
   return true;
 }
@@ -91,104 +95,126 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
   return !!window;
 }
 
-export function launchPlayerObj(
+export function launchPlayerChannel(
   channel: Channel,
   altQuality = false,
   autoRestart: boolean = null,
-): ChildProcess {
+) {
   const LQ = !altQuality ? config.settings.LQ : !config.settings.LQ;
 
-  if (autoRestart === null) {
-    channel.changeSettings({
-      onAutoRestart: channel.autoRestart,
-    });
-  } else {
-    channel.changeSettings({
-      onAutoRestart: autoRestart,
-    });
-  }
+  channel.changeSettings({
+    onAutoRestart: autoRestart !== null ? autoRestart : channel.autoRestart,
+  });
 
   const { playLink, params } = !LQ ? channel.play() : channel.playLQ();
 
   return launchStreamlink(playLink, params, channel);
 }
 
-function launchStreamlink(
+async function launchStreamlink(
   playLink: string,
   params: string[],
   channel: Channel,
-  firstStart = true,
-): ChildProcess {
+) {
   addLogs(playLink, params);
 
-  channel._startTime = Date.now();
+  let firstStart = true;
+  let autoRestartAttempts = 0;
+  let startTime = Date.now();
 
-  const childProcess = execFile(
-    'streamlink',
-    [playLink, 'best', ...params],
-    (err, data) => {
-      addLogs(err, data, 'streamlink exited.');
+  channel._playingProcesses++;
 
-      if (err) {
-        if ((err as any).code === 'ENOENT') {
-          dialog.showMessageBox({
-            type: 'error',
-            message: 'Streamlink not found.',
-          });
+  console.log(channel.isLive, channel.onAutoRestart);
 
-          channel.changeSettings({
-            onAutoRestart: false,
-          });
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    addLogs(
+      'streamlink_starting',
+      firstStart,
+      autoRestartAttempts,
+      channel._playingProcesses,
+    );
 
-          return shell.openExternal(
-            `https://github.com/streamlink/streamlink/releases`,
-          );
-        } else {
-          if (firstStart) {
-            printNotification('Error', err.message);
-          }
-        }
-      }
+    try {
+      await new Promise<void>((resolve, reject) => {
+        execFile(
+          'streamlink',
+          [playLink, 'best', ...params],
+          (error, stdout, stderr) => {
+            console.log('error', error);
+            console.log('stderr', stderr);
+            console.log('stdout', stdout);
 
-      if (data.indexOf('error: ') >= 0) {
-        const error = data.split('error: ');
+            if (error) {
+              reject([error, stdout, stderr]);
 
-        if (firstStart) {
-          printNotification('Error', error[1]);
-        }
-      }
+              return;
+            }
 
-      if (Date.now() - channel._startTime < AUTO_RESTART_TIMEOUT * 1000) {
-        channel._autoRestartAttempts++;
+            resolve();
+          },
+        );
+      });
+
+      addLogs('streamlink_exited');
+
+      if (Date.now() - startTime < AUTO_RESTART_TIMEOUT * 1000) {
+        autoRestartAttempts++;
       } else {
-        channel._autoRestartAttempts = 0;
+        autoRestartAttempts = 0;
       }
 
-      if (
-        channel.isLive &&
-        channel.onAutoRestart &&
-        channel._autoRestartAttempts < AUTO_RESTART_ATTEMPTS
-      ) {
-        launchStreamlink(playLink, params, channel, false);
-      } else {
-        channel.changeSettings({
-          onAutoRestart: false,
+      firstStart = false;
+      startTime = Date.now();
+    } catch (exception) {
+      const [error, stdout, _stderr] = exception;
+
+      addLogs('streamlink_error', error);
+
+      if ((error as any).code === 'ENOENT') {
+        await dialog.showMessageBox({
+          type: 'error',
+          message: 'Streamlink not found.',
         });
 
-        channel._autoRestartAttempts = 0;
+        await shell.openExternal(
+          `https://github.com/streamlink/streamlink/releases`,
+        );
+
+        break;
       }
-    },
-  );
 
-  channel._processes.push(childProcess);
+      if (firstStart) {
+        printNotification('Error', error.message);
 
-  childProcess.on('error', () => {
-    _.pull(channel._processes, childProcess);
+        if (stdout.indexOf('error: ') >= 0) {
+          const [, message] = stdout.split('error: ');
+
+          printNotification('Error', message);
+        }
+      }
+    }
+
+    if (channel.serviceName !== ServiceNamesEnum.CUSTOM && !channel.isLive) {
+      break;
+    }
+
+    if (!channel.onAutoRestart) {
+      break;
+    }
+
+    if (autoRestartAttempts > AUTO_RESTART_ATTEMPTS) {
+      break;
+    }
+  }
+
+  addLogs('playing_closing', channel._playingProcesses);
+
+  channel._playingProcesses--;
+
+  channel.changeSettings({
+    onAutoRestart: false,
   });
 
-  childProcess.on('exit', () => {
-    _.pull(channel._processes, childProcess);
-  });
-
-  return childProcess;
+  return;
 }

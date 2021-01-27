@@ -57,8 +57,8 @@ export class BaseStreamService implements AbstractStreamService {
   public chatLink(channel: Channel) {
     return this.embedLink(channel);
   }
-  public icon = null;
-  public play(channel: Channel) {
+  public icon: Buffer = null;
+  public play(channel: Channel): { playLink: string; params: string[] } {
     return {
       playLink: channel._customPlayUrl || channel.link,
       params: [],

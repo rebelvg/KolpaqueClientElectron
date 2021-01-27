@@ -109,7 +109,9 @@ ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
 
 ipcMain.on('getSettingSync', (event, settingName) => {
   if (!config.settings.hasOwnProperty(settingName)) {
-    return (event.returnValue = null);
+    event.returnValue = null;
+
+    return;
   }
 
   event.returnValue = config.settings[settingName];
