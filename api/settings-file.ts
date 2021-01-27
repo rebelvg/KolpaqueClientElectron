@@ -108,29 +108,13 @@ ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));
 
 ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
 
-ipcMain.on('getSettingSync', (event, settingName) => {
-  if (!config.settings.hasOwnProperty(settingName)) {
-    event.returnValue = null;
-
-    return;
-  }
-
-  event.returnValue = config.settings[settingName];
-
-  return;
-});
-
-ipcMain.on('config_find', (event, query) => {
+ipcMain.handle('config_find', (event, query) => {
   const find = config.find(query);
 
-  const res = {
+  return {
     channels: _.map(find.channels, (channel: Channel) => {
       return channel.filterData();
     }),
     count: find.count,
   };
-
-  event.returnValue = res;
-
-  return;
 });

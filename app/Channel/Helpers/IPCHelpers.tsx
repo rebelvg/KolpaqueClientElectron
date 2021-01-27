@@ -1,7 +1,11 @@
-const { remote, ipcRenderer } = window.require('electron');
-const { Menu } = remote;
-
+import { IpcRenderer } from 'electron';
 import { menuTemplate } from '../../Channel/Helpers/menu';
+
+const {
+  remote,
+  ipcRenderer,
+}: { remote: any; ipcRenderer: IpcRenderer } = window.require('electron');
+const { Menu } = remote;
 
 export const addChannel = (channel) => {
   ipcRenderer.send('channel_add', channel);
@@ -25,6 +29,7 @@ export const getVersion = () => {
 
 export const openChannelMenu = (channel, func) => {
   const menu = new Menu();
+
   const template = menuTemplate(channel, func);
 
   template.map((item) => menu.append(item));

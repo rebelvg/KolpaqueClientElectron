@@ -11,6 +11,7 @@ import {
 } from '../../redux/settings';
 import { updateData } from '../../redux/channel';
 import Settings from '../../Settings/Components/Settings';
+import { getVersion } from '../../Channel/Helpers/IPCHelpers';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -25,7 +26,7 @@ export default class SettingsContainer extends Component<any, any> {
   constructor(props) {
     super(props);
 
-    const version = ipcRenderer.sendSync('client_getVersion');
+    const version = getVersion();
 
     this.state = {
       version,

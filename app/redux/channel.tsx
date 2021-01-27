@@ -1,7 +1,10 @@
 import { createActions, handleActions } from 'redux-actions';
 import { getTab } from '../Channel/constants';
+import { IpcRenderer } from 'electron';
 
-const { ipcRenderer } = window.require('electron');
+const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
+  'electron',
+);
 
 const defaultState = {
   channels: [],
@@ -15,7 +18,7 @@ const defaultState = {
 
 //ACTIONS
 export const updateData = (filter = null, activeTab = null) => {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     if (filter === null) {
       filter = getState().channel.filter;
     }
@@ -27,7 +30,8 @@ export const updateData = (filter = null, activeTab = null) => {
     const tab = getTab(activeTab);
 
     const query = { filter, [tab.filter]: tab.filterValue };
-    const data = ipcRenderer.sendSync('config_find', query);
+
+    const data = await ipcRenderer.invoke('config_find', query);
 
     dispatch(updateView({ ...data, filter, activeTab }));
   };

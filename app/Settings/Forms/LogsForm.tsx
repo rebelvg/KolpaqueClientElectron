@@ -1,8 +1,11 @@
-const { ipcRenderer } = window.require('electron');
-
 import React, { Component } from 'react';
 import { withTheme } from 'styled-components';
 import ReactJson from 'react-json-view';
+import { IpcRenderer } from 'electron';
+
+const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
+  'electron',
+);
 
 @withTheme
 export default class LogsForm extends Component<any, any> {
@@ -18,15 +21,15 @@ export default class LogsForm extends Component<any, any> {
     };
   }
 
-  componentDidMount() {
-    const logs = ipcRenderer.sendSync('config_logs');
+  async componentDidMount() {
+    const logs = await ipcRenderer.invoke('config_logs');
 
     this.setState({
       logs,
     });
 
-    this.getLogsInterval = setInterval(() => {
-      const logs = ipcRenderer.sendSync('config_logs');
+    this.getLogsInterval = setInterval(async () => {
+      const logs = await ipcRenderer.invoke('config_logs');
 
       this.setState({
         logs,

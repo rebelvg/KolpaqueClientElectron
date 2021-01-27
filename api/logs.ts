@@ -13,9 +13,7 @@ export const crashLogPath = path.join(clientAppDataPath, 'crash.log');
 
 let logs: string[] = [];
 
-ipcMain.on('config_logs', (event) => {
-  event.returnValue = logs.slice().reverse();
-});
+ipcMain.handle('config_logs', () => logs.slice().reverse());
 
 export function addLogs(...log: any[]): void {
   const logLine = log
