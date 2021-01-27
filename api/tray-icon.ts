@@ -4,12 +4,6 @@ import { config } from './settings-file';
 import { contextMenuTemplate } from './main';
 import { Channel } from './channel-class';
 
-config.on('setting_changed', (settingName, settingValue) => {
-  if (settingName === 'showNotifications') {
-    contextMenuTemplate[3].checked = settingValue;
-  }
-});
-
 export function rebuildIconMenu(): Menu {
   const onlineChannels = config.find({
     isLive: true,

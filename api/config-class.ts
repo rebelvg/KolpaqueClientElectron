@@ -6,6 +6,7 @@ import { EventEmitter } from 'events';
 
 import { Channel } from './channel-class';
 import { addLogs } from './logs';
+import { contextMenuTemplate } from './main';
 
 const oldSettingsPath = path.join(
   app.getPath('documents'),
@@ -164,25 +165,6 @@ export class Config extends EventEmitter {
     this.readFile();
 
     this.saveLoop();
-
-    this.on('channel_removed', () => {
-      app['mainWindow'].webContents.send('channel_removeSync');
-    });
-
-    this.on('setting_changed', (settingName, settingValue) => {
-      app['mainWindow'].webContents.send(
-        'config_changeSetting',
-        settingName,
-        settingValue,
-      );
-    });
-
-    this.on('setting_changed', () => {
-      app['mainWindow'].webContents.send(
-        'config_changeSettingSync',
-        this.settings,
-      );
-    });
   }
 
   private async readFile(): Promise<void> {
@@ -263,7 +245,7 @@ export class Config extends EventEmitter {
 
     _.pull(this.channels, channel);
 
-    this.emit('channel_removed', channel);
+    app['mainWindow'].webContents.send('channel_removeSync');
 
     return true;
   }
@@ -275,7 +257,7 @@ export class Config extends EventEmitter {
 
     this.settings[settingName] = settingValue;
 
-    this.emit('setting_changed', settingName, settingValue);
+    this.setSettings(settingName, settingValue);
 
     return true;
   }
@@ -368,5 +350,17 @@ export class Config extends EventEmitter {
     await Promise.all(channels.map((channel) => channel.getInfo()));
 
     app['mainWindow'].webContents.send('channel_addSync');
+  }
+
+  public setSettings(settingName: string, settingValue: unknown) {
+    if (settingName === 'showNotifications') {
+      contextMenuTemplate[3].checked = settingValue;
+    }
+
+    app['mainWindow'].webContents.send(
+      'config_changeSetting',
+      settingName,
+      settingValue,
+    );
   }
 }
