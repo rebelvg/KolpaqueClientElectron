@@ -14,8 +14,6 @@ async function checkService(
       serviceName: service.name,
     });
 
-    addLogs('channel_check_checking_service', service.name, channels.length);
-
     await service.getStats(channels, printBalloon);
   } catch (error) {
     addLogs(error);
