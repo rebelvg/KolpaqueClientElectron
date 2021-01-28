@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { Component } from 'react';
 import { withTheme } from 'styled-components';
 import ReactJson from 'react-json-view';
@@ -42,6 +43,14 @@ export default class LogsForm extends Component<any, any> {
   }
 
   render() {
-    return <ReactJson src={this.state.logs} collapsed={false} />;
+    return (
+      <ReactJson
+        src={this.state.logs}
+        // @ts-ignore
+        quotesOnKeys={false}
+        collapsed={false}
+        enableClipboard={false}
+      />
+    );
   }
 }
