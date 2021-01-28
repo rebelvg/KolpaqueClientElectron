@@ -11,6 +11,7 @@ import {
 } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { config } from '../settings-file';
+import { addLogs } from '../logs';
 
 async function getStats(
   channels: Channel[],
@@ -147,6 +148,8 @@ async function addImportedChannels(
 
         if (channel) {
           channelsAdded.push(channel);
+
+          addLogs('twitch_imported_channel', channel.link);
         }
       }
     }),

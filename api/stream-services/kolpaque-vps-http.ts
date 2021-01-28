@@ -3,6 +3,7 @@ import { KolpaqueVpsRtmpStreamService } from './kolpaque-vps-rtmp';
 import { Channel } from '../channel-class';
 import { klpqStreamClient } from '../api-clients';
 import { config } from '../settings-file';
+import { addLogs } from '../logs';
 
 async function doImport(
   this: BaseStreamService,
@@ -27,6 +28,8 @@ async function doImport(
 
     if (channel) {
       channelsAdded.push(channel);
+
+      addLogs('kolpaque_vps_http_imported_channel', channel.link);
     }
   }
 
