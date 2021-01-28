@@ -178,12 +178,12 @@ export const contextMenuTemplate: any[] = [
   {
     label: 'Play / Clipboard',
     type: 'normal',
-    click: (
+    click: async (
       menuItem: MenuItem,
       browserWindow: BrowserWindow,
       event: unknown,
-    ): void => {
-      launchPlayerLink(clipboard.readText(), (event as any).ctrlKey);
+    ) => {
+      await launchPlayerLink(clipboard.readText(), (event as any).ctrlKey);
     },
   },
   {
@@ -199,6 +199,7 @@ export const contextMenuTemplate: any[] = [
     type: 'normal',
     click: (): void => {
       forceQuit = true;
+
       app.quit();
     },
   },

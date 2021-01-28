@@ -10,6 +10,8 @@ export function printNotification(
   content: string,
   channel: Channel = null,
 ): void {
+  addLogs('printNotification', title, content);
+
   if (!config.settings.showNotifications) {
     return;
   }
@@ -50,7 +52,7 @@ async function onBalloonClick(
   content: string,
   channel: Channel,
 ) {
-  addLogs('balloon_click');
+  addLogs('balloon_click', title, content);
 
   if (!config.settings.launchOnBalloonClick) {
     return;

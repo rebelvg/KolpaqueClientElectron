@@ -16,6 +16,8 @@ const AUTO_RESTART_TIMEOUT = 60;
 ipcMain.on(
   'channel_play',
   async (event, id, altQuality = false, autoRestart = null) => {
+    addLogs('channel_play', id, altQuality, autoRestart);
+
     const channel = config.findById(id);
 
     if (!channel) {
@@ -29,6 +31,8 @@ ipcMain.on(
 ipcMain.on(
   'channel_changeSettingSync',
   (event, id, settingName, settingValue) => {
+    addLogs('channel_changeSettingSync', id, settingName, settingValue);
+
     const channel = config.findById(id);
 
     if (!channel) {
@@ -63,35 +67,33 @@ export async function launchPlayerLink(
 }
 
 export async function playInWindow(channel: Channel): Promise<boolean> {
-  let window: BrowserWindow;
-
   const embedLink = channel.embedLink();
 
-  if (embedLink) {
-    window = new BrowserWindow({
-      width: 1280,
-      height: 720,
-      webPreferences: {
-        nodeIntegration: false,
-      },
-    });
-
-    await window.loadURL(embedLink);
-
-    window.on('closed', () => {
-      _.pull(channel._windows, window);
-
-      window = null;
-    });
-
-    main.mainWindow.on('closed', () => {
-      if (window) {
-        window.close();
-      }
-    });
-
-    channel._windows.push(window);
+  if (!embedLink) {
+    return false;
   }
+
+  const window = new BrowserWindow({
+    width: 1280,
+    height: 720,
+    webPreferences: {
+      nodeIntegration: false,
+    },
+  });
+
+  await window.loadURL(embedLink);
+
+  window.on('closed', () => {
+    _.pull(channel._windows, window);
+  });
+
+  main.mainWindow.on('closed', () => {
+    if (window) {
+      window.close();
+    }
+  });
+
+  channel._windows.push(window);
 
   return !!window;
 }
@@ -117,7 +119,7 @@ async function launchStreamlink(
   params: string[],
   channel: Channel,
 ) {
-  addLogs(playLink, params);
+  addLogs(playLink, params, channel.link);
 
   let firstStart = true;
   let autoRestartAttempts = 0;
@@ -129,6 +131,7 @@ async function launchStreamlink(
   while (true) {
     addLogs(
       'streamlink_starting',
+      channel.link,
       firstStart,
       autoRestartAttempts,
       channel._playingProcesses,
@@ -151,7 +154,7 @@ async function launchStreamlink(
         );
       });
 
-      addLogs('streamlink_exited');
+      addLogs('streamlink_exited', channel.link);
 
       if (Date.now() - startTime < AUTO_RESTART_TIMEOUT * 1000) {
         autoRestartAttempts++;
@@ -164,7 +167,7 @@ async function launchStreamlink(
     } catch (exception) {
       const [error, stdout, _stderr] = exception;
 
-      addLogs('streamlink_error', error);
+      addLogs('streamlink_error', channel.link, error);
 
       if ((error as any).code === 'ENOENT') {
         await dialog.showMessageBox({
@@ -203,7 +206,7 @@ async function launchStreamlink(
     }
   }
 
-  addLogs('playing_closing', channel._playingProcesses);
+  addLogs('playing_closing', channel.link, channel._playingProcesses);
 
   channel._playingProcesses--;
 

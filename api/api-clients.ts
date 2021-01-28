@@ -11,10 +11,14 @@ const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
 export const KLPQ_SERVICE_URL = 'https://client-api.klpq.men';
 
 ipcMain.on('twitch_login', async () => {
+  addLogs('twitch_login');
+
   await klpqServiceClient.getTwitchUser();
 });
 
 ipcMain.on('youtube_login', async () => {
+  addLogs('youtube_login');
+
   await klpqServiceClient.getYoutubeUser();
 });
 
@@ -63,7 +67,7 @@ class TwitchClient {
 
   public async refreshAccessToken(): Promise<boolean> {
     if (this.accessToken) {
-      return;
+      return true;
     }
 
     if (!this.refreshToken) {

@@ -14,21 +14,20 @@ async function checkService(
       serviceName: service.name,
     });
 
+    addLogs('channel_check_checking_service', service.name, channels.length);
+
     await service.getStats(channels, printBalloon);
   } catch (error) {
     addLogs(error);
   }
 }
 
-async function checkServiceLoop(
-  service: BaseStreamService,
-  printBalloon: boolean,
-): Promise<void> {
+async function checkServiceLoop(service: BaseStreamService): Promise<void> {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     await sleep(service.checkLiveTimeout * 1000);
 
-    await checkService(service, printBalloon);
+    await checkService(service, true);
   }
 }
 
@@ -37,9 +36,13 @@ export function sleep(ms: number): Promise<void> {
 }
 
 export async function loop(): Promise<void> {
+  addLogs('channel_check_init');
+
   await Promise.all(
     _.map(REGISTERED_SERVICES, (service) => checkService(service, false)),
   );
 
-  _.forEach(REGISTERED_SERVICES, (service) => checkServiceLoop(service, true));
+  addLogs('channel_check_init_done');
+
+  _.forEach(REGISTERED_SERVICES, (service) => checkServiceLoop(service));
 }

@@ -54,11 +54,12 @@ process.on('unhandledRejection', (error) => {
   }
 
   if (!fs.existsSync(pathOption)) {
-    throw new Error('Bad path.');
+    throw new Error('bad_path');
   }
 
   pathOption = path.join(pathOption, 'KolpaqueClientElectron');
 
+  // eslint-disable-next-line no-console
   console.log(options);
 
   for (const platform of platforms) {
@@ -84,6 +85,7 @@ process.on('unhandledRejection', (error) => {
       });
     }
 
+    // eslint-disable-next-line no-console
     console.log(appPaths);
   }
 })();

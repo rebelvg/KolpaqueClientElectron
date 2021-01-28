@@ -3,8 +3,11 @@ import { BrowserWindow, Menu, MenuItem, nativeImage } from 'electron';
 import { config } from './settings-file';
 import { contextMenuTemplate } from './main';
 import { Channel } from './channel-class';
+import { addLogs } from './logs';
 
 export function rebuildIconMenu(): Menu {
+  addLogs('rebuildIconMenu');
+
   const onlineChannels = config.find({
     isLive: true,
   }).channels;

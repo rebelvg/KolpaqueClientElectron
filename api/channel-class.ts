@@ -58,7 +58,7 @@ export class Channel extends EventEmitter {
     const host = channelURL.host.toLowerCase();
 
     if (host.length === 0) {
-      throw Error(`Hostname can't be empty.`);
+      throw new Error('empty_hostname');
     }
 
     for (const serviceObj of REGISTERED_SERVICES) {

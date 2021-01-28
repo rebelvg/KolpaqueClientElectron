@@ -83,10 +83,13 @@ export class BaseStreamService implements AbstractStreamService {
   public async getInfo(channels: Channel[]): Promise<void> {
     return await null;
   }
-  public async doImport(channels: string[], emitEvent: boolean) {
+  public async doImport(
+    channels: string[],
+    emitEvent: boolean,
+  ): Promise<Channel[]> {
     return await [];
   }
-  public doImportSettings(emitEvent: boolean) {
+  public doImportSettings(emitEvent: boolean): Promise<Channel[]> {
     return this.doImport([], emitEvent);
   }
   public buildChannelLink(channelName: string): string {

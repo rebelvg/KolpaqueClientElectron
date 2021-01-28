@@ -22,6 +22,8 @@ const SERVICES = [
 const UPDATES: string[] = [];
 
 ipcMain.on('client_getInfo', async () => {
+  addLogs('client_getInfo');
+
   await Promise.all(
     SERVICES.map((service) => {
       if (UPDATES.includes(service.name)) {

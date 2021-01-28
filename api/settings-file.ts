@@ -4,10 +4,13 @@ import * as _ from 'lodash';
 import { Config } from './config-class';
 import { Channel } from './channel-class';
 import { main } from './main';
+import { addLogs } from './logs';
 
 export const config = new Config();
 
 ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
+  addLogs('config_changeSetting', settingName, settingValue);
+
   if (settingName === 'twitchImport') {
     settingValue = _.uniq(settingValue);
   }
@@ -16,16 +19,22 @@ ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
 });
 
 ipcMain.on('channel_add', (event, channelLink) => {
+  addLogs('channel_add', channelLink);
+
   return config.addChannelLink(channelLink);
 });
 
 ipcMain.on('channel_remove', (event, id) => {
+  addLogs('channel_remove', id);
+
   return config.removeChannelById(id);
 });
 
 ipcMain.on(
   'channel_changeSettingSync',
   (event, id, settingName, settingValue) => {
+    addLogs('channel_changeSettingSync', id, settingName, settingValue);
+
     const channel = config.findById(id);
 
     if (!channel) {
@@ -43,6 +52,8 @@ ipcMain.on(
 );
 
 ipcMain.on('channel_openPage', (event, id) => {
+  addLogs('channel_openPage', id);
+
   const channel = config.findById(id);
 
   if (channel === null) {
@@ -59,46 +70,46 @@ ipcMain.on('channel_openPage', (event, id) => {
 });
 
 ipcMain.on('channel_openChat', (event, id) => {
+  addLogs('channel_openChat', id);
+
   const channel = config.findById(id);
 
   if (!channel) {
     return false;
   }
 
-  let window: BrowserWindow;
-
   const chatLink = channel.chatLink();
 
-  if (chatLink) {
-    if (config.settings.playInWindow) {
-      window = new BrowserWindow({
-        width: 405,
-        height: 720,
-        webPreferences: {
-          nodeIntegration: false,
-        },
-      });
+  if (!chatLink) {
+    return false;
+  }
 
-      window.loadURL(chatLink);
+  if (config.settings.playInWindow) {
+    const window = new BrowserWindow({
+      width: 405,
+      height: 720,
+      webPreferences: {
+        nodeIntegration: false,
+      },
+    });
 
-      window.on('closed', () => {
-        window = null;
-      });
+    window.loadURL(chatLink);
 
-      main.mainWindow.on('closed', () => {
-        if (window) {
-          window.close();
-        }
-      });
-    } else {
-      shell.openExternal(chatLink);
-    }
+    main.mainWindow.on('closed', () => {
+      if (window) {
+        window.close();
+      }
+    });
+  } else {
+    shell.openExternal(chatLink);
   }
 
   return true;
 });
 
 ipcMain.on('channel_copyClipboard', (event, channelLink) => {
+  addLogs('channel_copyClipboard', channelLink);
+
   clipboard.writeText(channelLink);
 
   return true;
@@ -109,6 +120,8 @@ ipcMain.once('getChannels', (event) => (event.returnValue = config.channels));
 ipcMain.once('getSettings', (event) => (event.returnValue = config.settings));
 
 ipcMain.handle('config_find', (event, query) => {
+  addLogs('config_find', query);
+
   const find = config.find(query);
 
   return {
