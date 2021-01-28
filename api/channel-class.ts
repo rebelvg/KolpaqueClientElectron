@@ -182,7 +182,7 @@ export class Channel extends EventEmitter {
       return;
     }
 
-    addLogs(`${this.link} went online.`);
+    addLogs(this.link, 'went_online');
 
     if (printBalloon) {
       printNotification('Stream is Live', this.visibleName, this);
@@ -228,7 +228,7 @@ export class Channel extends EventEmitter {
       return;
     }
 
-    addLogs(`${this.link} went offline.`);
+    addLogs(this.link, 'went_offline');
 
     this.changeSettings({
       lastUpdated: Date.now(),

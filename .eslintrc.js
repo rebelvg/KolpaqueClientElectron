@@ -25,7 +25,7 @@ module.exports = {
     ],
     semi: ['error', 'always'],
     'eol-last': ['error', 'always'],
-    'no-console': 0,
+    'no-console': 'error',
     'no-var': 'error',
     eqeqeq: ['error', 'always'],
     curly: ['error', 'all'],

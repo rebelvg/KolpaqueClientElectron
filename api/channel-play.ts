@@ -125,8 +125,6 @@ async function launchStreamlink(
 
   channel._playingProcesses++;
 
-  console.log(channel.isLive, channel.onAutoRestart);
-
   // eslint-disable-next-line no-constant-condition
   while (true) {
     addLogs(
@@ -142,10 +140,6 @@ async function launchStreamlink(
           'streamlink',
           [playLink, 'best', ...params],
           (error, stdout, stderr) => {
-            console.log('error', error);
-            console.log('stderr', stderr);
-            console.log('stdout', stdout);
-
             if (error) {
               reject([error, stdout, stderr]);
 

@@ -8,18 +8,10 @@ import { Channel } from './channel-class';
 import { addLogs } from './logs';
 import { contextMenuTemplate, main } from './main';
 
-const oldSettingsPath = path.join(
-  app.getPath('documents'),
-  'KolpaqueClient.json',
-);
 const settingsPath = path.join(
   app.getPath('documents'),
   'KolpaqueClientElectron.json',
 );
-
-if (fs.existsSync(oldSettingsPath)) {
-  fs.renameSync(oldSettingsPath, settingsPath);
-}
 
 const channelSave = [
   'link',
@@ -334,7 +326,7 @@ export class Config extends EventEmitter {
 
       fs.writeFileSync(settingsPath, JSON.stringify(saveConfig, null, 2));
 
-      addLogs('settings saved.');
+      addLogs('settings_saved');
 
       return true;
     } catch (e) {

@@ -16,27 +16,27 @@ let logs: string[] = [];
 ipcMain.handle('config_logs', () => logs.slice().reverse());
 
 export function addLogs(...log: any[]): void {
-  const logLine = log
-    .filter((logItem) => logItem !== undefined)
-    .map((logItem) => {
-      return util.inspect(logItem, { depth: 3 });
-    })
-    .join(' ');
+  const logLine = util.inspect(log, {
+    depth: 10,
+    compact: true,
+    breakLength: Infinity,
+  });
 
+  // eslint-disable-next-line no-console
   console.log(logLine);
 
   fs.appendFileSync(
     appLogPath,
-    `${new Date().toLocaleString()} - ${logLine}${os.EOL}`,
+    `${new Date().toLocaleString()} ${logLine}${os.EOL}`,
   );
 
   logs.push(logLine);
 
-  logs = _.takeRight(logs, 20);
+  logs = _.takeRight(logs, 50);
 }
 
 export function run() {
   setInterval(() => {
-    addLogs(`memory usage`, _.forEach(process.memoryUsage()));
+    addLogs('memory_usage', _.forEach(process.memoryUsage()));
   }, 100 * 1000);
 }

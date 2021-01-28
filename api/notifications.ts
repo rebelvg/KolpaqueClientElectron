@@ -50,7 +50,7 @@ async function onBalloonClick(
   content: string,
   channel: Channel,
 ) {
-  addLogs('balloon was clicked.');
+  addLogs('balloon_click');
 
   if (!config.settings.launchOnBalloonClick) {
     return;

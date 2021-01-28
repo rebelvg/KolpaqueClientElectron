@@ -27,7 +27,7 @@ import { init } from './client-init';
 
 const isDev = process.env.NODE_ENV === 'dev';
 
-addLogs('isDev', isDev);
+addLogs('is_dev', isDev);
 
 let forceQuit = false;
 
@@ -116,7 +116,7 @@ function createWindow(): void {
   });
 
   mainWindow.on('close', (e) => {
-    addLogs('forceQuit', forceQuit);
+    addLogs('force_quit', forceQuit);
 
     if (forceQuit) {
       return;
@@ -222,7 +222,7 @@ app.on('ready', () => {
   appIcon.setIgnoreDoubleClickEvents(true);
 
   appIcon.on('click', () => {
-    addLogs('left-click event.');
+    addLogs('left_click_event');
 
     if (process.platform === 'darwin') {
       showTrayContextMenu();
@@ -232,7 +232,7 @@ app.on('ready', () => {
   });
 
   appIcon.on('right-click', () => {
-    addLogs('right-click event.');
+    addLogs('right_click_event');
 
     if (process.platform === 'darwin') {
       toggleHideClient();
