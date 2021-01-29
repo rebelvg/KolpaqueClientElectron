@@ -80,7 +80,7 @@ class Channels extends PureComponent<any, any> {
           type={'uniform'}
           length={channels.length}
           useStaticSize={true}
-          threshold={600}
+          threshold={500}
           itemRenderer={(index) => (
             <div key={channels[index].id}>
               <Channel

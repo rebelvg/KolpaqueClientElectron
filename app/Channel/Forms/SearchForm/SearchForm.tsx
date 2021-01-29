@@ -36,7 +36,7 @@ class SearchForm extends Component<any> {
             <StyledIcon size={14} icon={search} />
           </button>
         </InputWrapper>
-        <AutoSave save={save} debounce={600} />
+        <AutoSave save={save} debounce={500} />
       </Form>
     );
   }
