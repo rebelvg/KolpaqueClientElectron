@@ -112,9 +112,12 @@ const sortChannels = (
 interface ISettings {
   LQ: boolean;
   showNotifications: boolean;
+  enableNotificationSounds: boolean;
   minimizeAtStart: boolean;
   launchOnBalloonClick: boolean;
   size: number[];
+  enableKolpaqueImport: boolean;
+  enableTwitchImport: boolean;
   twitchImport: string[];
   nightMode: boolean;
   sortType: string;
@@ -132,9 +135,12 @@ export class Config extends EventEmitter {
   public settings: ISettings = {
     LQ: false,
     showNotifications: true,
+    enableNotificationSounds: false,
     minimizeAtStart: false,
     launchOnBalloonClick: true,
     size: [400, 800],
+    enableKolpaqueImport: false,
+    enableTwitchImport: false,
     twitchImport: [],
     nightMode: false,
     sortType: 'lastAdded',

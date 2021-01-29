@@ -3,8 +3,7 @@ import Icon from 'react-icons-kit';
 import { close } from 'react-icons-kit/fa/close';
 import { Field } from 'react-final-form';
 import styled, { withTheme } from 'styled-components';
-
-const TextField = ({ input }) => <MemberInput {...input} />;
+import { ToggleAdapter } from './SettingsForm';
 
 @withTheme
 export default class ImportForm extends Component<any> {
@@ -16,14 +15,21 @@ export default class ImportForm extends Component<any> {
 
   addMember = () => {
     const { values, reset, importChannel } = this.props;
+
+    console.log(values);
+
     const member = values.member;
 
+    console.log('member', member);
+
     importChannel(member);
+
     reset();
   };
 
   submit = (data) => {
     const { handleSubmit, values, reset, submit, members } = this.props;
+
     const member = values.member;
 
     if (member) {
@@ -34,14 +40,44 @@ export default class ImportForm extends Component<any> {
   };
 
   render() {
-    const { members, theme } = this.props;
+    const { members, theme, changeSetting } = this.props;
 
     return (
       <Form onSubmit={this.submit}>
-        <Field
+        <FieldWrapper>
+          <Label>Enable Kolpaque Import</Label>
+          <InputWrapper>
+            <Field
+              name="enableKolpaqueImport"
+              component={ToggleAdapter}
+              toggle={changeSetting}
+            />
+          </InputWrapper>
+        </FieldWrapper>
+
+        <FieldWrapper>
+          <Label>Enable Twitch Import</Label>
+          <InputWrapper>
+            <Field
+              name="enableTwitchImport"
+              component={ToggleAdapter}
+              toggle={changeSetting}
+            />
+          </InputWrapper>
+        </FieldWrapper>
+
+        <br />
+        <br />
+
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          Twitch Import Settings
+        </div>
+
+        <StyledField
           name="member"
-          placeholder="Enter twitch nickname..."
-          component={TextField}
+          type="text"
+          component="input"
+          placeholder="Twitch channel..."
         />
         <BtnWrap>
           <AddBtn type="button" onClick={this.addMember}>
@@ -69,14 +105,6 @@ export default class ImportForm extends Component<any> {
     );
   }
 }
-
-const MemberInput = styled.input`
-  background-color: ${(props) => props.theme.input.bg};
-  color: ${(props) => props.theme.input.color};
-  border: none;
-  padding: 5px;
-  outline: 1px solid ${(props) => props.theme.outline};
-`;
 
 const AddBtn = styled.button`
   background-color: transparent;
@@ -120,4 +148,29 @@ const Member = styled.div`
   align-items: center;
   border-top: 1px solid ${(props) => props.theme.outline};
   padding: 5px 20px;
+`;
+
+const FieldWrapper = styled.div`
+  display: flex;
+  flex-direction: ${(props) => (props.full ? 'column' : 'row')};
+  justify-content: space-between;
+  margin: 2px 20px;
+`;
+
+const Label = styled.label`
+  font-weight: bold;
+  font-size: 15px;
+  color: ${(props) => props.theme.client.color};
+  padding-bottom: 10px;
+`;
+
+const InputWrapper = styled.div``;
+
+const StyledField = styled(Field)`
+  width: 100%;
+  height: 18px;
+  padding: 0px;
+  margin: 0px;
+  position: relative;
+  z-index: 100000;
 `;

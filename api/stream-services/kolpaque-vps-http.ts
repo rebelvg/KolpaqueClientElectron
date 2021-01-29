@@ -10,6 +10,10 @@ async function doImport(
   channelNames: string[],
   emitEvent: boolean,
 ): Promise<Channel[]> {
+  if (!config.settings.enableKolpaqueImport) {
+    return [];
+  }
+
   const res = await klpqStreamClient.getChannelsList();
 
   if (!res) {

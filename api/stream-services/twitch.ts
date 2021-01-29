@@ -238,6 +238,10 @@ async function doImport(
   channelNames: string[],
   emitEvent: boolean,
 ): Promise<Channel[]> {
+  if (!config.settings.enableTwitchImport) {
+    return [];
+  }
+
   const channels: Channel[] = [];
 
   await Promise.all(

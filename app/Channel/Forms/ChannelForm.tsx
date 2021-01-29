@@ -20,6 +20,7 @@ export default class ChannelForm extends Component<any> {
     const { handleSubmit, reset } = this.props;
 
     handleSubmit(data);
+
     reset();
   };
 

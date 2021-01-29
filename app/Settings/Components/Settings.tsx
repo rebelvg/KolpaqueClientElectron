@@ -82,6 +82,8 @@ export default class Settings extends Component<any, any> {
             onSubmit={this.submit}
             submit={this.submitImports}
             importChannel={this.importChannel}
+            initialValues={{ ...settings }}
+            changeSetting={this.changeSetting}
             render={(props) => <ImportForm {...props} />}
           />
         )}

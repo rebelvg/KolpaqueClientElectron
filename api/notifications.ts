@@ -38,6 +38,7 @@ function printNewNotification(
     icon: icon,
     title: title,
     body: content,
+    silent: !config.settings.enableNotificationSounds,
   });
 
   notification.on('click', () => {

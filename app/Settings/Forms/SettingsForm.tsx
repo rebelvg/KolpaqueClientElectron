@@ -14,7 +14,7 @@ const sortTypes = [
   { value: 'visibleName', label: 'By Name' },
 ];
 
-const ToggleAdapter: any = ({
+export const ToggleAdapter: any = ({
   input: { onChange, name, value },
   toggle,
   ...rest
@@ -58,6 +58,17 @@ const SettingsForm: any = ({ handleSubmit, changeSetting }) => (
       <InputWrapper>
         <Field
           name="showNotifications"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
+      </InputWrapper>
+    </FieldWrapper>
+
+    <FieldWrapper>
+      <Label>Enable Notification Sounds</Label>
+      <InputWrapper>
+        <Field
+          name="enableNotificationSounds"
           component={ToggleAdapter}
           toggle={changeSetting}
         />

@@ -12,8 +12,11 @@ import {
 import { updateData } from '../../redux/channel';
 import Settings from '../../Settings/Components/Settings';
 import { getVersion } from '../../Channel/Helpers/IPCHelpers';
+import { IpcRenderer } from 'electron';
 
-const { ipcRenderer } = window.require('electron');
+const {
+  ipcRenderer,
+}: { remote: any; ipcRenderer: IpcRenderer } = window.require('electron');
 
 @withTheme
 @connect(
@@ -33,11 +36,21 @@ export default class SettingsContainer extends Component<any, any> {
     };
   }
 
+  private changeSettingHandler = (e, settingName, settingValue) => {
+    this.props.updateData();
+
+    this.props.changeSettingsResponse(settingName, settingValue);
+  };
+
   componentWillMount() {
-    ipcRenderer.on('config_changeSetting', (e, settingName, settingValue) => {
-      this.props.updateData();
-      this.props.changeSettingsResponse(settingName, settingValue);
-    });
+    ipcRenderer.on('config_changeSetting', this.changeSettingHandler);
+  }
+
+  componentWillUnmount() {
+    ipcRenderer.removeListener(
+      'config_changeSetting',
+      this.changeSettingHandler,
+    );
   }
 
   render() {
