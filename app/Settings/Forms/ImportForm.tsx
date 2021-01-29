@@ -16,11 +16,7 @@ export default class ImportForm extends Component<any> {
   addMember = () => {
     const { values, reset, importChannel } = this.props;
 
-    console.log(values);
-
     const member = values.member;
-
-    console.log('member', member);
 
     importChannel(member);
 
