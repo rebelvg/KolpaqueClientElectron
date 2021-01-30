@@ -86,7 +86,7 @@ const sortChannels = (
       break;
     }
     case 'service_visibleName': {
-      sortedChannels = _.sortBy(channels, ['service', 'visibleName']);
+      sortedChannels = _.sortBy(channels, ['serviceName', 'visibleName']);
       break;
     }
     case 'visibleName': {
