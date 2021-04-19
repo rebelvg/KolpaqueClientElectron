@@ -17,7 +17,7 @@ ipcMain.handle('config_logs', () => logs.slice().reverse());
 
 export function addLogs(...log: any[]): void {
   const logLine = util.inspect(log, {
-    depth: 10,
+    depth: Infinity,
     compact: true,
     breakLength: Infinity,
   });
