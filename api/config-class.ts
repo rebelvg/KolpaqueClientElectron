@@ -166,8 +166,10 @@ export class Config extends EventEmitter {
   }
 
   private async readFile(): Promise<void> {
+    let file: string;
+
     try {
-      const file = fs.readFileSync(settingsPath, 'utf8');
+      file = fs.readFileSync(settingsPath, 'utf8');
 
       const parseJson = JSON.parse(file);
 
@@ -185,7 +187,7 @@ export class Config extends EventEmitter {
         }
       });
     } catch (error) {
-      addLogs(error);
+      addLogs(error, settingsPath, file);
 
       throw error;
     }
