@@ -1,5 +1,4 @@
 import * as SocketClient from 'socket.io-client';
-import * as uuid from 'uuid';
 
 import { addLogs } from './logs';
 import {
@@ -7,19 +6,24 @@ import {
   klpqServiceClient,
   youtubeClient,
   KLPQ_SERVICE_URL,
+  SOCKET_CLIENT_ID,
+  ITwitchUser,
 } from './api-clients';
 import { printNotification } from './notifications';
 
-export interface ITwitchUser {
-  accessToken: string;
-  refreshToken: string;
-}
-
-const io = SocketClient(KLPQ_SERVICE_URL);
-
-export const SOCKET_CLIENT_ID = uuid.v4();
-
 export function run() {
+  const io = SocketClient(KLPQ_SERVICE_URL);
+
+  io.on('connect', () => {
+    addLogs('socket_connected');
+
+    io.emit('request_id', SOCKET_CLIENT_ID);
+  });
+
+  io.on('connect_error', (error) => {
+    addLogs('connect_error', error);
+  });
+
   io.on('twitch_user', (user: ITwitchUser) => {
     addLogs('socket_got_twitch_user', user);
 
@@ -44,11 +48,5 @@ export function run() {
     klpqServiceClient.setUser(signedJwt);
 
     printNotification('KLPQ Service', 'Login Successful');
-  });
-
-  io.on('connect', () => {
-    addLogs('socket_connected');
-
-    io.emit('request_id', SOCKET_CLIENT_ID);
   });
 }

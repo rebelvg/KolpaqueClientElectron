@@ -8,11 +8,11 @@ import { run as runSocket } from './socket-client';
 export async function init(): Promise<void> {
   addLogs('init_start');
 
+  runSocket();
+  runLogs();
+
   await importLoop();
   await channelLoop();
   await infoLoop();
   await versionLoop();
-
-  runLogs();
-  runSocket();
 }

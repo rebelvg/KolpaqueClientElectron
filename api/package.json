@@ -2,5 +2,7 @@
   "name": "api",
   "version": "1.0.0",
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "source-map-support": "^0.5.19"
+  }
 }

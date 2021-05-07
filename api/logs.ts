@@ -11,16 +11,20 @@ const clientAppDataPath = app.getPath('userData');
 export const appLogPath = path.join(clientAppDataPath, 'app.log');
 export const crashLogPath = path.join(clientAppDataPath, 'crash.log');
 
-let logs: string[] = [];
+let logsUi: string[] = [];
 
-ipcMain.handle('config_logs', () => logs.slice().reverse());
+ipcMain.handle('config_logs', () => logsUi.slice().reverse());
 
-export function addLogs(...log: any[]): void {
-  const logLine = util.inspect(log, {
-    depth: Infinity,
-    compact: true,
-    breakLength: Infinity,
-  });
+export function addLogs(...logs: any[]): void {
+  const logLine = logs
+    .map((log) =>
+      util.inspect(log, {
+        depth: Infinity,
+        compact: true,
+        breakLength: Infinity,
+      }),
+    )
+    .join(' ');
 
   // eslint-disable-next-line no-console
   console.log(logLine);
@@ -30,13 +34,13 @@ export function addLogs(...log: any[]): void {
     `${new Date().toLocaleString()} ${logLine}${os.EOL}`,
   );
 
-  logs.push(logLine);
+  logsUi.push(logLine);
 
-  logs = _.takeRight(logs, 50);
+  logsUi = _.takeRight(logsUi, 50);
 }
 
 export function run() {
-  setInterval(() => {
-    addLogs('memory_usage', _.forEach(process.memoryUsage()));
-  }, 100 * 1000);
+  addLogs('memory_usage', process.memoryUsage());
+
+  setInterval(() => addLogs('memory_usage', process.memoryUsage()), 100 * 1000);
 }

@@ -3,12 +3,17 @@ import { addLogs } from './logs';
 import { config } from './settings-file';
 import * as qs from 'querystring';
 import { shell, ipcMain } from 'electron';
-
-import { SOCKET_CLIENT_ID, ITwitchUser } from './socket-client';
+import * as uuid from 'uuid';
 
 const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
 
 export const KLPQ_SERVICE_URL = 'https://client-api.klpq.men';
+export const SOCKET_CLIENT_ID = uuid.v4();
+
+export interface ITwitchUser {
+  accessToken: string;
+  refreshToken: string;
+}
 
 ipcMain.on('twitch_login', async () => {
   addLogs('twitch_login');
@@ -63,6 +68,8 @@ class TwitchClient {
 
   public setRefreshToken(refreshToken: string): void {
     config.settings.twitchRefreshToken = refreshToken;
+
+    addLogs('refreshToken', refreshToken);
   }
 
   public async refreshAccessToken(): Promise<boolean> {

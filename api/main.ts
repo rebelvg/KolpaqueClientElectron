@@ -15,6 +15,7 @@ import * as fixPath from 'fix-path';
 import * as defaultMenu from 'electron-default-menu';
 import * as fs from 'fs';
 import * as os from 'os';
+import 'source-map-support/register';
 
 fixPath();
 
