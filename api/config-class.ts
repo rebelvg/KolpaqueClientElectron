@@ -8,9 +8,13 @@ import { Channel } from './channel-class';
 import { addLogs } from './logs';
 import { contextMenuTemplate, main } from './main';
 
-const settingsPath = path.join(
+const SETTINGS_FILE_PATH = path.join(
   app.getPath('documents'),
   'KolpaqueClientElectron.json',
+);
+const SETTINGS_FILE_PATH_BAD = path.join(
+  app.getPath('documents'),
+  'KolpaqueClientElectron.json.bak',
 );
 
 const channelSave = [
@@ -166,11 +170,23 @@ export class Config extends EventEmitter {
   }
 
   private async readFile(): Promise<void> {
+    if (!fs.existsSync(SETTINGS_FILE_PATH)) {
+      return;
+    }
+
+    const file = fs.readFileSync(SETTINGS_FILE_PATH, 'utf8');
+
+    let parseJson: Config;
+
     try {
-      const file = fs.readFileSync(settingsPath, 'utf8');
+      parseJson = JSON.parse(file);
+    } catch (error) {
+      fs.writeFileSync(SETTINGS_FILE_PATH_BAD, file);
 
-      const parseJson = JSON.parse(file);
+      return;
+    }
 
+    try {
       for (const parsedChannel of parseJson.channels) {
         const channel = await this.addChannelLink(parsedChannel.link, false);
 
@@ -187,7 +203,7 @@ export class Config extends EventEmitter {
     } catch (error) {
       addLogs(error);
 
-      return;
+      throw error;
     }
   }
 
@@ -330,7 +346,7 @@ export class Config extends EventEmitter {
         settings: this.settings,
       };
 
-      fs.writeFileSync(settingsPath, JSON.stringify(saveConfig, null, 2));
+      fs.writeFileSync(SETTINGS_FILE_PATH, JSON.stringify(saveConfig, null, 2));
 
       addLogs('settings_saved');
 
