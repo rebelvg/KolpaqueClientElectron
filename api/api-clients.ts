@@ -4,10 +4,12 @@ import { config } from './settings-file';
 import * as qs from 'querystring';
 import { shell, ipcMain } from 'electron';
 import * as uuid from 'uuid';
+import { ISavedSettingsFile } from './config-class';
 
 const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
 
-export const KLPQ_SERVICE_URL = 'https://client-api.klpq.men';
+// export const KLPQ_SERVICE_URL = 'https://client-api.klpq.men';
+export const KLPQ_SERVICE_URL = 'http://localhost:3000';
 export const SOCKET_CLIENT_ID = uuid.v4();
 
 export interface ITwitchUser {
@@ -292,6 +294,15 @@ export interface IYoutubeStreams {
   items: any[];
 }
 
+export interface IGetSyncChannels {
+  id: string;
+  channels: any[];
+}
+
+export interface IPostSyncChannels {
+  id: string;
+}
+
 class YoutubeClient {
   private accessToken: string = null;
 
@@ -529,6 +540,52 @@ class KlpqServiceClient {
       return data;
     } catch (error) {
       this.handleError(error);
+
+      return;
+    }
+  }
+
+  public async getSyncChannels(id: string) {
+    const url = `${this.baseUrl}/sync/${id}`;
+
+    try {
+      const {
+        data: { channels },
+      } = await axios.get<IGetSyncChannels>(url, {
+        headers: { jwt: this.jwtToken },
+      });
+
+      return channels;
+    } catch (error) {
+      addLogs(error);
+
+      return;
+    }
+  }
+
+  public async saveSyncChannels(
+    id: string,
+    channels: ISavedSettingsFile['channels'],
+  ) {
+    const url = `${this.baseUrl}/sync`;
+
+    try {
+      const {
+        data: { id: syncId },
+      } = await axios.post<IPostSyncChannels>(
+        url,
+        {
+          id,
+          channels,
+        },
+        {
+          headers: { jwt: this.jwtToken },
+        },
+      );
+
+      return syncId;
+    } catch (error) {
+      addLogs(error);
 
       return;
     }

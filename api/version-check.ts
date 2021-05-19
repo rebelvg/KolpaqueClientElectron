@@ -4,9 +4,9 @@ import * as _ from 'lodash';
 import { printNotification } from './notifications';
 import { addLogs } from './logs';
 import { githubClient } from './api-clients';
-import { sleep } from './channel-check';
 import { CLIENT_VERSION } from './globals';
 import { main } from './main';
+import { sleep } from './helpers';
 
 const SERVICES = [
   {

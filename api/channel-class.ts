@@ -16,11 +16,10 @@ import {
 import { customStreamService } from './stream-services/custom';
 import { launchPlayerChannel, playInWindow } from './channel-play';
 import { main } from './main';
-
-const channelValidate = ['visibleName', 'isPinned', 'autoStart', 'autoRestart'];
+import { ISavedSettingsFile } from './config-class';
 
 export class Channel extends EventEmitter {
-  public id: string;
+  public readonly id: string;
   public serviceName: ServiceNamesEnum = ServiceNamesEnum.CUSTOM;
   private serviceObj: BaseStreamService = customStreamService;
   public name: string;
@@ -94,16 +93,14 @@ export class Channel extends EventEmitter {
     this.visibleName = this.name;
   }
 
-  public update(channelConfig: Partial<Channel>): void {
-    _.forEach(channelConfig, (settingValue, settingName) => {
-      if (channelValidate.includes(settingName)) {
-        if (settingName === 'visibleName' && !settingValue) {
-          return;
-        }
+  public update(channelConfig: ISavedSettingsFile['channels'][0]): void {
+    if (channelConfig.visibleName) {
+      this.visibleName = channelConfig.visibleName;
+    }
 
-        this[settingName] = settingValue;
-      }
-    });
+    this.isPinned = channelConfig.isPinned;
+    this.autoStart = channelConfig.autoStart;
+    this.autoRestart = channelConfig.autoRestart;
   }
 
   private changeSetting(settingName: string, settingValue: unknown): boolean {

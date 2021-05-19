@@ -1,9 +1,9 @@
 import { ipcMain, dialog } from 'electron';
 import * as _ from 'lodash';
 
-import { sleep } from './channel-check';
 import { Channel } from './channel-class';
 import { REGISTERED_SERVICES } from './globals';
+import { sleep } from './helpers';
 import { addLogs } from './logs';
 import { ServiceNamesEnum } from './stream-services/_base';
 

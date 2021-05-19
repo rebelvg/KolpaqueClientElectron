@@ -9,7 +9,7 @@ import AutoSave from './AutoSave';
 const { remote } = window.require('electron');
 const { Menu } = remote;
 
-const openMenu = () => {
+export const openMenu = () => {
   const macMenu = Menu.buildFromTemplate(template);
 
   macMenu.popup(remote.getCurrentWindow());

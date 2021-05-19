@@ -75,6 +75,7 @@ export default class ImportForm extends Component<any> {
           component="input"
           placeholder="Twitch channel..."
         />
+
         <BtnWrap>
           <AddBtn type="button" onClick={this.addMember}>
             Import Channels Once

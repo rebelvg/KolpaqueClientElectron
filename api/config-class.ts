@@ -7,23 +7,13 @@ import { EventEmitter } from 'events';
 import { Channel } from './channel-class';
 import { addLogs } from './logs';
 import { contextMenuTemplate, main } from './main';
+import { sleep } from './helpers';
+import { klpqServiceClient } from './api-clients';
 
 const SETTINGS_FILE_PATH = path.join(
   app.getPath('documents'),
   'KolpaqueClientElectron.json',
 );
-const SETTINGS_FILE_PATH_BAD = path.join(
-  app.getPath('documents'),
-  'KolpaqueClientElectron.json.bak',
-);
-
-const channelSave = [
-  'link',
-  'visibleName',
-  'isPinned',
-  'autoStart',
-  'autoRestart',
-];
 
 const filterChannel = (channel: Channel, filter: string): boolean => {
   filter = filter.trim();
@@ -132,6 +122,18 @@ interface ISettings {
   twitchRefreshToken: string;
   youtubeTosConsent: boolean;
   youtubeRefreshToken: string;
+  syncId: string;
+}
+
+export interface ISavedSettingsFile {
+  channels: {
+    link: string;
+    visibleName: string;
+    isPinned: boolean;
+    autoStart: boolean;
+    autoRestart: boolean;
+  }[];
+  settings: ISettings;
 }
 
 export class Config extends EventEmitter {
@@ -155,6 +157,7 @@ export class Config extends EventEmitter {
     twitchRefreshToken: '',
     youtubeTosConsent: false,
     youtubeRefreshToken: '',
+    syncId: null,
   };
 
   constructor() {
@@ -176,14 +179,33 @@ export class Config extends EventEmitter {
 
     const file = fs.readFileSync(SETTINGS_FILE_PATH, 'utf8');
 
-    let parseJson: Config;
+    let parseJson: ISavedSettingsFile;
 
     try {
       parseJson = JSON.parse(file);
     } catch (error) {
-      fs.writeFileSync(SETTINGS_FILE_PATH_BAD, file);
+      addLogs(error);
 
       return;
+    }
+
+    const { syncId } = parseJson.settings;
+
+    if (syncId) {
+      const syncedChannels = await klpqServiceClient.getSyncChannels(syncId);
+
+      if (syncedChannels) {
+        parseJson.channels = syncedChannels;
+      }
+    } else {
+      const newSyncId = await klpqServiceClient.saveSyncChannels(
+        syncId,
+        parseJson.channels,
+      );
+
+      if (newSyncId) {
+        parseJson.settings.syncId = newSyncId;
+      }
     }
 
     try {
@@ -195,11 +217,10 @@ export class Config extends EventEmitter {
         }
       }
 
-      _.forEach(this.settings, (settingValue, settingName) => {
-        if (parseJson.settings.hasOwnProperty(settingName)) {
-          this.settings[settingName] = parseJson.settings[settingName];
-        }
-      });
+      this.settings = {
+        ...this.settings,
+        ...parseJson.settings,
+      };
     } catch (error) {
       addLogs(error);
 
@@ -207,10 +228,13 @@ export class Config extends EventEmitter {
     }
   }
 
-  private saveLoop(): void {
-    setInterval(() => {
-      this.saveFile();
-    }, 5 * 60 * 1000);
+  private async saveLoop(): Promise<void> {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      await sleep(5 * 60 * 1000);
+
+      await this.saveFile(true);
+    }
   }
 
   async addChannelLink(
@@ -327,21 +351,33 @@ export class Config extends EventEmitter {
     };
   }
 
-  saveFile(): boolean {
+  async saveFile(doSync: boolean): Promise<boolean> {
     try {
-      const channels = _.map(this.channels, (channel) => {
-        const saveChannel = {};
+      const channels = _.map(
+        this.channels,
+        ({ link, visibleName, isPinned, autoStart, autoRestart }) => ({
+          link,
+          visibleName,
+          isPinned,
+          autoStart,
+          autoRestart,
+        }),
+      );
 
-        _.forEach(channelSave, (settingName) => {
-          if (channel.hasOwnProperty(settingName)) {
-            saveChannel[settingName] = channel[settingName];
-          }
-        });
+      if (doSync) {
+        const { syncId } = this.settings;
 
-        return saveChannel;
-      });
+        const newSyncId = await klpqServiceClient.saveSyncChannels(
+          syncId,
+          channels,
+        );
 
-      const saveConfig = {
+        if (newSyncId) {
+          this.settings.syncId = newSyncId;
+        }
+      }
+
+      const saveConfig: ISavedSettingsFile = {
         channels,
         settings: this.settings,
       };

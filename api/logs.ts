@@ -16,6 +16,16 @@ let logsUi: string[] = [];
 ipcMain.handle('config_logs', () => logsUi.slice().reverse());
 
 export function addLogs(...logs: any[]): void {
+  _.forEach(logs, (value, key) => {
+    if (value instanceof Error) {
+      logs[key] = {
+        name: value.name,
+        message: value.message,
+        stack: value.stack,
+      };
+    }
+  });
+
   const logLine = logs
     .map((log) =>
       util.inspect(log, {

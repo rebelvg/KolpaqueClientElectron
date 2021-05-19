@@ -4,6 +4,8 @@ import { Field } from 'react-final-form';
 import Toggle from 'react-toggle-button';
 import styled from 'styled-components';
 import Select from 'react-select';
+import AutoSave from '../../Channel/Forms/SearchForm/AutoSave';
+import { openMenu } from '../../Channel/Forms/SearchForm/SearchForm';
 
 const { shell, ipcRenderer } = window.require('electron');
 
@@ -44,7 +46,7 @@ const ReactSelectAdapter = ({ input, select, ...rest }) => (
   />
 );
 
-const SettingsForm: any = ({ handleSubmit, changeSetting }) => (
+const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
   <Form onSubmit={handleSubmit}>
     <FieldWrapper>
       <Label>LQ</Label>
@@ -198,6 +200,29 @@ const SettingsForm: any = ({ handleSubmit, changeSetting }) => (
     >
       Twitch Login
     </button>
+
+    <br />
+    <br />
+
+    <InputWrapper>
+      <StyledField
+        name="syncId"
+        type="text"
+        component="input"
+        placeholder="Sync Key..."
+        onContextMenu={() => {
+          openMenu();
+        }}
+      />
+    </InputWrapper>
+    <AutoSave
+      save={(value) => {
+        const syncKey = value.syncId || null;
+
+        changeSetting(syncKey, 'syncId');
+      }}
+      debounce={500}
+    />
   </Form>
 );
 
@@ -230,5 +255,14 @@ const Label = styled.label`
 `;
 
 const InputWrapper = styled.div``;
+
+const StyledField = styled(Field)`
+  width: 100%;
+  height: 18px;
+  padding: 0px;
+  margin: 0px;
+  position: relative;
+  z-index: 100000;
+`;
 
 export default SettingsForm;

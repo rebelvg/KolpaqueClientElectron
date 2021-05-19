@@ -4,6 +4,7 @@ import { config } from './settings-file';
 import { addLogs } from './logs';
 import { REGISTERED_SERVICES } from './globals';
 import { BaseStreamService } from './stream-services/_base';
+import { sleep } from './helpers';
 
 async function checkService(
   service: BaseStreamService,
@@ -27,10 +28,6 @@ async function checkServiceLoop(service: BaseStreamService): Promise<void> {
 
     await checkService(service, true);
   }
-}
-
-export function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export async function loop(): Promise<void> {
