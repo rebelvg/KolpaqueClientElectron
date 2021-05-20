@@ -135,6 +135,7 @@ export interface ISavedSettingsFile {
     channelAdded: Date;
   }[];
   settings: ISettings;
+  migrations: string[];
 }
 
 export class Config extends EventEmitter {
@@ -160,6 +161,7 @@ export class Config extends EventEmitter {
     youtubeRefreshToken: '',
     syncId: null,
   };
+  public migrations: string[] = [];
 
   constructor() {
     super();
@@ -184,6 +186,8 @@ export class Config extends EventEmitter {
 
     try {
       parseJson = JSON.parse(file);
+
+      parseJson = this.runMigrations(parseJson);
     } catch (error) {
       addLogs(error);
 
@@ -203,6 +207,8 @@ export class Config extends EventEmitter {
         ...this.settings,
         ...parseJson.settings,
       };
+
+      this.migrations = parseJson.migrations;
     } catch (error) {
       addLogs(error);
 
@@ -333,6 +339,7 @@ export class Config extends EventEmitter {
       const saveConfig: ISavedSettingsFile = {
         channels,
         settings: this.settings,
+        migrations: this.migrations,
       };
 
       fs.writeFileSync(SETTINGS_FILE_PATH, JSON.stringify(saveConfig, null, 2));
@@ -388,5 +395,26 @@ export class Config extends EventEmitter {
         channelAdded,
       }),
     );
+  }
+
+  public runMigrations(parsedJson: ISavedSettingsFile) {
+    if (!parsedJson.migrations) {
+      parsedJson.migrations = [];
+    }
+
+    if (!parsedJson.migrations.includes('migration_1')) {
+      parsedJson.channels = parsedJson.channels.map((channel, id) => {
+        const dateNow = Date.now();
+
+        return {
+          ...channel,
+          channelAdded: new Date(dateNow + id),
+        };
+      });
+
+      parsedJson.migrations.push('migration_1');
+    }
+
+    return parsedJson;
   }
 }

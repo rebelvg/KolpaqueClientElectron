@@ -96,17 +96,9 @@ export class Channel extends EventEmitter {
   }
 
   public update(channelConfig: ISavedSettingsFile['channels'][0]): void {
-    if (channelConfig.visibleName) {
-      this.visibleName = channelConfig.visibleName;
-    }
-
-    this.isPinned = channelConfig.isPinned;
-    this.autoStart = channelConfig.autoStart;
-    this.autoRestart = channelConfig.autoRestart;
-
-    if (channelConfig.channelAdded) {
-      this.channelAdded = channelConfig.channelAdded;
-    }
+    _.forEach(channelConfig, (value, key) => {
+      this[key] = value;
+    });
   }
 
   private changeSetting(settingName: string, settingValue: unknown): boolean {
