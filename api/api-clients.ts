@@ -8,8 +8,8 @@ import { ISavedSettingsFile } from './config-class';
 
 const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
 
-// export const KLPQ_SERVICE_URL = 'https://client-api.klpq.men';
-export const KLPQ_SERVICE_URL = 'http://localhost:3000';
+export const KLPQ_SERVICE_URL = 'https://client-api.klpq.men';
+// export const KLPQ_SERVICE_URL = 'http://localhost:3000';
 export const SOCKET_CLIENT_ID = uuid.v4();
 
 export interface ITwitchUser {
@@ -545,7 +545,9 @@ class KlpqServiceClient {
     }
   }
 
-  public async getSyncChannels(id: string) {
+  public async getSyncChannels(
+    id: string,
+  ): Promise<ISavedSettingsFile['channels']> {
     const url = `${this.baseUrl}/sync/${id}`;
 
     try {
@@ -566,7 +568,7 @@ class KlpqServiceClient {
   public async saveSyncChannels(
     id: string,
     channels: ISavedSettingsFile['channels'],
-  ) {
+  ): Promise<string> {
     const url = `${this.baseUrl}/sync`;
 
     try {

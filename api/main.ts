@@ -113,7 +113,7 @@ function createWindow(): void {
   });
 
   mainWindow.on('close', () => {
-    config.saveFile(false);
+    config.saveFile();
   });
 
   mainWindow.on('close', (e) => {

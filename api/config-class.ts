@@ -8,7 +8,7 @@ import { Channel } from './channel-class';
 import { addLogs } from './logs';
 import { contextMenuTemplate, main } from './main';
 import { sleep } from './helpers';
-import { klpqServiceClient } from './api-clients';
+import { syncSettings } from './sync-settings';
 
 const SETTINGS_FILE_PATH = path.join(
   app.getPath('documents'),
@@ -166,13 +166,13 @@ export class Config extends EventEmitter {
     this.run();
   }
 
-  private async run() {
-    await this.readFile();
+  private run() {
+    this.readFile();
 
     this.saveLoop();
   }
 
-  private async readFile(): Promise<void> {
+  private readFile(): Promise<void> {
     if (!fs.existsSync(SETTINGS_FILE_PATH)) {
       return;
     }
@@ -189,31 +189,12 @@ export class Config extends EventEmitter {
       return;
     }
 
-    const { syncId } = parseJson.settings;
-
-    if (syncId) {
-      const syncedChannels = await klpqServiceClient.getSyncChannels(syncId);
-
-      if (syncedChannels) {
-        parseJson.channels = syncedChannels;
-      }
-    } else {
-      const newSyncId = await klpqServiceClient.saveSyncChannels(
-        syncId,
-        parseJson.channels,
-      );
-
-      if (newSyncId) {
-        parseJson.settings.syncId = newSyncId;
-      }
-    }
-
     try {
       for (const parsedChannel of parseJson.channels) {
-        const channel = await this.addChannelLink(parsedChannel.link, false);
+        const channel = this.addChannelLink(parsedChannel.link, false);
 
         if (channel) {
-          await channel.update(parsedChannel);
+          channel.update(parsedChannel);
         }
       }
 
@@ -233,14 +214,11 @@ export class Config extends EventEmitter {
     while (true) {
       await sleep(5 * 60 * 1000);
 
-      await this.saveFile(true);
+      this.saveFile();
     }
   }
 
-  async addChannelLink(
-    channelLink: string,
-    emitEvent = true,
-  ): Promise<Channel> {
+  addChannelLink(channelLink: string, emitEvent = true): Channel {
     const channel = Config.buildChannel(channelLink);
 
     if (!channel) {
@@ -258,7 +236,7 @@ export class Config extends EventEmitter {
     this.channels.push(channel);
 
     if (emitEvent) {
-      await this.addChannels([channel]);
+      this.addChannels([channel]);
     }
 
     return channel;
@@ -351,31 +329,9 @@ export class Config extends EventEmitter {
     };
   }
 
-  async saveFile(doSync: boolean): Promise<boolean> {
+  saveFile(): boolean {
     try {
-      const channels = _.map(
-        this.channels,
-        ({ link, visibleName, isPinned, autoStart, autoRestart }) => ({
-          link,
-          visibleName,
-          isPinned,
-          autoStart,
-          autoRestart,
-        }),
-      );
-
-      if (doSync) {
-        const { syncId } = this.settings;
-
-        const newSyncId = await klpqServiceClient.saveSyncChannels(
-          syncId,
-          channels,
-        );
-
-        if (newSyncId) {
-          this.settings.syncId = newSyncId;
-        }
-      }
+      const channels = this.generateSaveChannels();
 
       const saveConfig: ISavedSettingsFile = {
         channels,
@@ -383,6 +339,8 @@ export class Config extends EventEmitter {
       };
 
       fs.writeFileSync(SETTINGS_FILE_PATH, JSON.stringify(saveConfig, null, 2));
+
+      syncSettings.save();
 
       addLogs('settings_saved');
 
@@ -411,6 +369,19 @@ export class Config extends EventEmitter {
       'config_changeSetting',
       settingName,
       settingValue,
+    );
+  }
+
+  public generateSaveChannels(): ISavedSettingsFile['channels'] {
+    return _.map(
+      this.channels,
+      ({ link, visibleName, isPinned, autoStart, autoRestart }) => ({
+        link,
+        visibleName,
+        isPinned,
+        autoStart,
+        autoRestart,
+      }),
     );
   }
 }
