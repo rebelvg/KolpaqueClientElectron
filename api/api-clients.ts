@@ -573,7 +573,7 @@ class KlpqServiceClient {
 
     try {
       const {
-        data: { id: syncId },
+        data: { id: newSyncId },
       } = await axios.post<IPostSyncChannels>(
         url,
         {
@@ -585,7 +585,7 @@ class KlpqServiceClient {
         },
       );
 
-      return syncId;
+      return newSyncId;
     } catch (error) {
       addLogs(error);
 

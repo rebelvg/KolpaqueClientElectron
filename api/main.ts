@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import {
   app,
   BrowserWindow,
@@ -15,7 +16,6 @@ import * as fixPath from 'fix-path';
 import * as defaultMenu from 'electron-default-menu';
 import * as fs from 'fs';
 import * as os from 'os';
-import 'source-map-support/register';
 
 fixPath();
 
@@ -36,8 +36,6 @@ ipcMain.once('client_ready', async () => {
   addLogs('client_ready');
 
   await init();
-
-  addLogs('init_done');
 });
 
 const iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));

@@ -38,6 +38,7 @@ export class Channel extends EventEmitter {
   public autoRestart = false;
   public _trayIcon: Electron.NativeImage;
   public _playingProcesses = 0;
+  public channelAdded: Date;
 
   constructor(channelLink: string) {
     super();
@@ -47,6 +48,7 @@ export class Channel extends EventEmitter {
     this.id = uuid.v4();
     this.link = channelLink;
     this.name = this.link;
+    this.channelAdded = new Date();
 
     const channelURL = new URL(channelLink);
 
@@ -101,6 +103,10 @@ export class Channel extends EventEmitter {
     this.isPinned = channelConfig.isPinned;
     this.autoStart = channelConfig.autoStart;
     this.autoRestart = channelConfig.autoRestart;
+
+    if (channelConfig.channelAdded) {
+      this.channelAdded = channelConfig.channelAdded;
+    }
   }
 
   private changeSetting(settingName: string, settingValue: unknown): boolean {

@@ -72,7 +72,7 @@ const sortChannels = (
 
   switch (sortType) {
     case 'lastAdded': {
-      sortedChannels = channels;
+      sortedChannels = _.sortBy(channels, ['channelAdded']);
       break;
     }
     case 'lastUpdated': {
@@ -88,7 +88,7 @@ const sortChannels = (
       break;
     }
     default: {
-      sortedChannels = channels;
+      sortedChannels = _.sortBy(channels, ['channelAdded']);
     }
   }
 
@@ -132,6 +132,7 @@ export interface ISavedSettingsFile {
     isPinned: boolean;
     autoStart: boolean;
     autoRestart: boolean;
+    channelAdded: Date;
   }[];
   settings: ISettings;
 }
@@ -191,7 +192,7 @@ export class Config extends EventEmitter {
 
     try {
       for (const parsedChannel of parseJson.channels) {
-        const channel = this.addChannelLink(parsedChannel.link, false);
+        const channel = this.addChannelLink(parsedChannel.link);
 
         if (channel) {
           channel.update(parsedChannel);
@@ -218,7 +219,7 @@ export class Config extends EventEmitter {
     }
   }
 
-  addChannelLink(channelLink: string, emitEvent = true): Channel {
+  addChannelLink(channelLink: string): Channel {
     const channel = Config.buildChannel(channelLink);
 
     if (!channel) {
@@ -234,10 +235,6 @@ export class Config extends EventEmitter {
     channel.lastUpdated = Date.now();
 
     this.channels.push(channel);
-
-    if (emitEvent) {
-      this.addChannels([channel]);
-    }
 
     return channel;
   }
@@ -352,7 +349,7 @@ export class Config extends EventEmitter {
     }
   }
 
-  public async addChannels(channels: Channel[]) {
+  public async runChannelUpdates(channels: Channel[]) {
     await Promise.all(channels.map((channel) => channel.getStats(false)));
 
     await Promise.all(channels.map((channel) => channel.getInfo()));
@@ -375,12 +372,20 @@ export class Config extends EventEmitter {
   public generateSaveChannels(): ISavedSettingsFile['channels'] {
     return _.map(
       this.channels,
-      ({ link, visibleName, isPinned, autoStart, autoRestart }) => ({
+      ({
         link,
         visibleName,
         isPinned,
         autoStart,
         autoRestart,
+        channelAdded,
+      }) => ({
+        link,
+        visibleName,
+        isPinned,
+        autoStart,
+        autoRestart,
+        channelAdded,
       }),
     );
   }

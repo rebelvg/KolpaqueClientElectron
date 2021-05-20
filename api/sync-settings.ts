@@ -1,9 +1,12 @@
 import { klpqServiceClient } from './api-clients';
 import { Channel } from './channel-class';
+import { addLogs } from './logs';
 import { config } from './settings-file';
 
 class SyncSettings {
   public async init() {
+    addLogs('sync_init');
+
     const { syncId } = config.settings;
 
     const channels = config.generateSaveChannels();
@@ -18,10 +21,16 @@ class SyncSettings {
         return;
       }
 
-      return newSyncId;
+      config.settings.syncId = newSyncId;
+
+      return;
     }
 
     const syncedChannels = await klpqServiceClient.getSyncChannels(syncId);
+
+    if (!syncedChannels) {
+      return;
+    }
 
     for (const localChannel of config.channels) {
       const findSyncedChannel = syncedChannels.find(
@@ -29,6 +38,8 @@ class SyncSettings {
       );
 
       if (!findSyncedChannel) {
+        addLogs('sync_removing_channel', localChannel.link);
+
         config.removeChannelById(localChannel.id);
       }
     }
@@ -41,7 +52,9 @@ class SyncSettings {
       );
 
       if (!findLocalChannel) {
-        const channel = config.addChannelLink(syncedChannel.link, false);
+        addLogs('sync_adding_channel', syncedChannel.link);
+
+        const channel = config.addChannelLink(syncedChannel.link);
 
         if (channel) {
           channel.update(syncedChannel);
@@ -53,9 +66,9 @@ class SyncSettings {
       }
     }
 
-    await config.addChannels(newChannels);
+    await config.runChannelUpdates(newChannels);
 
-    return syncedChannels;
+    return;
   }
 
   public async save() {
@@ -74,7 +87,9 @@ class SyncSettings {
       return;
     }
 
-    return newSyncId;
+    config.settings.syncId = newSyncId;
+
+    return;
   }
 }
 

@@ -18,10 +18,18 @@ ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
   return config.changeSetting(settingName, settingValue);
 });
 
-ipcMain.on('channel_add', (event, channelLink) => {
+ipcMain.on('channel_add', async (event, channelLink) => {
   addLogs('channel_add', channelLink);
 
-  return config.addChannelLink(channelLink);
+  const channel = config.addChannelLink(channelLink);
+
+  if (!channel) {
+    return null;
+  }
+
+  await config.runChannelUpdates([channel]);
+
+  return channel;
 });
 
 ipcMain.on('channel_remove', (event, id) => {

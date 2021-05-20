@@ -27,7 +27,6 @@ async function doImport(
   for (const channelName of channels) {
     const channel = await config.addChannelLink(
       `${this.buildChannelLink(channelName)}`,
-      false,
     );
 
     if (channel) {
@@ -38,7 +37,7 @@ async function doImport(
   }
 
   if (emitEvent) {
-    await config.addChannels(channelsAdded);
+    await config.runChannelUpdates(channelsAdded);
   }
 
   return channelsAdded;

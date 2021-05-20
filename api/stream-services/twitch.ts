@@ -143,7 +143,6 @@ async function addImportedChannels(
       for (const importedChannel of userData.data) {
         const channel = await config.addChannelLink(
           `${twitchStreamService.buildChannelLink(importedChannel.login)}`,
-          false,
         );
 
         if (channel) {
@@ -180,7 +179,6 @@ async function importBase(
 
   const addedChannel = await config.addChannelLink(
     twitchStreamService.buildChannelLink(channelName),
-    false,
   );
 
   if (addedChannel) {
@@ -228,7 +226,7 @@ async function importBase(
   channelsAdded.forEach((channel) => channelsAddedAll.push(channel));
 
   if (emitEvent) {
-    await config.addChannels(channelsAdded);
+    await config.runChannelUpdates(channelsAdded);
   }
 
   return channelsAddedAll;
