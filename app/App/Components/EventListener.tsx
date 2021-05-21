@@ -10,7 +10,6 @@ import {
   getInfo,
   getLoaded,
 } from '../../redux/channel';
-import { initSettings } from '../../redux/settings';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -19,7 +18,6 @@ const { ipcRenderer } = window.require('electron');
     loaded: getLoaded(state),
   }),
   {
-    initSettings,
     getInfo,
     initStart,
     initEnd,
@@ -57,7 +55,7 @@ class EventListener extends Component<any> {
   };
 
   componentDidMount() {
-    const { initSettings, updateData, loaded, getInfo, initStart } = this.props;
+    const { updateData, loaded, getInfo, initStart } = this.props;
 
     if (!loaded) {
       ipcRenderer.on('channel_changeSettingSync', () => updateData());
@@ -66,7 +64,6 @@ class EventListener extends Component<any> {
       ipcRenderer.on('channel_removeSync', () => updateData());
 
       initStart();
-      initSettings();
 
       setTimeout(this.empty, 3000);
     }

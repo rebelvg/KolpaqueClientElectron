@@ -3,15 +3,14 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled, { withTheme } from 'styled-components';
 
-import {
-  changeSettings,
-  changeSettingsResponse,
-  importChannel,
-  getSettings,
-} from '../../redux/settings';
 import { updateData } from '../../redux/channel';
 import Settings from '../../Settings/Components/Settings';
-import { getVersion } from '../../Channel/Helpers/IPCHelpers';
+import {
+  changeSetting,
+  getSettings,
+  getVersion,
+  importChannel,
+} from '../../Channel/Helpers/IPCHelpers';
 import { IpcRenderer } from 'electron';
 
 const {
@@ -19,27 +18,31 @@ const {
 }: { remote: any; ipcRenderer: IpcRenderer } = window.require('electron');
 
 @withTheme
-@connect(
-  (state) => ({
-    settings: getSettings(state),
-  }),
-  { changeSettings, changeSettingsResponse, importChannel, updateData },
-)
+@connect(() => ({}), {
+  updateData,
+})
 export default class SettingsContainer extends Component<any, any> {
   constructor(props) {
     super(props);
 
+    const settings = getSettings();
+
     const version = getVersion();
 
     this.state = {
+      settings,
       version,
     };
   }
 
   private changeSettingHandler = (e, settingName, settingValue) => {
-    this.props.updateData();
+    const settings = getSettings();
 
-    this.props.changeSettingsResponse(settingName, settingValue);
+    this.setState({
+      settings,
+    });
+
+    this.props.updateData();
   };
 
   componentWillMount() {
@@ -54,14 +57,13 @@ export default class SettingsContainer extends Component<any, any> {
   }
 
   render() {
-    const { settings } = this.props;
-    const { version } = this.state;
+    const { settings, version } = this.state;
 
     return (
       <Container>
         <Settings
-          importChannel={this.props.importChannel}
-          changeSettings={this.props.changeSettings}
+          importChannel={importChannel}
+          changeSettings={changeSetting}
           settings={settings}
         />
         <StyledFooter>

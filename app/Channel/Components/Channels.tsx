@@ -3,9 +3,8 @@ import styled, { withTheme } from 'styled-components';
 import { connect } from 'react-redux';
 import Channel from '../../Channel/Components/Channel';
 import { getChannelsList, getUpdate, updateData } from '../../redux/channel';
-import { getSortType } from '../../redux/settings';
 import {
-  changeSetting,
+  changeChannelSetting,
   openChannelMenu,
 } from '../../Channel/Helpers/IPCHelpers';
 import ReactList from 'react-list';
@@ -14,7 +13,6 @@ import ReactList from 'react-list';
 @connect(
   (state) => ({
     update: getUpdate(state),
-    sortType: getSortType(state),
     channels: getChannelsList(state),
   }),
   {
@@ -40,7 +38,8 @@ class Channels extends PureComponent<any, any> {
   };
 
   renameChannel = (name, id) => {
-    changeSetting(id, 'visibleName', name);
+    changeChannelSetting(id, 'visibleName', name);
+
     this.setState({ edit: null });
   };
 

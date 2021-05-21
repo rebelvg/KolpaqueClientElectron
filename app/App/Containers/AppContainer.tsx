@@ -2,19 +2,26 @@ import React, { Component } from 'react';
 import { HashRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
 
 import Routes from '../../App/Components/Routes';
 import EventListener from '../../App/Components/EventListener';
 import { themes } from '../../Themes';
-import { getTheme } from '../../redux/settings';
+import { getSettings } from '../../Channel/Helpers/IPCHelpers';
 
-@connect((state) => ({
-  nightMode: getTheme(state),
-}))
-export default class AppContainer extends Component<any> {
+export default class AppContainer extends Component<any, any> {
+  constructor(props) {
+    super(props);
+
+    const settings = getSettings();
+
+    this.state = {
+      settings,
+    };
+  }
+
   render() {
-    const { nightMode } = this.props;
+    const { nightMode } = this.state;
+
     const theme = nightMode ? themes['nightTheme'] : themes['defaultTheme'];
 
     return (

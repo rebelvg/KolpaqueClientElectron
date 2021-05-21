@@ -15,7 +15,7 @@ export const deleteChannel = (channel) => {
   ipcRenderer.send('channel_remove', channel.id);
 };
 
-export const changeSetting = (id, settingName, settingValue) => {
+export const changeChannelSetting = (id, settingName, settingValue) => {
   ipcRenderer.send('channel_changeSettingSync', id, settingName, settingValue);
 };
 
@@ -28,7 +28,15 @@ export const getVersion = () => {
 };
 
 export const getSettings = () => {
-  ipcRenderer.sendSync('getSettings');
+  return ipcRenderer.sendSync('getSettings');
+};
+
+export const importChannel = (name: string) => {
+  return ipcRenderer.send('config_twitchImport', name);
+};
+
+export const changeSetting = (name: string, value: any) => {
+  return ipcRenderer.send('config_changeSetting', name, value);
 };
 
 export const openChannelMenu = (channel, func) => {

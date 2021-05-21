@@ -1,7 +1,10 @@
 import React, { PureComponent } from 'react';
 import styled, { withTheme } from 'styled-components';
 
-import { playChannel, changeSetting } from '../../Channel/Helpers/IPCHelpers';
+import {
+  playChannel,
+  changeChannelSetting,
+} from '../../Channel/Helpers/IPCHelpers';
 import EditForm from '../../Channel/Forms/EditForm';
 import {
   AutoStart,
@@ -21,7 +24,7 @@ class Channel extends PureComponent<any> {
   renameChannel = (value, id) => this.props.handleAction('RENAME', [value, id]);
 
   changeSetting = (id, name, value) => {
-    changeSetting(id, name, value);
+    changeChannelSetting(id, name, value);
   };
 
   render() {
