@@ -118,8 +118,6 @@ export class Channel extends EventEmitter {
       this.changeSetting(settingName, settingValue);
     });
 
-    console.log(settings);
-
     main.mainWindow.webContents.send('channel_changeSettingSync');
 
     return true;

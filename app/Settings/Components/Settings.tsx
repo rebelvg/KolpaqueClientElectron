@@ -52,8 +52,6 @@ export default class Settings extends Component<any, any> {
     const { settings } = this.props;
     const { activeKey } = this.state;
 
-    console.log(settings, activeKey);
-
     return (
       <Container>
         <SettingSelect

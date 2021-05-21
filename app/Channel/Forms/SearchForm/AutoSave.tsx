@@ -8,8 +8,6 @@ class AutoSave extends React.Component<any, any> {
   constructor(props) {
     super(props);
 
-    console.log('AutoSave', props);
-
     this.state = { values: props.values, submitting: false };
 
     this.saveDebounce = debounce(this.save, props.debounce);
@@ -17,8 +15,6 @@ class AutoSave extends React.Component<any, any> {
 
   save = () => {
     const { values, save } = this.props;
-
-    console.log('save', values, this.state);
 
     if (!isEqual(this.state.values, values)) {
       this.setState(

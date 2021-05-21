@@ -8,7 +8,6 @@ import Update from '../../Channel/Components/Update';
 import SearchForm from '../../Channel/Forms/SearchForm/SearchForm';
 import Footer from '../../Channel/Components/Footer';
 import Tabs from '../../Channel/Components/Tabs';
-import Loading from '../../Shared/Loading';
 import Channels from '../../Channel/Components/Channels';
 import { getChannels } from '../Helpers/IPCHelpers';
 
@@ -34,8 +33,6 @@ class ChannelContainer extends PureComponent<any, any> {
   }
 
   private updateView = async (caller: string) => {
-    console.log('updateView', caller);
-
     const { activeTab, filter } = this.state;
 
     const { channels, count } = await getChannels(
@@ -53,8 +50,6 @@ class ChannelContainer extends PureComponent<any, any> {
   };
 
   async componentDidMount() {
-    console.log('componentDidMount_channel');
-
     ipcRenderer.on('channel_changeSettingSync', () => {
       this.updateView('channel_changeSettingSync');
     });
@@ -76,8 +71,6 @@ class ChannelContainer extends PureComponent<any, any> {
 
   setFilter = async (value) => {
     const { activeTab } = this.state;
-
-    console.log(value);
 
     const filter = value.filter ? value.filter : '';
 
@@ -117,8 +110,6 @@ class ChannelContainer extends PureComponent<any, any> {
   render() {
     const { filter } = this.props;
     const { channels, count, activeTab } = this.state;
-
-    console.log('render');
 
     return (
       <Wrapper>
