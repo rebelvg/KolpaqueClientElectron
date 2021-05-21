@@ -56,8 +56,6 @@ class ChannelContainer extends PureComponent<any, any> {
   }
 
   setFilter = async (value) => {
-    console.log('setFilter');
-
     const { activeTab } = this.state;
 
     const filter = value.filter ? value.filter : '';
@@ -75,8 +73,6 @@ class ChannelContainer extends PureComponent<any, any> {
   };
 
   handleActiveTab = async (activeTab) => {
-    console.log('handleActiveTab');
-
     const { filter } = this.state;
 
     const { channels, count } = await getChannels({
@@ -95,11 +91,9 @@ class ChannelContainer extends PureComponent<any, any> {
     const { filter } = this.props;
     const { channels, count, activeTab } = this.state;
 
-    console.log('channel_render', activeTab, channels.length);
-
-    if (false) {
-      return <Loading />;
-    }
+    // if (false) {
+    //   return <Loading />;
+    // }
 
     return (
       <Wrapper>

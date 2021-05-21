@@ -38,8 +38,6 @@ export default class SettingsContainer extends Component<any, any> {
     this.setState({
       settings,
     });
-
-    // this.props.updateData();
   };
 
   componentWillMount() {
