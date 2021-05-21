@@ -27,6 +27,10 @@ export const getVersion = () => {
   return ipcRenderer.sendSync('client_getVersion');
 };
 
+export const getSettings = () => {
+  ipcRenderer.sendSync('getSettings');
+};
+
 export const openChannelMenu = (channel, func) => {
   const menu = new Menu();
 

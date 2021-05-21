@@ -12,10 +12,7 @@ import Logs from '../../Settings/Forms/LogsForm';
 const options = [
   { value: 'general', label: 'General Settings' },
   { value: 'import', label: 'Import Settings' },
-  {
-    value: 'logs',
-    label: 'Logs',
-  },
+  { value: 'logs', label: 'Logs' },
 ];
 
 export default class Settings extends Component<any, any> {
