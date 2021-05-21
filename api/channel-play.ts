@@ -28,29 +28,6 @@ ipcMain.on(
   },
 );
 
-ipcMain.on(
-  'channel_changeSettingSync',
-  (event, id, settingName, settingValue) => {
-    addLogs('channel_changeSettingSync_play', id, settingName, settingValue);
-
-    const channel = config.findById(id);
-
-    if (!channel) {
-      return false;
-    }
-
-    if (
-      channel._playingProcesses > 0 &&
-      settingName === 'autoRestart' &&
-      settingValue
-    ) {
-      channel.changeSettings({
-        onAutoRestart: true,
-      });
-    }
-  },
-);
-
 export async function launchPlayerLink(
   channelLink: string,
   LQ = null,

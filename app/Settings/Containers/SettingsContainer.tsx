@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled, { withTheme } from 'styled-components';
 
@@ -17,7 +16,6 @@ const {
 }: { remote: any; ipcRenderer: IpcRenderer } = window.require('electron');
 
 @withTheme
-@connect(() => ({}), {})
 export default class SettingsContainer extends Component<any, any> {
   constructor(props) {
     super(props);

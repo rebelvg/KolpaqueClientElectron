@@ -41,24 +41,25 @@ ipcMain.on('channel_remove', (event, id) => {
 ipcMain.on(
   'channel_changeSettingSync',
   (event, id, settingName, settingValue) => {
-    addLogs(
-      'channel_changeSettingSync_settings',
-      id,
-      settingName,
-      settingValue,
-    );
+    addLogs('channel_changeSettingSync', id, settingName, settingValue);
 
     const channel = config.findById(id);
 
     if (!channel) {
-      event.returnValue = false;
-
       return;
     }
 
-    event.returnValue = channel.changeSettings({
+    const newSettings = {
       [settingName]: settingValue,
-    });
+    };
+
+    if (settingName === 'autoRestart') {
+      if (channel._playingProcesses > 0 && settingValue) {
+        newSettings['onAutoRestart'] = true;
+      }
+    }
+
+    channel.changeSettings(newSettings);
 
     return;
   },
