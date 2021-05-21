@@ -1,13 +1,18 @@
 import { klpqServiceClient } from './api-clients';
 import { Channel } from './channel-class';
 import { addLogs } from './logs';
+import { main } from './main';
 import { config } from './settings-file';
 
 class SyncSettings {
   public async init() {
     addLogs('sync_init');
 
-    const { syncId } = config.settings;
+    const { enableSync, syncId } = config.settings;
+
+    if (!enableSync) {
+      return;
+    }
 
     const channels = config.generateSaveChannels();
 
@@ -23,12 +28,20 @@ class SyncSettings {
 
       config.settings.syncId = newSyncId;
 
+      main.mainWindow.webContents.send(
+        'config_changeSetting',
+        'syncId',
+        config.settings.syncId,
+      );
+
       return;
     }
 
     const syncedChannels = await klpqServiceClient.getSyncChannels(syncId);
 
     if (!syncedChannels) {
+      addLogs('bad_sync_id', syncId);
+
       return;
     }
 
@@ -77,8 +90,12 @@ class SyncSettings {
 
   public async save() {
     const {
-      settings: { syncId },
+      settings: { enableSync, syncId },
     } = config;
+
+    if (!enableSync) {
+      return;
+    }
 
     const channels = config.generateSaveChannels();
 
@@ -92,6 +109,12 @@ class SyncSettings {
     }
 
     config.settings.syncId = newSyncId;
+
+    main.mainWindow.webContents.send(
+      'config_changeSetting',
+      'syncId',
+      config.settings.syncId,
+    );
 
     return;
   }

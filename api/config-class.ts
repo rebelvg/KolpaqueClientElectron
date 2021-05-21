@@ -122,6 +122,7 @@ interface ISettings {
   twitchRefreshToken: string;
   youtubeTosConsent: boolean;
   youtubeRefreshToken: string;
+  enableSync: boolean;
   syncId: string;
 }
 
@@ -159,6 +160,7 @@ export class Config extends EventEmitter {
     twitchRefreshToken: '',
     youtubeTosConsent: false,
     youtubeRefreshToken: '',
+    enableSync: false,
     syncId: null,
   };
   public migrations: string[] = [];
@@ -367,6 +369,10 @@ export class Config extends EventEmitter {
   public setSettings(settingName: string, settingValue: unknown) {
     if (settingName === 'showNotifications') {
       contextMenuTemplate[3].checked = settingValue;
+    }
+
+    if (settingName === 'enableSync' || settingName === 'syncId') {
+      syncSettings.init();
     }
 
     main.mainWindow.webContents.send(

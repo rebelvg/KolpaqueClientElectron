@@ -4,7 +4,6 @@ import { Field } from 'react-final-form';
 import Toggle from 'react-toggle-button';
 import styled from 'styled-components';
 import Select from 'react-select';
-import AutoSave from '../../Channel/Forms/SearchForm/AutoSave';
 import { openMenu } from '../../Channel/Forms/SearchForm/SearchForm';
 
 const { shell, ipcRenderer } = window.require('electron');
@@ -204,6 +203,17 @@ const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
     <br />
     <br />
 
+    <FieldWrapper>
+      <Label>Enable Sync</Label>
+      <InputWrapper>
+        <Field
+          name="enableSync"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
+      </InputWrapper>
+    </FieldWrapper>
+
     <InputWrapper>
       <StyledField
         name="syncId"
@@ -213,16 +223,11 @@ const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
         onContextMenu={() => {
           openMenu();
         }}
+        onChange={(event) => {
+          changeSetting(event.target.value, 'syncId', true);
+        }}
       />
     </InputWrapper>
-    <AutoSave
-      save={(value) => {
-        const syncKey = value.syncId || null;
-
-        changeSetting(syncKey, 'syncId');
-      }}
-      debounce={500}
-    />
   </Form>
 );
 

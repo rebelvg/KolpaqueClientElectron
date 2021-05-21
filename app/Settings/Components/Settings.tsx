@@ -40,6 +40,8 @@ export default class Settings extends Component<any, any> {
   importChannel = (name) => this.props.importChannel(name);
 
   changeSetting = (value, name, text = false) => {
+    console.log(value, name, text);
+
     if (!text) {
       value = value ? value : false;
     } else {
