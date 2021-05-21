@@ -45,18 +45,6 @@ class SyncSettings {
       return;
     }
 
-    for (const localChannel of config.channels) {
-      const findSyncedChannel = syncedChannels.find(
-        (syncedChannel) => syncedChannel.link === localChannel.link,
-      );
-
-      if (!findSyncedChannel) {
-        addLogs('sync_removing_channel', localChannel.link);
-
-        config.removeChannelById(localChannel.id);
-      }
-    }
-
     const newChannels: Channel[] = [];
 
     for (const syncedChannel of syncedChannels) {

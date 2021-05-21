@@ -16,6 +16,8 @@ export const deleteChannel = (channel) => {
 };
 
 export const changeChannelSetting = (id, settingName, settingValue) => {
+  console.log('changeChannelSetting', id, settingName, settingValue);
+
   ipcRenderer.send('channel_changeSettingSync', id, settingName, settingValue);
 };
 

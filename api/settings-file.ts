@@ -41,7 +41,12 @@ ipcMain.on('channel_remove', (event, id) => {
 ipcMain.on(
   'channel_changeSettingSync',
   (event, id, settingName, settingValue) => {
-    addLogs('channel_changeSettingSync', id, settingName, settingValue);
+    addLogs(
+      'channel_changeSettingSync_settings',
+      id,
+      settingName,
+      settingValue,
+    );
 
     const channel = config.findById(id);
 

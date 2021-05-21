@@ -31,7 +31,7 @@ ipcMain.on(
 ipcMain.on(
   'channel_changeSettingSync',
   (event, id, settingName, settingValue) => {
-    addLogs('channel_changeSettingSync', id, settingName, settingValue);
+    addLogs('channel_changeSettingSync_play', id, settingName, settingValue);
 
     const channel = config.findById(id);
 

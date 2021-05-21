@@ -24,6 +24,8 @@ class Channel extends PureComponent<any> {
   renameChannel = (value, id) => this.props.handleAction('RENAME', [value, id]);
 
   changeSetting = (id, name, value) => {
+    console.log('changeSetting', id, name, value);
+
     changeChannelSetting(id, name, value);
   };
 

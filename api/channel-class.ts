@@ -113,14 +113,12 @@ export class Channel extends EventEmitter {
     return true;
   }
 
-  public changeSettings(settings: Partial<Channel>, send = true): boolean {
+  public changeSettings(settings: Partial<Channel>): boolean {
     _.forEach(settings, (settingValue, settingName) => {
       this.changeSetting(settingName, settingValue);
     });
 
-    if (send) {
-      main.mainWindow.webContents.send('channel_changeSettingSync');
-    }
+    main.mainWindow.webContents.send('channel_changeSettingSync');
 
     return true;
   }
