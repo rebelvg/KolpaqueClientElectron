@@ -3,25 +3,37 @@ import { FormSpy } from 'react-final-form';
 import { debounce, isEqual } from 'lodash';
 
 class AutoSave extends React.Component<any, any> {
-  setFilter;
+  private saveDebounce;
 
   constructor(props) {
     super(props);
 
+    console.log('AutoSave', props);
+
     this.state = { values: props.values, submitting: false };
-    this.setFilter = debounce(this.save, props.debounce);
+
+    this.saveDebounce = debounce(this.save, props.debounce);
   }
 
   save = () => {
     const { values, save } = this.props;
 
+    console.log('save', values, this.state);
+
     if (!isEqual(this.state.values, values)) {
-      save(values);
+      this.setState(
+        {
+          values,
+        },
+        () => {
+          save(values);
+        },
+      );
     }
   };
 
   componentWillReceiveProps() {
-    this.setFilter();
+    this.saveDebounce();
   }
 
   render() {

@@ -17,7 +17,7 @@ class Routes extends Component<any, any> {
     super(props);
 
     this.state = {
-      isLoading: true,
+      isLoading: false,
     };
 
     ipcRenderer.on('backend_ready', () => {

@@ -77,6 +77,8 @@ class ChannelContainer extends PureComponent<any, any> {
   setFilter = async (value) => {
     const { activeTab } = this.state;
 
+    console.log(value);
+
     const filter = value.filter ? value.filter : '';
 
     const { channels, count } = await getChannels(
