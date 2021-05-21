@@ -43,10 +43,7 @@ export default class SettingsContainer extends Component<any, any> {
   }
 
   componentWillUnmount() {
-    ipcRenderer.removeListener(
-      'config_changeSetting',
-      this.changeSettingHandler,
-    );
+    ipcRenderer.removeAllListeners('config_changeSetting');
   }
 
   render() {

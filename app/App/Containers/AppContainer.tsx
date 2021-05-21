@@ -3,8 +3,13 @@ import { HashRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import styled from 'styled-components';
 
+import { IpcRenderer } from 'electron';
+
+const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
+  'electron',
+);
+
 import Routes from '../../App/Components/Routes';
-import EventListener from '../../App/Components/EventListener';
 import { themes } from '../../Themes';
 import { getSettings } from '../../Channel/Helpers/IPCHelpers';
 
@@ -19,6 +24,10 @@ export default class AppContainer extends Component<any, any> {
     };
   }
 
+  componentDidMount() {
+    ipcRenderer.send('client_ready');
+  }
+
   render() {
     const { nightMode } = this.state;
 
@@ -30,7 +39,6 @@ export default class AppContainer extends Component<any, any> {
           <HashRouter>
             <Container>
               <Routes />
-              <EventListener />
             </Container>
           </HashRouter>
         </ThemeProvider>

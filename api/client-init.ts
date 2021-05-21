@@ -5,6 +5,7 @@ import { loop as versionLoop } from './version-check';
 import { addLogs, run as runLogs } from './logs';
 import { run as runSocket } from './socket-client';
 import { syncSettings } from './sync-settings';
+import { main } from './main';
 
 export async function init(): Promise<void> {
   addLogs('init_start');
@@ -19,6 +20,8 @@ export async function init(): Promise<void> {
   await versionLoop();
 
   await syncSettings.init();
+
+  main.mainWindow.webContents.send('backend_ready');
 
   addLogs('init_done');
 }

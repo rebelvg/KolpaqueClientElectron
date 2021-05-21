@@ -14,12 +14,18 @@ export default class Update extends Component<any, any> {
     this.state = {
       info: '',
     };
+  }
 
+  componentDidMount() {
     ipcRenderer.on('client_showInfo', (_event, info) => {
       this.setState({
         info,
       });
     });
+  }
+
+  componentWillUnmount() {
+    ipcRenderer.removeAllListeners('client_showInfo');
   }
 
   sendInfo = () => ipcRenderer.send('client_getInfo');

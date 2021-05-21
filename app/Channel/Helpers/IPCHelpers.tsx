@@ -41,14 +41,20 @@ export const changeSetting = (name: string, value: any) => {
   return ipcRenderer.send('config_changeSetting', name, value);
 };
 
-export const getChannels = (query: {
-  isLive: boolean;
-  filter: string;
-}): Promise<{
+export const getChannels = (
+  query: {
+    isLive: boolean;
+    filter: string;
+  },
+  caller: string,
+): Promise<{
   channels: any[];
   count: { online: number; offline: number };
 }> => {
-  return ipcRenderer.invoke('config_find', query);
+  return ipcRenderer.invoke('config_find', {
+    ...query,
+    caller,
+  });
 };
 
 export const openChannelMenu = (channel, func) => {
