@@ -10,7 +10,11 @@ export async function getStatsBase(channelId: string): Promise<boolean> {
   const data = await youtubeClient.getStreams(channelId);
 
   if (!data) {
-    return;
+    return false;
+  }
+
+  if (!data.items) {
+    return false;
   }
 
   if (data.items.length === 0) {
@@ -29,6 +33,10 @@ async function getStats(
       const data = await youtubeClient.getChannels(channel.name);
 
       if (!data) {
+        return;
+      }
+
+      if (!data.items) {
         return;
       }
 

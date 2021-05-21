@@ -64,6 +64,10 @@ class SyncSettings {
 
         continue;
       }
+
+      findLocalChannel.update(syncedChannel);
+
+      newChannels.push(findLocalChannel);
     }
 
     await config.runChannelUpdates(newChannels);
