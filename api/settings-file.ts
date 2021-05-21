@@ -123,8 +123,6 @@ ipcMain.on('channel_copyClipboard', (event, channelLink) => {
   return true;
 });
 
-ipcMain.on('getChannels', (event) => (event.returnValue = config.channels));
-
 ipcMain.on('getSettings', (event) => (event.returnValue = config.settings));
 
 ipcMain.handle('config_find', (event, query) => {

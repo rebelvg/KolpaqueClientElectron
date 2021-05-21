@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled, { withTheme } from 'styled-components';
 
-import { updateData } from '../../redux/channel';
 import Settings from '../../Settings/Components/Settings';
 import {
   changeSetting,
@@ -18,9 +17,7 @@ const {
 }: { remote: any; ipcRenderer: IpcRenderer } = window.require('electron');
 
 @withTheme
-@connect(() => ({}), {
-  updateData,
-})
+@connect(() => ({}), {})
 export default class SettingsContainer extends Component<any, any> {
   constructor(props) {
     super(props);
@@ -42,7 +39,7 @@ export default class SettingsContainer extends Component<any, any> {
       settings,
     });
 
-    this.props.updateData();
+    // this.props.updateData();
   };
 
   componentWillMount() {

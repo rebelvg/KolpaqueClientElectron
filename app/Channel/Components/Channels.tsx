@@ -1,8 +1,6 @@
 import React, { PureComponent } from 'react';
 import styled, { withTheme } from 'styled-components';
-import { connect } from 'react-redux';
 import Channel from '../../Channel/Components/Channel';
-import { getChannelsList, getUpdate, updateData } from '../../redux/channel';
 import {
   changeChannelSetting,
   openChannelMenu,
@@ -10,15 +8,6 @@ import {
 import ReactList from 'react-list';
 
 @withTheme
-@connect(
-  (state) => ({
-    update: getUpdate(state),
-    channels: getChannelsList(state),
-  }),
-  {
-    updateData,
-  },
-)
 class Channels extends PureComponent<any, any> {
   constructor(props) {
     super(props);
@@ -70,11 +59,11 @@ class Channels extends PureComponent<any, any> {
   };
 
   render() {
-    const { channels, update } = this.props;
+    const { channels } = this.props;
     const { edit, selected } = this.state;
 
     return (
-      <ChannelWrap isUpdate={update}>
+      <ChannelWrap isUpdate={false}>
         <ReactList
           type={'uniform'}
           length={channels.length}

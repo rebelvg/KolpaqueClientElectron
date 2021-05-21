@@ -1,29 +1,41 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
-import { getUpdate, sendInfo } from '../../redux/channel';
 
-@connect(
-  (state) => ({
-    update: getUpdate(state),
-  }),
-  { sendInfo },
-)
-export default class Update extends Component<any> {
-  sendInfo = (info) => this.props.sendInfo(info);
+import { IpcRenderer } from 'electron';
+
+const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
+  'electron',
+);
+
+export default class Update extends Component<any, any> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      info: '',
+    };
+
+    ipcRenderer.on('client_showInfo', (_event, info) => {
+      this.setState({
+        info,
+      });
+    });
+  }
+
+  sendInfo = () => ipcRenderer.send('client_getInfo');
 
   render() {
-    const { update } = this.props;
+    const { info } = this.state;
 
     return (
       <div>
-        {update && (
+        {info && (
           <UpdateWrapper
             onClick={() => {
-              this.sendInfo(update);
+              this.sendInfo();
             }}
           >
-            {update}
+            {info}
           </UpdateWrapper>
         )}
       </div>

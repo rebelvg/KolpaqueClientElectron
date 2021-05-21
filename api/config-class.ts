@@ -328,8 +328,8 @@ export class Config extends EventEmitter {
     return {
       channels: _.filter(filteredChannels, { isLive: query.isLive }),
       count: {
-        offline: _.filter(filteredChannels, { isLive: false }).length,
         online: _.filter(filteredChannels, { isLive: true }).length,
+        offline: _.filter(filteredChannels, { isLive: false }).length,
       },
     };
   }

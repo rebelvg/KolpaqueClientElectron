@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import Icon from 'react-icons-kit';
 import { cog } from 'react-icons-kit/fa/cog';
 import { Link } from 'react-router-dom';
@@ -11,46 +10,94 @@ import Footer from '../../Channel/Components/Footer';
 import Tabs from '../../Channel/Components/Tabs';
 import Loading from '../../Shared/Loading';
 import Channels from '../../Channel/Components/Channels';
-import {
-  getLoaded,
-  getFilter,
-  updateData,
-  getUpdate,
-} from '../../redux/channel';
+import { getChannels } from '../Helpers/IPCHelpers';
+
+import { IpcRenderer } from 'electron';
+
+const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
+  'electron',
+);
 
 @withTheme
-@connect(
-  (state) => ({
-    loaded: getLoaded(state),
-    filter: getFilter(state),
-    update: getUpdate(state),
-  }),
-  {
-    updateData,
-  },
-)
-class ChannelContainer extends PureComponent<any> {
+class ChannelContainer extends PureComponent<any, any> {
   constructor(props) {
     super(props);
 
     this.state = {
       selected: null,
       editChannel: null,
+      channels: [],
+      activeTab: 'online',
+      filter: '',
+      count: { online: 0, offline: 0 },
     };
   }
 
-  sendInfo = (info) => this.props.sendInfo(info);
+  private updateView = async () => {
+    const { activeTab, filter } = this.state;
 
-  setFilter = (value) => {
+    const { channels, count } = await getChannels({
+      isLive: activeTab === 'online',
+      filter,
+    });
+
+    this.setState({
+      channels,
+      count,
+    });
+  };
+
+  async componentDidMount() {
+    ipcRenderer.on('channel_changeSettingSync', () => this.updateView);
+    ipcRenderer.on('channel_addSync', () => this.updateView);
+    ipcRenderer.on('channel_removeSync', () => this.updateView);
+
+    await this.updateView();
+  }
+
+  setFilter = async (value) => {
+    console.log('setFilter');
+
+    const { activeTab } = this.state;
+
     const filter = value.filter ? value.filter : '';
 
-    this.props.updateData(filter, null);
+    const { channels, count } = await getChannels({
+      isLive: activeTab === 'online',
+      filter,
+    });
+
+    this.setState({
+      channels,
+      count,
+      filter,
+    });
+  };
+
+  handleActiveTab = async (activeTab) => {
+    console.log('handleActiveTab');
+
+    const { filter } = this.state;
+
+    const { channels, count } = await getChannels({
+      isLive: activeTab === 'online',
+      filter,
+    });
+
+    this.setState({
+      channels,
+      count,
+      activeTab,
+    });
   };
 
   render() {
-    const { update, loaded, filter } = this.props;
+    const { filter } = this.props;
+    const { channels, count, activeTab } = this.state;
 
-    if (!loaded) {
+    console.log('channel_render', activeTab, channels.length);
+
+    if (false) {
       return <Loading />;
     }
 
@@ -66,14 +113,18 @@ class ChannelContainer extends PureComponent<any> {
 
         <ContainerWrapper>
           <TabWrapper>
-            <Tabs />
+            <Tabs
+              handleActiveTab={this.handleActiveTab}
+              activeTab={activeTab}
+              count={count}
+            />
             <SettingsIcon to="/about">
               <CogIcon icon={cog} size={18} />
             </SettingsIcon>
           </TabWrapper>
 
-          <TabPanel update={update}>
-            <Channels />
+          <TabPanel>
+            <Channels channels={channels} />
           </TabPanel>
           <Update />
           <Footer />

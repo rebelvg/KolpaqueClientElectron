@@ -1,28 +1,20 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
 import { TABS } from '../../Channel/constants';
 
-import { getCount, getActiveTab, updateData } from '../../redux/channel';
-
-@connect(
-  (state) => ({
-    active: getActiveTab(state),
-    count: getCount(state),
-  }),
-  { updateData },
-)
 class Tabs extends Component<any> {
-  onChange = (value) => this.props.updateData(null, value);
+  onChange = (value) => {
+    this.props.handleActiveTab(value);
+  };
 
   render() {
-    const { active, count } = this.props;
+    const { activeTab, count } = this.props;
 
     return (
       <TabList>
         {TABS.map((tab) => (
           <Tab
-            active={active === tab.value}
+            active={activeTab === tab.value}
             onClick={() => this.onChange(tab.value)}
             key={tab.value}
           >
