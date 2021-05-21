@@ -8,7 +8,7 @@ import Update from '../../Channel/Components/Update';
 import SearchForm from '../../Channel/Forms/SearchForm/SearchForm';
 import Footer from '../../Channel/Components/Footer';
 import Tabs from '../../Channel/Components/Tabs';
-import Loading from '../../Shared/Loading';
+// import Loading from '../../Shared/Loading';
 import Channels from '../../Channel/Components/Channels';
 import { getChannels } from '../Helpers/IPCHelpers';
 
