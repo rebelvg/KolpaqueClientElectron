@@ -1,8 +1,63 @@
+import { app } from 'electron';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as crypto from 'crypto';
+
 import { klpqServiceClient } from './api-clients';
 import { Channel } from './channel-class';
 import { addLogs } from './logs';
 import { main } from './main';
 import { config } from './settings-file';
+import { ISavedSettingsFile } from './config-class';
+
+const SYNC_ID_FILE_PATH = path.join(
+  app.getPath('documents'),
+  'KolpaqueClientElectron_sync_id',
+);
+const SYNC_ENCRYPTION_KEY_FILE_PATH = path.join(
+  app.getPath('documents'),
+  'KolpaqueClientElectron_encryption_key',
+);
+
+let encryptionKey = Buffer.alloc(0);
+
+if (!fs.existsSync(SYNC_ENCRYPTION_KEY_FILE_PATH)) {
+  encryptionKey = crypto.randomBytes(48);
+
+  fs.writeFileSync(SYNC_ENCRYPTION_KEY_FILE_PATH, encryptionKey);
+} else {
+  encryptionKey = fs.readFileSync(SYNC_ENCRYPTION_KEY_FILE_PATH);
+}
+
+function encryptData(data: any): Buffer {
+  const cipher = crypto.createCipheriv(
+    'aes-256-cbc',
+    encryptionKey.slice(0, 32),
+    encryptionKey.slice(32),
+  );
+
+  const encrypted = Buffer.concat([
+    cipher.update(JSON.stringify(data)),
+    cipher.final(),
+  ]);
+
+  return encrypted;
+}
+
+function decryptData(encrypted: Buffer): any {
+  const decipher = crypto.createDecipheriv(
+    'aes-256-cbc',
+    encryptionKey.slice(0, 32),
+    encryptionKey.slice(32),
+  );
+
+  const decrypted = Buffer.concat([
+    decipher.update(encrypted),
+    decipher.final(),
+  ]);
+
+  return JSON.parse(decrypted.toString());
+}
 
 class SyncSettings {
   public async init() {
@@ -19,7 +74,7 @@ class SyncSettings {
     if (!syncId) {
       const newSyncId = await klpqServiceClient.saveSyncChannels(
         syncId,
-        channels,
+        encryptData(channels),
       );
 
       if (!newSyncId) {
@@ -34,10 +89,20 @@ class SyncSettings {
         config.settings.syncId,
       );
 
+      fs.writeFileSync(SYNC_ID_FILE_PATH, newSyncId);
+
       return;
     }
 
-    const syncedChannels = await klpqServiceClient.getSyncChannels(syncId);
+    const encryptedChannels = await klpqServiceClient.getSyncChannels(syncId);
+
+    let syncedChannels: ISavedSettingsFile['channels'];
+
+    try {
+      syncedChannels = decryptData(encryptedChannels);
+    } catch (error) {
+      addLogs(error);
+    }
 
     if (!syncedChannels) {
       addLogs('bad_sync_id', syncId);
@@ -89,7 +154,7 @@ class SyncSettings {
 
     const newSyncId = await klpqServiceClient.saveSyncChannels(
       syncId,
-      channels,
+      encryptData(channels),
     );
 
     if (!newSyncId) {
@@ -103,6 +168,8 @@ class SyncSettings {
       'syncId',
       config.settings.syncId,
     );
+
+    fs.writeFileSync(SYNC_ID_FILE_PATH, newSyncId);
 
     return;
   }

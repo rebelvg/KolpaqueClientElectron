@@ -4,7 +4,6 @@ import { config } from './settings-file';
 import * as qs from 'querystring';
 import { shell, ipcMain } from 'electron';
 import * as uuid from 'uuid';
-import { ISavedSettingsFile } from './config-class';
 
 const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
 
@@ -296,7 +295,7 @@ export interface IYoutubeStreams {
 
 export interface IGetSyncChannels {
   id: string;
-  channels: any[];
+  channels: string;
 }
 
 export interface IPostSyncChannels {
@@ -545,9 +544,7 @@ class KlpqServiceClient {
     }
   }
 
-  public async getSyncChannels(
-    id: string,
-  ): Promise<ISavedSettingsFile['channels']> {
+  public async getSyncChannels(id: string): Promise<Buffer> {
     const url = `${this.baseUrl}/sync/${id}`;
 
     try {
@@ -557,7 +554,7 @@ class KlpqServiceClient {
         headers: { jwt: this.jwtToken },
       });
 
-      return channels;
+      return Buffer.from(channels, 'hex');
     } catch (error) {
       addLogs(error);
 
@@ -565,10 +562,7 @@ class KlpqServiceClient {
     }
   }
 
-  public async saveSyncChannels(
-    id: string,
-    channels: ISavedSettingsFile['channels'],
-  ): Promise<string> {
+  public async saveSyncChannels(id: string, channels: Buffer): Promise<string> {
     const url = `${this.baseUrl}/sync`;
 
     try {
@@ -578,7 +572,7 @@ class KlpqServiceClient {
         url,
         {
           id,
-          channels,
+          channels: channels.toString('hex'),
         },
         {
           headers: { jwt: this.jwtToken },
