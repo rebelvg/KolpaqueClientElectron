@@ -5,49 +5,25 @@ import styled, { withTheme } from 'styled-components';
 import Settings from '../../Settings/Components/Settings';
 import {
   changeSetting,
-  getSettings,
   getVersion,
   importChannel,
 } from '../../Channel/Helpers/IPCHelpers';
-import { IpcRenderer } from 'electron';
-
-const {
-  ipcRenderer,
-}: { remote: any; ipcRenderer: IpcRenderer } = window.require('electron');
 
 @withTheme
 export default class SettingsContainer extends Component<any, any> {
   constructor(props) {
     super(props);
 
-    const settings = getSettings();
-
     const version = getVersion();
 
     this.state = {
-      settings,
       version,
     };
   }
 
-  private changeSettingHandler = (e, settingName, settingValue) => {
-    const settings = getSettings();
-
-    this.setState({
-      settings,
-    });
-  };
-
-  componentWillMount() {
-    ipcRenderer.on('config_changeSetting', this.changeSettingHandler);
-  }
-
-  componentWillUnmount() {
-    ipcRenderer.removeAllListeners('config_changeSetting');
-  }
-
   render() {
-    const { settings, version } = this.state;
+    const { settings } = this.props;
+    const { version } = this.state;
 
     return (
       <Container>

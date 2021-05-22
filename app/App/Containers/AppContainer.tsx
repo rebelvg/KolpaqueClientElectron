@@ -25,20 +25,34 @@ export default class AppContainer extends Component<any, any> {
   }
 
   componentDidMount() {
+    ipcRenderer.on('config_changeSetting', () => {
+      const settings = getSettings();
+
+      this.setState({
+        settings,
+      });
+    });
+
     ipcRenderer.send('client_ready');
   }
 
-  render() {
-    const { nightMode } = this.state;
+  componentWillUnmount() {
+    ipcRenderer.removeAllListeners('config_changeSetting');
+  }
 
-    const theme = nightMode ? themes['nightTheme'] : themes['defaultTheme'];
+  render() {
+    const { settings } = this.state;
+
+    const theme = settings.nightMode
+      ? themes['nightTheme']
+      : themes['defaultTheme'];
 
     return (
       <Container>
         <ThemeProvider theme={theme}>
           <HashRouter>
             <Container>
-              <Routes />
+              <Routes settings={settings} />
             </Container>
           </HashRouter>
         </ThemeProvider>
