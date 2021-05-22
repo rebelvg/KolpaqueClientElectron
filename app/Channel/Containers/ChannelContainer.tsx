@@ -108,7 +108,7 @@ class ChannelContainer extends PureComponent<any, any> {
   };
 
   render() {
-    const { filter } = this.props;
+    const { filter, updateNotification } = this.props;
     const { channels, count, activeTab } = this.state;
 
     return (
@@ -133,10 +133,10 @@ class ChannelContainer extends PureComponent<any, any> {
             </SettingsIcon>
           </TabWrapper>
 
-          <TabPanel>
+          <TabPanel updateNotification={updateNotification}>
             <Channels channels={channels} />
           </TabPanel>
-          <Update />
+          <Update updateNotification={updateNotification} />
           <Footer />
         </ContainerWrapper>
       </Wrapper>
@@ -158,7 +158,8 @@ const Wrapper = styled.div`
 
 const TabPanel = styled.div`
   width: 100%;
-  padding-bottom: ${({ update }) => (update ? 25 : 0)}px;
+  padding-bottom: ${({ updateNotification }) =>
+    updateNotification ? 28 : 0}px;
   display: block;
   max-height: 100vh;
   margin-right: 3px;

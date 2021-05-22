@@ -10,38 +10,24 @@ const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
 export default class Update extends Component<any, any> {
   constructor(props) {
     super(props);
-
-    this.state = {
-      info: '',
-    };
   }
 
-  componentDidMount() {
-    ipcRenderer.on('client_showInfo', (_event, info) => {
-      this.setState({
-        info,
-      });
-    });
-  }
-
-  componentWillUnmount() {
-    ipcRenderer.removeAllListeners('client_showInfo');
-  }
-
-  sendInfo = () => ipcRenderer.send('client_getInfo');
+  sendInfo = () => {
+    ipcRenderer.send('client_getInfo');
+  };
 
   render() {
-    const { info } = this.state;
+    const { updateNotification } = this.props;
 
     return (
       <div>
-        {info && (
+        {updateNotification && (
           <UpdateWrapper
             onClick={() => {
               this.sendInfo();
             }}
           >
-            {info}
+            {updateNotification}
           </UpdateWrapper>
         )}
       </div>

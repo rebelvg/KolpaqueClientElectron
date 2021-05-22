@@ -18,7 +18,14 @@ class Routes extends Component<any, any> {
 
     this.state = {
       isLoading: true,
+      updateNotification: '',
     };
+
+    ipcRenderer.on('client_showInfo', (_event, updateNotification) => {
+      this.setState({
+        updateNotification,
+      });
+    });
 
     ipcRenderer.on('backend_ready', () => {
       this.setState({
@@ -27,8 +34,12 @@ class Routes extends Component<any, any> {
     });
   }
 
+  componentWillUnmount() {
+    ipcRenderer.removeAllListeners('client_showInfo');
+  }
+
   render() {
-    const { isLoading } = this.state;
+    const { isLoading, updateNotification } = this.state;
 
     if (isLoading) {
       return <Loading />;
@@ -36,7 +47,13 @@ class Routes extends Component<any, any> {
 
     return (
       <RouterWrapper>
-        <Route exact path="/" component={ChannelContainer} />
+        <Route
+          exact
+          path="/"
+          component={() => (
+            <ChannelContainer updateNotification={updateNotification} />
+          )}
+        />
         <Route path="/about" component={SettingsContainer} />
       </RouterWrapper>
     );
