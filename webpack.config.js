@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  mode: 'development',
   entry: [
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:10000',
@@ -42,22 +43,14 @@ module.exports = {
     new webpack.IgnorePlugin(new RegExp('^(fs|ipc)$')),
   ],
   devtool: 'source-map',
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
   devServer: {
     hot: true,
     host: 'localhost',
     historyApiFallback: true,
     publicPath: '/',
     port: 10000,
-  },
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
-  },
-  node: {
-    fs: 'empty',
-  },
-  output: {
-    filename: 'dev_bundle.js',
-    publicPath: '/',
-    path: path.resolve(__dirname, 'dist-app'),
   },
 };
