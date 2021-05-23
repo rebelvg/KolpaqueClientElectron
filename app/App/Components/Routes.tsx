@@ -51,13 +51,18 @@ class Routes extends Component<any, any> {
         <Route
           exact
           path="/"
-          component={() => (
-            <ChannelContainer updateNotification={updateNotification} />
+          render={(props) => (
+            <ChannelContainer
+              updateNotification={updateNotification}
+              {...props}
+            />
           )}
         />
         <Route
           path="/about"
-          component={() => <SettingsContainer settings={settings} />}
+          render={(props) => (
+            <SettingsContainer settings={settings} {...props} />
+          )}
         />
       </RouterWrapper>
     );

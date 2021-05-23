@@ -32,10 +32,22 @@ addLogs('is_dev', isDev);
 
 let forceQuit = false;
 
-ipcMain.once('client_ready', async () => {
+let initDone = false;
+
+ipcMain.on('client_ready', async () => {
   addLogs('client_ready');
 
+  if (initDone) {
+    main.mainWindow.webContents.send('backend_ready');
+
+    return;
+  }
+
   await init();
+
+  main.mainWindow.webContents.send('backend_ready');
+
+  initDone = true;
 });
 
 const iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
