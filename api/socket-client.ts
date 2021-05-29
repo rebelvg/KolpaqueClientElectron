@@ -27,8 +27,8 @@ export function run() {
   io.on('twitch_user', (user: ITwitchUser) => {
     addLogs('socket_got_twitch_user', user);
 
-    twitchClient.setAccessToken(user.accessToken);
-    twitchClient.setRefreshToken(user.refreshToken);
+    twitchClient.accessToken = user.accessToken;
+    twitchClient.refreshToken = user.refreshToken;
 
     printNotification('Twitch', 'Login Successful');
   });
@@ -36,8 +36,8 @@ export function run() {
   io.on('youtube_user', (user: ITwitchUser) => {
     addLogs('socket_got_youtube_user', user);
 
-    youtubeClient.setAccessToken(user.accessToken);
-    youtubeClient.setRefreshToken(user.refreshToken);
+    youtubeClient.accessToken = user.accessToken;
+    youtubeClient.refreshToken = user.refreshToken;
 
     printNotification('Youtube', 'Login Successful');
   });

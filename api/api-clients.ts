@@ -57,20 +57,14 @@ export const TWITCH_CHUNK_LIMIT = 100;
 
 class TwitchClient {
   private baseUrl = 'https://api.twitch.tv/helix';
-  private accessToken: string = null;
+  public accessToken: string = null;
 
-  private get refreshToken(): string {
+  public get refreshToken(): string {
     return config.settings.twitchRefreshToken;
   }
 
-  public setAccessToken(accessToken: string): void {
-    this.accessToken = accessToken;
-  }
-
-  public setRefreshToken(refreshToken: string): void {
+  public set refreshToken(refreshToken: string) {
     config.settings.twitchRefreshToken = refreshToken;
-
-    addLogs('refreshToken', refreshToken);
   }
 
   public async refreshAccessToken(): Promise<boolean> {
@@ -93,7 +87,7 @@ class TwitchClient {
     }
 
     this.accessToken = user.accessToken;
-    this.setRefreshToken(user.refreshToken);
+    this.refreshToken = user.refreshToken;
 
     addLogs('twitch_new_access_token');
 
@@ -303,17 +297,13 @@ export interface IPostSyncChannels {
 }
 
 class YoutubeClient {
-  private accessToken: string = null;
+  public accessToken: string = null;
 
-  private get refreshToken(): string {
+  public get refreshToken(): string {
     return config.settings.youtubeRefreshToken;
   }
 
-  public setAccessToken(accessToken: string): void {
-    this.accessToken = accessToken;
-  }
-
-  public setRefreshToken(refreshToken: string): void {
+  public set refreshToken(refreshToken: string) {
     config.settings.youtubeRefreshToken = refreshToken;
   }
 
@@ -337,7 +327,7 @@ class YoutubeClient {
     }
 
     this.accessToken = user.accessToken;
-    this.setRefreshToken(user.refreshToken);
+    this.refreshToken = user.refreshToken;
 
     addLogs('youtube_new_access_token');
 
