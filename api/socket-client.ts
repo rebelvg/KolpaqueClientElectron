@@ -45,7 +45,7 @@ export function run() {
   io.on('klpq_user', (signedJwt: string) => {
     addLogs('socket_got_klpq_user', signedJwt);
 
-    klpqServiceClient.setUser(signedJwt);
+    klpqServiceClient.jwtToken = signedJwt;
 
     printNotification('KLPQ Service', 'Login Successful');
   });

@@ -200,6 +200,14 @@ const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
       Twitch Login
     </button>
 
+    <button
+      onClick={() => {
+        ipcRenderer.send('klpq_login');
+      }}
+    >
+      Klpq Login
+    </button>
+
     <br />
     <br />
 

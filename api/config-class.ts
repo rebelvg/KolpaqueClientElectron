@@ -124,6 +124,7 @@ interface ISettings {
   youtubeRefreshToken: string;
   enableSync: boolean;
   syncId: string;
+  klpqJwtToken: string;
 }
 
 export interface ISavedSettingsFile {
@@ -162,6 +163,7 @@ export class Config extends EventEmitter {
     youtubeRefreshToken: '',
     enableSync: false,
     syncId: null,
+    klpqJwtToken: null,
   };
   public migrations: string[] = [];
 
