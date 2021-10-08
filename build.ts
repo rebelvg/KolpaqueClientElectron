@@ -23,7 +23,9 @@ if (!buildPathArg) {
     `select output folder. (empty will default to home dir)${os.EOL}`,
   );
 } else {
-  pathOption = buildPathArg;
+  if (buildPathArg !== 'HOME_DIR') {
+    pathOption = buildPathArg;
+  }
 }
 
 process.on('unhandledRejection', (error) => {
