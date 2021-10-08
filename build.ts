@@ -5,12 +5,26 @@ import * as path from 'path';
 import * as os from 'os';
 import * as archiver from 'archiver';
 
-const platformOption = readlineSync.question(
-  `select platform. all - for all platforms or win32, darwin, linux. (empty will default to current platform)${os.EOL}`,
-);
-let pathOption = readlineSync.question(
-  `select output folder. (empty will default to home dir)${os.EOL}`,
-);
+const [, , platformArg, buildPathArg] = process.argv;
+
+let platformOption;
+let pathOption;
+
+if (!platformArg) {
+  platformOption = readlineSync.question(
+    `select platform. all - for all platforms or win32, darwin, linux. (empty will default to current platform)${os.EOL}`,
+  );
+} else {
+  platformOption = platformArg;
+}
+
+if (!buildPathArg) {
+  pathOption = readlineSync.question(
+    `select output folder. (empty will default to home dir)${os.EOL}`,
+  );
+} else {
+  pathOption = buildPathArg;
+}
 
 process.on('unhandledRejection', (error) => {
   throw error;
