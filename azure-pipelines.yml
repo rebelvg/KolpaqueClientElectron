@@ -17,5 +17,5 @@ steps:
 
 - script: |
     yarn install
-    yarn run build
+    yarn run build linux '$(System.DefaultWorkingDirectory)'
   displayName: 'install and build'
