@@ -3,11 +3,7 @@ import { HashRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import styled from 'styled-components';
 
-import { IpcRenderer } from 'electron';
-
-const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
-  'electron',
-);
+const { ipcRenderer } = window.require('electron');
 
 import Routes from '../../App/Components/Routes';
 import { themes } from '../../Themes';

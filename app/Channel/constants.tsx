@@ -1,3 +1,6 @@
+const { remote } = window.require('electron');
+const { Menu } = remote;
+
 export const getTab = (tab) => {
   return TABS.find((t) => t.value === tab);
 };
@@ -20,7 +23,7 @@ export const TABS = [
   },
 ];
 
-export const template = [
+export const template: any = [
   {
     label: 'Cut',
     accelerator: 'CmdOrCtrl+X',
@@ -42,3 +45,9 @@ export const template = [
     role: 'selectall',
   },
 ];
+
+export const openMenu = () => {
+  const macMenu = Menu.buildFromTemplate(template);
+
+  macMenu.popup({ window: remote.getCurrentWindow() });
+};

@@ -4,7 +4,7 @@ import { Field } from 'react-final-form';
 import Toggle from 'react-toggle-button';
 import styled from 'styled-components';
 import Select from 'react-select';
-import { openMenu } from '../../Channel/Forms/SearchForm/SearchForm';
+import { openMenu } from '../../Channel/constants';
 
 const { shell, ipcRenderer } = window.require('electron');
 

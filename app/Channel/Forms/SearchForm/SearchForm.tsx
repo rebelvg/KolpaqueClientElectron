@@ -3,17 +3,8 @@ import styled, { withTheme } from 'styled-components';
 import { Field } from 'react-final-form';
 import Icon from 'react-icons-kit';
 import { search } from 'react-icons-kit/fa/search';
-import { template } from '../../../Channel/constants';
 import AutoSave from './AutoSave';
-
-const { remote } = window.require('electron');
-const { Menu } = remote;
-
-export const openMenu = () => {
-  const macMenu = Menu.buildFromTemplate(template);
-
-  macMenu.popup(remote.getCurrentWindow());
-};
+import { openMenu } from '../../constants';
 
 @withTheme
 class SearchForm extends Component<any> {

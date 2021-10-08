@@ -1,37 +1,6 @@
 import React, { Component } from 'react';
 import styled, { withTheme } from 'styled-components';
-
-const { remote } = window.require('electron');
-const { Menu } = remote;
-
-const template = [
-  {
-    label: 'Cut',
-    accelerator: 'CmdOrCtrl+X',
-    role: 'cut',
-  },
-  {
-    label: 'Copy',
-    accelerator: 'CmdOrCtrl+C',
-    role: 'copy',
-  },
-  {
-    label: 'Paste',
-    accelerator: 'CmdOrCtrl+V',
-    role: 'paste',
-  },
-  {
-    label: 'Select All',
-    accelerator: 'CmdOrCtrl+A',
-    role: 'selectall',
-  },
-];
-
-const openMenu = () => {
-  const macMenu = Menu.buildFromTemplate(template);
-
-  macMenu.popup(remote.getCurrentWindow());
-};
+import { openMenu } from '../constants';
 
 @withTheme
 export default class EditForm extends Component<any, any> {
