@@ -25,7 +25,5 @@ steps:
   inputs:
     gitHubConnection: github.com_rebelvg
     repositoryName: rebelvg/KolpaqueClientElectron
-    tagSource: gitTag
-    tag: $(Build.BuildNumber)
     assets: |
       $(Agent.TempDirectory)/KolpaqueClientElectron-win32-x64/*.zip
