@@ -22,10 +22,6 @@ if (!buildPathArg) {
   pathOption = readlineSync.question(
     `select output folder. (empty will default to home dir)${os.EOL}`,
   );
-} else {
-  if (buildPathArg !== 'HOME_DIR') {
-    pathOption = buildPathArg;
-  }
 }
 
 process.on('unhandledRejection', (error) => {
