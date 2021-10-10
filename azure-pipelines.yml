@@ -21,11 +21,11 @@ steps:
   displayName: 'install and build'
 
 - task: GithubRelease@1 
-  displayName: 'Create GitHub Release'      
+  displayName: 'Create GitHub Release'
   inputs:
     gitHubConnection: rebelvg
     repositoryName: rebelvg/KolpaqueClientElectron
     tagSource: gitTag
-    tag: $(Build.BuildNumber)      
+    tag: $(Build.BuildNumber)
     assets: |
       $(Agent.TempDirectory)/KolpaqueClientElectron-win32-x64/*.zip
