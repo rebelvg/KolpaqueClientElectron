@@ -20,10 +20,14 @@ steps:
     yarn run build linux $(Agent.TempDirectory)
   displayName: 'install and build'
 
-- task: GithubRelease@1 
-  displayName: 'Create GitHub Release'
+- task: GitHubRelease@1
   inputs:
-    gitHubConnection: github.com_rebelvg
-    repositoryName: rebelvg/KolpaqueClientElectron
-    assets: |
-      $(Agent.TempDirectory)/KolpaqueClientElectron-win32-x64/*.zip
+    gitHubConnection: 'github.com_rebelvg'
+    repositoryName: 'rebelvg/KolpaqueClientElectron'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'gitTag'
+    releaseNotesSource: 'inline'
+    releaseNotesInline: 'test'
+    assets: '$(Agent.TempDirectory)/KolpaqueClientElectron-win32-x64/*.zip'
+    addChangeLog: false
