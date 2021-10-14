@@ -24,7 +24,7 @@ process.on('unhandledRejection', (error) => {
 
   childProcess.execSync(`git add .`);
 
-  childProcess.execSync(`git commit -m 'publish version ${newVersion}'`);
+  childProcess.execSync(`git commit -m "publish version ${newVersion}"`);
 
   childProcess.execSync(`git tag ${newVersion}`);
 
