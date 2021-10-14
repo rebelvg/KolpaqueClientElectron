@@ -3,6 +3,10 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as childProcess from 'child_process';
 
+process.on('unhandledRejection', (error) => {
+  throw error;
+});
+
 (() => {
   const packageJson = JSON.parse(
     fs.readFileSync('./package.json', { encoding: 'utf-8' }),
@@ -20,7 +24,7 @@ import * as childProcess from 'child_process';
 
   childProcess.execSync(`git add .`);
 
-  childProcess.execSync(`git commit -m publish version ${newVersion}`);
+  childProcess.execSync(`git commit -m 'publish version ${newVersion}'`);
 
   childProcess.execSync(`git tag ${newVersion}`);
 
