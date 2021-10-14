@@ -10,6 +10,10 @@ async function getStats(
     channels.map(async (channel) => {
       const data = await chaturbateClient.getChannel(channel.name);
 
+      if (!data) {
+        return;
+      }
+
       if (data.room_status === 'public') {
         channel._customPlayUrl = data.url;
 
