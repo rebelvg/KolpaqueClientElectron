@@ -17,8 +17,11 @@ steps:
 
 - script: |
     yarn install
+  displayName: 'install'
+
+- script: |
     yarn run build win32 $(Agent.TempDirectory)
-  displayName: 'install and build'
+  displayName: 'build'
 
 - task: GitHubRelease@1
   inputs:
