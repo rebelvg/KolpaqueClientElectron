@@ -96,10 +96,10 @@ process.on('unhandledRejection', (error) => {
 
         archiveStream.on('close', resolve);
         archive.pipe(archiveStream);
+
+        // eslint-disable-next-line no-console
+        console.log('archiving_done', appPath, archivePath);
       });
     }
-
-    // eslint-disable-next-line no-console
-    console.log(appPaths);
   }
 })();
