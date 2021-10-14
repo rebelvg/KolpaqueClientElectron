@@ -16,6 +16,10 @@ process.on('unhandledRejection', (error) => {
     `current version - ${packageJson.version}${os.EOL}enter new version${os.EOL}`,
   );
 
+  if (packageJson.version === newVersion) {
+    throw new Error('version_is_same');
+  }
+
   packageJson.version = newVersion;
 
   fs.writeFileSync('./package.json', JSON.stringify(packageJson));
