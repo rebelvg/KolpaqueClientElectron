@@ -29,5 +29,5 @@ steps:
     tagSource: 'gitTag'
     tagPattern: '.*'
     releaseNotesSource: inline
-    assets: '$(Agent.TempDirectory)/KolpaqueClientElectron/KolpaqueClientElectron-linux-x64/*.zip'
+    assets: '$(Agent.TempDirectory)/KolpaqueClientElectron/KolpaqueClientElectron-linux-x64.zip'
     addChangeLog: false
