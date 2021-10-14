@@ -32,14 +32,20 @@ steps:
     yarn run build CURRENT_OS $(Agent.TempDirectory)
   displayName: 'build'
 
-- task: GitHubRelease@1
+# - task: GitHubRelease@1
+#   inputs:
+#     gitHubConnection: 'github.com_rebelvg'
+#     repositoryName: 'rebelvg/KolpaqueClientElectron'
+#     action: edit
+#     target: '$(Build.SourceVersion)'
+#     tagSource: 'gitTag'
+#     tagPattern: '.*'
+#     releaseNotesSource: inline
+#     assets: '$(Agent.TempDirectory)/KolpaqueClientElectron/*.zip'
+#     addChangeLog: false
+
+- task: PublishPipelineArtifact@1
   inputs:
-    gitHubConnection: 'github.com_rebelvg'
-    repositoryName: 'rebelvg/KolpaqueClientElectron'
-    action: edit
-    target: '$(Build.SourceVersion)'
-    tagSource: 'gitTag'
-    tagPattern: '.*'
-    releaseNotesSource: inline
-    assets: '$(Agent.TempDirectory)/KolpaqueClientElectron/*.zip'
-    addChangeLog: false
+    targetPath: '$(Agent.TempDirectory)/KolpaqueClientElectron/*.zip'
+    artifact: 'kolpaque_client_build'
+    publishLocation: 'pipeline'
