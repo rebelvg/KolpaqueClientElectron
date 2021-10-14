@@ -7,7 +7,7 @@ trigger:
 - release
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: windows-latest
 
 steps:
 - task: NodeTool@0
@@ -17,7 +17,7 @@ steps:
 
 - script: |
     yarn install
-    yarn run build linux $(Agent.TempDirectory)
+    yarn run build win32 $(Agent.TempDirectory)
   displayName: 'install and build'
 
 - task: GitHubRelease@1
@@ -29,5 +29,5 @@ steps:
     tagSource: 'gitTag'
     tagPattern: '.*'
     releaseNotesSource: inline
-    assets: '$(Agent.TempDirectory)/KolpaqueClientElectron/KolpaqueClientElectron-linux-x64.zip'
+    assets: '$(Agent.TempDirectory)/KolpaqueClientElectron/KolpaqueClientElectron-win32-x64.zip'
     addChangeLog: false
