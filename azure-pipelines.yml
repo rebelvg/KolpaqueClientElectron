@@ -10,15 +10,15 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-# - task: NodeTool@0
-#   inputs:
-#     versionSpec: '16.x'
-#   displayName: 'Install Node.js'
+- task: NodeTool@0
+  inputs:
+    versionSpec: '16.x'
+  displayName: 'Install Node.js'
 
-# - script: |
-#     yarn install
-#     yarn run build linux $(Agent.TempDirectory)
-#   displayName: 'install and build'
+- script: |
+    yarn install
+    yarn run build linux $(Agent.TempDirectory)
+  displayName: 'install and build'
 
 - task: GitHubRelease@1
   inputs:
@@ -28,7 +28,6 @@ steps:
     target: '$(Build.SourceVersion)'
     tagSource: 'gitTag'
     tagPattern: 'release-.*'
-    releaseNotesSource: 'inline'
-    releaseNotesInline: 'test'
-    # assets: '$(Agent.TempDirectory)/KolpaqueClientElectron-win32-x64/*.zip'
+    releaseNotesSource: inline
+    assets: '$(Agent.TempDirectory)/KolpaqueClientElectron-win32-x64/*.zip'
     addChangeLog: false
