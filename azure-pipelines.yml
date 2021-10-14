@@ -46,6 +46,6 @@ steps:
 
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '$(Agent.TempDirectory)/KolpaqueClientElectron/*.zip'
+    targetPath: '$(Agent.TempDirectory)/KolpaqueClientElectron/KolpaqueClientElectron-win32-x64.zip'
     artifact: 'kolpaque_client_build'
     publishLocation: 'pipeline'
