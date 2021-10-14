@@ -15,7 +15,9 @@ if (!platformArg) {
     `select platform. all - for all platforms or win32, darwin, linux. (empty will default to current platform)${os.EOL}`,
   );
 } else {
-  platformOption = platformArg;
+  if (platformArg !== 'CURRENT_OS') {
+    platformOption = platformArg;
+  }
 }
 
 if (!buildPathArg) {

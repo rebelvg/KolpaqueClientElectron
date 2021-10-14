@@ -3,11 +3,20 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-latest'
+    mac:
+      imageName: 'macOS-latest'
+    windows:
+      imageName: 'windows-latest'
+
 trigger:
 - release
 
 pool:
-  vmImage: windows-latest
+  vmImage: $(imageName)
 
 steps:
 - task: NodeTool@0
@@ -20,7 +29,7 @@ steps:
   displayName: 'install'
 
 - script: |
-    yarn run build win32 $(Agent.TempDirectory)
+    yarn run build CURRENT_OS $(Agent.TempDirectory)
   displayName: 'build'
 
 - task: GitHubRelease@1
@@ -32,5 +41,5 @@ steps:
     tagSource: 'gitTag'
     tagPattern: '.*'
     releaseNotesSource: inline
-    assets: '$(Agent.TempDirectory)/KolpaqueClientElectron/KolpaqueClientElectron-win32-x64.zip'
+    assets: '$(Agent.TempDirectory)/KolpaqueClientElectron/*.zip'
     addChangeLog: false
