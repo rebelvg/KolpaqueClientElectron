@@ -24,7 +24,14 @@ process.on('unhandledRejection', (error) => {
 
   childProcess.execSync(`git add .`);
 
-  childProcess.execSync(`git commit -m "publish version ${newVersion}"`);
+  try {
+    childProcess.execSync(`git commit -m "publish version ${newVersion}"`);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(error);
+
+    throw error;
+  }
 
   childProcess.execSync(`git tag ${newVersion}`);
 
