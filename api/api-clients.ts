@@ -7,7 +7,7 @@ import * as uuid from 'uuid';
 
 const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
 
-export const KLPQ_SERVICE_URL = 'https://client-api.klpq.men';
+export const KLPQ_SERVICE_URL = 'https://kolpaque-client-api.klpq.io';
 // export const KLPQ_SERVICE_URL = 'http://localhost:3000';
 export const SOCKET_CLIENT_ID = uuid.v4();
 
