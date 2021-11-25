@@ -5,7 +5,7 @@ import { Channel } from '../channel-class';
 export class KolpaqueVpsMpdStreamService extends KolpaqueVpsRtmpStreamService {
   public name = ServiceNamesEnum.KLPQ_VPS_MPD;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
-  public hosts = ['klpq.men', 'www.klpq.men'];
+  public hosts = ['klpq.io', 'www.klpq.io', 'klpq.men', 'www.klpq.men'];
   public paths = [
     /^\/stream\/live\/(\S+)\/mpd\/$/gi,
     /^\/stream\/live\/(\S+)\/mpd$/gi,

@@ -46,7 +46,7 @@ async function doImport(
 export class KolpaqueVpsHttpStreamService extends KolpaqueVpsRtmpStreamService {
   public name = ServiceNamesEnum.KLPQ_VPS_HTTP;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
-  public hosts = ['klpq.men', 'www.klpq.men'];
+  public hosts = ['klpq.io', 'www.klpq.io', 'klpq.men', 'www.klpq.men'];
   public paths = [
     /^\/stream\/live\/(\S+)\/$/gi,
     /^\/stream\/live\/(\S+)$/gi,

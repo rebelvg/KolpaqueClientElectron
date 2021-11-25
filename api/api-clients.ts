@@ -243,7 +243,7 @@ export interface IKlpqChannelsList {
 }
 
 class KlpqStreamClient {
-  private baseUrl = 'https://stats.klpq.men/api';
+  private baseUrl = 'https://stats-api.klpq.io';
 
   public async getChannel(
     channelName: string,
