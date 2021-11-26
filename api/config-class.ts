@@ -179,7 +179,7 @@ export class Config extends EventEmitter {
     this.saveLoop();
   }
 
-  private readFile(): Promise<void> {
+  private readFile(): void {
     if (!fs.existsSync(SETTINGS_FILE_PATH)) {
       return;
     }
@@ -203,7 +203,12 @@ export class Config extends EventEmitter {
         const channel = this.addChannelLink(parsedChannel.link);
 
         if (channel) {
-          channel.update(parsedChannel);
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { link, ...updateData } = parsedChannel;
+
+          channel.update({
+            ...updateData,
+          });
         }
       }
 

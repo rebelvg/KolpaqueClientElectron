@@ -95,7 +95,9 @@ export class Channel extends EventEmitter {
     this.visibleName = this.name;
   }
 
-  public update(channelConfig: ISavedSettingsFile['channels'][0]): void {
+  public update(
+    channelConfig: Omit<ISavedSettingsFile['channels'][0], 'link'>,
+  ): void {
     _.forEach(channelConfig, (value, key) => {
       this[key] = value;
     });
