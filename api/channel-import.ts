@@ -50,7 +50,7 @@ export async function loop(): Promise<void> {
     }),
   );
 
-  addLogs('channel_check_init_done');
+  addLogs('channel_import_init_done');
 
   (async (): Promise<void> => {
     // eslint-disable-next-line no-constant-condition

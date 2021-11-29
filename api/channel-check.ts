@@ -11,11 +11,15 @@ async function checkService(
   printBalloon: boolean,
 ): Promise<void> {
   try {
+    addLogs('channel_check_stats', service.name);
+
     const channels = _.filter(config.channels, {
       serviceName: service.name,
     });
 
     await service.getStats(channels, printBalloon);
+
+    addLogs('channel_check_stats_done', service.name, channels.length);
   } catch (error) {
     addLogs(error);
   }

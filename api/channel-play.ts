@@ -144,7 +144,7 @@ async function launchStreamlink(
     } catch (exception) {
       const [error, stdout, _stderr] = exception;
 
-      addLogs('streamlink_error', channel.link, error);
+      addLogs('streamlink_error', channel.link, error, stdout, _stderr);
 
       if ((error as any).code === 'ENOENT') {
         await dialog.showMessageBox({

@@ -220,11 +220,7 @@ class TwitchClient {
   }
 
   private handleError(error: AxiosError): void {
-    addLogs(
-      new Error(error.message),
-      error?.response?.status,
-      error?.response?.data,
-    );
+    addLogs(error);
 
     if (error?.response?.status === 401) {
       addLogs('twitch_access_token_fail');
@@ -256,11 +252,7 @@ class KlpqStreamClient {
 
       return data;
     } catch (error) {
-      addLogs(
-        new Error(error.message),
-        error?.response?.status,
-        error?.response?.data,
-      );
+      addLogs(error);
 
       return;
     }
@@ -274,11 +266,7 @@ class KlpqStreamClient {
 
       return data;
     } catch (error) {
-      addLogs(
-        new Error(error.message),
-        error?.response?.status,
-        error?.response?.data,
-      );
+      addLogs(error);
 
       return;
     }
@@ -387,11 +375,7 @@ class ChaturbateClient {
 
       return data;
     } catch (error) {
-      addLogs(
-        new Error(error.message),
-        error?.response?.status,
-        error?.response?.data,
-      );
+      addLogs(error);
 
       return;
     }
@@ -435,11 +419,7 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      addLogs(
-        new Error(error.message),
-        error?.response?.status,
-        error?.response?.data,
-      );
+      addLogs(error);
 
       return;
     }
@@ -453,11 +433,7 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      addLogs(
-        new Error(error.message),
-        error?.response?.status,
-        error?.response?.data,
-      );
+      addLogs(error);
 
       return;
     }
@@ -557,11 +533,7 @@ class KlpqServiceClient {
   }
 
   private handleError(error: AxiosError): void {
-    addLogs(
-      new Error(error.message),
-      error?.response?.status,
-      error?.response?.data,
-    );
+    addLogs(error);
 
     return;
   }
@@ -577,11 +549,7 @@ class CommonClient {
 
       return data;
     } catch (error) {
-      addLogs(
-        new Error(error.message),
-        error?.response?.status,
-        error?.response?.data,
-      );
+      addLogs(error);
 
       return;
     }
@@ -607,11 +575,7 @@ class GithubClient {
 
       return data;
     } catch (error) {
-      addLogs(
-        new Error(error.message),
-        error?.response?.status,
-        error?.response?.data,
-      );
+      addLogs(error);
 
       return;
     }
