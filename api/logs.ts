@@ -17,7 +17,7 @@ ipcMain.handle('config_logs', () => logsUi.slice().reverse());
 
 export function addLogs(...logs: any[]): void {
   _.forEach(logs, (value, key) => {
-    if (typeof value === 'object') {
+    if (!!value && typeof value === 'object') {
       if (value.constructor.name === 'Error') {
         const stack = value.stack.split('\n').map((value) => value.trim());
 
