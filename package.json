@@ -47,7 +47,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.24.0",
     "electron-default-menu": "^1.0.1",
     "fix-path": "^2.1.0",
     "lodash": "^4.17.4",

@@ -17,22 +17,26 @@ ipcMain.handle('config_logs', () => logsUi.slice().reverse());
 
 export function addLogs(...logs: any[]): void {
   _.forEach(logs, (value, key) => {
-    if (value.constructor.name === 'Error') {
-      const stack = value.stack.split('\n').map((value) => value.trim());
+    if (typeof value === 'object') {
+      if (value.constructor.name === 'Error') {
+        const stack = value.stack.split('\n').map((value) => value.trim());
 
-      if (value?.response) {
-        logs[key] = {
-          message: value.message,
-          stack,
-          uri: `${value?.request?.method} ${value?.request?.protocol}//${value?.request?.host}${value?.request?.path}`,
-          status: value?.response?.status,
-          data: value?.response?.data,
-        };
+        if (value?.response) {
+          logs[key] = {
+            message: value.message,
+            stack,
+            uri: `${value?.request?.method} ${value?.request?.protocol}//${value?.request?.host}${value?.request?.path}`,
+            status: value?.response?.status,
+            data: value?.response?.data,
+          };
+        } else {
+          logs[key] = {
+            message: value.message,
+            stack,
+          };
+        }
       } else {
-        logs[key] = {
-          message: value.message,
-          stack,
-        };
+        logs[key] = JSON.stringify(value);
       }
     }
   });
@@ -40,7 +44,7 @@ export function addLogs(...logs: any[]): void {
   const logLine = logs
     .map((log) =>
       util.inspect(log, {
-        depth: Infinity,
+        depth: 1,
         compact: true,
         breakLength: Infinity,
       }),
