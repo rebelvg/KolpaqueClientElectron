@@ -13,7 +13,11 @@ export async function loop(): Promise<void> {
         serviceName: service.name,
       });
 
+      addLogs('channel_info_start', service.name, filteredChannels.length);
+
       await service.getInfo(filteredChannels);
+
+      addLogs('channel_info_done', service.name, filteredChannels.length);
     }),
   );
 

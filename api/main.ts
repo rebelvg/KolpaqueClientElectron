@@ -43,7 +43,13 @@ ipcMain.on('client_ready', async () => {
     return;
   }
 
-  await init();
+  try {
+    await init();
+  } catch (error) {
+    addLogs('init_failed', error);
+
+    throw error;
+  }
 
   main.mainWindow.webContents.send('backend_ready');
 

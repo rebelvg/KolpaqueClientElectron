@@ -90,6 +90,8 @@ async function getInfo(channels: Channel[]): Promise<void> {
 
   await Promise.all(
     chunkedChannels.map(async (channels) => {
+      addLogs('channel_info_twitch_start', channels.length);
+
       const userData = await twitchClient.getUsersByLogin(
         channels.map((channel) => channel.name),
       );
@@ -119,6 +121,8 @@ async function getInfo(channels: Channel[]): Promise<void> {
           );
         }),
       );
+
+      addLogs('channel_info_twitch_done', channels.length);
     }),
   );
 }
