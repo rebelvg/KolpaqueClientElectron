@@ -18,20 +18,20 @@ ipcMain.handle('config_logs', () => logsUi.slice().reverse());
 export function addLogs(...logs: any[]): void {
   _.forEach(logs, (value, key) => {
     if (value.constructor.name === 'Error') {
+      const stack = value.stack.split('\n').map((value) => value.trim());
+
       if (value?.response) {
         logs[key] = {
-          name: value.name,
           message: value.message,
-          stack: value.stack,
+          stack,
           uri: `${value?.request?.method} ${value?.request?.protocol}//${value?.request?.host}${value?.request?.path}`,
           status: value?.response?.status,
           data: value?.response?.data,
         };
       } else {
         logs[key] = {
-          name: value.name,
           message: value.message,
-          stack: value.stack,
+          stack,
         };
       }
     }
