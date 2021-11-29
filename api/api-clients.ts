@@ -64,6 +64,7 @@ export const TWITCH_CHUNK_LIMIT = 100;
 class TwitchClient {
   private baseUrl = 'https://api.twitch.tv/helix';
   public accessToken: string = null;
+  private _lastFailedTokenRefresh = 0;
 
   public get refreshToken(): string {
     return config.settings.twitchRefreshToken;
@@ -84,10 +85,18 @@ class TwitchClient {
       return false;
     }
 
+    if (Date.now() - this._lastFailedTokenRefresh < 1000) {
+      addLogs('twitch_token_cache_request');
+
+      return false;
+    }
+
     const user = await klpqServiceClient.refreshTwitchToken(this.refreshToken);
 
     if (!user) {
       addLogs('refresh_twitch_access_token_failed');
+
+      this._lastFailedTokenRefresh = Date.now();
 
       return false;
     }
@@ -102,6 +111,7 @@ class TwitchClient {
 
   public async getUsersByLogin(
     channelNames: string[],
+    callerName: string,
   ): Promise<ITwitchClientUsers> {
     await this.refreshAccessToken();
 

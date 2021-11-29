@@ -32,6 +32,7 @@ async function getStats(
 
       const userData = await twitchClient.getUsersByLogin(
         channels.map((channel) => channel.name),
+        'getStats',
       );
 
       if (!userData) {
@@ -93,6 +94,7 @@ async function getInfo(allChannels: Channel[]): Promise<void> {
 
     const userData = await twitchClient.getUsersByLogin(
       channels.map((channel) => channel.name),
+      'getInfo',
     );
 
     addLogs('channel_info_twitch_user_data', channels.length, !!userData);
@@ -189,7 +191,10 @@ async function importBase(
 
   channelName = channelName.trim();
 
-  const userData = await twitchClient.getUsersByLogin([channelName]);
+  const userData = await twitchClient.getUsersByLogin(
+    [channelName],
+    'importBase',
+  );
 
   if (!userData) {
     return [];

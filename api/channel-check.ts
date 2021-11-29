@@ -5,15 +5,17 @@ import { addLogs } from './logs';
 import { REGISTERED_SERVICES } from './globals';
 import { BaseStreamService } from './stream-services/_base';
 import { sleep } from './helpers';
+import { Channel } from './channel-class';
 
 async function checkService(
   service: BaseStreamService,
+  allChannels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
   try {
     addLogs('channel_check_stats', service.name);
 
-    const channels = _.filter(config.channels, {
+    const channels = _.filter(allChannels, {
       serviceName: service.name,
     });
 
@@ -30,16 +32,25 @@ async function checkServiceLoop(service: BaseStreamService): Promise<void> {
   while (true) {
     await sleep(service.checkLiveTimeout * 1000);
 
-    await checkService(service, true);
+    await checkService(service, config.channels, true);
   }
+}
+
+export async function checkChannels(
+  channels: Channel[],
+  printBalloon: boolean,
+) {
+  await Promise.all(
+    _.map(REGISTERED_SERVICES, (service) =>
+      checkService(service, channels, printBalloon),
+    ),
+  );
 }
 
 export async function loop(): Promise<void> {
   addLogs('channel_check_init');
 
-  await Promise.all(
-    _.map(REGISTERED_SERVICES, (service) => checkService(service, false)),
-  );
+  await checkChannels(config.channels, false);
 
   addLogs('channel_check_init_done');
 

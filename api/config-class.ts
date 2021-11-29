@@ -9,6 +9,8 @@ import { addLogs } from './logs';
 import { contextMenuTemplate, main } from './main';
 import { sleep } from './helpers';
 import { syncSettings } from './sync-settings';
+import { checkChannels } from './channel-check';
+import { getChannelInfo } from './channel-info';
 
 const SETTINGS_FILE_PATH = path.join(
   app.getPath('documents'),
@@ -366,10 +368,10 @@ export class Config extends EventEmitter {
   }
 
   public async runChannelUpdates(channels: Channel[], preInit: boolean) {
-    await Promise.all(channels.map((channel) => channel.getStats(false)));
+    await checkChannels(channels, false);
 
     if (!preInit) {
-      await Promise.all(channels.map((channel) => channel.getInfo()));
+      await getChannelInfo(channels);
     }
 
     main.mainWindow.webContents.send('channel_addSync');

@@ -25,10 +25,11 @@ import { rebuildIconMenu } from './tray-icon';
 
 import { addLogs, crashLogPath } from './logs';
 import { init } from './client-init';
+import { CLIENT_VERSION } from './globals';
 
 const isDev = process.env.NODE_ENV === 'dev';
 
-addLogs('is_dev', isDev);
+addLogs('is_dev', isDev, CLIENT_VERSION);
 
 let forceQuit = false;
 
