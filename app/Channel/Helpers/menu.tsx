@@ -1,5 +1,6 @@
-const { remote, ipcRenderer } = window.require('electron');
-const { MenuItem } = remote;
+import { MenuItem } from '@electron/remote';
+
+const { ipcRenderer } = window.require('electron');
 
 export const menuTemplate = (channel, edit) => [
   new MenuItem({

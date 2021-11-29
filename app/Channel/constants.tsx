@@ -1,5 +1,5 @@
-const { remote } = window.require('electron');
-const { Menu } = remote;
+import { Menu } from '@electron/remote';
+import * as remote from '@electron/remote';
 
 export const getTab = (tab) => {
   return TABS.find((t) => t.value === tab);

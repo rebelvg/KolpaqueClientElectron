@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development',
+  target: 'electron-renderer',
   entry: [
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:10000',

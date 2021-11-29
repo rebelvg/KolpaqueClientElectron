@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'production',
+  target: 'electron-renderer',
   entry: './app/index.tsx',
   module: {
     rules: [

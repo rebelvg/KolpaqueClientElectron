@@ -16,6 +16,7 @@ import * as fixPath from 'fix-path';
 import * as defaultMenu from 'electron-default-menu';
 import * as fs from 'fs';
 import * as os from 'os';
+import * as remoteMain from '@electron/remote/main';
 
 fixPath();
 
@@ -92,6 +93,8 @@ if (!lockStatus) {
 }
 
 function createWindow(): void {
+  remoteMain.initialize();
+
   const mainWindow = new BrowserWindow({
     title: 'Kolpaque Client',
     minWidth: 300,
@@ -103,10 +106,11 @@ function createWindow(): void {
     icon: iconPath,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true,
       contextIsolation: false,
     },
   });
+
+  remoteMain.enable(mainWindow.webContents);
 
   main.mainWindow = mainWindow;
 
