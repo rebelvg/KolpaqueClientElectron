@@ -136,7 +136,7 @@ class SyncSettings {
       newChannels.push(findLocalChannel);
     }
 
-    await config.runChannelUpdates(newChannels);
+    await config.runChannelUpdates(newChannels, true);
 
     return;
   }

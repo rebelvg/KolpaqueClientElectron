@@ -15,10 +15,11 @@ export async function init(): Promise<void> {
 
   await importLoop();
   await channelLoop();
-  await infoLoop();
   await versionLoop();
 
   await syncSettings.init();
+
+  infoLoop();
 
   addLogs('init_done');
 }

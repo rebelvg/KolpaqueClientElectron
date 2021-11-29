@@ -365,10 +365,12 @@ export class Config extends EventEmitter {
     }
   }
 
-  public async runChannelUpdates(channels: Channel[]) {
+  public async runChannelUpdates(channels: Channel[], preInit: boolean) {
     await Promise.all(channels.map((channel) => channel.getStats(false)));
 
-    await Promise.all(channels.map((channel) => channel.getInfo()));
+    if (!preInit) {
+      await Promise.all(channels.map((channel) => channel.getInfo()));
+    }
 
     main.mainWindow.webContents.send('channel_addSync');
   }

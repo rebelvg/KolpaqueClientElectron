@@ -572,6 +572,7 @@ class CommonClient {
     try {
       const { data } = await axios.get<Buffer>(url, {
         responseType: 'arraybuffer',
+        timeout: 5 * 1000,
       });
 
       return data;

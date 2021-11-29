@@ -77,10 +77,10 @@ async function getStats(
   );
 }
 
-async function getInfo(channels: Channel[]): Promise<void> {
+async function getInfo(allChannels: Channel[]): Promise<void> {
   await twitchClient.refreshAccessToken();
 
-  const filteredChannels = _.filter(channels, (channel) => !channel._icon);
+  const filteredChannels = _.filter(allChannels, (channel) => !channel._icon);
 
   if (filteredChannels.length === 0) {
     return;
@@ -88,43 +88,59 @@ async function getInfo(channels: Channel[]): Promise<void> {
 
   const chunkedChannels = _.chunk(filteredChannels, TWITCH_CHUNK_LIMIT);
 
-  await Promise.all(
-    chunkedChannels.map(async (channels) => {
-      addLogs('channel_info_twitch_start', channels.length);
+  for (const channels of chunkedChannels) {
+    addLogs('channel_info_twitch_start', channels.length);
 
-      const userData = await twitchClient.getUsersByLogin(
-        channels.map((channel) => channel.name),
-      );
+    const userData = await twitchClient.getUsersByLogin(
+      channels.map((channel) => channel.name),
+    );
 
-      await Promise.all(
-        channels.map(async (channel) => {
-          await Promise.all(
-            _.map(userData?.data, async (user) => {
-              if (user.login !== channel.name) {
-                return;
-              }
+    addLogs('channel_info_twitch_user_data', channels.length, !!userData);
 
-              const profileImageUrl = user?.profile_image_url;
+    let _downloadedLogosCount = 0;
 
-              if (!profileImageUrl) {
-                return;
-              }
+    await Promise.all(
+      channels.map(async (channel) => {
+        await Promise.all(
+          _.map(userData?.data, async (user) => {
+            if (user.login !== channel.name) {
+              return;
+            }
 
-              const logoBuffer = await commonClient.getContentAsBuffer(
-                profileImageUrl,
-              );
+            const profileImageUrl = user?.profile_image_url;
 
-              if (logoBuffer) {
-                channel._icon = logoBuffer;
-              }
-            }),
-          );
-        }),
-      );
+            if (!profileImageUrl) {
+              return;
+            }
 
-      addLogs('channel_info_twitch_done', channels.length);
-    }),
-  );
+            addLogs(
+              'channel_info_twitch_logo_start',
+              channels.length,
+              channel.name,
+              ++_downloadedLogosCount,
+            );
+
+            const logoBuffer = await commonClient.getContentAsBuffer(
+              profileImageUrl,
+            );
+
+            addLogs(
+              'channel_info_twitch_logo_done',
+              channels.length,
+              channel.name,
+              _downloadedLogosCount,
+            );
+
+            if (logoBuffer) {
+              channel._icon = logoBuffer;
+            }
+          }),
+        );
+      }),
+    );
+
+    addLogs('channel_info_twitch_done', channels.length, _downloadedLogosCount);
+  }
 }
 
 async function addImportedChannels(
@@ -230,7 +246,7 @@ async function importBase(
   channelsAdded.forEach((channel) => channelsAddedAll.push(channel));
 
   if (emitEvent) {
-    await config.runChannelUpdates(channelsAdded);
+    await config.runChannelUpdates(channelsAdded, emitEvent);
   }
 
   return channelsAddedAll;
