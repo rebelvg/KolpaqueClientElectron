@@ -65,7 +65,7 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
   });
 
   main.mainWindow.on('closed', () => {
-    if (window) {
+    if (window && !window.isDestroyed) {
       window.close();
     }
   });
