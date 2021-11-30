@@ -6,7 +6,7 @@ Electron version of Kolpaque Client **React Edition**.
 
 Multiplatform desktop app for tracking statuses of your favorite channels on various stream services and piping them with Streamlink into any desktop videoplayer (MPC, VLC, etc).
 
-## Automated build
+## Automated builds
 
 - https://rebelvg.visualstudio.com/kolpaque
 
