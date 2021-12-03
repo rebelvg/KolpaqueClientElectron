@@ -11,6 +11,7 @@ import { sleep } from './helpers';
 import { syncSettings } from './sync-settings';
 import { checkChannels } from './channel-check';
 import { getChannelInfo } from './channel-info';
+import { SourcesEnum } from './enums';
 
 const SETTINGS_FILE_PATH = path.join(
   app.getPath('documents'),
@@ -137,6 +138,7 @@ export interface ISavedSettingsFile {
     autoStart: boolean;
     autoRestart: boolean;
     channelAdded: Date;
+    sources: SourcesEnum[];
   }[];
   settings: ISettings;
   migrations: string[];
@@ -243,7 +245,10 @@ export class Config extends EventEmitter {
       return null;
     }
 
-    const res = this.findChannelByLink(channel.link);
+    const res = this.findByQuery({
+      serviceName: channel.serviceName,
+      name: channel.name,
+    });
 
     if (res !== null) {
       return null;
@@ -304,16 +309,8 @@ export class Config extends EventEmitter {
     return channel;
   }
 
-  findChannelByLink(channelLink: string): Channel {
-    const channel = this.channels.find((channel) => {
-      return channel.link === channelLink;
-    });
-
-    if (!channel) {
-      return null;
-    }
-
-    return channel;
+  findByQuery(params: Partial<Channel>): Channel {
+    return _.find(this.channels, params);
   }
 
   find(query: any = {}) {
@@ -403,6 +400,7 @@ export class Config extends EventEmitter {
         autoStart,
         autoRestart,
         channelAdded,
+        sources,
       }) => ({
         link,
         visibleName,
@@ -410,6 +408,7 @@ export class Config extends EventEmitter {
         autoStart,
         autoRestart,
         channelAdded,
+        sources,
       }),
     );
   }
@@ -430,6 +429,17 @@ export class Config extends EventEmitter {
       });
 
       parsedJson.migrations.push('migration_1');
+    }
+
+    if (!parsedJson.migrations.includes('migration_2')) {
+      parsedJson.channels = parsedJson.channels.map((channel, id) => {
+        return {
+          ...channel,
+          sources: [SourcesEnum.MANUAL_ACTION],
+        };
+      });
+
+      parsedJson.migrations.push('migration_2');
     }
 
     return parsedJson;

@@ -12,6 +12,7 @@ import {
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { config } from '../settings-file';
 import { addLogs } from '../logs';
+import { SourcesEnum } from '../enums';
 
 async function getStats(
   channels: Channel[],
@@ -163,14 +164,25 @@ async function addImportedChannels(
       }
 
       for (const importedChannel of userData.data) {
-        const channel = await config.addChannelLink(
-          `${twitchStreamService.buildChannelLink(importedChannel.login)}`,
-        );
+        const foundChannel = config.findByQuery({
+          serviceName: ServiceNamesEnum.TWITCH,
+          name: importedChannel.login,
+        });
 
-        if (channel) {
-          channelsAdded.push(channel);
+        if (foundChannel) {
+          if (!foundChannel.sources.includes(SourcesEnum.AUTO_IMPORT)) {
+            foundChannel.sources.push(SourcesEnum.AUTO_IMPORT);
+          }
+        } else {
+          const channel = config.addChannelLink(
+            `${twitchStreamService.buildChannelLink(importedChannel.login)}`,
+          );
 
-          addLogs('twitch_imported_channel', channel.link);
+          if (channel) {
+            channelsAdded.push(channel);
+
+            addLogs('twitch_imported_channel', channel.link);
+          }
         }
       }
     }),
@@ -202,7 +214,7 @@ async function importBase(
 
   const channelsAddedAll: Channel[] = [];
 
-  const addedChannel = await config.addChannelLink(
+  const addedChannel = config.addChannelLink(
     twitchStreamService.buildChannelLink(channelName),
   );
 
@@ -210,7 +222,7 @@ async function importBase(
     channelsAddedAll.push(addedChannel);
   }
 
-  const channelsToAdd = [];
+  const channelsToAdd: ITwitchFollowedChannel[] = [];
 
   await Promise.all(
     userData.data.map(async ({ id }) => {

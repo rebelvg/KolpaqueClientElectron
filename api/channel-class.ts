@@ -17,6 +17,7 @@ import { customStreamService } from './stream-services/custom';
 import { launchPlayerChannel, playInWindow } from './channel-play';
 import { main } from './main';
 import { ISavedSettingsFile } from './config-class';
+import { SourcesEnum } from './enums';
 
 export class Channel extends EventEmitter {
   public readonly id: string;
@@ -39,6 +40,7 @@ export class Channel extends EventEmitter {
   public _trayIcon: Electron.NativeImage;
   public _playingProcesses = 0;
   public channelAdded: Date;
+  public sources: SourcesEnum[];
 
   constructor(channelLink: string) {
     super();
