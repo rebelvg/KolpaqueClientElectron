@@ -40,7 +40,7 @@ export class Channel extends EventEmitter {
   public _trayIcon: Electron.NativeImage;
   public _playingProcesses = 0;
   public channelAdded: Date;
-  public sources: SourcesEnum[];
+  public sources: SourcesEnum[] = [];
 
   constructor(channelLink: string) {
     super();

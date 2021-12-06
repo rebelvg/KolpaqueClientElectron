@@ -12,6 +12,7 @@ import { syncSettings } from './sync-settings';
 import { checkChannels } from './channel-check';
 import { getChannelInfo } from './channel-info';
 import { SourcesEnum } from './enums';
+import { config } from './settings-file';
 
 const SETTINGS_FILE_PATH = path.join(
   app.getPath('documents'),
@@ -126,7 +127,6 @@ interface ISettings {
   youtubeTosConsent: boolean;
   youtubeRefreshToken: string;
   enableSync: boolean;
-  syncId: string;
   klpqJwtToken: string;
 }
 
@@ -142,6 +142,7 @@ export interface ISavedSettingsFile {
   }[];
   settings: ISettings;
   migrations: string[];
+  deletedChannels: string[];
 }
 
 export class Config extends EventEmitter {
@@ -166,10 +167,10 @@ export class Config extends EventEmitter {
     youtubeTosConsent: false,
     youtubeRefreshToken: '',
     enableSync: false,
-    syncId: null,
     klpqJwtToken: null,
   };
   public migrations: string[] = [];
+  public deletedChannels: string[] = [];
 
   constructor() {
     super();
@@ -204,7 +205,7 @@ export class Config extends EventEmitter {
 
     try {
       for (const parsedChannel of parseJson.channels) {
-        const channel = this.addChannelLink(parsedChannel.link);
+        const channel = this.addChannelLink(parsedChannel.link, null);
 
         if (channel) {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -221,7 +222,8 @@ export class Config extends EventEmitter {
         ...parseJson.settings,
       };
 
-      this.migrations = parseJson.migrations;
+      this.migrations = parseJson.migrations || [];
+      this.deletedChannels = parseJson.deletedChannels || [];
     } catch (error) {
       addLogs(error);
 
@@ -232,13 +234,13 @@ export class Config extends EventEmitter {
   private async saveLoop(): Promise<void> {
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      await sleep(5 * 60 * 1000);
+      await sleep(60 * 1000);
 
       this.saveFile();
     }
   }
 
-  addChannelLink(channelLink: string): Channel {
+  addChannelLink(channelLink: string, source: SourcesEnum): Channel {
     const channel = Config.buildChannel(channelLink);
 
     if (!channel) {
@@ -255,6 +257,10 @@ export class Config extends EventEmitter {
     }
 
     channel.lastUpdated = Date.now();
+
+    if (source) {
+      channel.sources = [source];
+    }
 
     this.channels.push(channel);
 
@@ -279,6 +285,8 @@ export class Config extends EventEmitter {
     }
 
     _.pull(this.channels, channel);
+
+    config.deletedChannels.push(channel.link);
 
     main.mainWindow.webContents.send('channel_removeSync');
 
@@ -310,7 +318,7 @@ export class Config extends EventEmitter {
   }
 
   findByQuery(params: Partial<Channel>): Channel {
-    return _.find(this.channels, params);
+    return _.find(this.channels, params) || null;
   }
 
   find(query: any = {}) {
@@ -348,11 +356,20 @@ export class Config extends EventEmitter {
         channels,
         settings: this.settings,
         migrations: this.migrations,
+        deletedChannels: this.deletedChannels,
       };
 
       fs.writeFileSync(SETTINGS_FILE_PATH, JSON.stringify(saveConfig, null, 2));
 
-      syncSettings.save();
+      syncSettings
+        .save()
+        .then(() => {
+          fs.writeFileSync(
+            SETTINGS_FILE_PATH,
+            JSON.stringify(saveConfig, null, 2),
+          );
+        })
+        .catch();
 
       addLogs('settings_saved');
 
@@ -435,7 +452,7 @@ export class Config extends EventEmitter {
       parsedJson.channels = parsedJson.channels.map((channel, id) => {
         return {
           ...channel,
-          sources: [SourcesEnum.MANUAL_ACTION],
+          sources: [],
         };
       });
 

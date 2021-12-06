@@ -4,6 +4,8 @@ import { Channel } from '../channel-class';
 import { klpqStreamClient } from '../api-clients';
 import { config } from '../settings-file';
 import { addLogs } from '../logs';
+import { SourcesEnum } from '../enums';
+import * as _ from 'lodash';
 
 async function doImport(
   this: BaseStreamService,
@@ -25,14 +27,40 @@ async function doImport(
   const channelsAdded: Channel[] = [];
 
   for (const channelName of channels) {
-    const channel = await config.addChannelLink(
-      `${this.buildChannelLink(channelName)}`,
-    );
+    const foundChannel = config.findByQuery({
+      serviceName: ServiceNamesEnum.KLPQ_VPS_HTTP,
+      name: channelName,
+    });
 
-    if (channel) {
-      channelsAdded.push(channel);
+    if (foundChannel) {
+      if (!foundChannel.sources.includes(SourcesEnum.AUTO_IMPORT)) {
+        foundChannel.sources.push(SourcesEnum.AUTO_IMPORT);
+      }
+    } else {
+      const channel = await config.addChannelLink(
+        `${this.buildChannelLink(channelName)}`,
+        SourcesEnum.AUTO_IMPORT,
+      );
 
-      addLogs('kolpaque_vps_http_imported_channel', channel.link);
+      if (channel) {
+        channelsAdded.push(channel);
+
+        addLogs('kolpaque_vps_http_imported_channel', channel.link);
+      }
+    }
+  }
+
+  for (const channel of config.channels) {
+    if (
+      channel.serviceName === ServiceNamesEnum.KLPQ_VPS_HTTP &&
+      channel.sources.includes(SourcesEnum.AUTO_IMPORT) &&
+      !channels.includes(channel.name)
+    ) {
+      if (channel.sources.length === 1) {
+        config.removeChannelById(channel.id);
+      } else {
+        _.pull(channel.sources, SourcesEnum.AUTO_IMPORT);
+      }
     }
   }
 

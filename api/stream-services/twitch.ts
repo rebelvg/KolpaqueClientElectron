@@ -116,22 +116,10 @@ async function getInfo(allChannels: Channel[]): Promise<void> {
               return;
             }
 
-            addLogs(
-              'channel_info_twitch_logo_start',
-              channels.length,
-              channel.name,
-              ++_downloadedLogosCount,
-            );
+            _downloadedLogosCount++;
 
             const logoBuffer = await commonClient.getContentAsBuffer(
               profileImageUrl,
-            );
-
-            addLogs(
-              'channel_info_twitch_logo_done',
-              channels.length,
-              channel.name,
-              _downloadedLogosCount,
             );
 
             if (logoBuffer) {
@@ -148,10 +136,12 @@ async function getInfo(allChannels: Channel[]): Promise<void> {
 
 async function addImportedChannels(
   channels: ITwitchFollowedChannel[],
-): Promise<Channel[]> {
+): Promise<[Channel[], string[]]> {
   const channelsAdded: Channel[] = [];
 
   const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
+
+  const channelNames: string[] = [];
 
   await Promise.all(
     chunkedChannels.map(async (channels) => {
@@ -164,6 +154,8 @@ async function addImportedChannels(
       }
 
       for (const importedChannel of userData.data) {
+        channelNames.push(importedChannel.login);
+
         const foundChannel = config.findByQuery({
           serviceName: ServiceNamesEnum.TWITCH,
           name: importedChannel.login,
@@ -176,6 +168,7 @@ async function addImportedChannels(
         } else {
           const channel = config.addChannelLink(
             `${twitchStreamService.buildChannelLink(importedChannel.login)}`,
+            SourcesEnum.AUTO_IMPORT,
           );
 
           if (channel) {
@@ -188,17 +181,17 @@ async function addImportedChannels(
     }),
   );
 
-  return channelsAdded;
+  return [channelsAdded, channelNames];
 }
 
 async function importBase(
   channelName: string,
   emitEvent: boolean,
-): Promise<Channel[]> {
+): Promise<[Channel[], string[]]> {
   await twitchClient.refreshAccessToken();
 
   if (!channelName) {
-    return [];
+    return [[], []];
   }
 
   channelName = channelName.trim();
@@ -209,13 +202,14 @@ async function importBase(
   );
 
   if (!userData) {
-    return [];
+    return [[], []];
   }
 
   const channelsAddedAll: Channel[] = [];
 
   const addedChannel = config.addChannelLink(
     twitchStreamService.buildChannelLink(channelName),
+    SourcesEnum.MANUAL_ACTION,
   );
 
   if (addedChannel) {
@@ -258,7 +252,9 @@ async function importBase(
     }),
   );
 
-  const channelsAdded = await addImportedChannels(channelsToAdd);
+  const [channelsAdded, channelNames] = await addImportedChannels(
+    channelsToAdd,
+  );
 
   channelsAdded.forEach((channel) => channelsAddedAll.push(channel));
 
@@ -266,7 +262,7 @@ async function importBase(
     await config.runChannelUpdates(channelsAdded, emitEvent);
   }
 
-  return channelsAddedAll;
+  return [channelsAddedAll, channelNames];
 }
 
 async function doImport(
@@ -278,14 +274,33 @@ async function doImport(
   }
 
   const channels: Channel[] = [];
+  const allImportedChannelNames: string[] = [];
 
   await Promise.all(
     _.map(channelNames, async (channelName) => {
-      const importedChannels = await importBase(channelName, emitEvent);
+      const [importedChannels, channelNames] = await importBase(
+        channelName,
+        emitEvent,
+      );
 
       channels.push(...importedChannels);
+      allImportedChannelNames.push(...channelNames);
     }),
   );
+
+  for (const channel of config.channels) {
+    if (
+      channel.serviceName === ServiceNamesEnum.TWITCH &&
+      channel.sources.includes(SourcesEnum.AUTO_IMPORT) &&
+      !allImportedChannelNames.includes(channel.name)
+    ) {
+      if (channel.sources.length === 1) {
+        config.removeChannelById(channel.id);
+      } else {
+        _.pull(channel.sources, SourcesEnum.AUTO_IMPORT);
+      }
+    }
+  }
 
   return channels;
 }

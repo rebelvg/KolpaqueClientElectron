@@ -5,6 +5,7 @@ import { Config } from './config-class';
 import { Channel } from './channel-class';
 import { main } from './main';
 import { addLogs } from './logs';
+import { SourcesEnum } from './enums';
 
 export const config = new Config();
 
@@ -21,7 +22,7 @@ ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
 ipcMain.on('channel_add', async (event, channelLink) => {
   addLogs('channel_add', channelLink);
 
-  const channel = config.addChannelLink(channelLink);
+  const channel = config.addChannelLink(channelLink, SourcesEnum.MANUAL_ACTION);
 
   if (!channel) {
     return null;

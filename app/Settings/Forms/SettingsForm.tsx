@@ -4,7 +4,7 @@ import { Field } from 'react-final-form';
 import Toggle from 'react-toggle-button';
 import styled from 'styled-components';
 import Select from 'react-select';
-import { openMenu } from '../../Channel/constants';
+// import { openMenu } from '../../Channel/constants';
 
 const { shell, ipcRenderer } = window.require('electron');
 
@@ -222,7 +222,7 @@ const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
       </InputWrapper>
     </FieldWrapper>
 
-    <InputWrapper>
+    {/* <InputWrapper>
       <StyledField
         name="syncId"
         type="text"
@@ -235,7 +235,7 @@ const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
           changeSetting(event.target.value, 'syncId', true);
         }}
       />
-    </InputWrapper>
+    </InputWrapper> */}
   </Form>
 );
 
@@ -269,13 +269,13 @@ const Label = styled.label`
 
 const InputWrapper = styled.div``;
 
-const StyledField = styled(Field)`
-  width: 100%;
-  height: 18px;
-  padding: 0px;
-  margin: 0px;
-  position: relative;
-  z-index: 100000;
-`;
+// const StyledField = styled(Field)`
+//   width: 100%;
+//   height: 18px;
+//   padding: 0px;
+//   margin: 0px;
+//   position: relative;
+//   z-index: 100000;
+// `;
 
 export default SettingsForm;

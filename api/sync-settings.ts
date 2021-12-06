@@ -60,10 +60,31 @@ function decryptData(encrypted: Buffer): any {
 }
 
 class SyncSettings {
+  private _syncId: string = null;
+
+  constructor() {
+    try {
+      this._syncId = fs.readFileSync(SYNC_ID_FILE_PATH, { encoding: 'utf-8' });
+    } catch (error) {}
+  }
+
+  private set syncId(id: string) {
+    if (this._syncId !== id) {
+      fs.writeFileSync(SYNC_ID_FILE_PATH, id);
+    }
+
+    this._syncId = id;
+  }
+
+  private get syncId() {
+    return this._syncId;
+  }
+
   public async init() {
     addLogs('sync_init');
 
-    const { enableSync, syncId } = config.settings;
+    const { enableSync } = config.settings;
+    const { syncId } = this;
 
     if (!enableSync) {
       return;
@@ -81,15 +102,13 @@ class SyncSettings {
         return;
       }
 
-      config.settings.syncId = newSyncId;
+      this.syncId = newSyncId;
 
       main.mainWindow.webContents.send(
         'config_changeSetting',
         'syncId',
-        config.settings.syncId,
+        syncId,
       );
-
-      fs.writeFileSync(SYNC_ID_FILE_PATH, newSyncId);
 
       return;
     }
@@ -113,14 +132,18 @@ class SyncSettings {
     const newChannels: Channel[] = [];
 
     for (const syncedChannel of syncedChannels) {
-      const findLocalChannel = config.channels.find(
-        (localChannel) => localChannel.link === syncedChannel.link,
-      );
+      if (config.deletedChannels.includes(syncedChannel.link)) {
+        continue;
+      }
+
+      const findLocalChannel = config.findByQuery({
+        link: syncedChannel.link,
+      });
 
       if (!findLocalChannel) {
         addLogs('sync_adding_channel', syncedChannel.link);
 
-        const channel = config.addChannelLink(syncedChannel.link);
+        const channel = config.addChannelLink(syncedChannel.link, null);
 
         if (channel) {
           channel.update(syncedChannel);
@@ -141,10 +164,13 @@ class SyncSettings {
 
   public async save() {
     const {
-      settings: { enableSync, syncId },
+      settings: { enableSync },
     } = config;
+    const { syncId } = this;
 
     if (!enableSync) {
+      config.deletedChannels = [];
+
       return;
     }
 
@@ -156,18 +182,20 @@ class SyncSettings {
     );
 
     if (!newSyncId) {
+      config.deletedChannels = [];
+
       return;
     }
 
-    config.settings.syncId = newSyncId;
+    this.syncId = newSyncId;
 
     main.mainWindow.webContents.send(
       'config_changeSetting',
       'syncId',
-      config.settings.syncId,
+      this.syncId,
     );
 
-    fs.writeFileSync(SYNC_ID_FILE_PATH, newSyncId);
+    config.deletedChannels = [];
 
     return;
   }
