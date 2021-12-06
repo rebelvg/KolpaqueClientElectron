@@ -189,8 +189,23 @@ const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
       </InputWrapper>
     </FieldWrapper>
 
+    <FieldWrapper>
+      <Label>Enable Channels Sync (encrypted locally)</Label>
+      <InputWrapper>
+        <Field
+          name="enableSync"
+          component={ToggleAdapter}
+          toggle={changeSetting}
+        />
+      </InputWrapper>
+    </FieldWrapper>
+
+    <br />
+
     <br />
     <br />
+
+    <div>You have to login via twitch to use twitch services.</div>
 
     <button
       onClick={() => {
@@ -199,6 +214,10 @@ const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
     >
       Twitch Login
     </button>
+
+    <br />
+
+    <div>You have to login via klpq to use klpq services.</div>
 
     <button
       onClick={() => {
@@ -209,18 +228,10 @@ const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
     </button>
 
     <br />
-    <br />
 
-    <FieldWrapper>
-      <Label>Enable Sync</Label>
-      <InputWrapper>
-        <Field
-          name="enableSync"
-          component={ToggleAdapter}
-          toggle={changeSetting}
-        />
-      </InputWrapper>
-    </FieldWrapper>
+    <div>
+      If client doesn't check channels try to login again or check the logs.
+    </div>
 
     {/* <InputWrapper>
       <StyledField
