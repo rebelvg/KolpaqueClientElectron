@@ -143,43 +143,49 @@ async function addImportedChannels(
 
   const channelNames: string[] = [];
 
-  await Promise.all(
-    chunkedChannels.map(async (channels) => {
-      const userData = await twitchClient.getUsersById(
-        channels.map((channel) => channel.to_id),
-      );
+  try {
+    await Promise.all(
+      chunkedChannels.map(async (channels) => {
+        const userData = await twitchClient.getUsersById(
+          channels.map((channel) => channel.to_id),
+        );
 
-      if (!userData) {
-        return;
-      }
+        if (!userData) {
+          throw new Error('no_user_data');
+        }
 
-      for (const importedChannel of userData.data) {
-        channelNames.push(importedChannel.login);
+        for (const importedChannel of userData.data) {
+          channelNames.push(importedChannel.login);
 
-        const foundChannel = config.findByQuery({
-          serviceName: ServiceNamesEnum.TWITCH,
-          name: importedChannel.login,
-        });
+          const foundChannel = config.findByQuery({
+            serviceName: ServiceNamesEnum.TWITCH,
+            name: importedChannel.login,
+          });
 
-        if (foundChannel) {
-          if (!foundChannel.sources.includes(SourcesEnum.AUTO_IMPORT)) {
-            foundChannel.sources.push(SourcesEnum.AUTO_IMPORT);
-          }
-        } else {
-          const channel = config.addChannelLink(
-            `${twitchStreamService.buildChannelLink(importedChannel.login)}`,
-            SourcesEnum.AUTO_IMPORT,
-          );
+          if (foundChannel) {
+            if (!foundChannel.sources.includes(SourcesEnum.AUTO_IMPORT)) {
+              foundChannel.sources.push(SourcesEnum.AUTO_IMPORT);
+            }
+          } else {
+            const channel = config.addChannelLink(
+              `${twitchStreamService.buildChannelLink(importedChannel.login)}`,
+              SourcesEnum.AUTO_IMPORT,
+            );
 
-          if (channel) {
-            channelsAdded.push(channel);
+            if (channel) {
+              channelsAdded.push(channel);
 
-            addLogs('twitch_imported_channel', channel.link);
+              addLogs('twitch_imported_channel', channel.link);
+            }
           }
         }
-      }
-    }),
-  );
+      }),
+    );
+  } catch (error) {
+    addLogs('error', error);
+
+    return null;
+  }
 
   return [channelsAdded, channelNames];
 }
@@ -191,7 +197,7 @@ async function importBase(
   await twitchClient.refreshAccessToken();
 
   if (!channelName) {
-    return [[], []];
+    return null;
   }
 
   channelName = channelName.trim();
@@ -202,7 +208,7 @@ async function importBase(
   );
 
   if (!userData) {
-    return [[], []];
+    return null;
   }
 
   const channelsAddedAll: Channel[] = [];
@@ -218,43 +224,53 @@ async function importBase(
 
   const channelsToAdd: ITwitchFollowedChannel[] = [];
 
-  await Promise.all(
-    userData.data.map(async ({ id }) => {
-      let cursor = '';
+  try {
+    await Promise.all(
+      userData.data.map(async ({ id }) => {
+        let cursor = '';
 
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        const followedChannelsData = await twitchClient.getFollowedChannels(
-          id,
-          cursor,
-        );
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const followedChannelsData = await twitchClient.getFollowedChannels(
+            id,
+            cursor,
+          );
 
-        if (!followedChannelsData) {
-          break;
+          if (!followedChannelsData) {
+            throw new Error('no_channels_data');
+          }
+
+          const { data: followedChannels } = followedChannelsData;
+
+          if (followedChannels.length === 0) {
+            break;
+          }
+
+          followedChannels.forEach((followedChannel) =>
+            channelsToAdd.push(followedChannel),
+          );
+
+          cursor = followedChannelsData.pagination.cursor;
+
+          if (!cursor) {
+            break;
+          }
         }
+      }),
+    );
+  } catch (error) {
+    addLogs('error', error);
 
-        const followedChannels = followedChannelsData.data;
+    return null;
+  }
 
-        cursor = followedChannelsData.pagination.cursor;
+  const addImportedChannelsRes = await addImportedChannels(channelsToAdd);
 
-        if (followedChannels.length === 0) {
-          break;
-        }
+  if (!addImportedChannelsRes) {
+    return null;
+  }
 
-        followedChannels.forEach((followedChannel) =>
-          channelsToAdd.push(followedChannel),
-        );
-
-        if (!cursor) {
-          break;
-        }
-      }
-    }),
-  );
-
-  const [channelsAdded, channelNames] = await addImportedChannels(
-    channelsToAdd,
-  );
+  const [channelsAdded, channelNames] = addImportedChannelsRes;
 
   channelsAdded.forEach((channel) => channelsAddedAll.push(channel));
 
@@ -276,17 +292,28 @@ async function doImport(
   const channels: Channel[] = [];
   const allImportedChannelNames: string[] = [];
 
-  await Promise.all(
-    _.map(channelNames, async (channelName) => {
-      const [importedChannels, channelNames] = await importBase(
-        channelName,
-        emitEvent,
-      );
+  try {
+    await Promise.all(
+      _.map(channelNames, async (channelName) => {
+        const importBaseRes = await importBase(channelName, emitEvent);
 
-      channels.push(...importedChannels);
-      allImportedChannelNames.push(...channelNames);
-    }),
-  );
+        if (!importBaseRes) {
+          throw new Error('no_import_base');
+        }
+
+        const [importedChannels, channelNames] = importBaseRes;
+
+        channels.push(...importedChannels);
+        allImportedChannelNames.push(...channelNames);
+      }),
+    );
+  } catch (error) {
+    addLogs('error', error);
+
+    return [];
+  }
+
+  const channelIdsToDelete: string[] = [];
 
   for (const channel of config.channels) {
     if (
@@ -294,12 +321,16 @@ async function doImport(
       channel.sources.includes(SourcesEnum.AUTO_IMPORT) &&
       !allImportedChannelNames.includes(channel.name)
     ) {
-      if (channel.sources.length === 1) {
-        config.removeChannelById(channel.id);
-      } else {
-        _.pull(channel.sources, SourcesEnum.AUTO_IMPORT);
+      _.pull(channel.sources, SourcesEnum.AUTO_IMPORT);
+
+      if (channel.sources.length === 0) {
+        channelIdsToDelete.push(channel.id);
       }
     }
+  }
+
+  for (const channelId of channelIdsToDelete) {
+    config.removeChannelById(channelId);
   }
 
   return channels;

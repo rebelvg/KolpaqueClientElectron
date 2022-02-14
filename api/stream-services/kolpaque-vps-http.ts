@@ -50,18 +50,24 @@ async function doImport(
     }
   }
 
+  const channelIdsToDelete: string[] = [];
+
   for (const channel of config.channels) {
     if (
       channel.serviceName === ServiceNamesEnum.KLPQ_VPS_HTTP &&
       channel.sources.includes(SourcesEnum.AUTO_IMPORT) &&
       !channels.includes(channel.name)
     ) {
-      if (channel.sources.length === 1) {
-        config.removeChannelById(channel.id);
-      } else {
-        _.pull(channel.sources, SourcesEnum.AUTO_IMPORT);
+      _.pull(channel.sources, SourcesEnum.AUTO_IMPORT);
+
+      if (channel.sources.length === 0) {
+        channelIdsToDelete.push(channel.id);
       }
     }
+  }
+
+  for (const channelId of channelIdsToDelete) {
+    config.removeChannelById(channelId);
   }
 
   if (emitEvent) {
