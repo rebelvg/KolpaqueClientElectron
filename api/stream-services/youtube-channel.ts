@@ -33,8 +33,8 @@ export class YoutubeChannelStreamService extends BaseStreamService {
       encoding: null,
     },
   );
-  public playLQ(channel: Channel) {
-    const { playLink, params } = this.play(channel);
+  public async playLQ(channel: Channel) {
+    const { playLink, params } = await this.play(channel);
 
     return {
       playLink,

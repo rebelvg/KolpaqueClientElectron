@@ -60,13 +60,13 @@ export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
     },
   );
   public play(channel: Channel) {
-    return {
+    return Promise.resolve({
       playLink: `rtmp://mediaserver.klpq.io/live/${channel.name}`,
       params: [],
-    };
+    });
   }
-  public playLQ(channel: Channel) {
-    const { playLink, params } = this.play(channel);
+  public async playLQ(channel: Channel) {
+    const { playLink, params } = await this.play(channel);
 
     return {
       playLink: playLink.replace('/live/', '/encode/'),

@@ -592,6 +592,24 @@ class GithubClient {
   }
 }
 
+class KlpqEncodeClient {
+  private baseUrl = 'https://encode.klpq.io';
+
+  async getStreamId(channelName: string) {
+    const url = `${this.baseUrl}/generate/mpd/live_${channelName}`;
+
+    try {
+      const { data } = await axios.get<{ id: string }>(url);
+
+      return data;
+    } catch (error) {
+      addLogs(error);
+
+      return;
+    }
+  }
+}
+
 export const twitchClient = new TwitchClient();
 export const klpqStreamClient = new KlpqStreamClient();
 export const youtubeClient = new YoutubeClient();
@@ -599,3 +617,4 @@ export const chaturbateClient = new ChaturbateClient();
 export const klpqServiceClient = new KlpqServiceClient();
 export const commonClient = new CommonClient();
 export const githubClient = new GithubClient();
+export const klpqEncodeClient = new KlpqEncodeClient();

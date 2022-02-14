@@ -351,13 +351,13 @@ class TwitchStreamService extends BaseStreamService {
     },
   );
   public play(channel: Channel) {
-    return {
+    return Promise.resolve({
       playLink: channel._customPlayUrl || channel.link,
       params: ['--twitch-disable-hosting', '--twitch-disable-ads'],
-    };
+    });
   }
-  public playLQ(channel: Channel) {
-    const { playLink, params } = this.play(channel);
+  public async playLQ(channel: Channel) {
+    const { playLink, params } = await this.play(channel);
 
     return {
       playLink,

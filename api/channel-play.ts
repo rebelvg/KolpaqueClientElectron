@@ -75,7 +75,7 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
   return !!window;
 }
 
-export function launchPlayerChannel(
+export async function launchPlayerChannel(
   channel: Channel,
   altQuality = false,
   autoRestart: boolean = null,
@@ -86,7 +86,9 @@ export function launchPlayerChannel(
     onAutoRestart: autoRestart !== null ? autoRestart : channel.autoRestart,
   });
 
-  const { playLink, params } = !LQ ? channel.play() : channel.playLQ();
+  const { playLink, params } = !LQ
+    ? await channel.play()
+    : await channel.playLQ();
 
   return launchStreamlink(playLink, params, channel);
 }

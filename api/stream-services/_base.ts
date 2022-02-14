@@ -27,10 +27,10 @@ abstract class AbstractStreamService {
   public abstract icon: Buffer;
   public abstract play(
     channel: Channel,
-  ): { playLink: string; params: string[] };
+  ): Promise<{ playLink: string; params: string[] }>;
   public abstract playLQ(
     channel: Channel,
-  ): { playLink: string; params: string[] };
+  ): Promise<{ playLink: string; params: string[] }>;
   public abstract checkLiveTimeout: number;
   public abstract checkLiveConfirmation: number;
   public abstract getStats(
@@ -58,14 +58,18 @@ export class BaseStreamService implements AbstractStreamService {
     return this.embedLink(channel);
   }
   public icon: Buffer = null;
-  public play(channel: Channel): { playLink: string; params: string[] } {
-    return {
+  public play(
+    channel: Channel,
+  ): Promise<{ playLink: string; params: string[] }> {
+    return Promise.resolve({
       playLink: channel._customPlayUrl || channel.link,
       params: [],
-    };
+    });
   }
-  public playLQ(channel: Channel) {
-    const { playLink, params } = this.play(channel);
+  public async playLQ(
+    channel: Channel,
+  ): Promise<{ playLink: string; params: string[] }> {
+    const { playLink, params } = await this.play(channel);
 
     return {
       playLink,
