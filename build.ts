@@ -79,14 +79,14 @@ process.on('unhandledRejection', (error) => {
   console.log(options);
 
   for (const platform of platforms) {
-    const appPaths = await packager({
+    const appPaths: string[] = await packager({
       ...options,
       platform,
       out: pathOption,
     });
 
     for (const appPath of appPaths) {
-      await new Promise((resolve) => {
+      const archivePath = await new Promise<string>((resolve) => {
         const folderName = path.basename(appPath);
         const archivePath = path.join(pathOption, `${folderName}.zip`);
 
@@ -96,12 +96,12 @@ process.on('unhandledRejection', (error) => {
         archive.directory(appPath, folderName);
         archive.finalize();
 
-        archiveStream.on('close', resolve);
+        archiveStream.on('close', () => resolve(archivePath));
         archive.pipe(archiveStream);
-
-        // eslint-disable-next-line no-console
-        console.log('archiving_done', appPath, archivePath);
       });
+
+      // eslint-disable-next-line no-console
+      console.log('archiving_done', appPath, archivePath);
     }
   }
 })();
