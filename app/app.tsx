@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { HashRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { themes } from './Themes';
-import {Routes} from './routes';
+import { Routes } from './routes';
 
 export const App = () => {
   const { app } = useStores();
@@ -21,7 +21,7 @@ export const App = () => {
       <ThemeProvider theme={theme}>
         <HashRouter>
           <Container>
-            <Routes/>
+            <Routes />
           </Container>
         </HashRouter>
       </ThemeProvider>
