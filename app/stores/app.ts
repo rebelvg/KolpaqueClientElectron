@@ -1,14 +1,14 @@
 import { makeObservable, observable, action, runInAction } from 'mobx';
 
 import { IpcRenderer } from 'electron';
-import { THEMES, APP_EVENTS} from '../constants';
+import { THEMES, APP_EVENTS } from '../constants';
 const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
   'electron',
 );
 
 class AppStore {
   hasLoaded = false;
-  settings = {nightMode: false};
+  settings = { nightMode: false };
   updateString = '';
   constructor() {
     makeObservable(this, {

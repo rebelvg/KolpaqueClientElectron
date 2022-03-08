@@ -17,7 +17,7 @@ const APP_EVENTS = {
   BACKEND_READY: 'backend_ready',
   CONFIG_CHANGE: 'config_changeSetting',
   SHOW_INFO: 'client_showInfo',
-  GET_SETTINGS: 'get_settings'
+  GET_SETTINGS: 'get_settings',
 };
 
 const THEMES = {
