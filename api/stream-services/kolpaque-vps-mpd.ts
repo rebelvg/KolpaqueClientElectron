@@ -8,6 +8,8 @@ export class KolpaqueVpsMpdStreamService extends KolpaqueVpsRtmpStreamService {
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['klpq.io', 'www.klpq.io', 'klpq.men', 'www.klpq.men'];
   public paths = [
+    /^\/stream\/(\S+)\/mpd\/$/gi,
+    /^\/stream\/(\S+)\/mpd$/gi,
     /^\/stream\/live_mpd\/(\S+)\/$/gi,
     /^\/stream\/live_mpd\/(\S+)$/gi,
   ];
@@ -39,5 +41,19 @@ export class KolpaqueVpsMpdStreamService extends KolpaqueVpsRtmpStreamService {
   };
   public buildChannelLink(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/stream/live_mpd/${channelName}`;
+  }
+}
+
+export class KolpaqueVpsMpdStreamServiceNew extends KolpaqueVpsMpdStreamService {
+  public name = ServiceNamesEnum.KLPQ_VPS_MPD_NEW;
+  public hosts = ['stream.klpq.io'];
+  public paths = [
+    /^\/(\S+)\/mpd\/$/gi,
+    /^\/(\S+)\/mpd$/gi,
+    /^\/live_mpd\/(\S+)\/$/gi,
+    /^\/live_mpd\/(\S+)$/gi,
+  ];
+  public buildChannelLink(channelName: string) {
+    return `${this.protocols[0]}//${this.hosts[0]}/live_mpd/${channelName}`;
   }
 }

@@ -42,16 +42,16 @@ export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
   public hosts = [
     'mediaserver.klpq.io',
     'mediaserver.klpq.men',
-    'stream.klpq.men',
-    'vps.klpq.men',
-    'klpq.io',
-    'klpq.men',
     'www.klpq.io',
     'www.klpq.men',
+    'klpq.io',
+    'klpq.men',
+    'stream.klpq.men',
+    'vps.klpq.men',
   ];
   public paths = [/^\/live\/(\S+)\/$/gi, /^\/live\/(\S+)$/gi];
   public embedLink(channel: Channel): string {
-    return `https://klpq.io/stream/${channel.name}`;
+    return `https://stream.klpq.io/${channel.name}`;
   }
   public icon = fs.readFileSync(
     path.normalize(path.join(__dirname, '../../icons', 'klpq_vps.png')),

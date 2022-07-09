@@ -4,6 +4,8 @@ export enum ServiceNamesEnum {
   KLPQ_VPS_RTMP = 'klpq-vps-rtmp',
   KLPQ_VPS_HTTP = 'klpq-vps-http',
   KLPQ_VPS_MPD = 'klpq-vps-mpd',
+  KLPQ_VPS_HTTP_NEW = 'klpq-vps-http-new',
+  KLPQ_VPS_MPD_NEW = 'klpq-vps-mpd-new',
   TWITCH = 'twitch',
   YOUTUBE_USER = 'youtube-user',
   YOUTUBE_CHANNEL = 'youtube-channel',

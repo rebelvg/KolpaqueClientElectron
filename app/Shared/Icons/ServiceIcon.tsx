@@ -37,6 +37,16 @@ const Services = {
     isImage: false,
     color: '#E62117',
   },
+  'klpq-vps-http-new': {
+    asset: './static/icons/klpq_vps.svg',
+    isImage: true,
+    color: null,
+  },
+  'klpq-vps-mpd-new': {
+    asset: './static/icons/klpq_vps.svg',
+    isImage: true,
+    color: null,
+  },
   default: {
     asset: eye,
     isImage: false,

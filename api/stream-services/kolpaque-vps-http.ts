@@ -92,3 +92,20 @@ export class KolpaqueVpsHttpStreamService extends KolpaqueVpsRtmpStreamService {
     return `${this.protocols[0]}//${this.hosts[0]}/stream/${channelName}`;
   }
 }
+
+export class KolpaqueVpsHttpStreamServiceNew extends KolpaqueVpsHttpStreamService {
+  public name = ServiceNamesEnum.KLPQ_VPS_HTTP_NEW;
+  public hosts = ['stream.klpq.io'];
+  public paths = [
+    /^\/live\/(\S+)\/$/gi,
+    /^\/live\/(\S+)$/gi,
+    /^\/(\S+)\/$/gi,
+    /^\/(\S+)$/gi,
+  ];
+  public doImport = async () => {
+    return await [];
+  };
+  public buildChannelLink(channelName: string) {
+    return `${this.protocols[0]}//${this.hosts[0]}/${channelName}`;
+  }
+}

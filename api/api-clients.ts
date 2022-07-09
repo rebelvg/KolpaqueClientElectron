@@ -554,12 +554,12 @@ class CommonClient {
     try {
       const { data } = await axios.get<Buffer>(url, {
         responseType: 'arraybuffer',
-        timeout: 5 * 1000,
+        timeout: 10 * 1000,
       });
 
       return data;
     } catch (error) {
-      addLogs(error);
+      addLogs('COMMON_CLIENT_GET_PICTURE_ERROR', error);
 
       return;
     }
