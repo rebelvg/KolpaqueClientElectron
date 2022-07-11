@@ -7,7 +7,7 @@ import { Config } from './config-class';
 import { printNotification } from './notifications';
 import { Channel } from './channel-class';
 import { addLogs } from './logs';
-import { ServiceNamesEnum } from './stream-services/_base';
+import { ProtocolsEnum, ServiceNamesEnum } from './stream-services/_base';
 import { main } from './main';
 
 const AUTO_RESTART_ATTEMPTS = 3;
@@ -117,11 +117,21 @@ async function launchStreamlink(
     );
 
     try {
-      await new Promise<void>((resolve, reject) => {
-        execFile(
-          'streamlink',
-          [playLink, 'best', ...params],
-          (error, stdout, stderr) => {
+      if (
+        playLink.includes(ProtocolsEnum.RTMP) &&
+        config.settings.customRtmpClientCommand.includes('{{RTMP_URL}}')
+      ) {
+        const [
+          command,
+          ...commandArgs
+        ] = config.settings.customRtmpClientCommand
+          .replace('{{RTMP_URL}}', playLink)
+          .split(' ');
+
+        await new Promise<void>((resolve, reject) => {
+          addLogs('channel_play_with_custom_command', command, commandArgs);
+
+          execFile(command, commandArgs, (error, stdout, stderr) => {
             if (error) {
               reject([error, stdout, stderr]);
 
@@ -129,9 +139,27 @@ async function launchStreamlink(
             }
 
             resolve();
-          },
-        );
-      });
+          });
+        });
+      } else {
+        await new Promise<void>((resolve, reject) => {
+          addLogs('channel_play_with_streamlink');
+
+          execFile(
+            'streamlink',
+            [playLink, 'best', ...params],
+            (error, stdout, stderr) => {
+              if (error) {
+                reject([error, stdout, stderr]);
+
+                return;
+              }
+
+              resolve();
+            },
+          );
+        });
+      }
 
       addLogs('streamlink_exited', channel.link);
 

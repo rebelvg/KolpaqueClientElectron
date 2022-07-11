@@ -128,6 +128,7 @@ interface ISettings {
   youtubeRefreshToken: string;
   enableSync: boolean;
   klpqJwtToken: string;
+  customRtmpClientCommand: string;
 }
 
 export interface ISavedSettingsFile {
@@ -168,6 +169,7 @@ export class Config extends EventEmitter {
     youtubeRefreshToken: '',
     enableSync: false,
     klpqJwtToken: null,
+    customRtmpClientCommand: '',
   };
   public migrations: string[] = [];
   public deletedChannels: string[] = [];
@@ -457,6 +459,12 @@ export class Config extends EventEmitter {
       });
 
       parsedJson.migrations.push('migration_2');
+    }
+
+    if (!parsedJson.migrations.includes('migration_3')) {
+      parsedJson.settings.customRtmpClientCommand = '';
+
+      parsedJson.migrations.push('migration_3');
     }
 
     return parsedJson;

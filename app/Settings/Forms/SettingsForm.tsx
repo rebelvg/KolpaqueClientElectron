@@ -4,6 +4,7 @@ import { Field } from 'react-final-form';
 import Toggle from 'react-toggle-button';
 import styled from 'styled-components';
 import Select from 'react-select';
+import { openMenu } from '../../Channel/constants';
 // import { openMenu } from '../../Channel/constants';
 
 const { shell, ipcRenderer } = window.require('electron');
@@ -99,7 +100,7 @@ const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
     </FieldWrapper>
 
     <FieldWrapper>
-      <Label>Night Mode </Label>
+      <Label>Night Mode</Label>
       <InputWrapper>
         <Field
           name="nightMode"
@@ -202,6 +203,28 @@ const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
 
     <br />
 
+    <InputWrapper>
+      <Label>
+        {
+          'Custom Rtmp Client Command, MUST include {{RTMP_URL}} text field, see example...'
+        }
+      </Label>
+      <StyledField
+        name="customRtmpClientCommand"
+        type="text"
+        component="input"
+        placeholder="streamlink {{RTMP_URL}} best"
+        onContextMenu={() => {
+          openMenu();
+        }}
+        onChange={(event) => {
+          changeSetting(event.target.value, 'customRtmpClientCommand', true);
+        }}
+      />
+    </InputWrapper>
+
+    <br />
+
     <br />
     <br />
 
@@ -280,13 +303,13 @@ const Label = styled.label`
 
 const InputWrapper = styled.div``;
 
-// const StyledField = styled(Field)`
-//   width: 100%;
-//   height: 18px;
-//   padding: 0px;
-//   margin: 0px;
-//   position: relative;
-//   z-index: 100000;
-// `;
+const StyledField = styled(Field)`
+  width: 100%;
+  height: 18px;
+  padding: 0px;
+  margin: 0px;
+  position: relative;
+  z-index: 100000;
+`;
 
 export default SettingsForm;
