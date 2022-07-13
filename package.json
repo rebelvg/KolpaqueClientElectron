@@ -51,7 +51,7 @@
     "axios": "^0.24.0",
     "electron-default-menu": "^1.0.1",
     "fix-path": "^2.1.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.21",
     "querystring": "^0.2.0",
     "socket.io-client": "^2.3.0",
     "source-map-support": "^0.5.19",
