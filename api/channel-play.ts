@@ -1,5 +1,5 @@
 import { ipcMain, dialog, shell, BrowserWindow } from 'electron';
-import { execFile } from 'child_process';
+import { spawn } from 'child_process';
 import * as _ from 'lodash';
 
 import { config } from './settings-file';
@@ -117,49 +117,47 @@ async function launchStreamlink(
     );
 
     try {
-      if (
+      const [command, ...commandArgs] =
         playLink.includes(ProtocolsEnum.RTMP) &&
         config.settings.customRtmpClientCommand.includes('{{RTMP_URL}}')
-      ) {
-        const [
-          command,
-          ...commandArgs
-        ] = config.settings.customRtmpClientCommand
-          .replace('{{RTMP_URL}}', playLink)
-          .split(' ');
+          ? config.settings.customRtmpClientCommand
+              .replace('{{RTMP_URL}}', playLink)
+              .split(' ')
+              .map((a) => a.trim())
+          : ['streamlink', playLink, 'best', ...params];
 
-        await new Promise<void>((resolve, reject) => {
-          addLogs('channel_play_with_custom_command', command, commandArgs);
+      await new Promise<void>((resolve, reject) => {
+        addLogs('spawn_command', command, commandArgs);
 
-          execFile(command, commandArgs, (error, stdout, stderr) => {
-            if (error) {
-              reject([error, stdout, stderr]);
+        const pipeProcess = spawn(command, commandArgs);
 
-              return;
-            }
+        let stdoutString = '';
+        let stderrString = '';
 
-            resolve();
-          });
+        pipeProcess.stdout.on('data', (data: Buffer) => {
+          if (command.toLowerCase() === 'streamlink') {
+            stdoutString += data.toString('utf-8');
+          }
         });
-      } else {
-        await new Promise<void>((resolve, reject) => {
-          addLogs('channel_play_with_streamlink');
 
-          execFile(
-            'streamlink',
-            [playLink, 'best', ...params],
-            (error, stdout, stderr) => {
-              if (error) {
-                reject([error, stdout, stderr]);
-
-                return;
-              }
-
-              resolve();
-            },
-          );
+        pipeProcess.stderr.on('data', (data: Buffer) => {
+          stderrString += data.toString('utf-8');
         });
-      }
+
+        pipeProcess.on('error', (error) => {
+          addLogs('spawn_command_error', command, commandArgs, error);
+
+          reject([error, stdoutString, stderrString]);
+        });
+
+        pipeProcess.on('exit', () => {
+          addLogs('spawn_command_exit', command, commandArgs);
+
+          console.log(stdoutString, stderrString);
+
+          resolve();
+        });
+      });
 
       addLogs('streamlink_exited', channel.link);
 
@@ -172,9 +170,9 @@ async function launchStreamlink(
       firstStart = false;
       startTime = Date.now();
     } catch (exception) {
-      const [error, stdout, _stderr] = exception;
+      const [error, stdout, stderr] = exception;
 
-      addLogs('streamlink_error', channel.link, error, stdout, _stderr);
+      addLogs('streamlink_error', channel.link, error, stdout, stderr);
 
       if ((error as any).code === 'ENOENT') {
         await dialog.showMessageBox({
