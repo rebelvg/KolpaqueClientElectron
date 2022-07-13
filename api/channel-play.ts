@@ -150,8 +150,8 @@ async function launchStreamlink(
           reject([error, stdoutString, stderrString]);
         });
 
-        pipeProcess.on('exit', () => {
-          addLogs('spawn_command_exit', command, commandArgs);
+        pipeProcess.on('close', (code, signal) => {
+          addLogs('spawn_command_exit', code, signal, command, commandArgs);
 
           console.log(stdoutString, stderrString);
 
