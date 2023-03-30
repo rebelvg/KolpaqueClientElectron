@@ -37,6 +37,11 @@ const Services = {
     isImage: false,
     color: '#E62117',
   },
+  'youtube-username': {
+    asset: youtubePlay,
+    isImage: false,
+    color: '#E62117',
+  },
   'klpq-vps-http-new': {
     asset: './static/icons/klpq_vps.svg',
     isImage: true,

@@ -42,6 +42,8 @@ async function getStats(
 
       const channelStatuses = await Promise.all(
         data.items.map(({ id }) => {
+          channel.meta.id = id;
+
           return getStatsBase(id);
         }),
       );

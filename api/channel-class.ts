@@ -41,6 +41,7 @@ export class Channel extends EventEmitter {
   public _playingProcesses = 0;
   public channelAdded: Date;
   public sources: SourcesEnum[] = [];
+  public meta: Record<string, string> = {};
 
   constructor(channelLink: string) {
     super();

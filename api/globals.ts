@@ -16,6 +16,7 @@ import { twitchStreamService } from './stream-services/twitch';
 import { YoutubeChannelStreamService } from './stream-services/youtube-channel';
 import { YoutubeUserStreamService } from './stream-services/youtube-user';
 import { BaseStreamService } from './stream-services/_base';
+import { YoutubeUsernameStreamService } from './stream-services/youtube-username';
 
 const packageJson = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, '../package.json'), {
@@ -36,4 +37,5 @@ export const REGISTERED_SERVICES: BaseStreamService[] = [
   new YoutubeChannelStreamService(),
   new ChaturbateStreamService(),
   customStreamService,
+  new YoutubeUsernameStreamService(),
 ];
