@@ -6,7 +6,7 @@ import { Channel } from './channel-class';
 import { addLogs } from './logs';
 
 export function rebuildIconMenu(): Menu {
-  addLogs('rebuildIconMenu');
+  addLogs('info', 'rebuildIconMenu');
 
   const onlineChannels = config.find({
     isLive: true,

@@ -10,7 +10,7 @@ import { SourcesEnum } from './enums';
 export const config = new Config();
 
 ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
-  addLogs('config_changeSetting', settingName, settingValue);
+  addLogs('info', 'config_changeSetting', settingName, settingValue);
 
   if (settingName === 'twitchImport') {
     settingValue = _.uniq(settingValue);
@@ -20,7 +20,7 @@ ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
 });
 
 ipcMain.on('channel_add', async (event, channelLink) => {
-  addLogs('channel_add', channelLink);
+  addLogs('info', 'channel_add', channelLink);
 
   const channel = config.addChannelLink(channelLink, SourcesEnum.MANUAL_ACTION);
 
@@ -34,7 +34,7 @@ ipcMain.on('channel_add', async (event, channelLink) => {
 });
 
 ipcMain.on('channel_remove', (event, id) => {
-  addLogs('channel_remove', id);
+  addLogs('info', 'channel_remove', id);
 
   return config.removeChannelById(id);
 });
@@ -42,7 +42,7 @@ ipcMain.on('channel_remove', (event, id) => {
 ipcMain.on(
   'channel_changeSettingSync',
   (event, id, settingName, settingValue) => {
-    addLogs('channel_changeSettingSync', id, settingName, settingValue);
+    addLogs('info', 'channel_changeSettingSync', id, settingName, settingValue);
 
     const channel = config.findById(id);
 
@@ -67,7 +67,7 @@ ipcMain.on(
 );
 
 ipcMain.on('channel_openPage', (event, id) => {
-  addLogs('channel_openPage', id);
+  addLogs('info', 'channel_openPage', id);
 
   const channel = config.findById(id);
 
@@ -85,7 +85,7 @@ ipcMain.on('channel_openPage', (event, id) => {
 });
 
 ipcMain.on('channel_openChat', (event, id) => {
-  addLogs('channel_openChat', id);
+  addLogs('info', 'channel_openChat', id);
 
   const channel = config.findById(id);
 
@@ -123,7 +123,7 @@ ipcMain.on('channel_openChat', (event, id) => {
 });
 
 ipcMain.on('channel_copyClipboard', (event, channelLink) => {
-  addLogs('channel_copyClipboard', channelLink);
+  addLogs('info', 'channel_copyClipboard', channelLink);
 
   clipboard.writeText(channelLink);
 
@@ -133,7 +133,7 @@ ipcMain.on('channel_copyClipboard', (event, channelLink) => {
 ipcMain.on('getSettings', (event) => (event.returnValue = config.settings));
 
 ipcMain.handle('config_find', (event, query) => {
-  addLogs('config_find', query);
+  addLogs('info', 'config_find', query);
 
   const find = config.find(query);
 

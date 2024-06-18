@@ -45,7 +45,7 @@ async function doImport(
       if (channel) {
         channelsAdded.push(channel);
 
-        addLogs('kolpaque_vps_http_imported_channel', channel.link);
+        addLogs('info', 'kolpaque_vps_http_imported_channel', channel.link);
       }
     }
   }

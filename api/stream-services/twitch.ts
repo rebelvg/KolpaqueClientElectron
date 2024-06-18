@@ -18,8 +18,6 @@ async function getStats(
   channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
-  await twitchClient.refreshAccessToken();
-
   const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
 
   await Promise.all(
@@ -80,8 +78,6 @@ async function getStats(
 }
 
 async function getInfo(allChannels: Channel[]): Promise<void> {
-  await twitchClient.refreshAccessToken();
-
   const filteredChannels = _.filter(allChannels, (channel) => !channel._icon);
 
   if (filteredChannels.length === 0) {
@@ -91,14 +87,19 @@ async function getInfo(allChannels: Channel[]): Promise<void> {
   const chunkedChannels = _.chunk(filteredChannels, TWITCH_CHUNK_LIMIT);
 
   for (const channels of chunkedChannels) {
-    addLogs('channel_info_twitch_start', channels.length);
+    addLogs('info', 'channel_info_twitch_start', channels.length);
 
     const userData = await twitchClient.getUsersByLogin(
       channels.map((channel) => channel.name),
       'getInfo',
     );
 
-    addLogs('channel_info_twitch_user_data', channels.length, !!userData);
+    addLogs(
+      'info',
+      'channel_info_twitch_user_data',
+      channels.length,
+      !!userData,
+    );
 
     let _downloadedLogosCount = 0;
 
@@ -130,7 +131,12 @@ async function getInfo(allChannels: Channel[]): Promise<void> {
       }),
     );
 
-    addLogs('channel_info_twitch_done', channels.length, _downloadedLogosCount);
+    addLogs(
+      'info',
+      'channel_info_twitch_done',
+      channels.length,
+      _downloadedLogosCount,
+    );
   }
 }
 
@@ -166,13 +172,13 @@ async function addImportedChannels(
           if (channel) {
             channelsAdded.push(channel);
 
-            addLogs('twitch_imported_channel', channel.link);
+            addLogs('info', 'twitch_imported_channel', channel.link);
           }
         }
       }),
     );
   } catch (error) {
-    addLogs('error', error);
+    addLogs('info', 'error', error);
 
     return null;
   }
@@ -185,8 +191,6 @@ async function importBase(
   channelName: string,
   emitEvent: boolean,
 ): Promise<[Channel[], string[]]> {
-  await twitchClient.refreshAccessToken();
-
   const channelsAddedAll: Channel[] = [];
 
   const addedChannel = config.addChannelLink(
@@ -231,7 +235,7 @@ async function importBase(
       }
     }
   } catch (error) {
-    addLogs('error', error);
+    addLogs('info', 'error', error);
 
     return null;
   }
@@ -286,7 +290,7 @@ async function doImport(
       }),
     );
   } catch (error) {
-    addLogs('error', error);
+    addLogs('info', 'error', error);
 
     return [];
   }
@@ -302,7 +306,7 @@ async function doImport(
       _.pull(channel.sources, SourcesEnum.AUTO_IMPORT);
 
       if (channel.sources.length === 0) {
-        addLogs('twitch_imported_channel_delete', channel.name);
+        addLogs('info', 'twitch_imported_channel_delete', channel.name);
 
         channelIdsToDelete.push(channel.id);
       }

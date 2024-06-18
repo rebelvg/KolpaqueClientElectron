@@ -81,7 +81,7 @@ class SyncSettings {
   }
 
   public async init() {
-    addLogs('sync_init');
+    addLogs('info', 'sync_init');
 
     const { enableSync } = config.settings;
     const { syncId } = this;
@@ -120,11 +120,11 @@ class SyncSettings {
     try {
       syncedChannels = decryptData(encryptedChannels);
     } catch (error) {
-      addLogs(error);
+      addLogs('info', error);
     }
 
     if (!syncedChannels) {
-      addLogs('bad_sync_id', syncId);
+      addLogs('info', 'bad_sync_id', syncId);
 
       return;
     }
@@ -141,7 +141,7 @@ class SyncSettings {
       });
 
       if (!findLocalChannel) {
-        addLogs('sync_adding_channel', syncedChannel.link);
+        addLogs('info', 'sync_adding_channel', syncedChannel.link);
 
         const channel = config.addChannelLink(syncedChannel.link, null);
 

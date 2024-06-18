@@ -16,7 +16,7 @@ const AUTO_RESTART_TIMEOUT = 60;
 ipcMain.on(
   'channel_play',
   async (event, id, altQuality = false, autoRestart = null) => {
-    addLogs('channel_play', id, altQuality, autoRestart);
+    addLogs('info', 'channel_play', id, altQuality, autoRestart);
 
     const channel = config.findById(id);
 
@@ -98,7 +98,7 @@ async function launchStreamlink(
   params: string[],
   channel: Channel,
 ) {
-  addLogs(playLink, params, channel.link);
+  addLogs('info', playLink, params, channel.link);
 
   let firstStart = true;
   let autoRestartAttempts = 0;
@@ -109,6 +109,7 @@ async function launchStreamlink(
   // eslint-disable-next-line no-constant-condition
   while (true) {
     addLogs(
+      'info',
       'streamlink_starting',
       channel.link,
       firstStart,
@@ -127,7 +128,7 @@ async function launchStreamlink(
           : ['streamlink', playLink, 'best', ...params];
 
       await new Promise<void>((resolve, reject) => {
-        addLogs('spawn_command', command, commandArgs);
+        addLogs('info', 'spawn_command', command, commandArgs);
 
         const pipeProcess = spawn(command, commandArgs);
 
@@ -145,13 +146,20 @@ async function launchStreamlink(
         });
 
         pipeProcess.on('error', (error) => {
-          addLogs('spawn_command_error', command, commandArgs, error);
+          addLogs('info', 'spawn_command_error', command, commandArgs, error);
 
           reject([error, stdoutString, stderrString]);
         });
 
         pipeProcess.on('close', (code, signal) => {
-          addLogs('spawn_command_exit', code, signal, command, commandArgs);
+          addLogs(
+            'info',
+            'spawn_command_exit',
+            code,
+            signal,
+            command,
+            commandArgs,
+          );
 
           if (code > 0) {
             reject([
@@ -167,7 +175,7 @@ async function launchStreamlink(
         });
       });
 
-      addLogs('streamlink_exited', channel.link);
+      addLogs('info', 'streamlink_exited', channel.link);
 
       if (Date.now() - startTime < AUTO_RESTART_TIMEOUT * 1000) {
         autoRestartAttempts++;
@@ -180,7 +188,7 @@ async function launchStreamlink(
     } catch (exception) {
       const [error, stdout, stderr] = exception;
 
-      addLogs('streamlink_error', channel.link, error, stdout, stderr);
+      addLogs('info', 'streamlink_error', channel.link, error, stdout, stderr);
 
       if ((error as any).code === 'ENOENT') {
         await dialog.showMessageBox({
@@ -219,7 +227,7 @@ async function launchStreamlink(
     }
   }
 
-  addLogs('playing_closing', channel.link, channel._playingProcesses);
+  addLogs('info', 'playing_closing', channel.link, channel._playingProcesses);
 
   channel._playingProcesses--;
 

@@ -22,7 +22,7 @@ const SERVICES = [
 const UPDATES: string[] = [];
 
 ipcMain.on('client_getInfo', async () => {
-  addLogs('client_getInfo');
+  addLogs('info', 'client_getInfo');
 
   await Promise.all(
     SERVICES.map((service) => {
@@ -73,7 +73,7 @@ function streamlinkVersionCheck(): Promise<boolean> {
   return new Promise((resolve) => {
     execFile('streamlink', ['--version-check'], (err: any, data) => {
       if (err) {
-        addLogs(err);
+        addLogs('info', err);
 
         if (err.code === 'ENOENT') {
           return resolve(true);

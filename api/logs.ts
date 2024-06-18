@@ -5,6 +5,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { app } from 'electron';
 import * as util from 'util';
+import { AxiosError } from 'axios';
 
 const clientAppDataPath = app.getPath('userData');
 
@@ -15,29 +16,38 @@ let logsUi: string[] = [];
 
 ipcMain.handle('config_logs', () => logsUi.slice().reverse());
 
-export function addLogs(...logs: any[]): void {
+export function addLogs(
+  level: 'error' | 'info' | 'debug',
+  ...logs: any[]
+): void {
   _.forEach(logs, (value, key) => {
-    if (!!value && typeof value === 'object') {
-      if (value.constructor.name === 'Error') {
-        const stack = value.stack.split('\n').map((value) => value.trim());
+    if (!value) {
+      return;
+    }
 
-        if (value?.response) {
-          logs[key] = {
-            message: value.message,
-            stack,
-            uri: `${value?.request?.method} ${value?.request?.protocol}//${value?.request?.host}${value?.request?.path}`,
-            status: value?.response?.status,
-            data: value?.response?.data,
-          };
-        } else {
-          logs[key] = {
-            message: value.message,
-            stack,
-          };
-        }
-      } else {
-        logs[key] = JSON.stringify(value);
-      }
+    if (value instanceof AxiosError) {
+      const stack = value.stack.split('\n').map((value) => value.trim());
+
+      logs[key] = {
+        message: value.message,
+        stack,
+        url: `${value?.request?.method} ${value?.request?.protocol}//${value?.request?.host}${value?.request?.path}`,
+        status: value?.response?.status,
+        data: value?.response?.data,
+      };
+
+      return;
+    }
+
+    if (value instanceof Error) {
+      const stack = value.stack.split('\n').map((value) => value.trim());
+
+      logs[key] = {
+        message: value.message,
+        stack,
+      };
+
+      return;
     }
   });
 
@@ -51,8 +61,10 @@ export function addLogs(...logs: any[]): void {
     )
     .join(' ');
 
-  // eslint-disable-next-line no-console
-  console.log(logLine);
+  if (['error', 'info'].includes(level)) {
+    // eslint-disable-next-line no-console
+    console.log(level, logLine);
+  }
 
   fs.appendFileSync(
     appLogPath,
@@ -65,7 +77,10 @@ export function addLogs(...logs: any[]): void {
 }
 
 export function run() {
-  addLogs('memory_usage', process.memoryUsage());
+  addLogs('info', 'memory_usage', process.memoryUsage());
 
-  setInterval(() => addLogs('memory_usage', process.memoryUsage()), 100 * 1000);
+  setInterval(
+    () => addLogs('info', 'memory_usage', process.memoryUsage()),
+    100 * 1000,
+  );
 }

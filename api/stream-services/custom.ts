@@ -35,7 +35,7 @@ async function getStats(
                   channel.setOffline();
                 }
               } catch (error) {
-                addLogs(error);
+                addLogs('info', error);
               }
 
               resolve();

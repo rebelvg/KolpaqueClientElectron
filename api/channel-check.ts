@@ -13,7 +13,7 @@ async function checkService(
   printBalloon: boolean,
 ): Promise<void> {
   try {
-    addLogs('channel_check_stats', service.name);
+    addLogs('info', 'channel_check_stats', service.name);
 
     const channels = _.filter(allChannels, {
       serviceName: service.name,
@@ -21,9 +21,9 @@ async function checkService(
 
     await service.getStats(channels, printBalloon);
 
-    addLogs('channel_check_stats_done', service.name, channels.length);
+    addLogs('info', 'channel_check_stats_done', service.name, channels.length);
   } catch (error) {
-    addLogs(error);
+    addLogs('info', error);
   }
 }
 
@@ -48,11 +48,11 @@ export async function checkChannels(
 }
 
 export async function loop(): Promise<void> {
-  addLogs('channel_check_init');
+  addLogs('info', 'channel_check_init');
 
   await checkChannels(config.channels, false);
 
-  addLogs('channel_check_init_done');
+  addLogs('info', 'channel_check_init_done');
 
   _.forEach(REGISTERED_SERVICES, (service) => checkServiceLoop(service));
 }

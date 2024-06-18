@@ -7,7 +7,7 @@ import { run as runSocket } from './socket-client';
 import { syncSettings } from './sync-settings';
 
 export async function init(): Promise<void> {
-  addLogs('init_start');
+  addLogs('info', 'init_start');
 
   runLogs();
 
@@ -21,5 +21,5 @@ export async function init(): Promise<void> {
 
   infoLoop();
 
-  addLogs('init_done');
+  addLogs('info', 'init_done');
 }

@@ -200,7 +200,7 @@ export class Config extends EventEmitter {
 
       parseJson = this.runMigrations(parseJson);
     } catch (error) {
-      addLogs(error);
+      addLogs('info', error);
 
       return;
     }
@@ -227,7 +227,7 @@ export class Config extends EventEmitter {
       this.migrations = parseJson.migrations || [];
       this.deletedChannels = parseJson.deletedChannels || [];
     } catch (error) {
-      addLogs(error);
+      addLogs('info', error);
 
       throw error;
     }
@@ -273,7 +273,7 @@ export class Config extends EventEmitter {
     try {
       return new Channel(channelLink);
     } catch (e) {
-      addLogs(e);
+      addLogs('info', e);
 
       return null;
     }
@@ -373,11 +373,11 @@ export class Config extends EventEmitter {
         })
         .catch();
 
-      addLogs('settings_saved');
+      addLogs('info', 'settings_saved');
 
       return true;
     } catch (e) {
-      addLogs(e);
+      addLogs('info', e);
 
       return false;
     }

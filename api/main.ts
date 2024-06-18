@@ -30,14 +30,14 @@ import { CLIENT_VERSION } from './globals';
 
 const isDev = process.env.NODE_ENV === 'dev';
 
-addLogs('is_dev', isDev, CLIENT_VERSION);
+addLogs('info', 'is_dev', isDev, CLIENT_VERSION);
 
 let forceQuit = false;
 
 let initDone = false;
 
 ipcMain.on('client_ready', async () => {
-  addLogs('client_ready');
+  addLogs('info', 'client_ready');
 
   if (initDone) {
     main.mainWindow.webContents.send('backend_ready');
@@ -48,7 +48,7 @@ ipcMain.on('client_ready', async () => {
   try {
     await init();
   } catch (error) {
-    addLogs('init_failed', error);
+    addLogs('info', 'init_failed', error);
 
     throw error;
   }
@@ -139,7 +139,7 @@ function createWindow(): void {
   });
 
   mainWindow.on('close', (e) => {
-    addLogs('force_quit', forceQuit);
+    addLogs('info', 'force_quit', forceQuit);
 
     if (forceQuit) {
       return;
@@ -246,7 +246,7 @@ app.on('ready', () => {
   appIcon.setIgnoreDoubleClickEvents(true);
 
   appIcon.on('click', () => {
-    addLogs('left_click_event');
+    addLogs('info', 'left_click_event');
 
     if (process.platform === 'darwin') {
       showTrayContextMenu();
@@ -256,7 +256,7 @@ app.on('ready', () => {
   });
 
   appIcon.on('right-click', () => {
-    addLogs('right_click_event');
+    addLogs('info', 'right_click_event');
 
     if (process.platform === 'darwin') {
       toggleHideClient();
@@ -273,13 +273,13 @@ app.on('ready', () => {
 });
 
 process.on('unhandledRejection', (err) => {
-  addLogs('unhandledRejection', err);
+  addLogs('info', 'unhandledRejection', err);
 
   throw err;
 });
 
 process.on('uncaughtException', (err) => {
-  addLogs('uncaughtException', err);
+  addLogs('info', 'uncaughtException', err);
 
   fs.appendFileSync(crashLogPath, `${err.stack}${os.EOL}`);
 

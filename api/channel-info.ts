@@ -12,19 +12,29 @@ export async function getChannelInfo(channels: Channel[]) {
         serviceName: service.name,
       });
 
-      addLogs('channel_info_start', service.name, filteredChannels.length);
+      addLogs(
+        'info',
+        'channel_info_start',
+        service.name,
+        filteredChannels.length,
+      );
 
       await service.getInfo(filteredChannels);
 
-      addLogs('channel_info_done', service.name, filteredChannels.length);
+      addLogs(
+        'info',
+        'channel_info_done',
+        service.name,
+        filteredChannels.length,
+      );
     }),
   );
 }
 
 export async function loop(): Promise<void> {
-  addLogs('channel_info_init');
+  addLogs('info', 'channel_info_init');
 
   await getChannelInfo(config.channels);
 
-  addLogs('channel_info_done');
+  addLogs('info', 'channel_info_done');
 }

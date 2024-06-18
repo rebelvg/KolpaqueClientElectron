@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.1",
-    "axios": "^0.24.0",
+    "axios": "^1.7.2",
     "electron-default-menu": "^1.0.1",
     "fix-path": "^2.1.0",
     "lodash": "^4.17.4",
