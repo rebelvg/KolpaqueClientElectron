@@ -56,7 +56,10 @@ export interface ITwitchFollowedChannels {
 }
 
 export interface ITwitchFollowedChannel {
-  to_id: string;
+  broadcaster_id: string;
+  broadcaster_login: string;
+  broadcaster_name: string;
+  followed_at: string;
 }
 
 export const TWITCH_CHUNK_LIMIT = 100;
@@ -210,13 +213,52 @@ class TwitchClient {
       return;
     }
 
-    const url = new URL(`${this.baseUrl}/users/follows?from_id=${userId}`);
+    const url = new URL(`${this.baseUrl}/channels/followed?user_id=${userId}`);
 
     url.searchParams.set('first', '100');
     url.searchParams.set('after', after);
 
     try {
       const { data } = await axios.get<ITwitchFollowedChannels>(url.href, {
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          'Client-ID': TWITCH_CLIENT_ID,
+        },
+      });
+
+      return data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  public async getUsers() {
+    await this.refreshAccessToken();
+
+    if (!this.accessToken) {
+      return;
+    }
+
+    const url = new URL(`${this.baseUrl}/users`);
+
+    try {
+      const { data } = await axios.get<{
+        data: [
+          {
+            id: string;
+            login: string;
+            display_name: string;
+            type: string;
+            broadcaster_type: string;
+            description: string;
+            profile_image_url: string;
+            offline_image_url: string;
+            view_count: number;
+            email: string;
+            created_at: string;
+          },
+        ];
+      }>(url.href, {
         headers: {
           Authorization: `Bearer ${this.accessToken}`,
           'Client-ID': TWITCH_CLIENT_ID,

@@ -21,6 +21,7 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 - Notifications
 - Auto-Import
   - Twitch
+  - KLPQ
 - Low Quality Playback
 - Stream Auto-Start on Online Status (with confirmation option)
 - Stream Auto-Restart

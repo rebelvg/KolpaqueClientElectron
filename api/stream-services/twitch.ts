@@ -139,44 +139,34 @@ async function addImportedChannels(
 ): Promise<[Channel[], string[]]> {
   const channelsAdded: Channel[] = [];
 
-  const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
-
   const channelNames: string[] = [];
 
   try {
     await Promise.all(
-      chunkedChannels.map(async (channels) => {
-        const userData = await twitchClient.getUsersById(
-          channels.map((channel) => channel.to_id),
-        );
+      channels.map((importedChannel) => {
+        channelNames.push(importedChannel.broadcaster_login);
 
-        if (!userData) {
-          throw new Error('no_user_data');
-        }
+        const foundChannel = config.findByQuery({
+          serviceName: ServiceNamesEnum.TWITCH,
+          name: importedChannel.broadcaster_login,
+        });
 
-        for (const importedChannel of userData.data) {
-          channelNames.push(importedChannel.login);
+        if (foundChannel) {
+          if (!foundChannel.sources.includes(SourcesEnum.AUTO_IMPORT)) {
+            foundChannel.sources.push(SourcesEnum.AUTO_IMPORT);
+          }
+        } else {
+          const channel = config.addChannelLink(
+            `${twitchStreamService.buildChannelLink(
+              importedChannel.broadcaster_login,
+            )}`,
+            SourcesEnum.AUTO_IMPORT,
+          );
 
-          const foundChannel = config.findByQuery({
-            serviceName: ServiceNamesEnum.TWITCH,
-            name: importedChannel.login,
-          });
+          if (channel) {
+            channelsAdded.push(channel);
 
-          if (foundChannel) {
-            if (!foundChannel.sources.includes(SourcesEnum.AUTO_IMPORT)) {
-              foundChannel.sources.push(SourcesEnum.AUTO_IMPORT);
-            }
-          } else {
-            const channel = config.addChannelLink(
-              `${twitchStreamService.buildChannelLink(importedChannel.login)}`,
-              SourcesEnum.AUTO_IMPORT,
-            );
-
-            if (channel) {
-              channelsAdded.push(channel);
-
-              addLogs('twitch_imported_channel', channel.link);
-            }
+            addLogs('twitch_imported_channel', channel.link);
           }
         }
       }),
@@ -191,25 +181,11 @@ async function addImportedChannels(
 }
 
 async function importBase(
+  channelId: string,
   channelName: string,
   emitEvent: boolean,
 ): Promise<[Channel[], string[]]> {
   await twitchClient.refreshAccessToken();
-
-  if (!channelName) {
-    return null;
-  }
-
-  channelName = channelName.trim();
-
-  const userData = await twitchClient.getUsersByLogin(
-    [channelName],
-    'importBase',
-  );
-
-  if (!userData) {
-    return null;
-  }
 
   const channelsAddedAll: Channel[] = [];
 
@@ -225,39 +201,35 @@ async function importBase(
   const channelsToAdd: ITwitchFollowedChannel[] = [];
 
   try {
-    await Promise.all(
-      userData.data.map(async ({ id }) => {
-        let cursor = '';
+    let cursor = '';
 
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const followedChannelsData = await twitchClient.getFollowedChannels(
-            id,
-            cursor,
-          );
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const followedChannelsData = await twitchClient.getFollowedChannels(
+        channelId,
+        cursor,
+      );
 
-          if (!followedChannelsData) {
-            throw new Error('no_channels_data');
-          }
+      if (!followedChannelsData) {
+        throw new Error('no_channels_data');
+      }
 
-          const { data: followedChannels } = followedChannelsData;
+      const { data: followedChannels } = followedChannelsData;
 
-          if (followedChannels.length === 0) {
-            break;
-          }
+      if (followedChannels.length === 0) {
+        break;
+      }
 
-          followedChannels.forEach((followedChannel) =>
-            channelsToAdd.push(followedChannel),
-          );
+      followedChannels.forEach((followedChannel) =>
+        channelsToAdd.push(followedChannel),
+      );
 
-          cursor = followedChannelsData.pagination.cursor;
+      cursor = followedChannelsData.pagination.cursor;
 
-          if (!cursor) {
-            break;
-          }
-        }
-      }),
-    );
+      if (!cursor) {
+        break;
+      }
+    }
   } catch (error) {
     addLogs('error', error);
 
@@ -293,9 +265,15 @@ async function doImport(
   const allImportedChannelNames: string[] = [];
 
   try {
+    const { data } = await twitchClient.getUsers();
+
     await Promise.all(
-      _.map(channelNames, async (channelName) => {
-        const importBaseRes = await importBase(channelName, emitEvent);
+      _.map(data, async (twitchChannel) => {
+        const importBaseRes = await importBase(
+          twitchChannel.id,
+          twitchChannel.login,
+          emitEvent,
+        );
 
         if (!importBaseRes) {
           throw new Error('no_import_base');
@@ -324,6 +302,8 @@ async function doImport(
       _.pull(channel.sources, SourcesEnum.AUTO_IMPORT);
 
       if (channel.sources.length === 0) {
+        addLogs('twitch_imported_channel_delete', channel.name);
+
         channelIdsToDelete.push(channel.id);
       }
     }

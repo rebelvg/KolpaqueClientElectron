@@ -10,7 +10,7 @@
     "lint": "eslint . && yarn run prettier",
     "lint:fix": "eslint . --fix && yarn run prettier:fix",
     "build:api": "tsc --project api/tsconfig.json",
-    "build:app": "cross-env NODE_ENV=production webpack --config webpack.config.production",
+    "build:app": "cross-env NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider webpack --config webpack.config.production",
     "build": "yarn run build:api && yarn run build:app && ts-node build.ts",
     "release": "yarn ts-node release.ts",
     "start:api": "yarn build:api && cross-env NODE_ENV=dev electron .",
