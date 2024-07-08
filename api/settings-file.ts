@@ -25,7 +25,7 @@ ipcMain.on('channel_add', async (event, channelLink) => {
   const channel = config.addChannelLink(channelLink, SourcesEnum.MANUAL_ACTION);
 
   if (!channel) {
-    return null;
+    return;
   }
 
   await config.runChannelUpdates([channel], false);
