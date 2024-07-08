@@ -21,7 +21,7 @@ export function run() {
   });
 
   io.on('connect_error', (error) => {
-    addLogs('info', 'connect_error', error);
+    addLogs('error', 'connect_error', error);
   });
 
   io.on('twitch_user', (user: ITwitchUser) => {

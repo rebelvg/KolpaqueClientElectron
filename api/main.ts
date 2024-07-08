@@ -40,7 +40,7 @@ ipcMain.on('client_ready', async () => {
   addLogs('info', 'client_ready');
 
   if (initDone) {
-    main.mainWindow.webContents.send('backend_ready');
+    main.mainWindow!.webContents.send('backend_ready');
 
     return;
   }
@@ -48,12 +48,12 @@ ipcMain.on('client_ready', async () => {
   try {
     await init();
   } catch (error) {
-    addLogs('info', 'init_failed', error);
+    addLogs('error', 'init_failed', error);
 
     throw error;
   }
 
-  main.mainWindow.webContents.send('backend_ready');
+  main.mainWindow!.webContents.send('backend_ready');
 
   initDone = true;
 });
@@ -76,14 +76,14 @@ if (process.platform === 'darwin') {
   );
 }
 
-export const main: { mainWindow: BrowserWindow } = {
-  mainWindow: null,
+export const main: { mainWindow: BrowserWindow | undefined } = {
+  mainWindow: undefined,
 };
 
 app.setName('Kolpaque Client');
 
 app.on('second-instance', () => {
-  main.mainWindow.show();
+  main.mainWindow!.show();
 });
 
 const lockStatus = app.requestSingleInstanceLock();
@@ -156,7 +156,7 @@ function createWindow(): void {
   });
 
   mainWindow.on('closed', () => {
-    main.mainWindow = null;
+    main.mainWindow = undefined;
   });
 }
 
@@ -169,7 +169,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (main.mainWindow === null) {
+  if (!main.mainWindow) {
     createWindow();
   }
 });
@@ -179,40 +179,39 @@ app.on('ready', () => {
     return;
   }
 
-  main.mainWindow.hide();
+  main.mainWindow!.hide();
 });
 
-export const contextMenuTemplate: any[] = [
+export const contextMenuTemplate: Electron.MenuItemConstructorOptions[] = [
   {
     label: 'Toggle Client',
     type: 'normal',
     visible: process.platform === 'linux',
     click: (): void => {
-      main.mainWindow.isVisible()
-        ? main.mainWindow.hide()
-        : main.mainWindow.show();
+      main.mainWindow!.isVisible()
+        ? main.mainWindow!.hide()
+        : main.mainWindow!.show();
     },
   },
   {
     label: 'Online Channels',
     type: 'submenu',
+    visible: true,
     submenu: [],
   },
   {
     label: 'Play / Clipboard',
     type: 'normal',
-    click: async (
-      menuItem: MenuItem,
-      browserWindow: BrowserWindow,
-      event: unknown,
-    ) => {
-      await launchPlayerLink(clipboard.readText(), (event as any).ctrlKey);
+    visible: true,
+    click: async (menuItem: MenuItem, browserWindow: BrowserWindow, event) => {
+      await launchPlayerLink(clipboard.readText(), !!event.ctrlKey);
     },
   },
   {
     label: 'Notifications',
     type: 'checkbox',
-    click: (menuItem: MenuItem): void => {
+    visible: true,
+    click: (menuItem: MenuItem) => {
       config.changeSetting('showNotifications', menuItem.checked);
     },
     checked: config.settings.showNotifications,
@@ -220,6 +219,7 @@ export const contextMenuTemplate: any[] = [
   {
     label: 'Quit Client',
     type: 'normal',
+    visible: true,
     click: (): void => {
       forceQuit = true;
 
@@ -229,7 +229,9 @@ export const contextMenuTemplate: any[] = [
 ];
 
 function toggleHideClient(): void {
-  main.mainWindow.isVisible() ? main.mainWindow.hide() : main.mainWindow.show();
+  main.mainWindow!.isVisible()
+    ? main.mainWindow!.hide()
+    : main.mainWindow!.show();
 }
 
 function showTrayContextMenu(): void {

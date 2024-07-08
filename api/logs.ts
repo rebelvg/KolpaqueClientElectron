@@ -26,7 +26,7 @@ export function addLogs(
     }
 
     if (value instanceof AxiosError) {
-      const stack = value.stack.split('\n').map((value) => value.trim());
+      const stack = value.stack?.split('\n').map((value) => value.trim());
 
       logs[key] = {
         message: value.message,
@@ -40,7 +40,7 @@ export function addLogs(
     }
 
     if (value instanceof Error) {
-      const stack = value.stack.split('\n').map((value) => value.trim());
+      const stack = value.stack?.split('\n').map((value) => value.trim());
 
       logs[key] = {
         message: value.message,
@@ -71,9 +71,11 @@ export function addLogs(
     `${new Date().toLocaleString()} ${logLine}${os.EOL}`,
   );
 
-  logsUi.push(logLine);
+  if (['error'].includes(level)) {
+    logsUi.push(logLine);
 
-  logsUi = _.takeRight(logsUi, 50);
+    logsUi = _.takeRight(logsUi, 50);
+  }
 }
 
 export function run() {

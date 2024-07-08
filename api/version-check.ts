@@ -49,7 +49,7 @@ function sendInfo(update: string): void {
 
   printNotification(`${_.capitalize(update)} Update Available`, service.link);
 
-  main.mainWindow.webContents.send(
+  main.mainWindow!.webContents.send(
     'client_showInfo',
     UPDATES.map(_.capitalize).join(' & ') + ' Update Available',
   );
@@ -64,18 +64,16 @@ async function clientVersionCheck(): Promise<boolean> {
 
   const newVersion = versionData.tag_name;
 
-  if (newVersion !== CLIENT_VERSION) {
-    return true;
-  }
+  return newVersion !== CLIENT_VERSION;
 }
 
 function streamlinkVersionCheck(): Promise<boolean> {
   return new Promise((resolve) => {
-    execFile('streamlink', ['--version-check'], (err: any, data) => {
-      if (err) {
-        addLogs('info', err);
+    execFile('streamlink', ['--version-check'], (error: Error, data) => {
+      if (error) {
+        addLogs('error', error);
 
-        if (err.code === 'ENOENT') {
+        if (error['code'] === 'ENOENT') {
           return resolve(true);
         }
 

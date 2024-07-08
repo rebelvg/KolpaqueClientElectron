@@ -19,7 +19,7 @@ async function doImport(
   const res = await klpqStreamClient.getChannelsList();
 
   if (!res) {
-    return;
+    return [];
   }
 
   const { channels } = res;
@@ -102,7 +102,7 @@ export class KolpaqueVpsHttpStreamServiceNew extends KolpaqueVpsHttpStreamServic
     /^\/(\S+)\/$/gi,
     /^\/(\S+)$/gi,
   ];
-  public doImport = async () => {
+  public doImport = async (): Promise<Channel[]> => {
     return await [];
   };
   public buildChannelLink(channelName: string) {

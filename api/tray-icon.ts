@@ -28,16 +28,17 @@ export function rebuildIconMenu(): Menu {
         ? channel.visibleName
         : `${channel.visibleName} (LQ)`,
       type: 'normal',
+      visible: true,
       click: async (
         menuItem: MenuItem,
         browserWindow: BrowserWindow,
-        event: any,
+        event,
       ) => {
-        await channel.startPlaying(event.ctrlKey, event.shiftKey ? true : null);
+        await channel.startPlaying(!!event.ctrlKey, !!event.shiftKey);
       },
       icon: channel._trayIcon,
     };
   });
 
-  return Menu.buildFromTemplate(contextMenuTemplate as any);
+  return Menu.buildFromTemplate(contextMenuTemplate);
 }

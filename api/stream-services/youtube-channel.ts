@@ -8,7 +8,7 @@ import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 async function getStats(
   channels: Channel[],
   printBalloon: boolean,
-): Promise<void> {
+): Promise<undefined> {
   await Promise.all(
     channels.map(async (channel) => {
       const channelStatus = await getStatsBase(channel.name);

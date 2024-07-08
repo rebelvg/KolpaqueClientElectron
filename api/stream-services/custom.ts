@@ -9,7 +9,7 @@ import { BaseStreamService, ServiceNamesEnum } from './_base';
 async function getStats(
   channels: Channel[],
   printBalloon: boolean,
-): Promise<void> {
+): Promise<undefined> {
   const { useStreamlinkForCustomChannels } = config.settings;
 
   if (!useStreamlinkForCustomChannels) {
@@ -35,7 +35,7 @@ async function getStats(
                   channel.setOffline();
                 }
               } catch (error) {
-                addLogs('info', error);
+                addLogs('error', error);
               }
 
               resolve();

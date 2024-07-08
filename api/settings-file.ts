@@ -71,7 +71,7 @@ ipcMain.on('channel_openPage', (event, id) => {
 
   const channel = config.findById(id);
 
-  if (channel === null) {
+  if (!channel) {
     return false;
   }
 
@@ -110,7 +110,7 @@ ipcMain.on('channel_openChat', (event, id) => {
 
     window.loadURL(chatLink);
 
-    main.mainWindow.on('closed', () => {
+    main.mainWindow!.on('closed', () => {
       if (window) {
         window.close();
       }

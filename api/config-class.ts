@@ -58,7 +58,7 @@ const filterChannels = (channels: Channel[], filter: string): Channel[] => {
     return channels;
   }
 
-  let filteredChannels = [];
+  let filteredChannels: Channel[] = [];
 
   filteredChannels = _.filter(channels, (channel) => {
     return filterChannel(channel, filter);
@@ -72,7 +72,7 @@ const sortChannels = (
   sortType: string,
   isReversed = false,
 ): Channel[] => {
-  let sortedChannels = [];
+  let sortedChannels: Channel[] = [];
 
   switch (sortType) {
     case 'lastAdded': {
@@ -127,7 +127,7 @@ interface ISettings {
   youtubeTosConsent: boolean;
   youtubeRefreshToken: string;
   enableSync: boolean;
-  klpqJwtToken: string;
+  klpqJwtToken: string | null;
   customRtmpClientCommand: string;
 }
 
@@ -200,7 +200,7 @@ export class Config extends EventEmitter {
 
       parseJson = this.runMigrations(parseJson);
     } catch (error) {
-      addLogs('info', error);
+      addLogs('error', error);
 
       return;
     }
@@ -227,7 +227,7 @@ export class Config extends EventEmitter {
       this.migrations = parseJson.migrations || [];
       this.deletedChannels = parseJson.deletedChannels || [];
     } catch (error) {
-      addLogs('info', error);
+      addLogs('error', error);
 
       throw error;
     }
@@ -242,11 +242,14 @@ export class Config extends EventEmitter {
     }
   }
 
-  addChannelLink(channelLink: string, source: SourcesEnum): Channel {
+  addChannelLink(
+    channelLink: string,
+    source: SourcesEnum | null,
+  ): Channel | undefined {
     const channel = Config.buildChannel(channelLink);
 
     if (!channel) {
-      return null;
+      return;
     }
 
     const res = this.findByQuery({
@@ -254,8 +257,8 @@ export class Config extends EventEmitter {
       name: channel.name,
     });
 
-    if (res !== null) {
-      return null;
+    if (res) {
+      return;
     }
 
     channel.lastUpdated = Date.now();
@@ -269,18 +272,22 @@ export class Config extends EventEmitter {
     return channel;
   }
 
-  static buildChannel(channelLink: string): Channel {
+  static buildChannel(channelLink: string): Channel | undefined {
     try {
       return new Channel(channelLink);
-    } catch (e) {
-      addLogs('info', e);
+    } catch (error) {
+      addLogs('error', error);
 
-      return null;
+      return;
     }
   }
 
   removeChannelById(id: string): boolean {
     const channel = this.findById(id);
+
+    if (!channel) {
+      return true;
+    }
 
     if (!this.channels.includes(channel)) {
       return true;
@@ -290,7 +297,7 @@ export class Config extends EventEmitter {
 
     config.deletedChannels.push(channel.link);
 
-    main.mainWindow.webContents.send('channel_removeSync');
+    main.mainWindow!.webContents.send('channel_removeSync');
 
     return true;
   }
@@ -307,20 +314,20 @@ export class Config extends EventEmitter {
     return true;
   }
 
-  findById(id: string): Channel {
+  findById(id: string): Channel | undefined {
     const channel = this.channels.find((channel) => {
       return channel.id === id;
     });
 
     if (!channel) {
-      return null;
+      return;
     }
 
     return channel;
   }
 
-  findByQuery(params: Partial<Channel>): Channel {
-    return _.find(this.channels, params) || null;
+  findByQuery(params: Partial<Channel>): Channel | undefined {
+    return _.find(this.channels, params);
   }
 
   find(query: any = {}) {
@@ -376,8 +383,8 @@ export class Config extends EventEmitter {
       addLogs('info', 'settings_saved');
 
       return true;
-    } catch (e) {
-      addLogs('info', e);
+    } catch (error) {
+      addLogs('error', error);
 
       return false;
     }
@@ -390,19 +397,19 @@ export class Config extends EventEmitter {
       await getChannelInfo(channels);
     }
 
-    main.mainWindow.webContents.send('channel_addSync');
+    main.mainWindow!.webContents.send('channel_addSync');
   }
 
-  public setSettings(settingName: string, settingValue: unknown) {
+  public setSettings(settingName: string, settingValue: any) {
     if (settingName === 'showNotifications') {
-      contextMenuTemplate[3].checked = settingValue;
+      contextMenuTemplate[3].checked = settingValue as boolean;
     }
 
     if (settingName === 'enableSync' || settingName === 'syncId') {
       syncSettings.init();
     }
 
-    main.mainWindow.webContents.send(
+    main.mainWindow!.webContents.send(
       'config_changeSetting',
       settingName,
       settingValue,

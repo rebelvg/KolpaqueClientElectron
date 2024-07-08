@@ -28,7 +28,7 @@ async function getStatsBase(
 async function getStats(
   channels: Channel[],
   printBalloon: boolean,
-): Promise<void> {
+): Promise<undefined> {
   await Promise.all(
     channels.map((channel) => {
       return getStatsBase(channel, printBalloon);
@@ -59,24 +59,31 @@ export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
       encoding: null,
     },
   );
-  public play(channel: Channel) {
+  public play(
+    channel: Channel,
+  ): Promise<{ playLink: string | null; params: string[] }> {
     return Promise.resolve({
       playLink: `rtmp://mediaserver.klpq.io/live/${channel.name}`,
       params: [],
     });
   }
-  public async playLQ(channel: Channel) {
+  public async playLQ(
+    channel: Channel,
+  ): Promise<{ playLink: string | null; params: string[] }> {
     const { playLink, params } = await this.play(channel);
 
     return {
-      playLink: playLink.replace('/live/', '/encode/'),
+      playLink: playLink?.replace('/live/', '/encode/') || null,
       params,
     };
   }
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
   public getStats = getStats;
-  public doImport = async (channelNames: string[], emitEvent: boolean) => {
+  public doImport = async (
+    channelNames: string[],
+    emitEvent: boolean,
+  ): Promise<Channel[]> => {
     return await [];
   };
   public buildChannelLink(channelName: string) {

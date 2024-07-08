@@ -17,12 +17,15 @@ import { SourcesEnum } from '../enums';
 async function getStats(
   channels: Channel[],
   printBalloon: boolean,
-): Promise<void> {
+): Promise<undefined> {
   const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
 
   await Promise.all(
     chunkedChannels.map(async (channels) => {
-      const mappedChannels = channels.map((channel) => {
+      const mappedChannels: {
+        channel: Channel;
+        userId: string | null;
+      }[] = channels.map((channel) => {
         return {
           channel,
           userId: null,
@@ -59,7 +62,9 @@ async function getStats(
       }
 
       const streamData = await twitchClient.getStreams(
-        existingChannels.map(({ userId }) => userId),
+        existingChannels
+          .map(({ userId }) => userId)
+          .filter(Boolean) as string[],
       );
 
       if (!streamData) {
@@ -77,7 +82,7 @@ async function getStats(
   );
 }
 
-async function getInfo(allChannels: Channel[]): Promise<void> {
+async function getInfo(allChannels: Channel[]): Promise<undefined> {
   const filteredChannels = _.filter(allChannels, (channel) => !channel._icon);
 
   if (filteredChannels.length === 0) {
@@ -94,6 +99,10 @@ async function getInfo(allChannels: Channel[]): Promise<void> {
       'getInfo',
     );
 
+    if (!userData) {
+      continue;
+    }
+
     addLogs(
       'info',
       'channel_info_twitch_user_data',
@@ -106,12 +115,12 @@ async function getInfo(allChannels: Channel[]): Promise<void> {
     await Promise.all(
       channels.map(async (channel) => {
         await Promise.all(
-          _.map(userData?.data, async (user) => {
+          _.map(userData.data, async (user) => {
             if (user.login !== channel.name) {
               return;
             }
 
-            const profileImageUrl = user?.profile_image_url;
+            const profileImageUrl = user.profile_image_url;
 
             if (!profileImageUrl) {
               return;
@@ -142,7 +151,7 @@ async function getInfo(allChannels: Channel[]): Promise<void> {
 
 async function addImportedChannels(
   channels: ITwitchFollowedChannel[],
-): Promise<[Channel[], string[]]> {
+): Promise<[Channel[], string[]] | undefined> {
   const channelsAdded: Channel[] = [];
 
   const channelNames: string[] = [];
@@ -178,9 +187,9 @@ async function addImportedChannels(
       }),
     );
   } catch (error) {
-    addLogs('info', 'error', error);
+    addLogs('error', error);
 
-    return null;
+    return;
   }
 
   return [channelsAdded, channelNames];
@@ -190,7 +199,7 @@ async function importBase(
   channelId: string,
   channelName: string,
   emitEvent: boolean,
-): Promise<[Channel[], string[]]> {
+): Promise<[Channel[], string[]] | undefined> {
   const channelsAddedAll: Channel[] = [];
 
   const addedChannel = config.addChannelLink(
@@ -235,15 +244,15 @@ async function importBase(
       }
     }
   } catch (error) {
-    addLogs('info', 'error', error);
+    addLogs('error', error);
 
-    return null;
+    return;
   }
 
   const addImportedChannelsRes = await addImportedChannels(channelsToAdd);
 
   if (!addImportedChannelsRes) {
-    return null;
+    return;
   }
 
   const [channelsAdded, channelNames] = addImportedChannelsRes;
@@ -269,10 +278,14 @@ async function doImport(
   const allImportedChannelNames: string[] = [];
 
   try {
-    const { data } = await twitchClient.getUsers();
+    const res = await twitchClient.getUsers();
+
+    if (!res) {
+      return [];
+    }
 
     await Promise.all(
-      _.map(data, async (twitchChannel) => {
+      _.map(res.data, async (twitchChannel) => {
         const importBaseRes = await importBase(
           twitchChannel.id,
           twitchChannel.login,
@@ -286,11 +299,12 @@ async function doImport(
         const [importedChannels, channelNames] = importBaseRes;
 
         channels.push(...importedChannels);
+
         allImportedChannelNames.push(...channelNames);
       }),
     );
   } catch (error) {
-    addLogs('info', 'error', error);
+    addLogs('error', error);
 
     return [];
   }

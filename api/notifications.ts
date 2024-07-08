@@ -8,7 +8,7 @@ import { Channel } from './channel-class';
 export function printNotification(
   title: string,
   content: string,
-  channel: Channel = null,
+  channel: Channel | null = null,
 ): void {
   addLogs('info', 'printNotification', title, content);
 
@@ -22,7 +22,7 @@ export function printNotification(
 function printNewNotification(
   title: string,
   content: string,
-  channel: Channel,
+  channel: Channel | null,
 ): void {
   let icon: string | NativeImage = iconPathBalloon;
 
@@ -51,7 +51,7 @@ function printNewNotification(
 async function onBalloonClick(
   title: string,
   content: string,
-  channel: Channel,
+  channel: Channel | null,
 ) {
   addLogs('info', 'balloon_click', title, content);
 
@@ -60,7 +60,7 @@ async function onBalloonClick(
   }
 
   if (title.indexOf('Stream is Live') === 0) {
-    await channel.startPlaying();
+    await channel?.startPlaying();
   }
 
   if (title.includes('Update Available')) {

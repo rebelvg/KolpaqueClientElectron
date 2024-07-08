@@ -23,7 +23,7 @@ async function checkService(
 
     addLogs('info', 'channel_check_stats_done', service.name, channels.length);
   } catch (error) {
-    addLogs('info', error);
+    addLogs('error', error);
   }
 }
 

@@ -27,13 +27,13 @@ abstract class AbstractStreamService {
   public abstract paths: RegExp[];
   public abstract embedLink(channel: Channel): string;
   public abstract chatLink(channel: Channel): string;
-  public abstract icon: Buffer;
+  public abstract icon: Buffer | null;
   public abstract play(
     channel: Channel,
-  ): Promise<{ playLink: string; params: string[] }>;
+  ): Promise<{ playLink: string | null; params: string[] }>;
   public abstract playLQ(
     channel: Channel,
-  ): Promise<{ playLink: string; params: string[] }>;
+  ): Promise<{ playLink: string | null; params: string[] }>;
   public abstract checkLiveTimeout: number;
   public abstract checkLiveConfirmation: number;
   public abstract getStats(
@@ -51,19 +51,19 @@ abstract class AbstractStreamService {
 
 export class BaseStreamService implements AbstractStreamService {
   public name = ServiceNamesEnum.CUSTOM;
-  public protocols = [];
-  public hosts = [];
-  public paths = [];
+  public protocols: ProtocolsEnum[] = [];
+  public hosts: string[] = [];
+  public paths: RegExp[] = [];
   public embedLink(channel: Channel) {
     return channel.link;
   }
   public chatLink(channel: Channel) {
     return this.embedLink(channel);
   }
-  public icon: Buffer = null;
+  public icon: Buffer | null = null;
   public play(
     channel: Channel,
-  ): Promise<{ playLink: string; params: string[] }> {
+  ): Promise<{ playLink: string | null; params: string[] }> {
     return Promise.resolve({
       playLink: channel._customPlayUrl || channel.link,
       params: [],
@@ -71,7 +71,7 @@ export class BaseStreamService implements AbstractStreamService {
   }
   public async playLQ(
     channel: Channel,
-  ): Promise<{ playLink: string; params: string[] }> {
+  ): Promise<{ playLink: string | null; params: string[] }> {
     const { playLink, params } = await this.play(channel);
 
     return {
@@ -84,11 +84,11 @@ export class BaseStreamService implements AbstractStreamService {
   public async getStats(
     channels: Channel[],
     printBalloon: boolean,
-  ): Promise<void> {
-    return await null;
+  ): Promise<undefined> {
+    return await undefined;
   }
-  public async getInfo(channels: Channel[]): Promise<void> {
-    return await null;
+  public async getInfo(channels: Channel[]): Promise<undefined> {
+    return await undefined;
   }
   public async doImport(
     channels: string[],

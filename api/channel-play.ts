@@ -30,7 +30,7 @@ ipcMain.on(
 
 export async function launchPlayerLink(
   channelLink: string,
-  LQ = null,
+  LQ: boolean,
 ): Promise<boolean> {
   const channel = Config.buildChannel(channelLink);
 
@@ -38,7 +38,7 @@ export async function launchPlayerLink(
     return false;
   }
 
-  await launchPlayerChannel(channel, LQ);
+  await launchPlayerChannel(channel, LQ, false);
 
   return true;
 }
@@ -64,7 +64,7 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
     _.pull(channel._windows, window);
   });
 
-  main.mainWindow.on('closed', () => {
+  main.mainWindow!.on('closed', () => {
     if (window && !window.isDestroyed) {
       window.close();
     }
@@ -77,18 +77,22 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
 
 export async function launchPlayerChannel(
   channel: Channel,
-  altQuality = false,
-  autoRestart: boolean = null,
+  altQuality: boolean | null,
+  autoRestart: boolean | null,
 ) {
-  const LQ = !altQuality ? config.settings.LQ : !config.settings.LQ;
+  const LQ = !altQuality ? config.settings.LQ : true;
 
   channel.changeSettings({
-    onAutoRestart: autoRestart !== null ? autoRestart : channel.autoRestart,
+    onAutoRestart: autoRestart === null ? channel.autoRestart : autoRestart,
   });
 
   const { playLink, params } = !LQ
     ? await channel.play()
     : await channel.playLQ();
+
+  if (!playLink) {
+    return;
+  }
 
   return launchStreamlink(playLink, params, channel);
 }
@@ -99,6 +103,10 @@ async function launchStreamlink(
   channel: Channel,
 ) {
   addLogs('info', playLink, params, channel.link);
+
+  if (!playLink) {
+    return;
+  }
 
   let firstStart = true;
   let autoRestartAttempts = 0;
@@ -146,7 +154,7 @@ async function launchStreamlink(
         });
 
         pipeProcess.on('error', (error) => {
-          addLogs('info', 'spawn_command_error', command, commandArgs, error);
+          addLogs('error', 'spawn_command_error', command, commandArgs, error);
 
           reject([error, stdoutString, stderrString]);
         });
@@ -188,7 +196,7 @@ async function launchStreamlink(
     } catch (exception) {
       const [error, stdout, stderr] = exception;
 
-      addLogs('info', 'streamlink_error', channel.link, error, stdout, stderr);
+      addLogs('error', 'streamlink_error', channel.link, error, stdout, stderr);
 
       if ((error as any).code === 'ENOENT') {
         await dialog.showMessageBox({

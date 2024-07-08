@@ -32,7 +32,7 @@ export class Channel extends EventEmitter {
   public _icon: Buffer;
   public _offlineConfirmations = 0;
   public _windows: BrowserWindow[] = [];
-  public _customPlayUrl: string;
+  public _customPlayUrl: string | null;
   public visibleName: string;
   public isPinned = false;
   public autoStart = false;
@@ -123,7 +123,7 @@ export class Channel extends EventEmitter {
       this.changeSetting(settingName, settingValue);
     });
 
-    main.mainWindow.webContents.send('channel_changeSettingSync');
+    main.mainWindow!.webContents.send('channel_changeSettingSync');
 
     return true;
   }
@@ -235,8 +235,8 @@ export class Channel extends EventEmitter {
   }
 
   public async startPlaying(
-    altQuality = false,
-    autoRestart = null,
+    altQuality: boolean | null = null,
+    autoRestart: boolean | null = null,
   ): Promise<boolean> {
     if (config.settings.playInWindow) {
       const wasWindowCreated = await playInWindow(this);
@@ -251,7 +251,7 @@ export class Channel extends EventEmitter {
     return true;
   }
 
-  private settingsActions(settingName: string, settingValue: unknown) {
+  private settingsActions(settingName: string, settingValue: any) {
     if (settingName === 'visibleName') {
       if (!settingValue) {
         this[settingName] = this.name;

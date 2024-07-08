@@ -13,7 +13,9 @@ export class KolpaqueVpsMpdStreamService extends KolpaqueVpsRtmpStreamService {
     /^\/stream\/live_mpd\/(\S+)\/$/gi,
     /^\/stream\/live_mpd\/(\S+)$/gi,
   ];
-  public async play(channel: Channel) {
+  public async play(
+    channel: Channel,
+  ): Promise<{ playLink: string | null; params: string[] }> {
     const res = await klpqEncodeClient.getStreamId(channel.name);
 
     if (!res) {
@@ -28,7 +30,9 @@ export class KolpaqueVpsMpdStreamService extends KolpaqueVpsRtmpStreamService {
       params: [],
     };
   }
-  public async playLQ(channel: Channel) {
+  public async playLQ(
+    channel: Channel,
+  ): Promise<{ playLink: string | null; params: string[] }> {
     const { playLink, params } = await this.play(channel);
 
     return {
