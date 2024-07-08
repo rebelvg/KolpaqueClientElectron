@@ -402,7 +402,7 @@ export class Config extends EventEmitter {
 
   public setSettings(settingName: string, settingValue: any) {
     if (settingName === 'showNotifications') {
-      contextMenuTemplate[3].checked = settingValue as boolean;
+      contextMenuTemplate[3]!.checked = settingValue as boolean;
     }
 
     if (settingName === 'enableSync' || settingName === 'syncId') {

@@ -138,13 +138,13 @@ async function launchStreamlink(
       await new Promise<void>((resolve, reject) => {
         addLogs('info', 'spawn_command', command, commandArgs);
 
-        const pipeProcess = spawn(command, commandArgs);
+        const pipeProcess = spawn(command!, commandArgs);
 
         let stdoutString = '';
         let stderrString = '';
 
         pipeProcess.stdout.on('data', (data: Buffer) => {
-          if (command.toLowerCase() === 'streamlink') {
+          if (command!.toLowerCase() === 'streamlink') {
             stdoutString += data.toString('utf-8');
           }
         });

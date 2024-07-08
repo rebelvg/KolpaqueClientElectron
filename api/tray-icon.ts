@@ -12,33 +12,35 @@ export function rebuildIconMenu(): Menu {
     isLive: true,
   }).channels;
 
-  contextMenuTemplate[1]['submenu'] = onlineChannels.map((channel: Channel) => {
-    if (!channel._trayIcon) {
-      const iconBuffer = channel.icon();
+  contextMenuTemplate[1]!['submenu'] = onlineChannels.map(
+    (channel: Channel) => {
+      if (!channel._trayIcon) {
+        const iconBuffer = channel.icon();
 
-      if (iconBuffer) {
-        channel._trayIcon = nativeImage
-          .createFromBuffer(iconBuffer)
-          .resize({ height: 16 });
+        if (iconBuffer) {
+          channel._trayIcon = nativeImage
+            .createFromBuffer(iconBuffer)
+            .resize({ height: 16 });
+        }
       }
-    }
 
-    return {
-      label: !config.settings.LQ
-        ? channel.visibleName
-        : `${channel.visibleName} (LQ)`,
-      type: 'normal',
-      visible: true,
-      click: async (
-        menuItem: MenuItem,
-        browserWindow: BrowserWindow,
-        event,
-      ) => {
-        await channel.startPlaying(!!event.ctrlKey, !!event.shiftKey);
-      },
-      icon: channel._trayIcon,
-    };
-  });
+      return {
+        label: !config.settings.LQ
+          ? channel.visibleName
+          : `${channel.visibleName} (LQ)`,
+        type: 'normal',
+        visible: true,
+        click: async (
+          menuItem: MenuItem,
+          browserWindow: BrowserWindow,
+          event,
+        ) => {
+          await channel.startPlaying(!!event.ctrlKey, !!event.shiftKey);
+        },
+        icon: channel._trayIcon,
+      };
+    },
+  );
 
   return Menu.buildFromTemplate(contextMenuTemplate);
 }

@@ -7,6 +7,7 @@
     "resolveJsonModule": true,
     "incremental": false,
     "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
     "outDir": "../dist-api"
   },
   "include": ["../api/**/*"]

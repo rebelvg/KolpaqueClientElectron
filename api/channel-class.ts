@@ -85,9 +85,11 @@ export class Channel extends EventEmitter {
 
         this.serviceName = serviceObj.name;
         this.serviceObj = serviceObj;
-        this.name = channelName;
+        this.name = channelName!;
 
-        const newChannelUrl = new URL(serviceObj.buildChannelLink(channelName));
+        const newChannelUrl = new URL(
+          serviceObj.buildChannelLink(channelName!),
+        );
 
         this.link = newChannelUrl.href;
 
@@ -158,7 +160,7 @@ export class Channel extends EventEmitter {
   }
 
   public host() {
-    return this.serviceObj.hosts[0];
+    return this.serviceObj.hosts[0]!;
   }
 
   public icon() {
