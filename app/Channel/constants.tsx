@@ -1,5 +1,6 @@
 import { Menu } from '@electron/remote';
 import * as remote from '@electron/remote';
+import { MenuItemConstructorOptions } from 'electron';
 
 export const getTab = (tab) => {
   return TABS.find((t) => t.value === tab);
@@ -23,7 +24,7 @@ export const TABS = [
   },
 ];
 
-export const template: any = [
+export const template: MenuItemConstructorOptions[] = [
   {
     label: 'Cut',
     accelerator: 'CmdOrCtrl+X',
@@ -42,7 +43,7 @@ export const template: any = [
   {
     label: 'Select All',
     accelerator: 'CmdOrCtrl+A',
-    role: 'selectall',
+    role: 'selectAll',
   },
 ];
 

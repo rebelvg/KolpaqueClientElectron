@@ -330,7 +330,7 @@ export class Config extends EventEmitter {
     return _.find(this.channels, params);
   }
 
-  find(query: any = {}) {
+  find(query: { filter?: string; isLive?: boolean } = {}) {
     const sort = {
       type: this.settings.sortType,
       isReversed: this.settings.sortReverse,

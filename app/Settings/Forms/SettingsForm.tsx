@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { Field } from 'react-final-form';
 import Toggle from 'react-toggle-button';
@@ -16,7 +16,7 @@ const sortTypes = [
   { value: 'visibleName', label: 'By Name' },
 ];
 
-export const ToggleAdapter: any = ({
+export const ToggleAdapter: FunctionComponent<any> = ({
   input: { onChange, name, value },
   toggle,
   ...rest
@@ -46,7 +46,11 @@ const ReactSelectAdapter = ({ input, select, ...rest }) => (
   />
 );
 
-const SettingsForm: any = ({ handleSubmit, changeSetting, initialValues }) => (
+const SettingsForm: FunctionComponent<any> = ({
+  handleSubmit,
+  changeSetting,
+  initialValues,
+}) => (
   <Form onSubmit={handleSubmit}>
     <FieldWrapper>
       <Label>LQ</Label>

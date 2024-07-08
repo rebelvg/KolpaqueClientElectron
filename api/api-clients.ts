@@ -368,7 +368,7 @@ export interface IYoutubeChannels {
 }
 
 export interface IYoutubeStreams {
-  items: any[];
+  items: null[];
 }
 
 export interface IGetSyncChannels {
