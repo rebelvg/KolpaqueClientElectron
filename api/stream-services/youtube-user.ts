@@ -27,7 +27,7 @@ export async function getStatsBase(channelId: string): Promise<boolean> {
 async function getStats(
   channels: Channel[],
   printBalloon: boolean,
-): Promise<undefined> {
+): Promise<void> {
   await Promise.all(
     channels.map(async (channel) => {
       const data = await youtubeClient.getChannels(channel.name);

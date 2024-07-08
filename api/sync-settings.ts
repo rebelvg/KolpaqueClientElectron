@@ -68,7 +68,7 @@ class SyncSettings {
     } catch (error) {}
   }
 
-  private set syncId(id: string) {
+  private set syncId(id: string | undefined) {
     if (this._syncId !== id) {
       fs.writeFileSync(SYNC_ID_FILE_PATH, id);
     }

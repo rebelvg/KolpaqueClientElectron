@@ -28,7 +28,7 @@ async function getStatsBase(
 async function getStats(
   channels: Channel[],
   printBalloon: boolean,
-): Promise<undefined> {
+): Promise<void> {
   await Promise.all(
     channels.map((channel) => {
       return getStatsBase(channel, printBalloon);

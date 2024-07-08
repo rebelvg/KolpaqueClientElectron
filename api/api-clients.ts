@@ -549,7 +549,7 @@ class KlpqServiceClient {
     return config.settings.klpqJwtToken;
   }
 
-  public set jwtToken(jwtToken: string) {
+  public set jwtToken(jwtToken: string | null) {
     config.settings.klpqJwtToken = jwtToken;
   }
 

@@ -81,14 +81,11 @@ export class BaseStreamService implements AbstractStreamService {
   }
   public checkLiveTimeout = 0;
   public checkLiveConfirmation = 0;
-  public async getStats(
-    channels: Channel[],
-    printBalloon: boolean,
-  ): Promise<undefined> {
-    return await undefined;
+  public getStats(channels: Channel[], printBalloon: boolean): Promise<void> {
+    return Promise.resolve();
   }
-  public async getInfo(channels: Channel[]): Promise<undefined> {
-    return await undefined;
+  public getInfo(channels: Channel[]): Promise<void> {
+    return Promise.resolve();
   }
   public async doImport(
     channels: string[],

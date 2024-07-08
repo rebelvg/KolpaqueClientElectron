@@ -17,7 +17,7 @@ import { SourcesEnum } from '../enums';
 async function getStats(
   channels: Channel[],
   printBalloon: boolean,
-): Promise<undefined> {
+): Promise<void> {
   const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
 
   await Promise.all(
