@@ -47,4 +47,9 @@ export class YoutubeChannelStreamService extends BaseStreamService {
   public buildChannelLink(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/channel/${channelName}`;
   }
+  public embedLink(channel: Channel): string {
+    const link = super.embedLink(channel);
+
+    return `${link}/streams`;
+  }
 }
