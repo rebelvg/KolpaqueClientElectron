@@ -191,7 +191,7 @@ class SyncSettings {
 
     this.syncId = newSyncId;
 
-    main.mainWindow!.webContents.send(
+    main.mainWindow?.webContents.send(
       'config_changeSetting',
       'syncId',
       this.syncId,
