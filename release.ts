@@ -8,6 +8,8 @@ process.on('unhandledRejection', (error) => {
 });
 
 (() => {
+  childProcess.execSync(`yarn run lint`, { stdio: 'inherit' });
+
   const packageJson = JSON.parse(
     fs.readFileSync('./package.json', { encoding: 'utf-8' }),
   );
@@ -22,17 +24,19 @@ process.on('unhandledRejection', (error) => {
 
   packageJson.version = newVersion;
 
-  fs.writeFileSync('./package.json', JSON.stringify(packageJson));
+  fs.writeFileSync('./package.json', JSON.stringify(packageJson, null, 2));
 
-  childProcess.execSync(`yarn run lint:fix`);
+  childProcess.execSync(`yarn run lint:fix`, { stdio: 'inherit' });
 
-  childProcess.execSync(`git add .`);
+  childProcess.execSync(`git add .`, { stdio: 'inherit' });
 
-  childProcess.execSync(`git commit -m "publish version ${newVersion}"`);
+  childProcess.execSync(`git commit -m "publish version ${newVersion}"`, {
+    stdio: 'inherit',
+  });
 
-  childProcess.execSync(`git tag ${newVersion}`);
+  childProcess.execSync(`git tag ${newVersion}`, { stdio: 'inherit' });
 
-  childProcess.execSync(`git push`);
+  childProcess.execSync(`git push`, { stdio: 'inherit' });
 
-  childProcess.execSync(`git push --tags`);
+  childProcess.execSync(`git push --tags`, { stdio: 'inherit' });
 })();

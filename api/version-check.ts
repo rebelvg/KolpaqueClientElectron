@@ -22,8 +22,6 @@ const SERVICES = [
 
 const UPDATES: string[] = [];
 
-const isDev = process.env.NODE_ENV === 'dev';
-
 ipcMain.on('client_getInfo', async () => {
   addLogs('info', 'client_getInfo');
 
