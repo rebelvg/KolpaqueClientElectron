@@ -39,7 +39,7 @@ class Routes extends Component<any, any> {
   }
 
   render() {
-    const { settings } = this.props;
+    const { settings, integrations } = this.props;
     const { isLoading, updateNotification } = this.state;
 
     if (isLoading) {
@@ -61,7 +61,11 @@ class Routes extends Component<any, any> {
         <Route
           path="/about"
           render={(props) => (
-            <SettingsContainer settings={settings} {...props} />
+            <SettingsContainer
+              settings={settings}
+              integrations={integrations}
+              {...props}
+            />
           )}
         />
       </RouterWrapper>

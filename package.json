@@ -14,7 +14,7 @@
     "build": "yarn run build:api && yarn run build:app && ts-node build.ts",
     "release": "yarn ts-node release.ts",
     "start:api": "yarn build:api && cross-env NODE_ENV=dev electron .",
-    "start:app": "webpack-dev-server",
+    "start:app": "cross-env NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server",
     "start:dev": "concurrently --kill-others \"yarn run start:api\" \"yarn run start:app\"",
     "start": "yarn run build:api && yarn run build:app && electron ."
   },

@@ -25,7 +25,10 @@ export const getVersion = () => {
 };
 
 export const getSettings = () => {
-  return ipcRenderer.sendSync('getSettings');
+  return {
+    settings: ipcRenderer.sendSync('getSettings'),
+    integrations: ipcRenderer.sendSync('getIntegrations'),
+  };
 };
 
 export const importChannel = (name: string) => {

@@ -5,7 +5,6 @@ import Toggle from 'react-toggle-button';
 import styled from 'styled-components';
 import Select from 'react-select';
 import { openMenu } from '../../Channel/constants';
-// import { openMenu } from '../../Channel/constants';
 
 const { shell, ipcRenderer } = window.require('electron');
 
@@ -50,6 +49,7 @@ const SettingsForm: FunctionComponent<any> = ({
   handleSubmit,
   changeSetting,
   initialValues,
+  integrations,
 }) => (
   <Form onSubmit={handleSubmit}>
     <FieldWrapper>
@@ -58,7 +58,6 @@ const SettingsForm: FunctionComponent<any> = ({
         <Field name="LQ" component={ToggleAdapter} toggle={changeSetting} />
       </InputWrapper>
     </FieldWrapper>
-
     <FieldWrapper>
       <Label>Show Notifications</Label>
       <InputWrapper>
@@ -69,7 +68,6 @@ const SettingsForm: FunctionComponent<any> = ({
         />
       </InputWrapper>
     </FieldWrapper>
-
     <FieldWrapper>
       <Label>Enable Notification Sounds</Label>
       <InputWrapper>
@@ -80,7 +78,6 @@ const SettingsForm: FunctionComponent<any> = ({
         />
       </InputWrapper>
     </FieldWrapper>
-
     <FieldWrapper>
       <Label>Start Minimized</Label>
       <InputWrapper>
@@ -91,7 +88,6 @@ const SettingsForm: FunctionComponent<any> = ({
         />
       </InputWrapper>
     </FieldWrapper>
-
     <FieldWrapper>
       <Label>Play on Balloon Click</Label>
       <InputWrapper>
@@ -102,7 +98,6 @@ const SettingsForm: FunctionComponent<any> = ({
         />
       </InputWrapper>
     </FieldWrapper>
-
     <FieldWrapper>
       <Label>Night Mode</Label>
       <InputWrapper>
@@ -113,7 +108,6 @@ const SettingsForm: FunctionComponent<any> = ({
         />
       </InputWrapper>
     </FieldWrapper>
-
     <FieldWrapper>
       <Label>Confirm Auto-Start</Label>
       <InputWrapper>
@@ -124,7 +118,6 @@ const SettingsForm: FunctionComponent<any> = ({
         />
       </InputWrapper>
     </FieldWrapper>
-
     <FieldWrapper>
       <Label>Play In Window</Label>
       <InputWrapper>
@@ -135,9 +128,7 @@ const SettingsForm: FunctionComponent<any> = ({
         />
       </InputWrapper>
     </FieldWrapper>
-
     <br />
-
     <SelectWrapper>
       <Label>Sort Mode</Label>
       <SelectField
@@ -147,7 +138,6 @@ const SettingsForm: FunctionComponent<any> = ({
         select={changeSetting}
       />
     </SelectWrapper>
-
     <FieldWrapper>
       <Label>Reversed Sort</Label>
       <InputWrapper>
@@ -158,7 +148,6 @@ const SettingsForm: FunctionComponent<any> = ({
         />
       </InputWrapper>
     </FieldWrapper>
-
     <FieldWrapper>
       <Label>
         Youtube{' '}
@@ -182,7 +171,6 @@ const SettingsForm: FunctionComponent<any> = ({
         />
       </InputWrapper>
     </FieldWrapper>
-
     <FieldWrapper>
       <Label>Use Streamlink To Check Custom Channels</Label>
       <InputWrapper>
@@ -193,7 +181,6 @@ const SettingsForm: FunctionComponent<any> = ({
         />
       </InputWrapper>
     </FieldWrapper>
-
     <FieldWrapper>
       <Label>Enable Channels Sync (encrypted locally)</Label>
       <InputWrapper>
@@ -204,15 +191,9 @@ const SettingsForm: FunctionComponent<any> = ({
         />
       </InputWrapper>
     </FieldWrapper>
-
     <br />
-
     <InputWrapper>
-      <Label>
-        {
-          'Custom Rtmp Client Command, MUST include {{RTMP_URL}} text field, see example...'
-        }
-      </Label>
+      <Label>{'Custom RTMP Client Command'}</Label>
       <StyledField
         name="customRtmpClientCommand"
         type="text"
@@ -226,14 +207,7 @@ const SettingsForm: FunctionComponent<any> = ({
         }}
       />
     </InputWrapper>
-
     <br />
-
-    <br />
-    <br />
-
-    <div>You have to login via twitch to use twitch services.</div>
-
     <button
       onClick={() => {
         ipcRenderer.send('twitch_login');
@@ -241,25 +215,23 @@ const SettingsForm: FunctionComponent<any> = ({
     >
       Twitch Login
     </button>
-
+    Status:{' '}
+    {integrations.twitch !== null
+      ? integrations.twitch
+        ? 'Token valid'
+        : 'Token failed, check logs'
+      : 'Checking integration...'}
     <br />
-
-    <div>You have to login via klpq to use klpq services.</div>
-
+    <br />
     <button
       onClick={() => {
         ipcRenderer.send('klpq_login');
       }}
     >
-      Klpq Login
+      KLPQ Login
     </button>
-
     <br />
-
-    <div>
-      If client doesn't check channels try to login again or check the logs.
-    </div>
-
+    <br />
     {/* <InputWrapper>
       <StyledField
         name="syncId"

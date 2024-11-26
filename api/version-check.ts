@@ -21,6 +21,8 @@ const SERVICES = [
 
 const UPDATES: string[] = [];
 
+const isDev = process.env.NODE_ENV === 'dev';
+
 ipcMain.on('client_getInfo', async () => {
   addLogs('info', 'client_getInfo');
 
@@ -74,7 +76,7 @@ function streamlinkVersionCheck(): Promise<boolean> {
         addLogs('error', error);
 
         if (error['code'] === 'ENOENT') {
-          return resolve(true);
+          return resolve(false);
         }
 
         return resolve(false);
@@ -93,6 +95,10 @@ function streamlinkVersionCheck(): Promise<boolean> {
 
 export function loop(): void {
   (async (): Promise<void> => {
+    if (isDev) {
+      return;
+    }
+
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const hasUpdate = await clientVersionCheck();

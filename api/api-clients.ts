@@ -16,6 +16,33 @@ export interface ITwitchUser {
   refreshToken: string;
 }
 
+const integrationState: {
+  twitch: boolean | null;
+} = {
+  twitch: null,
+};
+
+ipcMain.on(
+  'getIntegrations',
+  (event) => (event.returnValue = integrationState),
+);
+
+ipcMain.on('settings_check_tokens', async () => {
+  addLogs('info', 'settings_check_tokens');
+
+  try {
+    await twitchClient.validateToken();
+
+    integrationState.twitch = true;
+  } catch (error) {
+    addLogs('error', { error });
+
+    integrationState.twitch = false;
+  }
+
+  config.updateSettingsPage();
+});
+
 ipcMain.on('twitch_login', async () => {
   addLogs('info', 'twitch_login');
 
@@ -79,7 +106,7 @@ class TwitchClient {
 
     this.axios.interceptors.request.use(
       (req) => {
-        addLogs('info', 'axios', req.url);
+        addLogs('debug', 'axios', req.url);
 
         return req;
       },
@@ -279,6 +306,19 @@ class TwitchClient {
     }
   }
 
+  public async validateToken() {
+    const url = new URL(`https://id.twitch.tv/oauth2/validate`);
+
+    await this.axios.get(url.href, {
+      headers: {
+        Authorization: `OAuth ${await this.getAccessToken()}`,
+        'Client-ID': TWITCH_CLIENT_ID,
+      },
+    });
+
+    return;
+  }
+
   private handleError(error: AxiosError): void {
     addLogs('error', error);
 
@@ -308,7 +348,7 @@ class KlpqStreamClient {
 
     this.axios.interceptors.request.use(
       (req) => {
-        addLogs('info', 'axios', req.url);
+        addLogs('debug', 'axios', req.url);
 
         return req;
       },
@@ -456,7 +496,7 @@ class ChaturbateClient {
 
     this.axios.interceptors.request.use(
       (req) => {
-        addLogs('info', 'axios', req.url);
+        addLogs('debug', 'axios', req.url);
 
         return req;
       },
@@ -522,7 +562,7 @@ class KlpqServiceClient {
 
     this.axios.interceptors.request.use(
       (req) => {
-        addLogs('info', 'axios', req.url);
+        addLogs('debug', 'axios', req.url);
 
         return req;
       },
@@ -769,7 +809,7 @@ class GithubClient {
 
     this.axios.interceptors.request.use(
       (req) => {
-        addLogs('info', 'axios', req.url);
+        addLogs('debug', 'axios', req.url);
 
         return req;
       },
@@ -823,7 +863,7 @@ class KlpqEncodeClient {
 
     this.axios.interceptors.request.use(
       (req) => {
-        addLogs('info', 'axios', req.url);
+        addLogs('debug', 'axios', req.url);
 
         return req;
       },

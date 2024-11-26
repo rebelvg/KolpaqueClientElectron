@@ -44,6 +44,16 @@ export default class LogsForm extends Component<any, any> {
 
   render() {
     return (
+      <button
+        onClick={() => {
+          ipcRenderer.send('logs_open_folder');
+        }}
+      >
+        Show Folder
+      </button>
+    );
+
+    return (
       <ReactJson
         src={this.state.logs}
         // @ts-ignore

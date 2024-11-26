@@ -4,6 +4,11 @@ import styled from 'styled-components';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import { Form } from 'react-final-form';
+import { IpcRenderer } from 'electron';
+
+const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
+  'electron',
+);
 
 import SettingsForm from '../../Settings/Forms/SettingsForm';
 import ImportForm from '../../Settings/Forms/ImportForm';
@@ -12,7 +17,7 @@ import Logs from '../../Settings/Forms/LogsForm';
 const options = [
   { value: 'general', label: 'General Settings' },
   { value: 'import', label: 'Import Settings' },
-  { value: 'logs', label: 'Error Logs' },
+  { value: 'logs', label: 'Logs' },
 ];
 
 export default class Settings extends Component<any, any> {
@@ -22,6 +27,8 @@ export default class Settings extends Component<any, any> {
     this.state = {
       activeKey: 'general',
     };
+
+    ipcRenderer.send('settings_check_tokens');
   }
 
   changeWindow = (selected) => {
@@ -49,7 +56,7 @@ export default class Settings extends Component<any, any> {
   submit = (values) => values;
 
   render() {
-    const { settings } = this.props;
+    const { settings, integrations } = this.props;
     const { activeKey } = this.state;
 
     return (
@@ -68,6 +75,7 @@ export default class Settings extends Component<any, any> {
             // @ts-ignore
             changeSetting={this.changeSetting}
             initialValues={{ ...settings }}
+            integrations={{ ...integrations }}
             render={(props) => <SettingsForm {...props} />}
           />
         )}

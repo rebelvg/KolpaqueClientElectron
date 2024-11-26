@@ -409,11 +409,11 @@ export class Config extends EventEmitter {
       syncSettings.init();
     }
 
-    main.mainWindow!.webContents.send(
-      'config_changeSetting',
-      settingName,
-      settingValue,
-    );
+    this.updateSettingsPage();
+  }
+
+  public updateSettingsPage() {
+    main.mainWindow!.webContents.send('config_changeSetting');
   }
 
   public generateSaveChannels(): ISavedSettingsFile['channels'] {

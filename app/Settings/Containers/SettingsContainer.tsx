@@ -22,7 +22,7 @@ export default class SettingsContainer extends Component<any, any> {
   }
 
   render() {
-    const { settings } = this.props;
+    const { settings, integrations } = this.props;
     const { version } = this.state;
 
     return (
@@ -31,6 +31,7 @@ export default class SettingsContainer extends Component<any, any> {
           importChannel={importChannel}
           changeSettings={changeSetting}
           settings={settings}
+          integrations={integrations}
         />
         <StyledFooter>
           <StyledLink to="/">Back</StyledLink>

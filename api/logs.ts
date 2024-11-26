@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { ipcMain, shell } from 'electron';
 import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -16,8 +16,14 @@ let logsUi: string[] = [];
 
 ipcMain.handle('config_logs', () => logsUi.slice().reverse());
 
+ipcMain.on('logs_open_folder', () => {
+  addLogs('info', 'logs_open_folder');
+
+  shell.showItemInFolder(appLogPath);
+});
+
 export function addLogs(
-  level: 'error' | 'info' | 'debug',
+  level: 'fatal' | 'error' | 'warn' | 'info' | 'debug',
   ...logs: any[]
 ): void {
   _.forEach(logs, (value, key) => {
@@ -52,26 +58,35 @@ export function addLogs(
   });
 
   const logLine = logs
-    .map((log) =>
-      util.inspect(log, {
-        depth: 1,
-        compact: true,
-        breakLength: Infinity,
-      }),
-    )
+    .map((log) => {
+      if (typeof log === 'object') {
+        return util.inspect(log, {
+          depth: 1,
+          compact: true,
+          breakLength: Infinity,
+        });
+      }
+
+      return log;
+    })
     .join(' ');
 
-  if (['error', 'info'].includes(level)) {
+  if (['fatal', 'error', 'warn', 'info'].includes(level)) {
     // eslint-disable-next-line no-console
     console.log(level, logLine);
   }
 
   fs.appendFileSync(
     appLogPath,
-    `${new Date().toLocaleString()} ${logLine}${os.EOL}`,
+    `${new Date().toISOString()} level:${level} ${logLine}${os.EOL}`,
   );
 
-  if (['error'].includes(level)) {
+  fs.appendFileSync(
+    `${appLogPath}-${level}`,
+    `${new Date().toISOString()} ${logLine}${os.EOL}`,
+  );
+
+  if (['fatal', 'error', 'warn'].includes(level)) {
     logsUi.push(logLine);
 
     logsUi = _.takeRight(logsUi, 50);

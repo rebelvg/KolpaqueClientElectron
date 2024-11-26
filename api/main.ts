@@ -275,13 +275,13 @@ app.on('ready', () => {
 });
 
 process.on('unhandledRejection', (err) => {
-  addLogs('info', 'unhandledRejection', err);
+  addLogs('fatal', 'unhandledRejection', err);
 
   throw err;
 });
 
 process.on('uncaughtException', (err) => {
-  addLogs('info', 'uncaughtException', err);
+  addLogs('fatal', 'uncaughtException', err);
 
   fs.appendFileSync(crashLogPath, `${err.stack}${os.EOL}`);
 

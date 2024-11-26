@@ -13,19 +13,21 @@ export default class AppContainer extends Component<any, any> {
   constructor(props) {
     super(props);
 
-    const settings = getSettings();
+    const { settings, integrations } = getSettings();
 
     this.state = {
       settings,
+      integrations,
     };
   }
 
   componentDidMount() {
     ipcRenderer.on('config_changeSetting', () => {
-      const settings = getSettings();
+      const { settings, integrations } = getSettings();
 
       this.setState({
         settings,
+        integrations,
       });
     });
 
@@ -37,7 +39,7 @@ export default class AppContainer extends Component<any, any> {
   }
 
   render() {
-    const { settings } = this.state;
+    const { settings, integrations } = this.state;
 
     const theme = settings.nightMode
       ? themes['nightTheme']
@@ -48,7 +50,7 @@ export default class AppContainer extends Component<any, any> {
         <ThemeProvider theme={theme}>
           <HashRouter>
             <Container>
-              <Routes settings={settings} />
+              <Routes settings={settings} integrations={integrations} />
             </Container>
           </HashRouter>
         </ThemeProvider>
