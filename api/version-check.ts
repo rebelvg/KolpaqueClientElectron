@@ -7,6 +7,7 @@ import { githubClient } from './api-clients';
 import { CLIENT_VERSION } from './globals';
 import { main } from './main';
 import { sleep } from './helpers';
+import * as semver from 'semver';
 
 const SERVICES = [
   {
@@ -64,9 +65,9 @@ async function clientVersionCheck(): Promise<boolean> {
     return false;
   }
 
-  const newVersion = versionData.tag_name;
+  const githubVersion = versionData.tag_name;
 
-  return newVersion !== CLIENT_VERSION;
+  return semver.gt(githubVersion, CLIENT_VERSION);
 }
 
 function streamlinkVersionCheck(): Promise<boolean> {
@@ -95,10 +96,6 @@ function streamlinkVersionCheck(): Promise<boolean> {
 
 export function loop(): void {
   (async (): Promise<void> => {
-    if (isDev) {
-      return;
-    }
-
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const hasUpdate = await clientVersionCheck();
