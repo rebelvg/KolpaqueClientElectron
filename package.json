@@ -26,6 +26,7 @@
     "app"
   ],
   "devDependencies": {
+    "@electron/packager": "^18.3.6",
     "@types/lodash": "4.14.120",
     "@types/semver": "^7.5.8",
     "@types/socket.io-client": "^1.4.32",
@@ -35,8 +36,7 @@
     "archiver": "^4.0.1",
     "concurrently": "^5.3.0",
     "cross-env": "^5.0.5",
-    "electron": "^16.0.0",
-    "electron-packager": "^14.2.1",
+    "electron": "^33.2.0",
     "eslint": "^7.13.0",
     "husky": "^1.3.1",
     "prettier": "^2.2.0",
@@ -48,7 +48,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@electron/remote": "^2.0.1",
+    "@electron/remote": "^2.1.2",
     "axios": "^1.7.2",
     "electron-default-menu": "^1.0.1",
     "fix-path": "^2.1.0",

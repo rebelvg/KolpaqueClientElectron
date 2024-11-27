@@ -32,13 +32,18 @@ export async function launchPlayerLink(
   channelLink: string,
   LQ: boolean,
 ): Promise<boolean> {
+  addLogs('info', 'launchPlayerLink', {
+    channelLink,
+    LQ,
+  });
+
   const channel = Config.buildChannel(channelLink);
 
   if (!channel) {
     return false;
   }
 
-  await launchPlayerChannel(channel, LQ, false);
+  await channel.startPlaying(LQ, false);
 
   return true;
 }

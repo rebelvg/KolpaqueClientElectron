@@ -215,14 +215,16 @@ const SettingsForm: FunctionComponent<any> = ({
     >
       Twitch Login
     </button>
-    Status:{' '}
-    {integrations.twitch !== null
-      ? integrations.twitch
-        ? 'Token valid'
-        : 'Token failed, check logs'
-      : 'Checking integration...'}
-    <br />
-    <br />
+
+    <Label>
+      Status:{' '}
+      {integrations.twitch !== null
+        ? integrations.twitch
+          ? 'Token valid'
+          : 'Token failed, check logs'
+        : 'Checking integration...'}
+    </Label>
+
     <button
       onClick={() => {
         ipcRenderer.send('klpq_login');

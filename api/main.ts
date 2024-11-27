@@ -204,7 +204,7 @@ export const contextMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     type: 'normal',
     visible: true,
     click: async (menuItem: MenuItem, browserWindow: BrowserWindow, event) => {
-      await launchPlayerLink(clipboard.readText(), !!event.ctrlKey);
+      await launchPlayerLink(clipboard.readText('clipboard'), !!event.ctrlKey);
     },
   },
   {

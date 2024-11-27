@@ -1,9 +1,9 @@
-import * as packager from 'electron-packager';
 import * as readlineSync from 'readline-sync';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as archiver from 'archiver';
+import { Options, packager } from '@electron/packager';
 
 const [, , platformArg, buildPathArg] = process.argv;
 
@@ -33,7 +33,7 @@ process.on('unhandledRejection', (error) => {
 });
 
 (async (): Promise<void> => {
-  const options = {
+  const options: Options = {
     dir: './',
     tmpdir: false,
     icon: './icons/icon',
@@ -54,7 +54,7 @@ process.on('unhandledRejection', (error) => {
     },
     asar: true,
     prune: true,
-    out: null,
+    out: undefined,
   };
 
   let platforms;
