@@ -232,6 +232,16 @@ const SettingsForm: FunctionComponent<any> = ({
     >
       KLPQ Login
     </button>
+
+    <Label>
+      Status:{' '}
+      {integrations.klpq !== null
+        ? integrations.klpq
+          ? 'Token valid'
+          : 'Token failed, check logs'
+        : 'Checking integration...'}
+    </Label>
+
     <br />
     <br />
     {/* <InputWrapper>

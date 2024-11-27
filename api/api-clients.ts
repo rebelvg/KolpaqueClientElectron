@@ -4,6 +4,7 @@ import { config } from './settings-file';
 import * as qs from 'querystring';
 import { shell, ipcMain } from 'electron';
 import * as uuid from 'uuid';
+import { sleep } from './helpers';
 
 const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
 
@@ -18,8 +19,10 @@ export interface ITwitchUser {
 
 const integrationState: {
   twitch: boolean | null;
+  klpq: boolean | null;
 } = {
   twitch: null,
+  klpq: null,
 };
 
 ipcMain.on(
@@ -30,14 +33,29 @@ ipcMain.on(
 ipcMain.on('settings_check_tokens', async () => {
   addLogs('info', 'settings_check_tokens');
 
+  integrationState.twitch = null;
+  integrationState.klpq = null;
+
+  config.updateSettingsPage();
+
   try {
     await twitchClient.validateToken();
 
     integrationState.twitch = true;
   } catch (error) {
-    addLogs('error', { error });
+    addLogs('error', error);
 
     integrationState.twitch = false;
+  }
+
+  try {
+    await klpqServiceClient.validateToken();
+
+    integrationState.klpq = true;
+  } catch (error) {
+    addLogs('error', error);
+
+    integrationState.klpq = false;
   }
 
   config.updateSettingsPage();
@@ -134,6 +152,8 @@ class TwitchClient {
   }
 
   public set refreshToken(refreshToken: string) {
+    addLogs('info', 'twitchRefreshToken', refreshToken);
+
     config.settings.twitchRefreshToken = refreshToken;
   }
 
@@ -590,6 +610,8 @@ class KlpqServiceClient {
   }
 
   public set jwtToken(jwtToken: string | null) {
+    addLogs('info', 'klpqJwtToken', jwtToken);
+
     config.settings.klpqJwtToken = jwtToken;
   }
 
@@ -737,6 +759,19 @@ class KlpqServiceClient {
 
       return;
     }
+  }
+
+  public async validateToken() {
+    const {
+      data: { jwt },
+    } = await this.axios.get<{ jwt: string }>(
+      `${this.baseUrl}/auth/klpq/refresh`,
+      {
+        headers: { jwt: this.jwtToken },
+      },
+    );
+
+    this.jwtToken = jwt;
   }
 
   private handleError(error: AxiosError): void {
@@ -899,6 +934,19 @@ class KlpqEncodeClient {
       return;
     }
   }
+}
+
+export function loop() {
+  (async () => {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        await klpqServiceClient.validateToken();
+      } catch (error) {}
+
+      await sleep(30 * 60 * 1000);
+    }
+  })();
 }
 
 export const twitchClient = new TwitchClient();

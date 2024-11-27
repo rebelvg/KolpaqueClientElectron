@@ -10,6 +10,7 @@ import {
   ITwitchUser,
 } from './api-clients';
 import { printNotification } from './notifications';
+import { ipcMain } from 'electron';
 
 export function run() {
   const io = SocketClient(KLPQ_SERVICE_URL, { timeout: 120 * 1000 });
@@ -30,6 +31,8 @@ export function run() {
     twitchClient.refreshToken = user.refreshToken;
 
     printNotification('Twitch', 'Login Successful');
+
+    ipcMain.emit('settings_check_tokens');
   });
 
   io.on('youtube_user', (user: ITwitchUser) => {
@@ -39,6 +42,8 @@ export function run() {
     youtubeClient.refreshToken = user.refreshToken;
 
     printNotification('Youtube', 'Login Successful');
+
+    ipcMain.emit('settings_check_tokens');
   });
 
   io.on('klpq_user', (signedJwt: string) => {
@@ -47,5 +52,7 @@ export function run() {
     klpqServiceClient.jwtToken = signedJwt;
 
     printNotification('KLPQ Service', 'Login Successful');
+
+    ipcMain.emit('settings_check_tokens');
   });
 }

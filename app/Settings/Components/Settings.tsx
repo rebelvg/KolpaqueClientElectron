@@ -27,7 +27,9 @@ export default class Settings extends Component<any, any> {
     this.state = {
       activeKey: 'general',
     };
+  }
 
+  componentDidMount(): void {
     ipcRenderer.send('settings_check_tokens');
   }
 
