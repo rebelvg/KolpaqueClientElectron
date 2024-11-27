@@ -28,9 +28,13 @@ import { addLogs, crashLogPath } from './logs';
 import { init } from './client-init';
 import { CLIENT_VERSION } from './globals';
 
-const isDev = process.env.NODE_ENV === 'dev';
-
-addLogs('info', 'is_dev', isDev, CLIENT_VERSION);
+addLogs(
+  'info',
+  'is_dev',
+  process.env.NODE_ENV,
+  process.env.REACT_ENV,
+  CLIENT_VERSION,
+);
 
 let forceQuit = false;
 
@@ -82,14 +86,16 @@ export const main: { mainWindow: BrowserWindow | undefined } = {
 
 app.setName('Kolpaque Client');
 
-app.on('second-instance', () => {
-  main.mainWindow!.show();
-});
+if (process.env.NODE_ENV !== 'dev') {
+  app.on('second-instance', () => {
+    main.mainWindow!.show();
+  });
 
-const lockStatus = app.requestSingleInstanceLock();
+  const lockStatus = app.requestSingleInstanceLock();
 
-if (!lockStatus) {
-  app.quit();
+  if (!lockStatus) {
+    app.quit();
+  }
 }
 
 function createWindow(): void {
@@ -116,10 +122,12 @@ function createWindow(): void {
 
   mainWindow.setMenu(null);
 
-  if (isDev) {
+  if (process.env.REACT_ENV === 'dev') {
     mainWindow.loadURL('http://localhost:10000');
 
-    mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools({
+      mode: 'detach',
+    });
   } else {
     mainWindow.loadURL(
       url.format({

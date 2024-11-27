@@ -15,7 +15,7 @@ import { SourcesEnum } from './enums';
 import { config } from './settings-file';
 
 const SETTINGS_FILE_PATH = path.join(
-  app.getPath('documents'),
+  process.env.NODE_ENV !== 'dev' ? app.getPath('documents') : './.config',
   'KolpaqueClientElectron.json',
 );
 

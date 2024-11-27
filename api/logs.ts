@@ -7,7 +7,8 @@ import { app } from 'electron';
 import * as util from 'util';
 import { AxiosError } from 'axios';
 
-const clientAppDataPath = app.getPath('userData');
+const clientAppDataPath =
+  process.env.NODE_ENV !== 'dev' ? app.getPath('userData') : './.config';
 
 export const appLogPath = path.join(clientAppDataPath, 'app.log');
 export const crashLogPath = path.join(clientAppDataPath, 'crash.log');
@@ -19,7 +20,7 @@ ipcMain.handle('config_logs', () => logsUi.slice().reverse());
 ipcMain.on('logs_open_folder', () => {
   addLogs('info', 'logs_open_folder');
 
-  shell.showItemInFolder(appLogPath);
+  shell.openPath(path.resolve(clientAppDataPath));
 });
 
 export function addLogs(

@@ -11,11 +11,11 @@ import { config } from './settings-file';
 import { ISavedSettingsFile } from './config-class';
 
 const SYNC_ID_FILE_PATH = path.join(
-  app.getPath('documents'),
+  process.env.NODE_ENV !== 'dev' ? app.getPath('documents') : './.config',
   'KolpaqueClientElectron_sync_id',
 );
 const SYNC_ENCRYPTION_KEY_FILE_PATH = path.join(
-  app.getPath('documents'),
+  process.env.NODE_ENV !== 'dev' ? app.getPath('documents') : './.config',
   'KolpaqueClientElectron_encryption_key',
 );
 

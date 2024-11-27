@@ -4,3 +4,5 @@ dist-api/
 dist-app/
 node_modules/
 *.log
+.config/*
+!.config/.gitkeep

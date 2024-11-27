@@ -12,9 +12,9 @@
     "build:api": "tsc --project api/tsconfig.json",
     "build": "yarn run build:api && yarn workspace app run build && ts-node build.ts",
     "release": "yarn ts-node release.ts",
-    "start:api": "yarn build:api && cross-env NODE_ENV=dev electron .",
+    "start:api": "yarn run build:api && cross-env NODE_ENV=dev REACT_ENV=dev electron .",
     "start:dev": "concurrently --kill-others \"yarn run start:api\" \"yarn workspace app run start\"",
-    "start": "yarn run build:api && yarn workspace app run build && electron ."
+    "start": "yarn run build:api && yarn workspace app run build && cross-env NODE_ENV=dev electron ."
   },
   "author": "KLPQ",
   "license": "CC0-1.0",

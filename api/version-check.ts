@@ -36,7 +36,10 @@ ipcMain.on('client_getInfo', async () => {
 
 ipcMain.on(
   'client_getVersion',
-  (event) => (event.returnValue = CLIENT_VERSION),
+  (event) =>
+    (event.returnValue = `${CLIENT_VERSION}${
+      process.env.NODE_ENV === 'dev' ? ' DEV' : ''
+    }`),
 );
 
 function sendInfo(update: string): void {

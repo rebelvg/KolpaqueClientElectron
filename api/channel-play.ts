@@ -61,7 +61,10 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
     webPreferences: {
       nodeIntegration: false,
     },
+    autoHideMenuBar: true,
   });
+
+  window.setMenu(null);
 
   await window.loadURL(embedLink);
 
