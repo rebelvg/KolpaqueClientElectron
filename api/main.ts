@@ -165,6 +165,12 @@ function createWindow(): void {
   });
 
   mainWindow.on('closed', () => {
+    const childWindows = mainWindow.getChildWindows();
+
+    for (const childWindow of childWindows) {
+      childWindow.close();
+    }
+
     main.mainWindow = undefined;
   });
 }
