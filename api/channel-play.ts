@@ -174,7 +174,7 @@ async function launchStreamlink(
             commandArgs,
           );
 
-          if (code > 0) {
+          if (code && code > 0) {
             reject([
               new Error(`Command failed: ${command} ${commandArgs.join(' ')}`),
               stdoutString,

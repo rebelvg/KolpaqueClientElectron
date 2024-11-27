@@ -7,8 +7,8 @@ import { Options, packager } from '@electron/packager';
 
 const [, , platformArg, buildPathArg] = process.argv;
 
-let platformOption;
-let pathOption;
+let platformOption: string | undefined;
+let pathOption: string;
 
 if (!platformArg) {
   platformOption = readlineSync.question(
