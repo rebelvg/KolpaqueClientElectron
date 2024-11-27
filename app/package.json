@@ -1,6 +1,10 @@
 {
   "name": "app",
   "version": "1.0.0",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider webpack --config webpack.config.production",
+    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server"
+  },
   "devDependencies": {
     "@types/react": "^16.0.0",
     "copy-webpack-plugin": "^4.1.1",
@@ -30,5 +34,9 @@
     "ts-loader": "^8.0.11",
     "url-loader": "^0.6.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "webpack": "^4.0.0",
+    "webpack-cli": "^3.0.0",
+    "webpack-dev-server": "^3.11.0"
+  }
 }

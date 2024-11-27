@@ -9,7 +9,7 @@ module.exports = {
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:10000',
     'webpack/hot/only-dev-server',
-    './app/index.tsx',
+    './index.tsx',
   ],
   module: {
     rules: [
@@ -19,7 +19,12 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
         test: /\.(jpe?g|gif|png|wav|mp3)$/,
+        include: [path.resolve(__dirname, './static')],
         loader: 'url-loader',
         options: {
           limit: 8192,
@@ -27,12 +32,8 @@ module.exports = {
       },
       {
         test: /\.(woff|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        include: [path.resolve(__dirname, 'static')],
+        include: [path.resolve(__dirname, './static')],
         loader: 'file-loader',
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
       },
     ],
   },

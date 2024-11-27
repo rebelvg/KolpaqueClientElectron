@@ -10,13 +10,11 @@
     "lint": "eslint . && yarn run prettier",
     "lint:fix": "eslint . --fix && yarn run prettier:fix",
     "build:api": "tsc --project api/tsconfig.json",
-    "build:app": "cross-env NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider webpack --config webpack.config.production",
-    "build": "yarn run build:api && yarn run build:app && ts-node build.ts",
+    "build": "yarn run build:api && yarn workspace app run build && ts-node build.ts",
     "release": "yarn ts-node release.ts",
     "start:api": "yarn build:api && cross-env NODE_ENV=dev electron .",
-    "start:app": "cross-env NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server",
-    "start:dev": "concurrently --kill-others \"yarn run start:api\" \"yarn run start:app\"",
-    "start": "yarn run build:api && yarn run build:app && electron ."
+    "start:dev": "concurrently --kill-others \"yarn run start:api\" \"yarn workspace app run start\"",
+    "start": "yarn run build:api && yarn workspace app run build && electron ."
   },
   "author": "KLPQ",
   "license": "CC0-1.0",
@@ -42,10 +40,7 @@
     "prettier": "^2.2.0",
     "readline-sync": "^1.4.7",
     "ts-node": "^9.0.0",
-    "typescript": "4.4.4",
-    "webpack": "^4.0.0",
-    "webpack-cli": "^3.0.0",
-    "webpack-dev-server": "^3.11.0"
+    "typescript": "4.4.4"
   },
   "dependencies": {
     "@electron/remote": "^2.1.2",
