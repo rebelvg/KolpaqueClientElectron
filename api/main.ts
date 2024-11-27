@@ -85,6 +85,7 @@ export const main: { mainWindow: BrowserWindow | undefined } = {
 };
 
 app.setName('Kolpaque Client');
+app.setAppUserModelId('Kolpaque Client');
 
 if (process.env.NODE_ENV !== 'dev') {
   app.on('second-instance', () => {
