@@ -184,13 +184,11 @@ app.on('ready', () => {
 
 export const contextMenuTemplate: Electron.MenuItemConstructorOptions[] = [
   {
-    label: 'Toggle Client',
+    label: 'Hide/Show Client',
     type: 'normal',
     visible: process.platform === 'linux',
     click: (): void => {
-      main.mainWindow!.isVisible()
-        ? main.mainWindow!.hide()
-        : main.mainWindow!.show();
+      toggleHideClient();
     },
   },
   {
@@ -247,27 +245,61 @@ app.on('ready', () => {
   appIcon.setToolTip('Kolpaque Client');
   appIcon.setIgnoreDoubleClickEvents(true);
 
+  appIcon.on('middle-click', () => {
+    addLogs('info', 'middle_click_event');
+  });
+
+  appIcon.on('double-click', () => {
+    addLogs('info', 'double_click_event');
+  });
+
   appIcon.on('click', () => {
     addLogs('info', 'left_click_event');
 
-    if (process.platform === 'darwin') {
-      showTrayContextMenu();
-    } else {
-      toggleHideClient();
+    switch (process.platform) {
+      case 'win32':
+        toggleHideClient();
+
+        break;
+      case 'linux':
+        toggleHideClient();
+
+        break;
+      case 'darwin':
+        showTrayContextMenu();
+
+        break;
+      default:
+        toggleHideClient();
+
+        break;
     }
   });
 
   appIcon.on('right-click', () => {
     addLogs('info', 'right_click_event');
 
-    if (process.platform === 'darwin') {
-      toggleHideClient();
-    } else {
-      showTrayContextMenu();
+    switch (process.platform) {
+      case 'win32':
+        showTrayContextMenu();
+
+        break;
+      case 'linux':
+        showTrayContextMenu();
+
+        break;
+      case 'darwin':
+        toggleHideClient();
+
+        break;
+      default:
+        showTrayContextMenu();
+
+        break;
     }
   });
 
-  if (process.platform === 'darwin') {
+  if (['darwin'].includes(process.platform)) {
     const menu = defaultMenu(app, shell);
 
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu));

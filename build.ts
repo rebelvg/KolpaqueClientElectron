@@ -36,7 +36,7 @@ process.on('unhandledRejection', (error) => {
   const options: Options = {
     dir: './',
     tmpdir: false,
-    icon: './icons/icon',
+    icon: './icons/icon.png',
     arch: 'x64',
     ignore: [
       /.git/,
