@@ -33,6 +33,18 @@ export default class Settings extends Component<any, any> {
     ipcRenderer.send('settings_check_tokens');
   }
 
+  componentDidUpdate(
+    prevProps: Readonly<any>,
+    prevState: Readonly<any>,
+    snapshot?: any,
+  ): void {
+    const { activeKey } = this.state;
+
+    if (prevState.activeKey !== activeKey && activeKey === 'general') {
+      ipcRenderer.send('settings_check_tokens');
+    }
+  }
+
   changeWindow = (selected) => {
     this.setState({
       activeKey: selected.value,
