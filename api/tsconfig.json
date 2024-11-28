@@ -8,6 +8,7 @@
     "incremental": false,
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
+    "noImplicitThis": true,
     "outDir": "../dist-api"
   },
   "include": ["../api/**/*"]
