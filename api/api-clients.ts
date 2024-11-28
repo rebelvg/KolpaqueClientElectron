@@ -541,8 +541,6 @@ class YoutubeClient {
       return;
     }
 
-    console.log(channelName);
-
     return await klpqServiceClient.getYoutubeChannels(
       channelName,
       await this.getAccessToken(),
@@ -753,8 +751,6 @@ class KlpqServiceClient {
         },
       });
 
-      console.log(data);
-
       return data;
     } catch (error) {
       this.handleError(error);
@@ -781,8 +777,6 @@ class KlpqServiceClient {
           accessToken,
         },
       });
-
-      console.log(data);
 
       return data;
     } catch (error) {

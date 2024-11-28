@@ -30,8 +30,6 @@ async function getStats(
 ): Promise<void> {
   await Promise.all(
     channels.map(async (channel) => {
-      console.log(channel);
-
       const data = await youtubeClient.getChannels(
         channel.name,
         channel.serviceName === ServiceNamesEnum.YOUTUBE_USERNAME
