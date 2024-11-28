@@ -50,7 +50,7 @@ export async function checkChannels(
 export async function loop(): Promise<void> {
   addLogs('info', 'channel_check_init');
 
-  await checkChannels(config.channels, false);
+  await checkChannels(config.channels, true);
 
   addLogs('info', 'channel_check_init_done');
 

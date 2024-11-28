@@ -90,7 +90,7 @@ const SettingsForm: FunctionComponent<any> = ({
         </InputWrapper>
       </FieldWrapper>
       <FieldWrapper>
-        <Label>Play on Balloon Click</Label>
+        <Label>Handle Notification Click</Label>
         <InputWrapper>
           <Field
             name="launchOnBalloonClick"

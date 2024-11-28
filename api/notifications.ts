@@ -4,6 +4,7 @@ import { config } from './settings-file';
 import { addLogs } from './logs';
 import { iconPathBalloon } from './main';
 import { Channel } from './channel-class';
+import { sleep } from './helpers';
 
 export function printNotification(
   title: string,
@@ -46,6 +47,12 @@ function printNewNotification(
   });
 
   notification.show();
+
+  sleep(5000).then(() => {
+    if (channel && !channel.isPinned) {
+      notification.close();
+    }
+  });
 }
 
 async function onBalloonClick(

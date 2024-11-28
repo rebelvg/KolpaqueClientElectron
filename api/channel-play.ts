@@ -220,12 +220,12 @@ async function launchStreamlink(
       }
 
       if (firstStart) {
-        printNotification('Error', error.message);
+        printNotification('Streamlink Error', error.message);
 
         const [, message] = stdout.split('[cli][error]');
 
         if (message) {
-          printNotification('Error', message?.trim());
+          printNotification('Streamlink Error', message?.trim());
         }
       }
     }

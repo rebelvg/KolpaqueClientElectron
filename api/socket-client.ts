@@ -30,7 +30,7 @@ export function run() {
 
     twitchClient.refreshToken = user.refreshToken;
 
-    printNotification('Twitch', 'Login Successful');
+    printNotification('Auth', 'Twitch Login Successful');
 
     ipcMain.emit('settings_check_tokens');
   });
@@ -41,7 +41,7 @@ export function run() {
     youtubeClient.accessToken = user.accessToken;
     youtubeClient.refreshToken = user.refreshToken;
 
-    printNotification('Youtube', 'Login Successful');
+    printNotification('Auth', 'Youtube Login Successful');
 
     ipcMain.emit('settings_check_tokens');
   });
@@ -51,7 +51,7 @@ export function run() {
 
     klpqServiceClient.jwtToken = signedJwt;
 
-    printNotification('KLPQ Service', 'Login Successful');
+    printNotification('Auth', 'KLPQ Login Successful');
 
     ipcMain.emit('settings_check_tokens');
   });
