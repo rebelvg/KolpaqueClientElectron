@@ -20,9 +20,11 @@ export interface ITwitchUser {
 const integrationState: {
   twitch: boolean | null;
   klpq: boolean | null;
+  youtube: boolean | null;
 } = {
   twitch: null,
   klpq: null,
+  youtube: null,
 };
 
 ipcMain.on(
@@ -56,6 +58,16 @@ ipcMain.on('settings_check_tokens', async () => {
     addLogs('error', error);
 
     integrationState.klpq = false;
+  }
+
+  try {
+    await youtubeClient.validateToken();
+
+    integrationState.youtube = true;
+  } catch (error) {
+    addLogs('error', error);
+
+    integrationState.youtube = false;
   }
 
   config.updateSettingsPage();
@@ -441,7 +453,9 @@ export interface IPostSyncChannels {
 }
 
 class YoutubeClient {
-  public accessToken: string;
+  private _accessToken: string | undefined;
+
+  private _accessTokenPromise: Promise<string> | undefined;
 
   public get refreshToken(): string {
     return config.settings.youtubeRefreshToken;
@@ -451,11 +465,53 @@ class YoutubeClient {
     config.settings.youtubeRefreshToken = refreshToken;
   }
 
-  public async refreshAccessToken(): Promise<boolean | undefined> {
-    if (this.accessToken) {
-      return;
+  private getAccessToken(): Promise<string> {
+    if (this._accessToken) {
+      return Promise.resolve(this._accessToken);
     }
 
+    if (this._accessTokenPromise) {
+      return this._accessTokenPromise;
+    }
+
+    const promise = new Promise<string>((resolve, reject) => {
+      klpqServiceClient
+        .refreshYoutubeToken(this.refreshToken)
+        .then((user) => {
+          this._accessTokenPromise = undefined;
+
+          if (!user) {
+            return reject('no_user');
+          }
+
+          this._accessToken = user.accessToken;
+          this.refreshToken = user.refreshToken;
+
+          return resolve(user.accessToken);
+        })
+        .catch((error) => {
+          this._accessTokenPromise = undefined;
+
+          reject(error);
+        });
+    });
+
+    this._accessTokenPromise = promise;
+
+    return promise;
+  }
+
+  public async validateToken() {
+    const res = await klpqServiceClient.refreshYoutubeToken(this.refreshToken);
+
+    if (!res) {
+      throw new Error('no_token');
+    }
+
+    this.refreshToken = res.refreshToken;
+  }
+
+  public async refreshAccessToken(): Promise<boolean | undefined> {
     if (!this.refreshToken) {
       addLogs('error', 'no_youtube_refresh_token');
 
@@ -470,7 +526,6 @@ class YoutubeClient {
       return false;
     }
 
-    this.accessToken = user.accessToken;
     this.refreshToken = user.refreshToken;
 
     addLogs('info', 'youtube_new_access_token');
@@ -480,12 +535,19 @@ class YoutubeClient {
 
   public async getChannels(
     channelName: string,
+    forHandle: string | undefined,
   ): Promise<IYoutubeChannels | undefined> {
     if (!config.settings.youtubeTosConsent) {
       return;
     }
 
-    return await klpqServiceClient.getYoutubeChannels(channelName);
+    console.log(channelName);
+
+    return await klpqServiceClient.getYoutubeChannels(
+      channelName,
+      await this.getAccessToken(),
+      forHandle,
+    );
   }
 
   public async getStreams(
@@ -495,7 +557,10 @@ class YoutubeClient {
       return;
     }
 
-    return await klpqServiceClient.getYoutubeStreams(channelId);
+    return await klpqServiceClient.getYoutubeStreams(
+      channelId,
+      await this.getAccessToken(),
+    );
   }
 }
 
@@ -669,17 +734,26 @@ class KlpqServiceClient {
 
   public async getYoutubeChannels(
     channelName: string,
+    accessToken: string,
+    forHandle: string | undefined,
   ): Promise<IYoutubeChannels | undefined> {
     if (!this.jwtToken) {
       return;
     }
 
-    const url = `${this.baseUrl}/youtube/channels?channelName=${channelName}`;
+    const url = `${this.baseUrl}/youtube/channels`;
 
     try {
       const { data } = await this.axios.get<IYoutubeChannels>(url, {
         headers: { jwt: this.jwtToken },
+        params: {
+          channelName,
+          accessToken,
+          forHandle,
+        },
       });
+
+      console.log(data);
 
       return data;
     } catch (error) {
@@ -691,17 +765,24 @@ class KlpqServiceClient {
 
   public async getYoutubeStreams(
     channelId: string,
+    accessToken: string,
   ): Promise<IYoutubeStreams | undefined> {
     if (!this.jwtToken) {
       return;
     }
 
-    const url = `${this.baseUrl}/youtube/streams?channelId=${channelId}`;
+    const url = `${this.baseUrl}/youtube/streams`;
 
     try {
       const { data } = await this.axios.get<IYoutubeStreams>(url, {
         headers: { jwt: this.jwtToken },
+        params: {
+          channelId,
+          accessToken,
+        },
       });
+
+      console.log(data);
 
       return data;
     } catch (error) {

@@ -208,7 +208,9 @@ const SettingsForm: FunctionComponent<any> = ({
           }}
         />
       </InputWrapper>
+
       <br />
+
       <button
         onClick={() => {
           ipcRenderer.send('twitch_login');
@@ -238,6 +240,23 @@ const SettingsForm: FunctionComponent<any> = ({
         Status:{' '}
         {integrations.klpq !== null
           ? integrations.klpq
+            ? 'Token valid'
+            : 'Token failed, check logs'
+          : 'Checking integration...'}
+      </Label>
+
+      <button
+        onClick={() => {
+          ipcRenderer.send('youtube_login');
+        }}
+      >
+        YouTube Login
+      </button>
+
+      <Label>
+        Status:{' '}
+        {integrations.youtube !== null
+          ? integrations.youtube
             ? 'Token valid'
             : 'Token failed, check logs'
           : 'Checking integration...'}

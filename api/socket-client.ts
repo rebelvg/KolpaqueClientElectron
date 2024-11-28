@@ -38,7 +38,6 @@ export function run() {
   io.on('youtube_user', (user: ITwitchUser) => {
     addLogs('info', 'socket_got_youtube_user', user);
 
-    youtubeClient.accessToken = user.accessToken;
     youtubeClient.refreshToken = user.refreshToken;
 
     printNotification('Auth', 'Youtube Login Successful');

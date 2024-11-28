@@ -41,7 +41,7 @@ export class YoutubeChannelStreamService extends BaseStreamService {
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     };
   }
-  public checkLiveTimeout = 120;
+  public checkLiveTimeout = 300;
   public checkLiveConfirmation = 3;
   public getStats = getStats;
   public buildChannelLink(channelName: string) {

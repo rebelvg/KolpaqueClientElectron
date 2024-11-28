@@ -30,7 +30,14 @@ async function getStats(
 ): Promise<void> {
   await Promise.all(
     channels.map(async (channel) => {
-      const data = await youtubeClient.getChannels(channel.name);
+      console.log(channel);
+
+      const data = await youtubeClient.getChannels(
+        channel.name,
+        channel.serviceName === ServiceNamesEnum.YOUTUBE_USERNAME
+          ? channel.name
+          : undefined,
+      );
 
       if (!data) {
         return;
@@ -76,7 +83,7 @@ export class YoutubeUserStreamService extends BaseStreamService {
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     };
   }
-  public checkLiveTimeout = 120;
+  public checkLiveTimeout = 300;
   public checkLiveConfirmation = 3;
   public getStats = getStats;
   public buildChannelLink(channelName: string) {
