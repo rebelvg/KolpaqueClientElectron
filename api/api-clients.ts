@@ -735,10 +735,6 @@ class KlpqServiceClient {
     accessToken: string,
     forHandle: string | undefined,
   ): Promise<IYoutubeChannels | undefined> {
-    if (!this.jwtToken) {
-      return;
-    }
-
     const url = `${this.baseUrl}/youtube/channels`;
 
     try {
@@ -763,10 +759,6 @@ class KlpqServiceClient {
     channelId: string,
     accessToken: string,
   ): Promise<IYoutubeStreams | undefined> {
-    if (!this.jwtToken) {
-      return;
-    }
-
     const url = `${this.baseUrl}/youtube/streams`;
 
     try {

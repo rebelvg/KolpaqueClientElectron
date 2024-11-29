@@ -31,8 +31,8 @@ import { CLIENT_VERSION } from './globals';
 addLogs(
   'info',
   'is_dev',
-  process.env.NODE_ENV,
-  process.env.REACT_ENV,
+  process.env.NODE_ENV === 'dev',
+  process.env.REACT_ENV === 'dev',
   CLIENT_VERSION,
 );
 

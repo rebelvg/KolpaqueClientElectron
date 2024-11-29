@@ -38,7 +38,7 @@ export function addLogs(
       logs[key] = {
         message: value.message,
         stack,
-        url: `${value?.request?.method} ${value?.request?.protocol}//${value?.request?.host}${value?.request?.path}`,
+        url: `${value.config?.method} ${value.config?.url}`,
         status: value?.response?.status,
         data: value?.response?.data,
       };
