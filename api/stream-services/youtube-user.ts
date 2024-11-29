@@ -6,23 +6,60 @@ import { Channel } from '../channel-class';
 import { youtubeClient } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { addLogs } from '../logs';
+import { Innertube } from 'youtubei.js';
 
 export async function getStatsBase(channelId: string): Promise<boolean> {
-  const data = await youtubeClient.getStreams(channelId);
+  try {
+    const youtube = await Innertube.create({});
 
-  if (!data) {
+    const channel = await youtube.getChannel(channelId);
+
+    await channel.getLiveStreams();
+
+    const streams = ((await channel.getLiveStreams()) as unknown) as {
+      current_tab?: {
+        content?: {
+          type: 'RichGrid';
+          contents?: {
+            type: 'RichItem';
+            content?: {
+              type: 'Video';
+              id: string;
+              duration?: {
+                text: 'LIVE';
+              };
+            };
+          }[];
+        };
+      };
+    };
+
+    if (streams.current_tab?.content?.type !== 'RichGrid') {
+      return false;
+    }
+
+    let isLive = false;
+
+    _.forEach(streams?.current_tab?.content?.contents, (stream) => {
+      if (stream?.type !== 'RichItem') {
+        return;
+      }
+
+      if (stream.content?.type !== 'Video') {
+        return;
+      }
+
+      if (stream.content.duration?.text === 'LIVE') {
+        isLive = true;
+      }
+    });
+
+    return isLive;
+  } catch (error) {
+    addLogs('error', error);
+
     return false;
   }
-
-  if (!data.items) {
-    return false;
-  }
-
-  if (data.items.length === 0) {
-    return false;
-  }
-
-  return true;
 }
 
 async function getStats(

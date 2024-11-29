@@ -495,11 +495,17 @@ class YoutubeClient {
       return;
     }
 
-    return await klpqServiceClient.getYoutubeChannels(
-      channelName,
-      await this.getAccessToken(),
-      forHandle,
-    );
+    try {
+      const data = await klpqServiceClient.getYoutubeChannels(
+        channelName,
+        await this.getAccessToken(),
+        forHandle,
+      );
+
+      return data;
+    } catch (error) {
+      this._accessToken = undefined;
+    }
   }
 
   public async getStreams(
@@ -509,10 +515,16 @@ class YoutubeClient {
       return;
     }
 
-    return await klpqServiceClient.getYoutubeStreams(
-      channelId,
-      await this.getAccessToken(),
-    );
+    try {
+      const data = await klpqServiceClient.getYoutubeStreams(
+        channelId,
+        await this.getAccessToken(),
+      );
+
+      return data;
+    } catch (error) {
+      this._accessToken = undefined;
+    }
   }
 }
 
@@ -628,20 +640,16 @@ class KlpqServiceClient {
   ): Promise<IYoutubeChannels | undefined> {
     const url = `${this.baseUrl}/youtube/channels`;
 
-    try {
-      const { data } = await axiosInstance.get<IYoutubeChannels>(url, {
-        headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
-        params: {
-          channelName,
-          accessToken,
-          forHandle,
-        },
-      });
+    const { data } = await axiosInstance.get<IYoutubeChannels>(url, {
+      headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
+      params: {
+        channelName,
+        accessToken,
+        forHandle,
+      },
+    });
 
-      return data;
-    } catch (error) {
-      return;
-    }
+    return data;
   }
 
   public async getYoutubeStreams(
@@ -650,19 +658,15 @@ class KlpqServiceClient {
   ): Promise<IYoutubeStreams | undefined> {
     const url = `${this.baseUrl}/youtube/streams`;
 
-    try {
-      const { data } = await axiosInstance.get<IYoutubeStreams>(url, {
-        headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
-        params: {
-          channelId,
-          accessToken,
-        },
-      });
+    const { data } = await axiosInstance.get<IYoutubeStreams>(url, {
+      headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
+      params: {
+        channelId,
+        accessToken,
+      },
+    });
 
-      return data;
-    } catch (error) {
-      return;
-    }
+    return data;
   }
 
   public async getSyncChannels(id: string): Promise<Buffer | undefined> {

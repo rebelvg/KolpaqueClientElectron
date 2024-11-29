@@ -55,6 +55,7 @@
     "semver": "^7.6.3",
     "socket.io-client": "^2.3.0",
     "source-map-support": "^0.5.19",
-    "uuid": "^8.0.0"
+    "uuid": "^8.0.0",
+    "youtubei.js": "^11.0.1"
   }
 }
