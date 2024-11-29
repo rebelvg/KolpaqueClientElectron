@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    addLogs('debug', 'axios', config.url, config.params);
+    addLogs('debug', 'axios', config.method, config.url, config.params);
 
     return config;
   },

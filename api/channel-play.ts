@@ -64,6 +64,8 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
     autoHideMenuBar: true,
   });
 
+  main.createdWindows.push(window);
+
   window.setMenu(null);
 
   await window.loadURL(embedLink);

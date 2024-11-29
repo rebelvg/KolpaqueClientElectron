@@ -80,8 +80,12 @@ if (process.platform === 'darwin') {
   );
 }
 
-export const main: { mainWindow: BrowserWindow | undefined } = {
+export const main: {
+  mainWindow: BrowserWindow | undefined;
+  createdWindows: BrowserWindow[];
+} = {
   mainWindow: undefined,
+  createdWindows: [],
 };
 
 app.setName('Kolpaque Client');
@@ -148,7 +152,7 @@ function createWindow(): void {
   });
 
   mainWindow.on('close', (e) => {
-    addLogs('info', 'force_quit', forceQuit);
+    addLogs('info', 'close', 'force_quit', forceQuit, mainWindow.isDestroyed());
 
     if (forceQuit) {
       return;
@@ -157,6 +161,16 @@ function createWindow(): void {
     if (process.platform === 'darwin') {
       e.preventDefault();
       mainWindow.hide();
+    } else {
+      const childWindows = main.createdWindows;
+
+      addLogs('info', 'close', childWindows.length);
+
+      for (const childWindow of childWindows) {
+        if (!childWindow.isDestroyed()) {
+          childWindow.close();
+        }
+      }
     }
   });
 
@@ -165,13 +179,7 @@ function createWindow(): void {
   });
 
   mainWindow.on('closed', () => {
-    if (!mainWindow.isDestroyed()) {
-      const childWindows = mainWindow.getChildWindows();
-
-      for (const childWindow of childWindows) {
-        childWindow.close();
-      }
-    }
+    addLogs('info', 'closed', forceQuit, mainWindow.isDestroyed());
 
     main.mainWindow = undefined;
   });
