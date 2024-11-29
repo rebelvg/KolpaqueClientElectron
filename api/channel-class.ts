@@ -18,6 +18,7 @@ import { launchPlayerChannel, playInWindow } from './channel-play';
 import { main } from './main';
 import { ISavedSettingsFile } from './config-class';
 import { SourcesEnum } from './enums';
+import { sleep } from './helpers';
 
 export class Channel extends EventEmitter {
   public readonly id: string;
@@ -175,7 +176,7 @@ export class Channel extends EventEmitter {
     return this.serviceObj.checkLiveConfirmation;
   }
 
-  public async setOnline(printBalloon: boolean) {
+  public setOnline(printBalloon: boolean) {
     this._offlineConfirmations = 0;
 
     if (this.isLive) {
@@ -185,7 +186,15 @@ export class Channel extends EventEmitter {
     addLogs('info', this.link, 'went_online');
 
     if (printBalloon) {
-      printNotification('Stream is Live', this.visibleName, this);
+      if (!this.autoStart) {
+        printNotification('Stream is Live', this.visibleName, this);
+      } else {
+        printNotification(
+          'Stream is Live with Autostart',
+          this.visibleName,
+          this,
+        );
+      }
     }
 
     if (
@@ -207,7 +216,9 @@ export class Channel extends EventEmitter {
             }
           });
       } else {
-        await this.startPlaying();
+        sleep(5000).then(async () => {
+          await this.startPlaying();
+        });
       }
     }
 

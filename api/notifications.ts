@@ -66,7 +66,7 @@ async function onBalloonClick(
     return;
   }
 
-  if (title.indexOf('Stream is Live') === 0) {
+  if (title.includes('Stream is Live')) {
     await channel?.startPlaying();
   }
 
