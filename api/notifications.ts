@@ -48,7 +48,7 @@ function printNewNotification(
 
   notification.show();
 
-  sleep(5000).then(() => {
+  sleep(30 * 1000).then(() => {
     if (channel && !channel.isPinned) {
       notification.close();
     }
