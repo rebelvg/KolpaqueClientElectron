@@ -32,7 +32,7 @@ class ChannelContainer extends PureComponent<any, any> {
     };
   }
 
-  private updateView = async (caller: string) => {
+  private updateView = async (caller: string, args?) => {
     const { activeTab, filter } = this.state;
 
     const { channels, count } = await getChannels(
@@ -40,7 +40,7 @@ class ChannelContainer extends PureComponent<any, any> {
         isLive: activeTab === 'online',
         filter,
       },
-      caller,
+      `${caller} ${JSON.stringify(args)}`,
     );
 
     this.setState({
@@ -53,8 +53,8 @@ class ChannelContainer extends PureComponent<any, any> {
     ipcRenderer.on('channel_changeSettingSync', () => {
       this.updateView('channel_changeSettingSync');
     });
-    ipcRenderer.on('channel_addSync', () => {
-      this.updateView('channel_addSync');
+    ipcRenderer.on('runChannelUpdates', (event, args) => {
+      this.updateView('runChannelUpdates', args);
     });
     ipcRenderer.on('channel_removeSync', () => {
       this.updateView('channel_removeSync');
@@ -65,7 +65,7 @@ class ChannelContainer extends PureComponent<any, any> {
 
   componentWillUnmount() {
     ipcRenderer.removeAllListeners('channel_changeSettingSync');
-    ipcRenderer.removeAllListeners('channel_addSync');
+    ipcRenderer.removeAllListeners('runChannelUpdates');
     ipcRenderer.removeAllListeners('channel_removeSync');
   }
 

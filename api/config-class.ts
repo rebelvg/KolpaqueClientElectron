@@ -390,14 +390,20 @@ export class Config extends EventEmitter {
     }
   }
 
-  public async runChannelUpdates(channels: Channel[], preInit: boolean) {
-    await checkChannels(channels, false);
+  public async runChannelUpdates(
+    channels: Channel[],
+    preInit: boolean,
+    source: string,
+  ) {
+    if (channels.length > 0) {
+      await checkChannels(channels, false);
+    }
 
     if (!preInit) {
       await getChannelInfo(channels);
     }
 
-    main.mainWindow!.webContents.send('channel_addSync');
+    main.mainWindow!.webContents.send('runChannelUpdates', source);
   }
 
   public setSettings(settingName: string, settingValue: any) {

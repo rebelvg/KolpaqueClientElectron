@@ -260,7 +260,7 @@ async function importBase(
   channelsAdded.forEach((channel) => channelsAddedAll.push(channel));
 
   if (emitEvent) {
-    await config.runChannelUpdates(channelsAdded, emitEvent);
+    await config.runChannelUpdates(channelsAdded, emitEvent, 'importBase');
   }
 
   return [channelsAddedAll, channelNames];

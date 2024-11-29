@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { Channel } from '../channel-class';
 import { youtubeClient } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
+import { addLogs } from '../logs';
 
 export async function getStatsBase(channelId: string): Promise<boolean> {
   const data = await youtubeClient.getStreams(channelId);
@@ -52,6 +53,8 @@ async function getStats(
           return getStatsBase(id);
         }),
       );
+
+      addLogs('info', channel.name, channelStatuses);
 
       if (_.some(channelStatuses)) {
         channel.setOnline(printBalloon);

@@ -72,7 +72,10 @@ export function addLogs(
     })
     .join(' ');
 
-  if (['fatal', 'error', 'warn', 'info'].includes(level)) {
+  if (
+    ['fatal', 'error', 'warn', 'info'].includes(level) ||
+    process.env.NODE_ENV === 'dev'
+  ) {
     // eslint-disable-next-line no-console
     console.log(level, logLine);
   }

@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { Channel } from '../channel-class';
 import { getStatsBase } from './youtube-user';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
+import { addLogs } from '../logs';
 
 async function getStats(
   channels: Channel[],
@@ -12,6 +13,8 @@ async function getStats(
   await Promise.all(
     channels.map(async (channel) => {
       const channelStatus = await getStatsBase(channel.name);
+
+      addLogs('info', channel.name, channelStatus);
 
       if (channelStatus) {
         channel.setOnline(printBalloon);

@@ -71,7 +71,7 @@ async function doImport(
   }
 
   if (emitEvent) {
-    await config.runChannelUpdates(channelsAdded, emitEvent);
+    await config.runChannelUpdates(channelsAdded, emitEvent, 'doImport');
   }
 
   return channelsAdded;
