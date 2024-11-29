@@ -66,6 +66,7 @@ ipcMain.on('settings_check_tokens', async () => {
 
   integrationState.twitch = null;
   integrationState.klpq = null;
+  integrationState.youtube = null;
 
   config.updateSettingsPage();
 
