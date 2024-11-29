@@ -60,6 +60,10 @@ export function addLogs(
 
   const logLine = logs
     .map((log) => {
+      if (typeof log === 'undefined') {
+        return typeof log;
+      }
+
       if (typeof log === 'object') {
         return util.inspect(log, {
           depth: 1,

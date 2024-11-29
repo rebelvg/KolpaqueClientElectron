@@ -5,6 +5,7 @@ import * as qs from 'querystring';
 import { shell, ipcMain } from 'electron';
 import * as uuid from 'uuid';
 import { sleep } from './helpers';
+import { CLIENT_VERSION } from './globals';
 
 const axiosInstance = axios.create({
   timeout: 120 * 1000,
@@ -17,7 +18,7 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
-    addLogs('error', 'axios', error);
+    addLogs('error', 'axios_req', error);
 
     return error;
   },
@@ -28,7 +29,7 @@ axiosInstance.interceptors.response.use(
     return res;
   },
   (error) => {
-    addLogs('error', 'axios', error);
+    addLogs('error', 'axios_res', error);
 
     return error;
   },
@@ -73,8 +74,6 @@ ipcMain.on('settings_check_tokens', async () => {
 
     integrationState.twitch = true;
   } catch (error) {
-    addLogs('error', error);
-
     integrationState.twitch = false;
   }
 
@@ -83,8 +82,6 @@ ipcMain.on('settings_check_tokens', async () => {
 
     integrationState.klpq = true;
   } catch (error) {
-    addLogs('error', error);
-
     integrationState.klpq = false;
   }
 
@@ -93,8 +90,6 @@ ipcMain.on('settings_check_tokens', async () => {
 
     integrationState.youtube = true;
   } catch (error) {
-    addLogs('error', error);
-
     integrationState.youtube = false;
   }
 
@@ -160,7 +155,7 @@ class TwitchClient {
   }
 
   public set refreshToken(refreshToken: string) {
-    addLogs('info', 'twitchRefreshToken', refreshToken);
+    addLogs('info', 'TwitchClient', 'refreshToken', refreshToken);
 
     config.settings.twitchRefreshToken = refreshToken;
   }
@@ -353,8 +348,6 @@ class TwitchClient {
   }
 
   private handleError(error: AxiosError): void {
-    addLogs('error', error);
-
     if (error?.response?.status === 401) {
       this._accessToken = undefined;
     }
@@ -383,8 +376,6 @@ class KlpqStreamClient {
 
       return data;
     } catch (error) {
-      addLogs('error', error);
-
       return;
     }
   }
@@ -397,8 +388,6 @@ class KlpqStreamClient {
 
       return data;
     } catch (error) {
-      addLogs('error', error);
-
       return;
     }
   }
@@ -431,6 +420,8 @@ class YoutubeClient {
   }
 
   public set refreshToken(refreshToken: string) {
+    addLogs('info', 'YoutubeClient', 'refreshToken', refreshToken);
+
     config.settings.youtubeRefreshToken = refreshToken;
   }
 
@@ -482,22 +473,16 @@ class YoutubeClient {
 
   public async refreshAccessToken(): Promise<boolean | undefined> {
     if (!this.refreshToken) {
-      addLogs('error', 'no_youtube_refresh_token');
-
       return false;
     }
 
     const user = await klpqServiceClient.refreshYoutubeToken(this.refreshToken);
 
     if (!user) {
-      addLogs('info', 'refresh_youtube_access_token_failed');
-
       return false;
     }
 
     this.refreshToken = user.refreshToken;
-
-    addLogs('info', 'youtube_new_access_token');
 
     return true;
   }
@@ -563,8 +548,6 @@ class ChaturbateClient {
 
       return data;
     } catch (error) {
-      addLogs('error', error);
-
       return;
     }
   }
@@ -578,7 +561,7 @@ class KlpqServiceClient {
   }
 
   public set jwtToken(jwtToken: string | null) {
-    addLogs('info', 'klpqJwtToken', jwtToken);
+    addLogs('info', 'KlpqServiceClient', 'jwtToken', jwtToken);
 
     config.settings.klpqJwtToken = jwtToken;
   }
@@ -604,17 +587,18 @@ class KlpqServiceClient {
   public async refreshTwitchToken(
     refreshToken: string,
   ): Promise<ITwitchUser | undefined> {
-    addLogs('info', 'refreshTwitchToken', refreshToken);
-
     try {
       const { data } = await axiosInstance.get<ITwitchUser>(
         `${this.baseUrl}/auth/twitch/refresh?refreshToken=${refreshToken}`,
+        {
+          headers: {
+            client_version: CLIENT_VERSION,
+          },
+        },
       );
 
       return data;
     } catch (error) {
-      addLogs('error', error);
-
       return;
     }
   }
@@ -625,12 +609,14 @@ class KlpqServiceClient {
     const url = `${this.baseUrl}/auth/google/refresh?refreshToken=${refreshToken}`;
 
     try {
-      const { data } = await axiosInstance.get<ITwitchUser>(url);
+      const { data } = await axiosInstance.get<ITwitchUser>(url, {
+        headers: {
+          client_version: CLIENT_VERSION,
+        },
+      });
 
       return data;
     } catch (error) {
-      addLogs('error', error);
-
       return;
     }
   }
@@ -644,7 +630,7 @@ class KlpqServiceClient {
 
     try {
       const { data } = await axiosInstance.get<IYoutubeChannels>(url, {
-        headers: { jwt: this.jwtToken },
+        headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
         params: {
           channelName,
           accessToken,
@@ -654,8 +640,6 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      this.handleError(error);
-
       return;
     }
   }
@@ -668,7 +652,7 @@ class KlpqServiceClient {
 
     try {
       const { data } = await axiosInstance.get<IYoutubeStreams>(url, {
-        headers: { jwt: this.jwtToken },
+        headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
         params: {
           channelId,
           accessToken,
@@ -677,8 +661,6 @@ class KlpqServiceClient {
 
       return data;
     } catch (error) {
-      this.handleError(error);
-
       return;
     }
   }
@@ -694,14 +676,12 @@ class KlpqServiceClient {
       } = await axiosInstance.get<IGetSyncChannels>(
         `${this.baseUrl}/sync/${id}`,
         {
-          headers: { jwt: this.jwtToken },
+          headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
         },
       );
 
       return Buffer.from(channels, 'hex');
     } catch (error) {
-      addLogs('error', error);
-
       return;
     }
   }
@@ -724,14 +704,12 @@ class KlpqServiceClient {
           channels: channels.toString('hex'),
         },
         {
-          headers: { jwt: this.jwtToken },
+          headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
         },
       );
 
       return newSyncId;
     } catch (error) {
-      addLogs('error', error);
-
       return;
     }
   }
@@ -742,17 +720,11 @@ class KlpqServiceClient {
     } = await axiosInstance.get<{ jwt: string }>(
       `${this.baseUrl}/auth/klpq/refresh`,
       {
-        headers: { jwt: this.jwtToken },
+        headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
       },
     );
 
     this.jwtToken = jwt;
-  }
-
-  private handleError(error: AxiosError): void {
-    addLogs('error', error);
-
-    return;
   }
 }
 
@@ -766,8 +738,6 @@ class CommonClient {
 
       return data;
     } catch (error) {
-      addLogs('error', 'COMMON_CLIENT_GET_PICTURE_ERROR', error);
-
       return;
     }
   }
@@ -792,8 +762,6 @@ class GithubClient {
 
       return data;
     } catch (error) {
-      addLogs('error', error);
-
       return;
     }
   }
@@ -810,8 +778,6 @@ class KlpqEncodeClient {
 
       return data;
     } catch (error) {
-      addLogs('error', error);
-
       return;
     }
   }
