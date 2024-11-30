@@ -2,3 +2,4 @@ dist-api/
 dist-app/
 *.js
 .config/
+scripts/
