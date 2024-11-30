@@ -49,11 +49,9 @@ export interface ITwitchUser {
 const integrationState: {
   twitch: boolean | null;
   klpq: boolean | null;
-  youtube: boolean | null;
 } = {
   twitch: null,
   klpq: null,
-  youtube: null,
 };
 
 ipcMain.on(
@@ -66,7 +64,6 @@ ipcMain.on('settings_check_tokens', async () => {
 
   integrationState.twitch = null;
   integrationState.klpq = null;
-  integrationState.youtube = null;
 
   config.updateSettingsPage();
 
@@ -84,14 +81,6 @@ ipcMain.on('settings_check_tokens', async () => {
     integrationState.klpq = true;
   } catch (error) {
     integrationState.klpq = false;
-  }
-
-  try {
-    await youtubeClient.validateToken();
-
-    integrationState.youtube = true;
-  } catch (error) {
-    integrationState.youtube = false;
   }
 
   config.updateSettingsPage();
@@ -499,7 +488,6 @@ class YoutubeClient {
     try {
       const data = await klpqServiceClient.getYoutubeChannels(
         channelName,
-        await this.getAccessToken(),
         forHandle,
       );
 
@@ -517,10 +505,7 @@ class YoutubeClient {
     }
 
     try {
-      const data = await klpqServiceClient.getYoutubeStreams(
-        channelId,
-        await this.getAccessToken(),
-      );
+      const data = await klpqServiceClient.getYoutubeStreams(channelId);
 
       return data;
     } catch (error) {
@@ -636,7 +621,6 @@ class KlpqServiceClient {
 
   public async getYoutubeChannels(
     channelName: string,
-    accessToken: string,
     forHandle: string | undefined,
   ): Promise<IYoutubeChannels | undefined> {
     const url = `${this.baseUrl}/youtube/channels`;
@@ -645,7 +629,6 @@ class KlpqServiceClient {
       headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
       params: {
         channelName,
-        accessToken,
         forHandle,
       },
     });
@@ -655,7 +638,6 @@ class KlpqServiceClient {
 
   public async getYoutubeStreams(
     channelId: string,
-    accessToken: string,
   ): Promise<IYoutubeStreams | undefined> {
     const url = `${this.baseUrl}/youtube/streams`;
 
@@ -663,7 +645,6 @@ class KlpqServiceClient {
       headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
       params: {
         channelId,
-        accessToken,
       },
     });
 

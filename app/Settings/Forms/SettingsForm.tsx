@@ -220,6 +220,8 @@ const SettingsForm: FunctionComponent<any> = ({
       </button>
 
       <Label>
+        {'Dependent features: twitch notifications, twitch import.'}
+        <br />
         Status:{' '}
         {integrations.twitch !== null
           ? integrations.twitch
@@ -237,6 +239,8 @@ const SettingsForm: FunctionComponent<any> = ({
       </button>
 
       <Label>
+        {'Dependent features: klpq sync, youtube notifications.'}
+        <br />
         Status:{' '}
         {integrations.klpq !== null
           ? integrations.klpq
@@ -245,25 +249,9 @@ const SettingsForm: FunctionComponent<any> = ({
           : 'Checking integration...'}
       </Label>
 
-      <button
-        onClick={() => {
-          ipcRenderer.send('youtube_login');
-        }}
-      >
-        YouTube Login
-      </button>
-
-      <Label>
-        Status:{' '}
-        {integrations.youtube !== null
-          ? integrations.youtube
-            ? 'Token valid'
-            : 'Token failed, check logs'
-          : 'Checking integration...'}
-      </Label>
-
       <br />
       <br />
+
       {/* <InputWrapper>
         <StyledField
           name="syncId"
