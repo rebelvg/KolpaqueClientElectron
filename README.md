@@ -8,7 +8,7 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 
 ## Automated builds
 
-- https://rebelvg.visualstudio.com/kolpaque
+- https://rebelvg.visualstudio.com/kolpaque/_build?definitionId=1
 
 ## Features
 
