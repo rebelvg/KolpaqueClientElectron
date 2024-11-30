@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as _ from 'lodash';
 
 import { Channel } from '../channel-class';
-import { youtubeClient } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { addLogs } from '../logs';
 import { Innertube } from 'youtubei.js';
@@ -68,35 +67,34 @@ async function getStats(
 ): Promise<void> {
   await Promise.all(
     channels.map(async (channel) => {
-      const data = await youtubeClient.getChannels(
-        channel.name,
-        channel.serviceName === ServiceNamesEnum.YOUTUBE_USERNAME
-          ? channel.name
-          : undefined,
-      );
+      try {
+        const youtube = await Innertube.create({});
 
-      if (!data) {
-        return;
-      }
+        const youtubeNavigation = ((await youtube.resolveURL(
+          channel.link,
+        )) as unknown) as {
+          payload?: {
+            browseId?: string;
+          };
+        };
 
-      if (!data.items) {
-        return;
-      }
+        if (!youtubeNavigation.payload?.browseId) {
+          return;
+        }
 
-      const channelStatuses = await Promise.all(
-        data.items.map(({ id }) => {
-          channel.meta.id = id;
+        const channelStatus = await getStatsBase(
+          youtubeNavigation.payload.browseId,
+        );
 
-          return getStatsBase(id);
-        }),
-      );
+        addLogs('info', channel.name, channelStatus);
 
-      addLogs('info', channel.name, channelStatuses);
-
-      if (_.some(channelStatuses)) {
-        channel.setOnline(printBalloon);
-      } else {
-        channel.setOffline();
+        if (channelStatus) {
+          channel.setOnline(printBalloon);
+        } else {
+          channel.setOffline();
+        }
+      } catch (error) {
+        addLogs('error', error);
       }
     }),
   );

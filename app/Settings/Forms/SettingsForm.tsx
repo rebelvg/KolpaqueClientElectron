@@ -239,7 +239,7 @@ const SettingsForm: FunctionComponent<any> = ({
       </button>
 
       <Label>
-        {'Dependent features: klpq sync, youtube notifications.'}
+        {'Dependent features: klpq sync.'}
         <br />
         Status:{' '}
         {integrations.klpq !== null
