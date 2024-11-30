@@ -7,33 +7,39 @@ import * as uuid from 'uuid';
 import { sleep } from './helpers';
 import { CLIENT_VERSION } from './globals';
 
-const axiosInstance = axios.create({
-  timeout: 120 * 1000,
-});
+function getAxios() {
+  const axiosInstance = axios.create({
+    timeout: 120 * 1000,
+  });
 
-axiosInstance.interceptors.request.use(
-  (config) => {
-    addLogs('debug', 'axios', config.method, config.url, config.params);
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      addLogs('debug', 'axios', config.method, config.url, config.params);
 
-    return config;
-  },
-  (error) => {
-    addLogs('error', 'axios_req', error);
+      return config;
+    },
+    (error) => {
+      addLogs('error', 'axios_req', error);
 
-    return error;
-  },
-);
+      return error;
+    },
+  );
 
-axiosInstance.interceptors.response.use(
-  (res) => {
-    return res;
-  },
-  (error) => {
-    addLogs('error', 'axios_res', error);
+  axiosInstance.interceptors.response.use(
+    (res) => {
+      addLogs('debug', 'axios', res.config.method, res.config.url, res.status);
 
-    return error;
-  },
-);
+      return res;
+    },
+    (error) => {
+      addLogs('error', 'axios_res', error);
+
+      return error;
+    },
+  );
+
+  return axiosInstance;
+}
 
 const TWITCH_CLIENT_ID = 'dk330061dv4t81s21utnhhdona0a91x';
 
@@ -76,7 +82,7 @@ ipcMain.on('settings_check_tokens', async () => {
   }
 
   try {
-    await klpqServiceClient.validateToken();
+    await klpqServiceClient.refreshKlpqToken();
 
     integrationState.klpq = true;
   } catch (error) {
@@ -140,7 +146,21 @@ class TwitchClient {
 
   private _accessTokenPromise: Promise<string> | undefined;
 
-  public get refreshToken(): string {
+  private axios = getAxios();
+
+  constructor() {
+    this.axios.interceptors.request.use(async (config) => {
+      config.headers.set(
+        'Authorization',
+        `Bearer ${await this.getAccessToken()}`,
+      );
+      config.headers.set('Client-ID', TWITCH_CLIENT_ID);
+
+      return config;
+    });
+  }
+
+  public get refreshToken(): string | null {
     return config.settings.twitchRefreshToken;
   }
 
@@ -150,13 +170,15 @@ class TwitchClient {
     config.settings.twitchRefreshToken = refreshToken;
   }
 
-  private getAccessToken(): Promise<string> {
-    if (this._accessToken) {
-      return Promise.resolve(this._accessToken);
-    }
+  public getAccessToken(force = false): Promise<string> {
+    if (!force) {
+      if (this._accessToken) {
+        return Promise.resolve(this._accessToken);
+      }
 
-    if (this._accessTokenPromise) {
-      return this._accessTokenPromise;
+      if (this._accessTokenPromise) {
+        return this._accessTokenPromise;
+      }
     }
 
     const promise = new Promise<string>((resolve, reject) => {
@@ -195,14 +217,11 @@ class TwitchClient {
     }
 
     try {
-      const { data: userData } = await axiosInstance.get<ITwitchClientUsers>(
-        `${this.baseUrl}/users?${channelNames
-          .map((channelName) => `login=${channelName}`)
-          .join('&')}`,
+      const { data: userData } = await this.axios.get<ITwitchClientUsers>(
+        `${this.baseUrl}/users`,
         {
-          headers: {
-            Authorization: `Bearer ${await this.getAccessToken()}`,
-            'Client-ID': TWITCH_CLIENT_ID,
+          params: {
+            login: channelNames,
           },
         },
       );
@@ -221,12 +240,11 @@ class TwitchClient {
     }
 
     try {
-      const { data: userData } = await axiosInstance.get<ITwitchClientUsers>(
-        `${this.baseUrl}/users?${ids.map((id) => `id=${id}`).join('&')}`,
+      const { data: userData } = await this.axios.get<ITwitchClientUsers>(
+        `${this.baseUrl}/users`,
         {
-          headers: {
-            Authorization: `Bearer ${await this.getAccessToken()}`,
-            'Client-ID': TWITCH_CLIENT_ID,
+          params: {
+            id: ids,
           },
         },
       );
@@ -245,16 +263,11 @@ class TwitchClient {
     }
 
     try {
-      const {
-        data: streamData,
-      } = await axiosInstance.get<ITwitchClientStreams>(
-        `${this.baseUrl}/streams/?${userIds
-          .map((userId) => `user_id=${userId}`)
-          .join('&')}`,
+      const { data: streamData } = await this.axios.get<ITwitchClientStreams>(
+        `${this.baseUrl}/streams`,
         {
-          headers: {
-            Authorization: `Bearer ${await this.getAccessToken()}`,
-            'Client-ID': TWITCH_CLIENT_ID,
+          params: {
+            user_id: userIds,
           },
         },
       );
@@ -269,21 +282,16 @@ class TwitchClient {
     userId: string,
     after: string,
   ): Promise<ITwitchFollowedChannels | undefined> {
-    const url = new URL(`${this.baseUrl}/channels/followed?user_id=${userId}`);
-
-    url.searchParams.set('first', '100');
-    url.searchParams.set('after', after);
+    const url = new URL(`${this.baseUrl}/channels/followed`);
 
     try {
-      const { data } = await axiosInstance.get<ITwitchFollowedChannels>(
-        url.href,
-        {
-          headers: {
-            Authorization: `Bearer ${await this.getAccessToken()}`,
-            'Client-ID': TWITCH_CLIENT_ID,
-          },
+      const { data } = await this.axios.get<ITwitchFollowedChannels>(url.href, {
+        params: {
+          user_id: userId,
+          first: '100',
+          after,
         },
-      );
+      });
 
       return data;
     } catch (error) {
@@ -295,7 +303,7 @@ class TwitchClient {
     const url = new URL(`${this.baseUrl}/users`);
 
     try {
-      const { data } = await axiosInstance.get<{
+      const { data } = await this.axios.get<{
         data: [
           {
             id: string;
@@ -311,12 +319,7 @@ class TwitchClient {
             created_at: string;
           },
         ];
-      }>(url.href, {
-        headers: {
-          Authorization: `Bearer ${await this.getAccessToken()}`,
-          'Client-ID': TWITCH_CLIENT_ID,
-        },
-      });
+      }>(url.href);
 
       return data;
     } catch (error) {
@@ -327,14 +330,7 @@ class TwitchClient {
   public async validateToken() {
     const url = new URL(`https://id.twitch.tv/oauth2/validate`);
 
-    await axiosInstance.get(url.href, {
-      headers: {
-        Authorization: `OAuth ${await this.getAccessToken()}`,
-        'Client-ID': TWITCH_CLIENT_ID,
-      },
-    });
-
-    return;
+    await this.axios.get(url.href);
   }
 
   private handleError(error: AxiosError): void {
@@ -355,6 +351,8 @@ export interface IKlpqChannelsList {
 class KlpqStreamClient {
   private baseUrl = 'https://stats-api.klpq.io';
 
+  private axios = getAxios();
+
   public async getChannel(
     channelName: string,
     host: string,
@@ -362,7 +360,7 @@ class KlpqStreamClient {
     const url = `${this.baseUrl}/channels/${host}/live/${channelName}`;
 
     try {
-      const { data } = await axiosInstance.get<IKlpqStreamChannel>(url);
+      const { data } = await this.axios.get<IKlpqStreamChannel>(url);
 
       return data;
     } catch (error) {
@@ -374,7 +372,7 @@ class KlpqStreamClient {
     const url = `${this.baseUrl}/channels/list`;
 
     try {
-      const { data } = await axiosInstance.get<IKlpqChannelsList>(url);
+      const { data } = await this.axios.get<IKlpqChannelsList>(url);
 
       return data;
     } catch (error) {
@@ -405,7 +403,9 @@ class YoutubeClient {
 
   private _accessTokenPromise: Promise<string> | undefined;
 
-  public get refreshToken(): string {
+  private axios = getAxios();
+
+  public get refreshToken(): string | null {
     return config.settings.youtubeRefreshToken;
   }
 
@@ -522,6 +522,8 @@ export interface IChaturbateChannel {
 class ChaturbateClient {
   private baseUrl = 'https://chaturbate.com/get_edge_hls_url_ajax';
 
+  private axios = getAxios();
+
   public async getChannel(
     channelName: string,
   ): Promise<IChaturbateChannel | undefined> {
@@ -533,7 +535,7 @@ class ChaturbateClient {
     };
 
     try {
-      const { data } = await axiosInstance.post<IChaturbateChannel>(
+      const { data } = await this.axios.post<IChaturbateChannel>(
         url,
         qs.stringify({
           room_slug: channelName,
@@ -553,6 +555,17 @@ class ChaturbateClient {
 
 class KlpqServiceClient {
   private baseUrl = KLPQ_SERVICE_URL;
+
+  private axios = getAxios();
+
+  constructor() {
+    this.axios.interceptors.request.use((config) => {
+      config.headers.set('client-version', CLIENT_VERSION);
+      config.headers.set('jwt', this.jwtToken);
+
+      return config;
+    });
+  }
 
   public get jwtToken(): string | null {
     return config.settings.klpqJwtToken;
@@ -583,14 +596,14 @@ class KlpqServiceClient {
   }
 
   public async refreshTwitchToken(
-    refreshToken: string,
+    refreshToken: string | null,
   ): Promise<ITwitchUser | undefined> {
     try {
-      const { data } = await axiosInstance.get<ITwitchUser>(
-        `${this.baseUrl}/auth/twitch/refresh?refreshToken=${refreshToken}`,
+      const { data } = await this.axios.get<ITwitchUser>(
+        `${this.baseUrl}/auth/twitch/refresh`,
         {
-          headers: {
-            client_version: CLIENT_VERSION,
+          params: {
+            refreshToken,
           },
         },
       );
@@ -601,15 +614,25 @@ class KlpqServiceClient {
     }
   }
 
+  public async refreshKlpqToken() {
+    const {
+      data: { jwt },
+    } = await this.axios.get<{ jwt: string }>(
+      `${this.baseUrl}/auth/klpq/refresh`,
+    );
+
+    this.jwtToken = jwt;
+  }
+
   public async refreshYoutubeToken(
-    refreshToken: string,
+    refreshToken: string | null,
   ): Promise<ITwitchUser | undefined> {
-    const url = `${this.baseUrl}/auth/google/refresh?refreshToken=${refreshToken}`;
+    const url = `${this.baseUrl}/auth/google/refresh`;
 
     try {
-      const { data } = await axiosInstance.get<ITwitchUser>(url, {
-        headers: {
-          client_version: CLIENT_VERSION,
+      const { data } = await this.axios.get<ITwitchUser>(url, {
+        params: {
+          refreshToken,
         },
       });
 
@@ -625,8 +648,7 @@ class KlpqServiceClient {
   ): Promise<IYoutubeChannels | undefined> {
     const url = `${this.baseUrl}/youtube/channels`;
 
-    const { data } = await axiosInstance.get<IYoutubeChannels>(url, {
-      headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
+    const { data } = await this.axios.get<IYoutubeChannels>(url, {
       params: {
         channelName,
         forHandle,
@@ -641,8 +663,7 @@ class KlpqServiceClient {
   ): Promise<IYoutubeStreams | undefined> {
     const url = `${this.baseUrl}/youtube/streams`;
 
-    const { data } = await axiosInstance.get<IYoutubeStreams>(url, {
-      headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
+    const { data } = await this.axios.get<IYoutubeStreams>(url, {
       params: {
         channelId,
       },
@@ -659,12 +680,7 @@ class KlpqServiceClient {
     try {
       const {
         data: { channels },
-      } = await axiosInstance.get<IGetSyncChannels>(
-        `${this.baseUrl}/sync/${id}`,
-        {
-          headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
-        },
-      );
+      } = await this.axios.get<IGetSyncChannels>(`${this.baseUrl}/sync/${id}`);
 
       return Buffer.from(channels, 'hex');
     } catch (error) {
@@ -683,41 +699,24 @@ class KlpqServiceClient {
     try {
       const {
         data: { id: newSyncId },
-      } = await axiosInstance.post<IPostSyncChannels>(
-        `${this.baseUrl}/sync`,
-        {
-          id,
-          channels: channels.toString('hex'),
-        },
-        {
-          headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
-        },
-      );
+      } = await this.axios.post<IPostSyncChannels>(`${this.baseUrl}/sync`, {
+        id,
+        channels: channels.toString('hex'),
+      });
 
       return newSyncId;
     } catch (error) {
       return;
     }
   }
-
-  public async validateToken() {
-    const {
-      data: { jwt },
-    } = await axiosInstance.get<{ jwt: string }>(
-      `${this.baseUrl}/auth/klpq/refresh`,
-      {
-        headers: { jwt: this.jwtToken, client_version: CLIENT_VERSION },
-      },
-    );
-
-    this.jwtToken = jwt;
-  }
 }
 
 class CommonClient {
+  private axios = getAxios();
+
   public async getContentAsBuffer(url: string): Promise<Buffer | undefined> {
     try {
-      const { data } = await axiosInstance.get<Buffer>(url, {
+      const { data } = await this.axios.get<Buffer>(url, {
         responseType: 'arraybuffer',
         timeout: 120 * 1000,
       });
@@ -736,11 +735,13 @@ interface IGithubLatestVersion {
 class GithubClient {
   private baseUrl = 'https://api.github.com';
 
+  private axios = getAxios();
+
   public async getLatestVersion(): Promise<IGithubLatestVersion | undefined> {
     const url = `${this.baseUrl}/repos/rebelvg/KolpaqueClientElectron/releases/latest`;
 
     try {
-      const { data } = await axiosInstance.get<IGithubLatestVersion>(url, {
+      const { data } = await this.axios.get<IGithubLatestVersion>(url, {
         headers: {
           'user-agent': 'KolpaqueClientElectron',
         },
@@ -756,11 +757,13 @@ class GithubClient {
 class KlpqEncodeClient {
   private baseUrl = 'https://encode.klpq.io';
 
+  private axios = getAxios();
+
   async getStreamId(channelName: string) {
     const url = `${this.baseUrl}/generate/mpd/live_${channelName}`;
 
     try {
-      const { data } = await axiosInstance.get<{ id: string }>(url);
+      const { data } = await this.axios.get<{ id: string }>(url);
 
       return data;
     } catch (error) {
@@ -774,7 +777,11 @@ export function loop() {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
-        await klpqServiceClient.validateToken();
+        await klpqServiceClient.refreshKlpqToken();
+      } catch (error) {}
+
+      try {
+        await twitchClient.getAccessToken(true);
       } catch (error) {}
 
       await sleep(30 * 60 * 1000);

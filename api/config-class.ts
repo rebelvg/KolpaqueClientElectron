@@ -123,9 +123,9 @@ interface ISettings {
   confirmAutoStart: boolean;
   playInWindow: boolean;
   useStreamlinkForCustomChannels: boolean;
-  twitchRefreshToken: string;
+  twitchRefreshToken: string | null;
   youtubeTosConsent: boolean;
-  youtubeRefreshToken: string;
+  youtubeRefreshToken: string | null;
   enableSync: boolean;
   klpqJwtToken: string | null;
   customRtmpClientCommand: string;
@@ -164,9 +164,9 @@ export class Config extends EventEmitter {
     confirmAutoStart: true,
     playInWindow: false,
     useStreamlinkForCustomChannels: false,
-    twitchRefreshToken: '',
+    twitchRefreshToken: null,
     youtubeTosConsent: false,
-    youtubeRefreshToken: '',
+    youtubeRefreshToken: null,
     enableSync: false,
     klpqJwtToken: null,
     customRtmpClientCommand: '',

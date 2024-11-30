@@ -225,8 +225,8 @@ const SettingsForm: FunctionComponent<any> = ({
         Status:{' '}
         {integrations.twitch !== null
           ? integrations.twitch
-            ? 'Token valid'
-            : 'Token failed, check logs'
+            ? 'Token valid.'
+            : 'Token failed, check logs.'
           : 'Checking integration...'}
       </Label>
 
@@ -244,8 +244,8 @@ const SettingsForm: FunctionComponent<any> = ({
         Status:{' '}
         {integrations.klpq !== null
           ? integrations.klpq
-            ? 'Token valid'
-            : 'Token failed, check logs'
+            ? 'Token valid.'
+            : 'Token failed, check logs.'
           : 'Checking integration...'}
       </Label>
 
