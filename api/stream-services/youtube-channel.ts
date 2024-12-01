@@ -10,19 +10,17 @@ async function getStats(
   channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
-  await Promise.all(
-    channels.map(async (channel) => {
-      const channelStatus = await getStatsBase(channel.name);
+  for (const channel of channels) {
+    const channelStatus = await getStatsBase(channel.name);
 
-      addLogs('info', channel.name, channelStatus);
+    addLogs('info', channel.name, channelStatus);
 
-      if (channelStatus) {
-        channel.setOnline(printBalloon);
-      } else {
-        channel.setOffline();
-      }
-    }),
-  );
+    if (channelStatus) {
+      channel.setOnline(printBalloon);
+    } else {
+      channel.setOffline();
+    }
+  }
 }
 
 export class YoutubeChannelStreamService extends BaseStreamService {

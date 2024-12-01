@@ -7,9 +7,11 @@ import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { addLogs } from '../logs';
 import { Innertube } from 'youtubei.js';
 
+const youtubePromise = Innertube.create({});
+
 export async function getStatsBase(channelId: string): Promise<boolean> {
   try {
-    const youtube = await Innertube.create({});
+    const youtube = await youtubePromise;
 
     const channel = await youtube.getChannel(channelId);
 
@@ -65,39 +67,37 @@ async function getStats(
   channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
-  await Promise.all(
-    channels.map(async (channel) => {
-      try {
-        const youtube = await Innertube.create({});
+  for (const channel of channels) {
+    try {
+      const youtube = await youtubePromise;
 
-        const youtubeNavigation = ((await youtube.resolveURL(
-          channel.link,
-        )) as unknown) as {
-          payload?: {
-            browseId?: string;
-          };
+      const youtubeNavigation = ((await youtube.resolveURL(
+        channel.link,
+      )) as unknown) as {
+        payload?: {
+          browseId?: string;
         };
+      };
 
-        if (!youtubeNavigation.payload?.browseId) {
-          return;
-        }
-
-        const channelStatus = await getStatsBase(
-          youtubeNavigation.payload.browseId,
-        );
-
-        addLogs('info', channel.name, channelStatus);
-
-        if (channelStatus) {
-          channel.setOnline(printBalloon);
-        } else {
-          channel.setOffline();
-        }
-      } catch (error) {
-        addLogs('error', error);
+      if (!youtubeNavigation.payload?.browseId) {
+        return;
       }
-    }),
-  );
+
+      const channelStatus = await getStatsBase(
+        youtubeNavigation.payload.browseId,
+      );
+
+      addLogs('info', channel.name, channelStatus);
+
+      if (channelStatus) {
+        channel.setOnline(printBalloon);
+      } else {
+        channel.setOffline();
+      }
+    } catch (error) {
+      addLogs('error', error);
+    }
+  }
 }
 
 export class YoutubeUserStreamService extends BaseStreamService {
