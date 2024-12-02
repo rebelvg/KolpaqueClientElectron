@@ -12,6 +12,8 @@
     "file-loader": "^1.1.5",
     "final-form": "^4.0.3",
     "html-webpack-plugin": "^4.5.0",
+    "mobx": "^6.4.2",
+    "mobx-react": "^7.3.0",
     "normalize.css": "^8.0.0",
     "prop-types": "^15.6.2",
     "react": "^16.2.0",
