@@ -21,7 +21,7 @@ function getAxios() {
     (error) => {
       addLogs('error', 'axios_req', error);
 
-      return error;
+      return Promise.reject(error);
     },
   );
 
@@ -34,7 +34,7 @@ function getAxios() {
     (error) => {
       addLogs('error', 'axios_res', error);
 
-      return error;
+      return Promise.reject(error);
     },
   );
 
@@ -144,16 +144,18 @@ class TwitchClient {
   private baseUrl = 'https://api.twitch.tv/helix';
   private _accessToken: string | undefined;
 
-  private _accessTokenPromise: Promise<string> | undefined;
+  private _accessTokenPromise: Promise<void> | undefined;
 
   private axios = getAxios();
 
   constructor() {
     this.axios.interceptors.request.use(async (config) => {
-      config.headers.set(
-        'Authorization',
-        `Bearer ${await this.getAccessToken()}`,
-      );
+      await this.getAccessToken();
+
+      if (this._accessToken) {
+        config.headers.set('Authorization', `Bearer ${this._accessToken}`);
+      }
+
       config.headers.set('Client-ID', TWITCH_CLIENT_ID);
 
       return config;
@@ -170,10 +172,10 @@ class TwitchClient {
     config.settings.twitchRefreshToken = refreshToken;
   }
 
-  public getAccessToken(force = false): Promise<string> {
+  public getAccessToken(force = false): Promise<void> {
     if (!force) {
       if (this._accessToken) {
-        return Promise.resolve(this._accessToken);
+        return Promise.resolve();
       }
 
       if (this._accessTokenPromise) {
@@ -181,25 +183,25 @@ class TwitchClient {
       }
     }
 
-    const promise = new Promise<string>((resolve, reject) => {
+    const promise = new Promise<void>((resolve, reject) => {
       klpqServiceClient
         .refreshTwitchToken(this.refreshToken)
         .then((user) => {
           this._accessTokenPromise = undefined;
 
           if (!user) {
-            return reject('no_user');
+            return resolve();
           }
 
           this._accessToken = user.accessToken;
           this.refreshToken = user.refreshToken;
 
-          return resolve(user.accessToken);
+          return resolve();
         })
         .catch((error) => {
           this._accessTokenPromise = undefined;
 
-          reject(error);
+          resolve();
         });
     });
 
@@ -401,9 +403,7 @@ export interface IPostSyncChannels {
 class YoutubeClient {
   private _accessToken: string | undefined;
 
-  private _accessTokenPromise: Promise<string> | undefined;
-
-  private axios = getAxios();
+  private _accessTokenPromise: Promise<void> | undefined;
 
   public get refreshToken(): string | null {
     return config.settings.youtubeRefreshToken;
@@ -415,34 +415,34 @@ class YoutubeClient {
     config.settings.youtubeRefreshToken = refreshToken;
   }
 
-  private getAccessToken(): Promise<string> {
+  private getAccessToken(): Promise<void> {
     if (this._accessToken) {
-      return Promise.resolve(this._accessToken);
+      return Promise.resolve();
     }
 
     if (this._accessTokenPromise) {
       return this._accessTokenPromise;
     }
 
-    const promise = new Promise<string>((resolve, reject) => {
+    const promise = new Promise<void>((resolve, reject) => {
       klpqServiceClient
         .refreshYoutubeToken(this.refreshToken)
         .then((user) => {
           this._accessTokenPromise = undefined;
 
           if (!user) {
-            return reject('no_user');
+            return resolve();
           }
 
           this._accessToken = user.accessToken;
           this.refreshToken = user.refreshToken;
 
-          return resolve(user.accessToken);
+          return resolve();
         })
         .catch((error) => {
           this._accessTokenPromise = undefined;
 
-          reject(error);
+          resolve();
         });
     });
 
