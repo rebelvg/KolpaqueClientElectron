@@ -11,7 +11,7 @@ async function getStatsBase(
 ): Promise<void> {
   const channelData = await klpqStreamClient.getChannel(
     channel.name,
-    channel.host(),
+    new URL(channel.link).hostname,
   );
 
   if (!channelData) {
@@ -38,8 +38,9 @@ async function getStats(
 
 export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
   public name = ServiceNamesEnum.KLPQ_VPS_RTMP;
-  public protocols = [ProtocolsEnum.RTMP];
+  public protocols = [ProtocolsEnum.RTMPS, ProtocolsEnum.RTMP];
   public hosts = [
+    'mediaserver.klpq.io:1936',
     'mediaserver.klpq.io',
     'mediaserver.klpq.men',
     'www.klpq.io',
@@ -63,7 +64,7 @@ export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
     channel: Channel,
   ): Promise<{ playLink: string | null; params: string[] }> {
     return Promise.resolve({
-      playLink: `rtmp://mediaserver.klpq.io/live/${channel.name}`,
+      playLink: `${this.protocols[0]}//${this.hosts[0]}/live/${channel.name}`,
       params: [],
     });
   }

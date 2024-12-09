@@ -16,6 +16,7 @@ export enum ServiceNamesEnum {
 
 export enum ProtocolsEnum {
   RTMP = 'rtmp:',
+  RTMPS = 'rtmps:',
   HTTP = 'http:',
   HTTPS = 'https:',
 }

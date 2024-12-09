@@ -160,10 +160,6 @@ export class Channel extends EventEmitter {
     return this.serviceObj.embedLink(this);
   }
 
-  public host() {
-    return this.serviceObj.hosts[0]!;
-  }
-
   public icon() {
     return this._icon ? this._icon : this.serviceObj.icon;
   }
