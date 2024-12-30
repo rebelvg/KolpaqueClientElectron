@@ -137,7 +137,7 @@ async function launchStreamlink(
 
     try {
       const [command, ...commandArgs] =
-        playLink.includes(ProtocolsEnum.RTMP) &&
+        [ProtocolsEnum.RTMP, ProtocolsEnum.RTMPS].includes(channel.protocol) &&
         config.settings.customRtmpClientCommand.includes('{{RTMP_URL}}')
           ? config.settings.customRtmpClientCommand
               .replace('{{RTMP_URL}}', playLink)
