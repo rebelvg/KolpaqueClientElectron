@@ -72,8 +72,10 @@ export const iconPathBalloon = path.normalize(
 );
 
 if (process.platform === 'darwin') {
-  app.dock.setIcon(iconPath);
-  app.dock.hide();
+  if (app.dock) {
+    app.dock.setIcon(iconPath);
+    app.dock.hide();
+  }
 
   iconPathTray = path.normalize(
     path.join(__dirname, '../icons', 'iconTemplate.png'),
