@@ -16,7 +16,7 @@ import Logs from '../../Settings/Forms/LogsForm';
 
 const options = [
   { value: 'general', label: 'General Settings' },
-  { value: 'import', label: 'Import Settings' },
+  // { value: 'import', label: 'Import Settings' },
   { value: 'logs', label: 'Logs' },
 ];
 

@@ -57,6 +57,7 @@ module.exports = {
       {
         args: 'none',
         varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
       },
     ],
     'no-return-await': 'off',

@@ -236,8 +236,8 @@ export const contextMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     label: 'Notifications',
     type: 'checkbox',
     visible: true,
-    click: (menuItem: MenuItem) => {
-      config.changeSetting('showNotifications', menuItem.checked);
+    click: async (menuItem: MenuItem) => {
+      await config.changeSetting('showNotifications', menuItem.checked);
     },
     checked: config.settings.showNotifications,
   },

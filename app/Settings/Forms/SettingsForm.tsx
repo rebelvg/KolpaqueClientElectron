@@ -59,6 +59,7 @@ const SettingsForm: FunctionComponent<any> = ({
           <Field name="LQ" component={ToggleAdapter} toggle={changeSetting} />
         </InputWrapper>
       </FieldWrapper>
+
       <FieldWrapper>
         <Label>Show Notifications</Label>
         <InputWrapper>
@@ -69,6 +70,7 @@ const SettingsForm: FunctionComponent<any> = ({
           />
         </InputWrapper>
       </FieldWrapper>
+
       <FieldWrapper>
         <Label>Enable Notification Sounds</Label>
         <InputWrapper>
@@ -79,6 +81,7 @@ const SettingsForm: FunctionComponent<any> = ({
           />
         </InputWrapper>
       </FieldWrapper>
+
       <FieldWrapper>
         <Label>Start Minimized</Label>
         <InputWrapper>
@@ -89,6 +92,7 @@ const SettingsForm: FunctionComponent<any> = ({
           />
         </InputWrapper>
       </FieldWrapper>
+
       <FieldWrapper>
         <Label>Handle Notification Click</Label>
         <InputWrapper>
@@ -99,6 +103,7 @@ const SettingsForm: FunctionComponent<any> = ({
           />
         </InputWrapper>
       </FieldWrapper>
+
       <FieldWrapper>
         <Label>Night Mode</Label>
         <InputWrapper>
@@ -109,6 +114,7 @@ const SettingsForm: FunctionComponent<any> = ({
           />
         </InputWrapper>
       </FieldWrapper>
+
       <FieldWrapper>
         <Label>Confirm Auto-Start</Label>
         <InputWrapper>
@@ -119,6 +125,7 @@ const SettingsForm: FunctionComponent<any> = ({
           />
         </InputWrapper>
       </FieldWrapper>
+
       <FieldWrapper>
         <Label>Play In Window</Label>
         <InputWrapper>
@@ -129,7 +136,9 @@ const SettingsForm: FunctionComponent<any> = ({
           />
         </InputWrapper>
       </FieldWrapper>
+
       <br />
+
       <SelectWrapper>
         <Label>Sort Mode</Label>
         <SelectField
@@ -139,6 +148,7 @@ const SettingsForm: FunctionComponent<any> = ({
           select={changeSetting}
         />
       </SelectWrapper>
+
       <FieldWrapper>
         <Label>Reversed Sort</Label>
         <InputWrapper>
@@ -149,7 +159,8 @@ const SettingsForm: FunctionComponent<any> = ({
           />
         </InputWrapper>
       </FieldWrapper>
-      <FieldWrapper>
+
+      {/* <FieldWrapper>
         <Label>
           Youtube{' '}
           <Link
@@ -171,7 +182,8 @@ const SettingsForm: FunctionComponent<any> = ({
             toggle={changeSetting}
           />
         </InputWrapper>
-      </FieldWrapper>
+      </FieldWrapper> */}
+
       <FieldWrapper>
         <Label>Use Streamlink To Check Custom Channels</Label>
         <InputWrapper>
@@ -182,7 +194,8 @@ const SettingsForm: FunctionComponent<any> = ({
           />
         </InputWrapper>
       </FieldWrapper>
-      <FieldWrapper>
+
+      {/* <FieldWrapper>
         <Label>Enable Channels Sync (encrypted locally)</Label>
         <InputWrapper>
           <Field
@@ -191,8 +204,10 @@ const SettingsForm: FunctionComponent<any> = ({
             toggle={changeSetting}
           />
         </InputWrapper>
-      </FieldWrapper>
+      </FieldWrapper> */}
+
       <br />
+
       <InputWrapper>
         <Label>{'Custom RTMP Client Command'}</Label>
         <StyledField
@@ -211,6 +226,19 @@ const SettingsForm: FunctionComponent<any> = ({
 
       <br />
 
+      <FieldWrapper>
+        <Label>Enable Twitch Import</Label>
+        <InputWrapper>
+          <Field
+            name="enableTwitchImport"
+            component={ToggleAdapter}
+            toggle={changeSetting}
+          />
+        </InputWrapper>
+      </FieldWrapper>
+
+      <br />
+
       <button
         onClick={() => {
           ipcRenderer.send('twitch_login');
@@ -220,7 +248,9 @@ const SettingsForm: FunctionComponent<any> = ({
       </button>
 
       <Label>
-        {'Dependent features: twitch notifications, twitch import.'}
+        {
+          'Features: live-stream notifications, import followed channels into client.'
+        }
         <br />
         Status:{' '}
         {integrations.twitch !== null
@@ -230,16 +260,16 @@ const SettingsForm: FunctionComponent<any> = ({
           : 'Checking integration...'}
       </Label>
 
-      <button
+      {/* <button
         onClick={() => {
           ipcRenderer.send('klpq_login');
         }}
       >
         KLPQ Login
-      </button>
+      </button> */}
 
-      <Label>
-        {'Dependent features: klpq sync.'}
+      {/* <Label>
+        {'Features: backup settings and channels.'}
         <br />
         Status:{' '}
         {integrations.klpq !== null
@@ -247,10 +277,10 @@ const SettingsForm: FunctionComponent<any> = ({
             ? 'Token valid.'
             : 'Token failed, check logs.'
           : 'Checking integration...'}
-      </Label>
+      </Label> */}
 
-      <br />
-      <br />
+      {/* <br />
+      <br /> */}
 
       {/* <InputWrapper>
         <StyledField

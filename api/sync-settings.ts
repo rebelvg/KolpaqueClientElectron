@@ -68,7 +68,11 @@ class SyncSettings {
     } catch (error) {}
   }
 
-  private set syncId(id: string) {
+  private set syncId(id: string | undefined) {
+    if (!id) {
+      return;
+    }
+
     if (this._syncId !== id) {
       fs.writeFileSync(SYNC_ID_FILE_PATH, id);
     }
@@ -90,78 +94,61 @@ class SyncSettings {
       return;
     }
 
-    const channels = config.generateSaveChannels();
-
     if (!syncId) {
-      const newSyncId = await klpqServiceClient.saveSyncChannels(
-        syncId,
-        encryptData(channels),
-      );
-
-      if (!newSyncId) {
-        return;
-      }
-
-      this.syncId = newSyncId;
-
-      main.mainWindow!.webContents.send(
-        'config_changeSetting',
-        'syncId',
-        syncId,
-      );
+      this.syncId = await this.save();
 
       return;
     }
 
     const encryptedChannels = await klpqServiceClient.getSyncChannels(syncId);
 
-    if (encryptedChannels) {
-      let syncedChannels: ISavedSettingsFile['channels'] | undefined;
-
-      try {
-        syncedChannels = decryptData(encryptedChannels);
-      } catch (error) {
-        addLogs('error', error);
-      }
-
-      if (!syncedChannels) {
-        addLogs('error', 'bad_sync_id', syncId);
-
-        return;
-      }
-
-      const newChannels: Channel[] = [];
-
-      for (const syncedChannel of syncedChannels) {
-        if (config.deletedChannels.includes(syncedChannel.link)) {
-          continue;
-        }
-
-        const findLocalChannel = config.findByQuery({
-          link: syncedChannel.link,
-        });
-
-        if (!findLocalChannel) {
-          addLogs('info', 'sync_adding_channel', syncedChannel.link);
-
-          const channel = config.addChannelLink(syncedChannel.link, null);
-
-          if (channel) {
-            channel.update(syncedChannel);
-
-            newChannels.push(channel);
-          }
-
-          continue;
-        }
-
-        findLocalChannel.update(syncedChannel);
-      }
-
-      await config.runChannelUpdates(newChannels, true, 'init');
+    if (!encryptedChannels) {
+      return;
     }
 
-    return;
+    let syncedChannels: ISavedSettingsFile['channels'] | undefined;
+
+    try {
+      syncedChannels = decryptData(encryptedChannels);
+    } catch (error) {
+      addLogs('error', error);
+    }
+
+    if (!syncedChannels) {
+      addLogs('error', 'bad_sync_id', syncId);
+
+      return;
+    }
+
+    const newChannels: Channel[] = [];
+
+    for (const syncedChannel of syncedChannels) {
+      if (config.deletedChannels.includes(syncedChannel.link)) {
+        continue;
+      }
+
+      const findLocalChannel = config.findByQuery({
+        link: syncedChannel.link,
+      });
+
+      if (!findLocalChannel) {
+        addLogs('info', 'sync_adding_channel', syncedChannel.link);
+
+        const channel = config.addChannelLink(syncedChannel.link, null);
+
+        if (channel) {
+          channel.update(syncedChannel);
+
+          newChannels.push(channel);
+        }
+
+        continue;
+      }
+
+      findLocalChannel.update(syncedChannel);
+    }
+
+    await config.runChannelUpdates(newChannels, true, 'init');
   }
 
   public async save() {
@@ -199,7 +186,7 @@ class SyncSettings {
 
     config.deletedChannels = [];
 
-    return;
+    return newSyncId;
   }
 }
 

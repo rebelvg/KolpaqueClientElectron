@@ -615,13 +615,23 @@ class KlpqServiceClient {
   }
 
   public async refreshKlpqToken() {
-    const {
-      data: { jwt },
-    } = await this.axios.get<{ jwt: string }>(
-      `${this.baseUrl}/auth/klpq/refresh`,
-    );
+    if (!this.jwtToken) {
+      return;
+    }
 
-    this.jwtToken = jwt;
+    try {
+      const {
+        data: { jwt },
+      } = await this.axios.get<{ jwt: string }>(
+        `${this.baseUrl}/auth/klpq/refresh`,
+      );
+
+      this.jwtToken = jwt;
+    } catch (error) {
+      if (error instanceof AxiosError && !!error.response?.status) {
+        this.jwtToken = null;
+      }
+    }
   }
 
   public async refreshYoutubeToken(

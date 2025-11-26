@@ -219,9 +219,11 @@ export class Config extends EventEmitter {
         }
       }
 
+      const { enableSync, klpqJwtToken, ...rest } = parseJson.settings;
+
       this.settings = {
         ...this.settings,
-        ...parseJson.settings,
+        ...rest,
       };
 
       this.migrations = parseJson.migrations || [];
@@ -302,14 +304,14 @@ export class Config extends EventEmitter {
     return true;
   }
 
-  changeSetting(settingName: string, settingValue: unknown): boolean {
+  async changeSetting(settingName: string, settingValue: unknown) {
     if (!this.settings.hasOwnProperty(settingName)) {
       return false;
     }
 
     this.settings[settingName] = settingValue;
 
-    this.setSettings(settingName, settingValue);
+    await this.setSettings(settingName, settingValue);
 
     return true;
   }
@@ -406,13 +408,13 @@ export class Config extends EventEmitter {
     main.mainWindow!.webContents.send('runChannelUpdates', source);
   }
 
-  public setSettings(settingName: string, settingValue: any) {
+  public async setSettings(settingName: string, settingValue: any) {
     if (settingName === 'showNotifications') {
       contextMenuTemplate[3]!.checked = settingValue as boolean;
     }
 
-    if (settingName === 'enableSync' || settingName === 'syncId') {
-      syncSettings.init();
+    if (settingName === 'enableSync') {
+      await syncSettings.save();
     }
 
     this.updateSettingsPage();

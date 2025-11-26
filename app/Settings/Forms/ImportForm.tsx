@@ -48,17 +48,6 @@ export default class ImportForm extends Component<any> {
             />
           </InputWrapper>
         </FieldWrapper> */}
-
-        <FieldWrapper>
-          <Label>Enable Twitch Import</Label>
-          <InputWrapper>
-            <Field
-              name="enableTwitchImport"
-              component={ToggleAdapter}
-              toggle={changeSetting}
-            />
-          </InputWrapper>
-        </FieldWrapper>
       </Form>
     );
   }
