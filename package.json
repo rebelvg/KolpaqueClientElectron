@@ -1,6 +1,6 @@
 {
   "name": "KolpaqueClientElectron",
-  "version": "0.6.17",
+  "version": "0.6.18",
   "description": "Multiplatform GUI for Streamlink",
   "main": "./dist-api/main.js",
   "scripts": {
