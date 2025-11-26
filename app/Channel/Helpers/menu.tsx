@@ -4,7 +4,7 @@ const { ipcRenderer } = window.require('electron');
 
 export const menuTemplate = (channel, edit) => [
   new MenuItem({
-    label: 'Play (Ctrl - Alt Quality, Shift - Auto-Restart)',
+    label: 'Play (Ctrl - Low Quality, Shift - Auto-Restart)',
     click: function (menuItem, browserWindow, event) {
       ipcRenderer.send(
         'channel_play',

@@ -36,20 +36,23 @@ async function getStats(
   );
 }
 
+const KLPQ_PROTOCOLS = [ProtocolsEnum.RTMPS, ProtocolsEnum.RTMP];
+const KLPQ_HOSTS = [
+  'mediaserver.klpq.io:1936',
+  'mediaserver.klpq.io',
+  'mediaserver.klpq.men',
+  'www.klpq.io',
+  'www.klpq.men',
+  'klpq.io',
+  'klpq.men',
+  'stream.klpq.men',
+  'vps.klpq.men',
+];
+
 export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
   public name = ServiceNamesEnum.KLPQ_VPS_RTMP;
-  public protocols = [ProtocolsEnum.RTMPS, ProtocolsEnum.RTMP];
-  public hosts = [
-    'mediaserver.klpq.io:1936',
-    'mediaserver.klpq.io',
-    'mediaserver.klpq.men',
-    'www.klpq.io',
-    'www.klpq.men',
-    'klpq.io',
-    'klpq.men',
-    'stream.klpq.men',
-    'vps.klpq.men',
-  ];
+  public protocols = KLPQ_PROTOCOLS;
+  public hosts = KLPQ_HOSTS;
   public paths = [/^\/live\/(\S+)\/$/gi, /^\/live\/(\S+)$/gi];
   public embedLink(channel: Channel): string {
     return `https://stream.klpq.io/${channel.name}`;
@@ -64,7 +67,7 @@ export class KolpaqueVpsRtmpStreamService extends BaseStreamService {
     channel: Channel,
   ): Promise<{ playLink: string | null; params: string[] }> {
     return Promise.resolve({
-      playLink: `${this.protocols[0]}//${this.hosts[0]}/live/${channel.name}`,
+      playLink: `${KLPQ_PROTOCOLS[0]}//${KLPQ_HOSTS[0]}/live/${channel.name}`,
       params: [],
     });
   }

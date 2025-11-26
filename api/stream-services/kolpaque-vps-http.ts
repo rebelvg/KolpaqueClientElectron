@@ -1,7 +1,7 @@
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { KolpaqueVpsRtmpStreamService } from './kolpaque-vps-rtmp';
 import { Channel } from '../channel-class';
-import { klpqStreamClient } from '../api-clients';
+import { IKlpqChannelsList } from '../api-clients';
 import { config } from '../settings-file';
 import { addLogs } from '../logs';
 import { SourcesEnum } from '../enums';
@@ -16,7 +16,7 @@ async function doImport(
     return [];
   }
 
-  const res = await klpqStreamClient.getChannelsList();
+  const res: IKlpqChannelsList = { channels: [] };
 
   if (!res) {
     return [];
@@ -87,7 +87,12 @@ export class KolpaqueVpsHttpStreamService extends KolpaqueVpsRtmpStreamService {
     /^\/stream\/(\S+)\/$/gi,
     /^\/stream\/(\S+)$/gi,
   ];
-  public doImport = doImport;
+  public doImport = async (
+    channelNames: string[],
+    emitEvent: boolean,
+  ): Promise<Channel[]> => {
+    return await [];
+  };
   public buildChannelLink(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/stream/${channelName}`;
   }
@@ -102,9 +107,8 @@ export class KolpaqueVpsHttpStreamServiceNew extends KolpaqueVpsHttpStreamServic
     /^\/(\S+)\/$/gi,
     /^\/(\S+)$/gi,
   ];
-  public doImport = async (): Promise<Channel[]> => {
-    return await [];
-  };
+
+  public doImport = doImport;
   public buildChannelLink(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/${channelName}`;
   }

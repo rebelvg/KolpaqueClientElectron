@@ -38,7 +38,7 @@ export default class ImportForm extends Component<any> {
 
     return (
       <Form onSubmit={this.submit}>
-        <FieldWrapper>
+        {/* <FieldWrapper>
           <Label>Enable Kolpaque Import</Label>
           <InputWrapper>
             <Field
@@ -47,7 +47,7 @@ export default class ImportForm extends Component<any> {
               toggle={changeSetting}
             />
           </InputWrapper>
-        </FieldWrapper>
+        </FieldWrapper> */}
 
         <FieldWrapper>
           <Label>Enable Twitch Import</Label>
