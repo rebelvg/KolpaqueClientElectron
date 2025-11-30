@@ -1,0 +1,44 @@
+{
+  "name": "KolpaqueClientElectron Dev",
+  // Use a simple, maintained Node/TypeScript dev image
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  // Bind your repo into the container
+  "workspaceFolder": "/workspaces/KolpaqueClientElectron",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/KolpaqueClientElectron,type=bind,consistency=cached",
+
+  // Run as the non-root 'node' user the image provides (usually UID 1000)
+  "remoteUser": "node",
+
+  // X11 socket + security hardening
+  "runArgs": [
+    "--shm-size=1g",                        // avoid Chromium /dev/shm issues
+    "--env", "DISPLAY",                     // forward host DISPLAY into container
+    "--volume", "/tmp/.X11-unix:/tmp/.X11-unix:ro", // X11 unix socket (read-only)
+    "--security-opt", "no-new-privileges",  // prevent privilege escalation
+    "--cap-drop", "ALL"                     // drop all Linux capabilities
+  ],
+
+  // Environment inside the container
+  "containerEnv": {
+    // Disable Chromium/Electron SUID sandbox (we're in a container anyway)
+    "ELECTRON_DISABLE_SANDBOX": "1",
+    // Keep it strictly X11 – no Wayland experiments here
+    "DISPLAY": "${localEnv:DISPLAY}",
+    // Optional, but can make GPU issues quieter
+    "LIBGL_ALWAYS_SOFTWARE": "1"
+  },
+
+  // VS Code features (optional but nice)
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+      ]
+    }
+  }
+}
