@@ -66,11 +66,14 @@ process.on('unhandledRejection', (error) => {
   }
 
   if (!pathOption) {
-    pathOption = os.homedir();
+    pathOption = path.resolve(
+      os.homedir(),
+      `${path.basename(__dirname)}-build`,
+    );
   }
 
   if (!fs.existsSync(pathOption)) {
-    throw new Error('bad_path');
+    fs.mkdirSync(pathOption);
   }
 
   pathOption = path.join(pathOption, 'KolpaqueClientElectron');
