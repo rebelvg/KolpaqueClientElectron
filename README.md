@@ -76,3 +76,49 @@ yarn run start
 ```
 yarn run build
 ```
+
+xhost +local:$(id -un)
+
+podman build -t electron-dev .
+
+podman run --rm -it \
+ --name electron-dev-wl \
+ --userns=keep-id \
+ --user "$(id -u):$(id -g)" \
+ \
+ -e XDG_RUNTIME_DIR \
+ -e WAYLAND_DISPLAY \
+ -e DISPLAY= \
+ -e DBUS_SESSION_BUS_ADDRESS \
+ \
+ -e ELECTRON_OZONE_PLATFORM_HINT=wayland \
+ -e OZONE_PLATFORM=wayland \
+ -e QT_QPA_PLATFORM=wayland \
+ -e ELECTRON_ENABLE_WAYLAND=1 \
+ -e ELECTRON_USE_WAYLAND=1 \
+ \
+ -v "$XDG_RUNTIME_DIR:$XDG_RUNTIME_DIR" \
+ --device /dev/dri \
+ -v /dev/dri:/dev/dri \
+ \
+ -v "$PWD:/workspace" \
+ -w /workspace \
+ electron-dev
+
+podman run --rm -it \
+ --name electron-dev-weston \
+ --userns=keep-id \
+ --user "$(id -u):$(id -g)" \
+ \
+ -e DISPLAY \
+ -e XAUTHORITY=/tmp/.Xauthority \
+ \
+ -v "$(xauth info | awk '/Authority file/ {print $3}'):/tmp/.Xauthority:ro" \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  \
+  --device /dev/dri \
+  -v /dev/dri:/dev/dri \
+  \
+  -v "$PWD:/workspace" \
+ -w /workspace \
+ electron-dev
