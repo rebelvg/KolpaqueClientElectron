@@ -1,0 +1,38 @@
+{
+  "name": "KolpaqueClientElectron",
+  "build": {
+    "dockerfile": "Containerfile"
+  },
+
+  // Extra args to pass to docker/podman run
+  "runArgs": [
+    // Keep host UID/GID mappings (podman understands this)
+    "--userns=keep-id",
+
+    // Wayland + GPU devices
+    "--device=/dev/dri",
+    "--volume=/dev/dri:/dev/dri",
+
+    // Mount the XDG_RUNTIME_DIR (where wayland + dbus sockets live)
+    "--volume=${localEnv:XDG_RUNTIME_DIR}:${localEnv:XDG_RUNTIME_DIR}"
+
+    // "--volume=/tmp/.X11-unix:/tmp/.X11-unix"
+  ],
+
+  // Env inside the container: pass through your host values
+  "containerEnv": {
+    "XDG_RUNTIME_DIR": "${localEnv:XDG_RUNTIME_DIR}",
+    "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
+    "DBUS_SESSION_BUS_ADDRESS": "${localEnv:DBUS_SESSION_BUS_ADDRESS}",
+
+    // You had `-e DISPLAY=` in your podman run -> explicitly unset X11
+    // "DISPLAY": "${localEnv:DISPLAY}"
+    "DISPLAY": ""
+  }
+
+  // "mounts": ["source=${localEnv:HOME}/.1password,target=/ssh-agent,type=bind"],
+
+  // "remoteEnv": {
+  //   "SSH_AUTH_SOCK": "/ssh-agent/agent.sock"
+  // }
+}

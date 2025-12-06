@@ -14,7 +14,7 @@
     "release": "yarn ts-node release.ts",
     "start:api": "yarn run build:api && cross-env NODE_ENV=dev REACT_ENV=dev electron .",
     "start:dev": "concurrently --kill-others \"yarn run start:api\" \"yarn workspace app run start\"",
-    "start": "yarn run build:api && yarn workspace app run build && cross-env NODE_ENV=dev electron ."
+    "start": "yarn run build:api && yarn workspace app run build && cross-env NODE_ENV=dev electron .  --ozone-platform=wayland"
   },
   "author": "KLPQ",
   "license": "CC0-1.0",
