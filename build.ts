@@ -22,10 +22,14 @@ if (!platformArg) {
 
 if (!buildPathArg) {
   pathOption = readlineSync.question(
-    `select output folder. (empty will default to home dir)${os.EOL}`,
+    `select output folder. (empty will default to tmp dir)${os.EOL}`,
   );
 } else {
   pathOption = buildPathArg;
+}
+
+if (!pathOption) {
+  pathOption = os.tmpdir();
 }
 
 process.on('unhandledRejection', (error) => {
@@ -39,11 +43,13 @@ process.on('unhandledRejection', (error) => {
     icon: './icons/icon.png',
     arch: 'x64',
     ignore: [
-      /.git/,
-      /.vscode/,
-      /.idea/,
-      /node_modules\/api/,
-      /node_modules\/app/,
+      /\/.git/,
+      /\/.vscode/,
+      /\/.idea/,
+      /\/node_modules\/api/,
+      /\/node_modules\/app/,
+      /\/.config/,
+      /\/.build/,
     ],
     overwrite: true,
     win32metadata: {
@@ -65,21 +71,12 @@ process.on('unhandledRejection', (error) => {
     platforms = [platformOption];
   }
 
-  if (!pathOption) {
-    pathOption = path.resolve(
-      os.homedir(),
-      `${path.basename(__dirname)}-build`,
-    );
-  }
-
   if (!fs.existsSync(pathOption)) {
-    fs.mkdirSync(pathOption);
+    throw new Error('no_folder');
   }
-
-  pathOption = path.join(pathOption, 'KolpaqueClientElectron');
 
   // eslint-disable-next-line no-console
-  console.log(options);
+  console.log(options, pathOption);
 
   for (const platform of platforms) {
     const appPaths: string[] = await packager({
@@ -91,6 +88,7 @@ process.on('unhandledRejection', (error) => {
     for (const appPath of appPaths) {
       const archivePath = await new Promise<string>((resolve) => {
         const folderName = path.basename(appPath);
+
         const archivePath = path.join(pathOption, `${folderName}.zip`);
 
         const archiveStream = fs.createWriteStream(archivePath);
@@ -105,6 +103,19 @@ process.on('unhandledRejection', (error) => {
 
       // eslint-disable-next-line no-console
       console.log('archiving_done', appPath, archivePath);
+
+      await fs.promises.cp(
+        appPath,
+        path.resolve(process.cwd(), '.build', path.basename(appPath)),
+        {
+          recursive: true,
+        },
+      );
+
+      await fs.promises.copyFile(
+        archivePath,
+        path.resolve(process.cwd(), '.build', path.basename(archivePath)),
+      );
     }
   }
 })();
