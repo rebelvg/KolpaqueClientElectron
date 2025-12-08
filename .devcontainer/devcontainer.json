@@ -31,7 +31,7 @@
   },
 
   "mounts": [
-    "type=volume,source=${localWorkspaceFolderBasename}-node_modules,target=/workspaces/${localWorkspaceFolderBasename}/node_modules",
+    "type=volume,source=${localWorkspaceFolderBasename}-node_modules,target=/workspaces/${localWorkspaceFolderBasename}/node_modules"
     // "source=${localEnv:HOME}/.1password,target=/ssh-agent,type=bind"
   ],
 
