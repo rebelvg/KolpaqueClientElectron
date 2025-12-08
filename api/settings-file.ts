@@ -28,7 +28,7 @@ ipcMain.on('channel_add', async (event, channelLink) => {
     return;
   }
 
-  await config.runChannelUpdates([channel], false, 'channel_add');
+  await config.runChannelUpdates([channel], true, 'channel_add');
 
   return channel;
 });

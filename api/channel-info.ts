@@ -4,6 +4,7 @@ import { Channel } from './channel-class';
 import { REGISTERED_SERVICES } from './globals';
 import { addLogs } from './logs';
 import { config } from './settings-file';
+import { refreshTrayIconMenuLinux } from './main';
 
 export async function getChannelInfo(channels: Channel[]) {
   await Promise.all(
@@ -29,6 +30,8 @@ export async function getChannelInfo(channels: Channel[]) {
       );
     }),
   );
+
+  refreshTrayIconMenuLinux();
 }
 
 export async function loop(): Promise<void> {

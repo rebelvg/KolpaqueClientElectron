@@ -394,14 +394,14 @@ export class Config extends EventEmitter {
 
   public async runChannelUpdates(
     channels: Channel[],
-    preInit: boolean,
+    updateChannelInfo: boolean,
     source: string,
   ) {
     if (channels.length > 0) {
       await checkChannels(channels, false);
     }
 
-    if (!preInit) {
+    if (updateChannelInfo) {
       await getChannelInfo(channels);
     }
 

@@ -112,33 +112,29 @@ async function getInfo(allChannels: Channel[]): Promise<undefined> {
 
     let _downloadedLogosCount = 0;
 
-    await Promise.all(
-      channels.map(async (channel) => {
-        await Promise.all(
-          _.map(userData.data, async (user) => {
-            if (user.login !== channel.name) {
-              return;
-            }
+    for (const channel of channels) {
+      for (const user of userData.data) {
+        if (user.login !== channel.name) {
+          continue;
+        }
 
-            const profileImageUrl = user.profile_image_url;
+        const profileImageUrl = user.profile_image_url;
 
-            if (!profileImageUrl) {
-              return;
-            }
+        if (!profileImageUrl) {
+          continue;
+        }
 
-            _downloadedLogosCount++;
+        _downloadedLogosCount++;
 
-            const logoBuffer = await commonClient.getContentAsBuffer(
-              profileImageUrl,
-            );
-
-            if (logoBuffer) {
-              channel._icon = logoBuffer;
-            }
-          }),
+        const logoBuffer = await commonClient.getContentAsBuffer(
+          profileImageUrl,
         );
-      }),
-    );
+
+        if (logoBuffer) {
+          channel._icon = logoBuffer;
+        }
+      }
+    }
 
     addLogs(
       'info',

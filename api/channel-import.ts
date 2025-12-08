@@ -7,27 +7,47 @@ import { sleep } from './helpers';
 import { addLogs } from './logs';
 import { ServiceNamesEnum } from './stream-services/_base';
 
+ipcMain.on('config_changeSetting', async (event, settingName, settingValue) => {
+  addLogs('info', 'config_changeSetting', settingName, settingValue);
+
+  if (settingName === 'enableTwitchImport' && settingValue) {
+    await Promise.all(
+      REGISTERED_SERVICES.map(async (service) => {
+        await service.doImportSettings(true);
+      }),
+    );
+  }
+});
+
 ipcMain.on('config_twitchImport', (event, channelName) => {
   addLogs('info', 'config_twitchImport', channelName);
 
-  return twitchImport(channelName);
+  return runImport();
 });
 
-async function twitchImport(channelName: string): Promise<boolean> {
-  let channels: Channel[] = [];
+async function runImport(): Promise<boolean> {
+  const channels: Channel[] = [];
 
   try {
     await Promise.all(
       REGISTERED_SERVICES.map(async (service) => {
-        if (service.name === ServiceNamesEnum.TWITCH) {
-          channels = await service.doImport([channelName], true);
+        switch (service.name) {
+          case ServiceNamesEnum.TWITCH:
+            const newChannels = await service.doImport([], true);
+
+            channels.push(...newChannels);
+
+            break;
+
+          default:
+            break;
         }
       }),
     );
 
     dialog.showMessageBox({
       type: 'info',
-      message: `Import done ${channels.length} channels added.`,
+      message: `Import done. ${channels.length} channels added.`,
     });
 
     return true;

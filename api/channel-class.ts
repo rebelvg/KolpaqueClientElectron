@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog } from 'electron';
+import { BrowserWindow, dialog, nativeImage } from 'electron';
 import { URL } from 'url';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
@@ -15,7 +15,7 @@ import {
 } from './stream-services/_base';
 import { customStreamService } from './stream-services/custom';
 import { launchPlayerChannel, playInWindow } from './channel-play';
-import { main } from './main';
+import { main, refreshTrayIconMenuLinux } from './main';
 import { ISavedSettingsFile } from './config-class';
 import { SourcesEnum } from './enums';
 import { sleep } from './helpers';
@@ -23,7 +23,7 @@ import { sleep } from './helpers';
 export class Channel extends EventEmitter {
   public readonly id: string;
   public serviceName: ServiceNamesEnum = ServiceNamesEnum.CUSTOM;
-  private serviceObj: BaseStreamService = customStreamService;
+  public serviceObj: BaseStreamService = customStreamService;
   public name: string;
   public link: string;
   public protocol: ProtocolsEnum;
@@ -38,7 +38,6 @@ export class Channel extends EventEmitter {
   public isPinned = false;
   public autoStart = false;
   public autoRestart = false;
-  public _trayIcon: Electron.NativeImage;
   public _playingProcesses = 0;
   public channelAdded: Date;
   public sources: SourcesEnum[] = [];
@@ -164,6 +163,20 @@ export class Channel extends EventEmitter {
     return this._icon ? this._icon : this.serviceObj.icon;
   }
 
+  public trayIcon() {
+    if (this._icon) {
+      return nativeImage.createFromBuffer(this._icon).resize({ height: 16 });
+    }
+
+    if (this.serviceObj.icon) {
+      return nativeImage
+        .createFromBuffer(this.serviceObj.icon)
+        .resize({ height: 16 });
+    }
+
+    return;
+  }
+
   public chatLink() {
     return this.serviceObj.chatLink(this);
   }
@@ -222,6 +235,8 @@ export class Channel extends EventEmitter {
       lastUpdated: Date.now(),
       isLive: true,
     });
+
+    refreshTrayIconMenuLinux();
   }
 
   public setOffline() {
@@ -241,6 +256,8 @@ export class Channel extends EventEmitter {
       lastUpdated: Date.now(),
       isLive: false,
     });
+
+    refreshTrayIconMenuLinux();
   }
 
   public async startPlaying(

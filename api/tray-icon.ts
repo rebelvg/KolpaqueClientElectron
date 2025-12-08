@@ -1,4 +1,4 @@
-import { BrowserWindow, Menu, MenuItem, nativeImage } from 'electron';
+import { BrowserWindow, Menu, MenuItem } from 'electron';
 
 import { config } from './settings-file';
 import { contextMenuTemplate } from './main';
@@ -14,15 +14,7 @@ export function rebuildIconMenu(): Menu {
 
   contextMenuTemplate[1]!['submenu'] = onlineChannels.map(
     (channel: Channel) => {
-      if (!channel._trayIcon) {
-        const iconBuffer = channel.icon();
-
-        if (iconBuffer) {
-          channel._trayIcon = nativeImage
-            .createFromBuffer(iconBuffer)
-            .resize({ height: 16 });
-        }
-      }
+      const icon = channel.trayIcon();
 
       return {
         label: !config.settings.LQ
@@ -37,7 +29,7 @@ export function rebuildIconMenu(): Menu {
         ) => {
           await channel.startPlaying(!!event.ctrlKey, !!event.shiftKey);
         },
-        icon: channel._trayIcon,
+        icon,
       };
     },
   );

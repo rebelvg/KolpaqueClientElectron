@@ -11,6 +11,7 @@ import {
 } from './api-clients';
 import { printNotification } from './notifications';
 import { ipcMain } from 'electron';
+import { REGISTERED_SERVICES } from './globals';
 
 export function run() {
   const io = SocketClient(KLPQ_SERVICE_URL, { timeout: 120 * 1000 });
@@ -25,7 +26,7 @@ export function run() {
     addLogs('error', 'connect_error', error);
   });
 
-  io.on('twitch_user', (user: ITwitchUser) => {
+  io.on('twitch_user', async (user: ITwitchUser) => {
     addLogs('info', 'socket_got_twitch_user', user);
 
     twitchClient.refreshToken = user.refreshToken;
@@ -33,6 +34,12 @@ export function run() {
     printNotification('Auth', 'Twitch Login Successful');
 
     ipcMain.emit('settings_check_tokens');
+
+    await Promise.all(
+      REGISTERED_SERVICES.map(async (service) => {
+        await service.doImportSettings(true);
+      }),
+    );
   });
 
   io.on('youtube_user', (user: ITwitchUser) => {
