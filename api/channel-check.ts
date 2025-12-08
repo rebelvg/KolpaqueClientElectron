@@ -5,7 +5,7 @@ import { sleep } from './helpers';
 import { serviceManager } from './services';
 
 export async function loop(): Promise<void> {
-  await serviceManager.checkChannels(config.channels, true);
+  await serviceManager.checkChannels(config.channels, false);
 
   _.forEach(serviceManager.services, async (service) => {
     // eslint-disable-next-line no-constant-condition
