@@ -1,4 +1,7 @@
+import * as _ from 'lodash';
 import { Channel } from '../channel-class';
+import { config } from '../settings-file';
+import { nativeImage } from 'electron';
 
 export enum ServiceNamesEnum {
   KLPQ_VPS_RTMP = 'klpq-vps-rtmp',
@@ -99,5 +102,13 @@ export class BaseStreamService implements AbstractStreamService {
   }
   public buildChannelLink(channelName: string): string {
     throw 'not_implemented';
+  }
+  get channels() {
+    return _.filter(config.channels, { serviceObj: this });
+  }
+  get _trayIcon() {
+    if (this.icon) {
+      return nativeImage.createFromBuffer(this.icon).resize({ height: 16 });
+    }
   }
 }

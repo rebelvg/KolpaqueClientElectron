@@ -5,7 +5,7 @@ import { loop as versionLoop } from './version-check';
 import { addLogs, run as runLogs } from './logs';
 import { run as runSocket } from './socket-client';
 import { syncSettings } from './sync-settings';
-import { loop } from './api-clients';
+import { clientLoop } from './api-clients';
 
 export async function init(): Promise<void> {
   addLogs('info', 'init_start');
@@ -20,9 +20,9 @@ export async function init(): Promise<void> {
 
   await syncSettings.init();
 
-  infoLoop();
+  await infoLoop();
 
-  await loop();
+  await clientLoop();
 
   addLogs('info', 'init_done');
 }

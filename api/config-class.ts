@@ -9,10 +9,9 @@ import { addLogs } from './logs';
 import { contextMenuTemplate, main } from './main';
 import { sleep } from './helpers';
 import { syncSettings } from './sync-settings';
-import { checkChannels } from './channel-check';
-import { getChannelInfo } from './channel-info';
 import { SourcesEnum } from './enums';
 import { config } from './settings-file';
+import { serviceManager } from './services';
 
 const SETTINGS_FILE_PATH = path.join(
   process.env.NODE_ENV !== 'dev' ? app.getPath('documents') : './.config',
@@ -398,11 +397,11 @@ export class Config extends EventEmitter {
     source: string,
   ) {
     if (channels.length > 0) {
-      await checkChannels(channels, false);
+      await serviceManager.checkChannels(channels, false);
     }
 
     if (updateChannelInfo) {
-      await getChannelInfo(channels);
+      await serviceManager.getInfoChannels(channels);
     }
 
     main.mainWindow!.webContents.send('runChannelUpdates', source);

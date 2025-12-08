@@ -1,10 +1,9 @@
-import { BrowserWindow, dialog, nativeImage } from 'electron';
+import { BrowserWindow, dialog, NativeImage } from 'electron';
 import { URL } from 'url';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 import * as uuid from 'uuid';
 
-import { REGISTERED_SERVICES } from './globals';
 import { addLogs } from './logs';
 import { printNotification } from './notifications';
 import { config } from './settings-file';
@@ -19,6 +18,7 @@ import { main, refreshTrayIconMenuLinux } from './main';
 import { ISavedSettingsFile } from './config-class';
 import { SourcesEnum } from './enums';
 import { sleep } from './helpers';
+import { serviceManager } from './services';
 
 export class Channel extends EventEmitter {
   public readonly id: string;
@@ -42,6 +42,8 @@ export class Channel extends EventEmitter {
   public channelAdded: Date;
   public sources: SourcesEnum[] = [];
   public meta: Record<string, string> = {};
+  public _trayIcon: NativeImage;
+  public _iconChecked = false;
 
   constructor(channelLink: string) {
     super();
@@ -65,7 +67,7 @@ export class Channel extends EventEmitter {
       throw new Error('empty_hostname');
     }
 
-    for (const serviceObj of REGISTERED_SERVICES) {
+    for (const serviceObj of serviceManager.services) {
       if (!serviceObj.protocols.includes(protocol)) {
         continue;
       }
@@ -164,14 +166,12 @@ export class Channel extends EventEmitter {
   }
 
   public trayIcon() {
-    if (this._icon) {
-      return nativeImage.createFromBuffer(this._icon).resize({ height: 16 });
+    if (this._trayIcon) {
+      return this._trayIcon;
     }
 
-    if (this.serviceObj.icon) {
-      return nativeImage
-        .createFromBuffer(this.serviceObj.icon)
-        .resize({ height: 16 });
+    if (this.serviceObj._trayIcon) {
+      return this.serviceObj._trayIcon;
     }
 
     return;

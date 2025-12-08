@@ -598,6 +598,10 @@ class KlpqServiceClient {
   public async refreshTwitchToken(
     refreshToken: string | null,
   ): Promise<ITwitchUser | undefined> {
+    if (!refreshToken) {
+      return;
+    }
+
     try {
       const { data } = await this.axios.get<ITwitchUser>(
         `${this.baseUrl}/auth/twitch/refresh`,
@@ -782,17 +786,14 @@ class KlpqEncodeClient {
   }
 }
 
-export function loop() {
+export function clientLoop() {
   (async () => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      try {
-        await klpqServiceClient.refreshKlpqToken();
-      } catch (error) {}
-
-      try {
-        await twitchClient.getAccessToken(true);
-      } catch (error) {}
+      await Promise.allSettled([
+        klpqServiceClient.refreshKlpqToken(),
+        twitchClient.getAccessToken(true),
+      ]);
 
       await sleep(30 * 60 * 1000);
     }

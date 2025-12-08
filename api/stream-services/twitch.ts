@@ -13,6 +13,7 @@ import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { config } from '../settings-file';
 import { addLogs } from '../logs';
 import { SourcesEnum } from '../enums';
+import { nativeImage } from 'electron';
 
 async function getStats(
   channels: Channel[],
@@ -83,7 +84,10 @@ async function getStats(
 }
 
 async function getInfo(allChannels: Channel[]): Promise<undefined> {
-  const filteredChannels = _.filter(allChannels, (channel) => !channel._icon);
+  const filteredChannels = _.filter(
+    allChannels,
+    (channel) => !channel._iconChecked,
+  );
 
   if (filteredChannels.length === 0) {
     return;
@@ -130,8 +134,12 @@ async function getInfo(allChannels: Channel[]): Promise<undefined> {
           profileImageUrl,
         );
 
+        channel._iconChecked = true;
+
         if (logoBuffer) {
-          channel._icon = logoBuffer;
+          channel._trayIcon = nativeImage
+            .createFromBuffer(logoBuffer)
+            .resize({ height: 16 });
         }
       }
     }

@@ -11,7 +11,8 @@ import {
 } from './api-clients';
 import { printNotification } from './notifications';
 import { ipcMain } from 'electron';
-import { REGISTERED_SERVICES } from './globals';
+import { serviceManager } from './services';
+import { ServiceNamesEnum } from './stream-services/_base';
 
 export function run() {
   const io = SocketClient(KLPQ_SERVICE_URL, { timeout: 120 * 1000 });
@@ -35,11 +36,9 @@ export function run() {
 
     ipcMain.emit('settings_check_tokens');
 
-    await Promise.all(
-      REGISTERED_SERVICES.map(async (service) => {
-        await service.doImportSettings(true);
-      }),
-    );
+    await serviceManager.getInfo(ServiceNamesEnum.TWITCH);
+
+    await serviceManager.doImport(ServiceNamesEnum.TWITCH, true);
   });
 
   io.on('youtube_user', (user: ITwitchUser) => {

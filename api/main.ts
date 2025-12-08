@@ -49,17 +49,22 @@ ipcMain.on('client_ready', async () => {
     return;
   }
 
+  initDone = true;
+
+  const startTime = Date.now();
+
   try {
-    await init();
+    await Promise.race([
+      init(),
+      new Promise<void>((resolve) => setTimeout(resolve, 5000)),
+    ]);
   } catch (error) {
     addLogs('error', 'init_failed', error);
-
-    throw error;
   }
 
-  main.mainWindow!.webContents.send('backend_ready');
+  addLogs('info', 'init_done', Date.now() - startTime);
 
-  initDone = true;
+  main.mainWindow!.webContents.send('backend_ready');
 });
 
 const iconPath = path.normalize(path.join(__dirname, '../icons', 'icon.png'));
