@@ -296,8 +296,4 @@ export class Channel extends EventEmitter {
   public async getStats(printBalloon: boolean) {
     await this.serviceObj.getStats([this], printBalloon);
   }
-
-  public async getInfo() {
-    await this.serviceObj.getInfo([this]);
-  }
 }
