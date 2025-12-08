@@ -18,6 +18,11 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as remoteMain from '@electron/remote/main';
 
+app.commandLine.appendSwitch(
+  'disable-features',
+  'HardwareMediaKeyHandling,MediaSessionService',
+);
+
 fixPath();
 
 import { config } from './settings-file';
