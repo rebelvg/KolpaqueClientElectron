@@ -28,11 +28,22 @@
     // You had `-e DISPLAY=` in your podman run -> explicitly unset X11
     // "DISPLAY": "${localEnv:DISPLAY}"
     "DISPLAY": ""
+  },
+
+  "mounts": [
+    "type=volume,source=${localWorkspaceFolderBasename}-node_modules,target=/workspaces/${localWorkspaceFolderBasename}/node_modules",
+    // "source=${localEnv:HOME}/.1password,target=/ssh-agent,type=bind"
+  ],
+
+  "postCreateCommand": "chown -R $(id -u):$(id -g) /workspaces/${localWorkspaceFolderBasename}",
+
+  "remoteEnv": {
+    // "SSH_AUTH_SOCK": "/ssh-agent/agent.sock"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": []
+    }
   }
-
-  // "mounts": ["source=${localEnv:HOME}/.1password,target=/ssh-agent,type=bind"],
-
-  // "remoteEnv": {
-  //   "SSH_AUTH_SOCK": "/ssh-agent/agent.sock"
-  // }
 }
