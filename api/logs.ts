@@ -76,10 +76,7 @@ export function addLogs(
     })
     .join(' ');
 
-  if (
-    ['fatal', 'error', 'warn', 'info'].includes(level) ||
-    process.env.NODE_ENV === 'dev'
-  ) {
+  if (process.env.NODE_ENV === 'dev') {
     switch (level) {
       case 'fatal':
       case 'error':
@@ -93,6 +90,20 @@ export function addLogs(
       default:
         // eslint-disable-next-line no-console
         console.log(level, logLine);
+        break;
+    }
+  } else {
+    switch (level) {
+      case 'fatal':
+      case 'error':
+        // eslint-disable-next-line no-console
+        console.error(level, logLine);
+        break;
+      case 'warn':
+        // eslint-disable-next-line no-console
+        console.warn(level, logLine);
+        break;
+      default:
         break;
     }
   }
