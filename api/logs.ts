@@ -13,15 +13,19 @@ const clientAppDataPath =
 export const appLogPath = path.join(clientAppDataPath, 'app.log');
 export const crashLogPath = path.join(clientAppDataPath, 'crash.log');
 
-let logsUi: string[] = [];
-
-ipcMain.handle('config_logs', () => logsUi.slice().reverse());
+ipcMain.handle('config_logs', () => []);
 
 ipcMain.on('logs_open_folder', () => {
   addLogs('info', 'logs_open_folder');
 
   shell.openPath(path.resolve(clientAppDataPath));
 });
+
+const { size } = fs.statSync(appLogPath);
+
+if (size > 256 * 1024 * 1024) {
+  fs.renameSync(appLogPath, `${appLogPath}.old`);
+}
 
 export function addLogs(
   level: 'fatal' | 'error' | 'warn' | 'info' | 'debug',
@@ -108,20 +112,20 @@ export function addLogs(
     }
   }
 
-  fs.appendFileSync(
-    appLogPath,
-    `${new Date().toISOString()} level:${level} ${logLine}${os.EOL}`,
-  );
-
-  fs.appendFileSync(
-    `${appLogPath}-${level}`,
-    `${new Date().toISOString()} ${logLine}${os.EOL}`,
-  );
+  fs.promises
+    .appendFile(
+      appLogPath,
+      `${new Date().toISOString()} level:${level} ${logLine}${os.EOL}`,
+    )
+    .catch();
 
   if (['fatal', 'error', 'warn'].includes(level)) {
-    logsUi.push(logLine);
-
-    logsUi = _.takeRight(logsUi, 50);
+    fs.promises
+      .appendFile(
+        `${appLogPath}-${level}`,
+        `${new Date().toISOString()} ${logLine}${os.EOL}`,
+      )
+      .catch();
   }
 }
 

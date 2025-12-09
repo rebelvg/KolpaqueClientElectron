@@ -228,7 +228,7 @@ export class Config extends EventEmitter {
       this.migrations = parseJson.migrations || [];
       this.deletedChannels = parseJson.deletedChannels || [];
     } catch (error) {
-      addLogs('error', error);
+      addLogs('error', error, parseJson);
 
       throw error;
     }
@@ -237,9 +237,9 @@ export class Config extends EventEmitter {
   private async saveLoop(): Promise<void> {
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      await sleep(60 * 1000);
+      await this.saveFile();
 
-      this.saveFile();
+      await sleep(5 * 1000);
     }
   }
 
@@ -369,17 +369,13 @@ export class Config extends EventEmitter {
         deletedChannels: this.deletedChannels,
       };
 
-      fs.writeFileSync(SETTINGS_FILE_PATH, JSON.stringify(saveConfig, null, 2));
+      const jsonConfig = JSON.stringify(saveConfig, null, 2);
 
-      syncSettings
-        .save()
-        .then(() => {
-          fs.writeFileSync(
-            SETTINGS_FILE_PATH,
-            JSON.stringify(saveConfig, null, 2),
-          );
-        })
-        .catch();
+      const tmpPath = `${SETTINGS_FILE_PATH}.tmp`;
+
+      fs.writeFileSync(tmpPath, jsonConfig);
+
+      fs.renameSync(tmpPath, SETTINGS_FILE_PATH);
 
       addLogs('info', 'settings_saved');
 

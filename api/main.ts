@@ -161,33 +161,36 @@ function createWindow(): void {
     mainWindow.hide();
   });
 
-  mainWindow.on('close', () => {
-    addLogs('info', 'close', mainWindow.isVisible());
-
-    config.saveFile();
-  });
-
   mainWindow.on('close', (e) => {
+    e.preventDefault();
+
     addLogs('info', 'close', 'force_quit', forceQuit, mainWindow.isDestroyed());
 
+    config.saveFile();
+
     if (forceQuit) {
+      app.exit(0);
+
       return;
     }
 
     if (process.platform === 'darwin') {
-      e.preventDefault();
       mainWindow.hide();
-    } else {
-      const childWindows = main.createdWindows;
 
-      addLogs('info', 'close', childWindows.length);
+      return;
+    }
 
-      for (const childWindow of childWindows) {
-        if (!childWindow.isDestroyed()) {
-          childWindow.close();
-        }
+    const childWindows = main.createdWindows;
+
+    addLogs('info', 'close', childWindows.length);
+
+    for (const childWindow of childWindows) {
+      if (!childWindow.isDestroyed()) {
+        childWindow.close();
       }
     }
+
+    app.exit(0);
   });
 
   mainWindow.on('resize', () => {
