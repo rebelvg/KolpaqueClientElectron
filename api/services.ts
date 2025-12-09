@@ -35,6 +35,8 @@ class ServiceManager {
   ];
 
   public async checkChannels(channels: Channel[], printBalloon: boolean) {
+    addLogs('info', 'channel_check_stats', channels.length, printBalloon);
+
     await Promise.all(
       _.map(this.services, async (service) => {
         const serviceChannels = _.filter(channels, {
@@ -42,7 +44,7 @@ class ServiceManager {
         });
 
         addLogs(
-          'info',
+          'debug',
           'channel_check_stats',
           service.name,
           serviceChannels.length,
@@ -51,21 +53,25 @@ class ServiceManager {
         await service.getStats(serviceChannels, printBalloon);
 
         addLogs(
-          'info',
+          'debug',
           'channel_check_stats_done',
           service.name,
           serviceChannels.length,
         );
       }),
     );
+
+    addLogs('info', 'channel_check_stats_done', channels.length, printBalloon);
   }
 
   public async doImport(serviceName: ServiceNamesEnum, emitEvent: boolean) {
     const channels: Channel[] = [];
 
+    addLogs('info', 'channel_import_start', serviceName, emitEvent);
+
     await Promise.all(
       _.map(this.services, async (service) => {
-        addLogs('info', 'channel_import_start', service.name);
+        addLogs('debug', 'channel_import_start', service.name);
 
         if (service.name === serviceName) {
           const newChannels = await service.doImportSettings(emitEvent);
@@ -73,9 +79,11 @@ class ServiceManager {
           channels.push(...newChannels);
         }
 
-        addLogs('info', 'channel_import_done', service.name);
+        addLogs('debug', 'channel_import_done', service.name);
       }),
     );
+
+    addLogs('info', 'channel_import_start_done', serviceName, emitEvent);
 
     return channels;
   }

@@ -174,7 +174,7 @@ function createWindow(): void {
       return;
     }
 
-    if (process.platform === 'darwin') {
+    if (['darwin', 'linux'].includes(process.platform)) {
       mainWindow.hide();
 
       return;

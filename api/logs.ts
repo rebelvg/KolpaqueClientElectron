@@ -91,6 +91,8 @@ export function addLogs(
         // eslint-disable-next-line no-console
         console.warn(level, logLine);
         break;
+      case 'debug':
+        break;
       default:
         // eslint-disable-next-line no-console
         console.log(level, logLine);
