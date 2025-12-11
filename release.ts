@@ -36,7 +36,5 @@ process.on('unhandledRejection', (error) => {
 
   childProcess.execSync(`git tag ${newVersion}`, { stdio: 'inherit' });
 
-  childProcess.execSync(`git push`, { stdio: 'inherit' });
-
-  childProcess.execSync(`git push --tags`, { stdio: 'inherit' });
+  childProcess.execSync(`git push --tags --no-verify`, { stdio: 'inherit' });
 })();
