@@ -3,43 +3,42 @@ import * as fs from 'fs';
 import * as _ from 'lodash';
 
 import { Channel } from '../channel-class';
-import { TWITCH_CHUNK_LIMIT } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
-import { config } from '../settings-file';
 import { kickClient } from '../clients/kick';
+import { sleep } from '../helpers';
 
 async function getStats(
   channels: Channel[],
   printBalloon: boolean,
 ): Promise<void> {
-  const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
-
-  const channelDataSlugMap: {
+  const streamStatusMap: {
     [key: string]: boolean;
   } = {};
 
-  await Promise.all(
-    chunkedChannels.map(async (channels) => {
-      const channelsData = await kickClient.getChannels(
-        channels.map((channel) => channel.name),
-      );
-
-      for (const channelData of channelsData) {
-        channelDataSlugMap[channelData.name] = channelData.isLive;
-      }
-    }),
-  );
-
   for (const channel of channels) {
-    const channelData = channelDataSlugMap[channel.name];
+    const channelData = await kickClient.getChannel(channel.name);
 
     if (!channelData) {
-      channel.setOffline();
+      return;
+    }
 
+    streamStatusMap[channel.name] = channelData.livestream?.is_live || false;
+
+    await sleep(1000);
+  }
+
+  for (const channel of channels) {
+    const streamStatus = streamStatusMap[channel.name];
+
+    if (typeof streamStatus === 'undefined') {
       continue;
     }
 
-    channel.setOnline(printBalloon);
+    if (!streamStatus) {
+      channel.setOffline();
+    } else {
+      channel.setOnline(printBalloon);
+    }
   }
 }
 
@@ -52,7 +51,7 @@ class KickStreamService extends BaseStreamService {
     return `${this.embedLink(channel)}/chat`;
   }
   public icon = fs.readFileSync(
-    path.normalize(path.join(__dirname, '../../icons', 'kick.ico')),
+    path.normalize(path.join(__dirname, '../../icons', 'kick.png')),
     {
       encoding: null,
     },
@@ -79,11 +78,6 @@ class KickStreamService extends BaseStreamService {
   public checkLiveTimeout = 30;
   public checkLiveConfirmation = 3;
   public getStats = getStats;
-  public doImportSettings(emitEvent: boolean) {
-    const channelNames = config.settings.twitchImport;
-
-    return this.doImport(channelNames, emitEvent);
-  }
   public buildChannelLink(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/${channelName}`;
   }

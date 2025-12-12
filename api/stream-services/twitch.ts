@@ -8,8 +8,6 @@ import {
   ITwitchFollowedChannel,
   twitchClient,
   TWITCH_CHUNK_LIMIT,
-  ITwitchClientStreams,
-  ITwitchClientUsers,
 } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { config } from '../settings-file';
@@ -23,11 +21,11 @@ async function getStats(
 ): Promise<void> {
   const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
 
-  const userDataMap: {
-    [key: string]: ITwitchClientUsers['data'][0];
+  const userIdMap: {
+    [key: string]: string;
   } = {};
-  const streamDataMap: {
-    [key: string]: ITwitchClientStreams['data'][0];
+  const streamStatusMap: {
+    [key: string]: boolean;
   } = {};
 
   await Promise.all(
@@ -50,33 +48,34 @@ async function getStats(
       }
 
       for (const userData of usersData.data) {
-        userDataMap[userData.login] = userData;
+        userIdMap[userData.login] = userData.id;
+        streamStatusMap[userData.id] = false;
       }
 
       for (const streamData of streamsData.data) {
-        streamDataMap[streamData.user_id] = streamData;
+        streamStatusMap[streamData.user_id] = true;
       }
     }),
   );
 
   for (const channel of channels) {
-    const userData = userDataMap[channel.name];
+    const userId = userIdMap[channel.name];
 
-    if (!userData) {
-      channel.setOffline();
-
+    if (!userId) {
       continue;
     }
 
-    const streamData = streamDataMap[userData.id];
+    const streamStatus = streamStatusMap[userId];
 
-    if (!streamData) {
-      channel.setOffline();
-
+    if (typeof streamStatus === 'undefined') {
       continue;
     }
 
-    channel.setOnline(printBalloon);
+    if (!streamStatus) {
+      channel.setOffline();
+    } else {
+      channel.setOnline(printBalloon);
+    }
   }
 }
 

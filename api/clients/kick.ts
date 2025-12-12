@@ -2,7 +2,6 @@ import { AxiosError } from 'axios';
 import { getAxios, klpqServiceClient } from '../api-clients';
 import { addLogs } from '../logs';
 import { config } from '../settings-file';
-import { sleep } from '../helpers';
 
 export interface IKickClientChannels {
   livestream: { is_live: boolean } | null;
@@ -76,52 +75,38 @@ class KickClient {
     return promise;
   }
 
-  public async getChannels(channelNames: string[]) {
-    if (channelNames.length === 0) {
-      return [];
-    }
-
-    const channelsData: {
-      name: string;
-      isLive: boolean;
-    }[] = [];
-
-    for (const channelName of channelNames) {
-      try {
-        const { data: channelData } = await this.axios.get<IKickClientChannels>(
-          `https://kick.com/api/v1/channels/${channelName}`,
-          {
-            headers: {
-              'User-Agent': `Mozilla/5.0 (X11; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0`,
-              Accept: `text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8`,
-              'Accept-Language': `en-US,en;q=0.5`,
-              'Accept-Encoding': `gzip, deflate, br, zstd`,
-              DNT: `1`,
-              'Sec-GPC': `1`,
-              Connection: `keep-alive`,
-              'Upgrade-Insecure-Requests': `1`,
-              'Sec-Fetch-Dest': `document`,
-              'Sec-Fetch-Mode': `navigate`,
-              'Sec-Fetch-Site': `none`,
-              Priority: `u=0, i`,
-              Pragma: `no-cache`,
-              'Cache-Control': `no-cache`,
-              TE: `trailers`,
-              Authorization: undefined,
-            },
+  public async getChannel(channelName: string) {
+    try {
+      const { data: channelData } = await this.axios.get<IKickClientChannels>(
+        `https://kick.com/api/v1/channels/${channelName}`,
+        {
+          headers: {
+            'User-Agent': `Mozilla/5.0 (X11; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0`,
+            Accept: `text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8`,
+            'Accept-Language': `en-US,en;q=0.5`,
+            'Accept-Encoding': `gzip, deflate, br, zstd`,
+            DNT: `1`,
+            'Sec-GPC': `1`,
+            Connection: `keep-alive`,
+            'Upgrade-Insecure-Requests': `1`,
+            'Sec-Fetch-Dest': `document`,
+            'Sec-Fetch-Mode': `navigate`,
+            'Sec-Fetch-Site': `none`,
+            Priority: `u=0, i`,
+            Pragma: `no-cache`,
+            'Cache-Control': `no-cache`,
+            TE: `trailers`,
+            Authorization: undefined,
           },
-        );
+        },
+      );
 
-        channelsData.push({
-          name: channelName,
-          isLive: channelData.livestream?.is_live || false,
-        });
-      } catch (error) {}
+      return channelData;
+    } catch (error) {
+      addLogs('error', error);
 
-      await sleep(1000);
+      return;
     }
-
-    return channelsData;
   }
 
   public async validateToken() {
