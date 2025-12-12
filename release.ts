@@ -8,8 +8,6 @@ process.on('unhandledRejection', (error) => {
 });
 
 (() => {
-  childProcess.execSync(`yarn run lint`, { stdio: 'inherit' });
-
   const packageJson = JSON.parse(
     fs.readFileSync('./package.json', { encoding: 'utf-8' }),
   );
@@ -18,19 +16,47 @@ process.on('unhandledRejection', (error) => {
     `current version - ${packageJson.version}${os.EOL}enter new version${os.EOL}`,
   );
 
-  if (packageJson.version === newVersion) {
-    throw new Error('version_is_same');
+  if (!newVersion) {
+    throw new Error('empty_version');
   }
 
   packageJson.version = newVersion;
 
   fs.writeFileSync('./package.json', JSON.stringify(packageJson, null, 2));
 
+  const lastTag = childProcess
+    .execSync(`git describe --tags --abbrev=0`, {
+      encoding: 'utf-8',
+    })
+    .trim();
+
+  // eslint-disable-next-line no-console
+  console.log('lastTag', lastTag);
+
+  const shortReleaseNote = readlineSync.question(
+    `enter an additional commit note, dash will be added automatically${os.EOL}`,
+  );
+
+  const changesList = childProcess
+    .execSync(`git log "${lastTag}..HEAD" --pretty=format:"- %s"`, {
+      encoding: 'utf-8',
+    })
+    .trim();
+
+  let commitNote = changesList;
+
+  if (shortReleaseNote) {
+    commitNote += `${os.EOL}- ${shortReleaseNote}`;
+  }
+
+  // eslint-disable-next-line no-console
+  console.log(commitNote);
+
   childProcess.execSync(`yarn run lint:fix`, { stdio: 'inherit' });
 
   childProcess.execSync(`git add .`, { stdio: 'inherit' });
 
-  childProcess.execSync(`git commit -m "publish version ${newVersion}"`, {
+  childProcess.execSync(`git commit -m "${commitNote}"`, {
     stdio: 'inherit',
   });
 
