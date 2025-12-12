@@ -26,6 +26,12 @@ async function getStats(
             'streamlink',
             [channel.link, 'best', '--twitch-disable-hosting', '--json'],
             (err, stdout) => {
+              if (err) {
+                addLogs('error', err, stdout);
+
+                return;
+              }
+
               try {
                 const res = JSON.parse(stdout);
 
@@ -35,7 +41,7 @@ async function getStats(
                   channel.setOffline();
                 }
               } catch (error) {
-                addLogs('error', error);
+                addLogs('error', error, stdout);
               }
 
               resolve();

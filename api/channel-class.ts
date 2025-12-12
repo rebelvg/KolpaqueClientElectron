@@ -265,11 +265,7 @@ export class Channel extends EventEmitter {
     autoRestart: boolean | null = null,
   ): Promise<boolean> {
     if (config.settings.playInWindow) {
-      const wasWindowCreated = await playInWindow(this);
-
-      if (wasWindowCreated) {
-        return true;
-      }
+      return await playInWindow(this);
     }
 
     await launchPlayerChannel(this, altQuality, autoRestart);

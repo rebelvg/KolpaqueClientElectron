@@ -64,12 +64,6 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
     autoHideMenuBar: true,
   });
 
-  main.createdWindows.push(window);
-
-  window.setMenu(null);
-
-  await window.loadURL(embedLink);
-
   window.on('closed', () => {
     _.pull(channel._windows, window);
   });
@@ -80,9 +74,23 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
     }
   });
 
-  channel._windows.push(window);
+  window.setMenu(null);
 
-  return !!window;
+  try {
+    await window.loadURL(embedLink);
+
+    main.createdWindows.push(window);
+
+    channel._windows.push(window);
+  } catch (error) {
+    addLogs('error', error, embedLink);
+
+    window.close();
+
+    return false;
+  }
+
+  return true;
 }
 
 export async function launchPlayerChannel(
