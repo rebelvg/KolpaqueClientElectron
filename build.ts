@@ -4,6 +4,11 @@ import * as path from 'path';
 import * as os from 'os';
 import * as archiver from 'archiver';
 import { Options, packager } from '@electron/packager';
+import * as childProcess from 'child_process';
+
+process.on('unhandledRejection', (error) => {
+  throw error;
+});
 
 const [, , platformArg, buildPathArg] = process.argv;
 
@@ -32,11 +37,26 @@ if (!pathOption) {
   pathOption = os.tmpdir();
 }
 
-process.on('unhandledRejection', (error) => {
-  throw error;
-});
-
 (async (): Promise<void> => {
+  // eslint-disable-next-line no-console
+  console.log('build start');
+
+  await Promise.all(
+    ['yarn run build:api', 'yarn run build:app'].map((command) => {
+      return new Promise((resolve) => {
+        const process = childProcess.spawn(command, {
+          stdio: ['inherit', 'inherit', 'inherit'],
+          shell: true,
+        });
+
+        process.on('exit', resolve);
+      });
+    }),
+  );
+
+  // eslint-disable-next-line no-console
+  console.log('build done');
+
   const options: Options = {
     dir: './',
     tmpdir: false,
