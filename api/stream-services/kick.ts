@@ -6,7 +6,7 @@ import { Channel } from '../channel-class';
 import { TWITCH_CHUNK_LIMIT } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { config } from '../settings-file';
-import { IKickClientChannels, kickClient } from '../clients/kick';
+import { kickClient } from '../clients/kick';
 
 async function getStats(
   channels: Channel[],
@@ -15,7 +15,7 @@ async function getStats(
   const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
 
   const channelDataSlugMap: {
-    [key: string]: IKickClientChannels['data'][0];
+    [key: string]: boolean;
   } = {};
 
   await Promise.all(
@@ -24,12 +24,8 @@ async function getStats(
         channels.map((channel) => channel.name),
       );
 
-      if (!channelsData) {
-        return;
-      }
-
-      for (const channelData of channelsData.data) {
-        channelDataSlugMap[channelData.slug] = channelData;
+      for (const channelData of channelsData) {
+        channelDataSlugMap[channelData.name] = channelData.isLive;
       }
     }),
   );
@@ -38,18 +34,6 @@ async function getStats(
     const channelData = channelDataSlugMap[channel.name];
 
     if (!channelData) {
-      channel.setOffline();
-
-      continue;
-    }
-
-    if (!channelData.stream) {
-      channel.setOffline();
-
-      continue;
-    }
-
-    if (!channelData.stream.is_live) {
       channel.setOffline();
 
       continue;

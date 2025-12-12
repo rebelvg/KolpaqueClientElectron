@@ -7,6 +7,24 @@ import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { addLogs } from '../logs';
 import { Innertube } from 'youtubei.js';
 
+interface IYoutubeLiveStreams {
+  current_tab?: {
+    content?: {
+      type: 'RichGrid';
+      contents?: {
+        type: 'RichItem';
+        content?: {
+          type: 'Video';
+          id: string;
+          duration?: {
+            text: 'LIVE';
+          };
+        };
+      }[];
+    };
+  };
+}
+
 const youtubePromise = Innertube.create({});
 
 export async function getStatsBase(channelId: string): Promise<boolean> {
@@ -17,23 +35,7 @@ export async function getStatsBase(channelId: string): Promise<boolean> {
 
     await channel.getLiveStreams();
 
-    const streams = ((await channel.getLiveStreams()) as unknown) as {
-      current_tab?: {
-        content?: {
-          type: 'RichGrid';
-          contents?: {
-            type: 'RichItem';
-            content?: {
-              type: 'Video';
-              id: string;
-              duration?: {
-                text: 'LIVE';
-              };
-            };
-          }[];
-        };
-      };
-    };
+    const streams = (await channel.getLiveStreams()) as IYoutubeLiveStreams;
 
     if (streams.current_tab?.content?.type !== 'RichGrid') {
       return false;
@@ -71,9 +73,7 @@ async function getStats(
     try {
       const youtube = await youtubePromise;
 
-      const youtubeNavigation = ((await youtube.resolveURL(
-        channel.link,
-      )) as unknown) as {
+      const youtubeNavigation = (await youtube.resolveURL(channel.link)) as {
         payload?: {
           browseId?: string;
         };

@@ -2,34 +2,10 @@ import { AxiosError } from 'axios';
 import { getAxios, klpqServiceClient } from '../api-clients';
 import { addLogs } from '../logs';
 import { config } from '../settings-file';
+import { sleep } from '../helpers';
 
 export interface IKickClientChannels {
-  data: [
-    {
-      banner_picture: 'https://kick.com/img/default-banner-pictures/default2.jpeg';
-      broadcaster_user_id: 123;
-      category: {
-        id: 101;
-        name: 'Old School Runescape';
-        thumbnail: 'https://kick.com/img/categories/old-school-runescape.jpeg';
-      };
-      channel_description: 'Channel description';
-      slug: 'john-doe';
-      stream: {
-        custom_tags: ['tag1', 'tag2'];
-        is_live: true;
-        is_mature: true;
-        key: 'super-secret-stream-key';
-        language: 'en';
-        start_time: '0001-01-01T00:00:00Z';
-        thumbnail: 'https://kick.com/img/default-thumbnail-pictures/default2.jpeg';
-        url: 'rtmps://stream.kick.com/1234567890';
-        viewer_count: 67;
-      };
-      stream_title: 'My first stream';
-    },
-  ];
-  message: 'text';
+  livestream: { is_live: boolean } | null;
 }
 
 class KickClient {
@@ -53,13 +29,13 @@ class KickClient {
   }
 
   public get refreshToken(): string | null {
-    return config.settings.twitchRefreshToken;
+    return config.settings.kickRefreshToken;
   }
 
   public set refreshToken(refreshToken: string) {
     addLogs('info', 'KickClient', 'refreshToken', refreshToken);
 
-    config.settings.twitchRefreshToken = refreshToken;
+    config.settings.kickRefreshToken = refreshToken;
   }
 
   public getAccessToken(force = false): Promise<void> {
@@ -100,33 +76,56 @@ class KickClient {
     return promise;
   }
 
-  public async getChannels(
-    channelSlugs: string[],
-  ): Promise<IKickClientChannels | undefined> {
-    if (channelSlugs.length === 0) {
-      return;
+  public async getChannels(channelNames: string[]) {
+    if (channelNames.length === 0) {
+      return [];
     }
 
-    try {
-      const { data: streamData } = await this.axios.get<IKickClientChannels>(
-        `${this.baseUrl}/public/v1/channels`,
-        {
-          params: {
-            slug: channelSlugs,
+    const channelsData: {
+      name: string;
+      isLive: boolean;
+    }[] = [];
+
+    for (const channelName of channelNames) {
+      try {
+        const { data: channelData } = await this.axios.get<IKickClientChannels>(
+          `https://kick.com/api/v1/channels/${channelName}`,
+          {
+            headers: {
+              'User-Agent': `Mozilla/5.0 (X11; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0`,
+              Accept: `text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8`,
+              'Accept-Language': `en-US,en;q=0.5`,
+              'Accept-Encoding': `gzip, deflate, br, zstd`,
+              DNT: `1`,
+              'Sec-GPC': `1`,
+              Connection: `keep-alive`,
+              'Upgrade-Insecure-Requests': `1`,
+              'Sec-Fetch-Dest': `document`,
+              'Sec-Fetch-Mode': `navigate`,
+              'Sec-Fetch-Site': `none`,
+              Priority: `u=0, i`,
+              Pragma: `no-cache`,
+              'Cache-Control': `no-cache`,
+              TE: `trailers`,
+              Authorization: undefined,
+            },
           },
-        },
-      );
+        );
 
-      return streamData;
-    } catch (error) {
-      this.handleError(error);
+        channelsData.push({
+          name: channelName,
+          isLive: channelData.livestream?.is_live || false,
+        });
+      } catch (error) {}
+
+      await sleep(1000);
     }
+
+    return channelsData;
   }
 
   public async validateToken() {
-    const url = new URL(`https://id.twitch.tv/oauth2/validate`);
-
-    await this.axios.get(url.href);
+    await this.axios.post(`${this.baseUrl}/public/v1/token/introspect`);
   }
 
   private handleError(error: AxiosError): void {

@@ -18,6 +18,7 @@ import { YoutubeUsernameStreamService } from './stream-services/youtube-username
 import { Channel } from './channel-class';
 import { BaseStreamService, ServiceNamesEnum } from './stream-services/_base';
 import { refreshTrayIconMenuLinux } from './main';
+import { kickStreamService } from './stream-services/kick';
 
 class ServiceManager {
   public services: BaseStreamService[] = [
@@ -32,6 +33,7 @@ class ServiceManager {
     new ChaturbateStreamService(),
     customStreamService,
     new YoutubeUsernameStreamService(),
+    kickStreamService,
   ];
 
   public async checkChannels(channels: Channel[], printBalloon: boolean) {

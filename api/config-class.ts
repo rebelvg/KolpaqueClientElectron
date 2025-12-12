@@ -128,6 +128,7 @@ interface ISettings {
   enableSync: boolean;
   klpqJwtToken: string | null;
   customRtmpClientCommand: string;
+  kickRefreshToken: string | null;
 }
 
 export interface ISavedSettingsFile {
@@ -169,6 +170,7 @@ export class Config extends EventEmitter {
     enableSync: false,
     klpqJwtToken: null,
     customRtmpClientCommand: '',
+    kickRefreshToken: null,
   };
   public migrations: string[] = [];
   public deletedChannels: string[] = [];

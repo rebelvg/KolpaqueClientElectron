@@ -52,6 +52,11 @@ const Services = {
     isImage: true,
     color: null,
   },
+  kick: {
+    asset: './static/icons/kick.ico',
+    isImage: true,
+    color: null,
+  },
   default: {
     asset: eye,
     isImage: false,

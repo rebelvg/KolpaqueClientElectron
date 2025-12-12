@@ -8,6 +8,8 @@ import {
   ITwitchFollowedChannel,
   twitchClient,
   TWITCH_CHUNK_LIMIT,
+  ITwitchClientStreams,
+  ITwitchClientUsers,
 } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { config } from '../settings-file';
@@ -21,66 +23,61 @@ async function getStats(
 ): Promise<void> {
   const chunkedChannels = _.chunk(channels, TWITCH_CHUNK_LIMIT);
 
+  const userDataMap: {
+    [key: string]: ITwitchClientUsers['data'][0];
+  } = {};
+  const streamDataMap: {
+    [key: string]: ITwitchClientStreams['data'][0];
+  } = {};
+
   await Promise.all(
     chunkedChannels.map(async (channels) => {
-      const mappedChannels: {
-        channel: Channel;
-        userId: string | null;
-      }[] = channels.map((channel) => {
-        return {
-          channel,
-          userId: null,
-        };
-      });
-
-      const userData = await twitchClient.getUsersByLogin(
+      const usersData = await twitchClient.getUsersByLogin(
         channels.map((channel) => channel.name),
         'getStats',
       );
 
-      if (!userData) {
+      if (!usersData) {
         return;
       }
 
-      _.forEach(mappedChannels, (channel) => {
-        _.forEach(userData.data, (user) => {
-          if (user.login === channel.channel.name) {
-            channel.userId = user.id;
-          }
-        });
-      });
-
-      const existingChannels = mappedChannels.filter(
-        (channel) => !!channel.userId,
+      const streamsData = await twitchClient.getStreams(
+        usersData.data.map((u) => u.id),
       );
 
-      if (existingChannels.length === 0) {
-        _.forEach(mappedChannels, ({ channel }) => {
-          channel.setOffline();
-        });
-
+      if (!streamsData) {
         return;
       }
 
-      const streamData = await twitchClient.getStreams(
-        existingChannels
-          .map(({ userId }) => userId)
-          .filter(Boolean) as string[],
-      );
-
-      if (!streamData) {
-        return;
+      for (const userData of usersData.data) {
+        userDataMap[userData.login] = userData;
       }
 
-      _.forEach(mappedChannels, ({ channel, userId }) => {
-        if (_.find(streamData.data, { user_id: userId })) {
-          channel.setOnline(printBalloon);
-        } else {
-          channel.setOffline();
-        }
-      });
+      for (const streamData of streamsData.data) {
+        streamDataMap[streamData.user_id] = streamData;
+      }
     }),
   );
+
+  for (const channel of channels) {
+    const userData = userDataMap[channel.name];
+
+    if (!userData) {
+      channel.setOffline();
+
+      continue;
+    }
+
+    const streamData = streamDataMap[userData.id];
+
+    if (!streamData) {
+      channel.setOffline();
+
+      continue;
+    }
+
+    channel.setOnline(printBalloon);
+  }
 }
 
 async function getInfo(allChannels: Channel[]): Promise<undefined> {

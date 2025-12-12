@@ -6,6 +6,7 @@ import { shell, ipcMain } from 'electron';
 import * as uuid from 'uuid';
 import { sleep } from './helpers';
 import { CLIENT_VERSION } from './globals';
+import { kickClient } from './clients/kick';
 
 export function getAxios() {
   const axiosInstance = axios.create({
@@ -55,9 +56,11 @@ export interface ITwitchUser {
 const integrationState: {
   twitch: boolean | null;
   klpq: boolean | null;
+  kick: boolean | null;
 } = {
   twitch: null,
   klpq: null,
+  kick: null,
 };
 
 ipcMain.on(
@@ -82,6 +85,14 @@ ipcMain.on('settings_check_tokens', async () => {
   }
 
   try {
+    await kickClient.validateToken();
+
+    integrationState.kick = true;
+  } catch (error) {
+    integrationState.kick = false;
+  }
+
+  try {
     await klpqServiceClient.refreshKlpqToken();
 
     integrationState.klpq = true;
@@ -96,6 +107,12 @@ ipcMain.on('twitch_login', async () => {
   addLogs('info', 'twitch_login');
 
   await klpqServiceClient.getTwitchUser();
+});
+
+ipcMain.on('kick_login', async () => {
+  addLogs('info', 'kick_login');
+
+  await klpqServiceClient.getKickUser();
 });
 
 ipcMain.on('youtube_login', async () => {
@@ -580,6 +597,12 @@ class KlpqServiceClient {
   public async getTwitchUser(): Promise<void> {
     await shell.openExternal(
       `${this.baseUrl}/auth/twitch?requestId=${SOCKET_CLIENT_ID}`,
+    );
+  }
+
+  public async getKickUser(): Promise<void> {
+    await shell.openExternal(
+      `${this.baseUrl}/auth/kick?requestId=${SOCKET_CLIENT_ID}`,
     );
   }
 

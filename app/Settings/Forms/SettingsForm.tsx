@@ -262,6 +262,25 @@ const SettingsForm: FunctionComponent<any> = ({
 
       {/* <button
         onClick={() => {
+          ipcRenderer.send('kick_login');
+        }}
+      >
+        Kick Login
+      </button>
+
+      <Label>
+        {'Features: live-stream notifications.'}
+        <br />
+        Status:{' '}
+        {integrations.kick !== null
+          ? integrations.kick
+            ? 'Token valid.'
+            : 'Token failed, check logs.'
+          : 'Checking integration...'}
+      </Label> */}
+
+      {/* <button
+        onClick={() => {
           ipcRenderer.send('klpq_login');
         }}
       >
