@@ -14,6 +14,7 @@ export enum ServiceNamesEnum {
   YOUTUBE_CHANNEL = 'youtube-channel',
   YOUTUBE_USERNAME = 'youtube-username',
   CHATURBATE = 'chaturbate',
+  KICK = 'kick',
   CUSTOM = 'custom',
 }
 

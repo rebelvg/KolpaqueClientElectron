@@ -7,7 +7,7 @@ import * as uuid from 'uuid';
 import { sleep } from './helpers';
 import { CLIENT_VERSION } from './globals';
 
-function getAxios() {
+export function getAxios() {
   const axiosInstance = axios.create({
     timeout: 120 * 1000,
   });
@@ -605,6 +605,29 @@ class KlpqServiceClient {
     try {
       const { data } = await this.axios.get<ITwitchUser>(
         `${this.baseUrl}/auth/twitch/refresh`,
+        {
+          params: {
+            refreshToken,
+          },
+        },
+      );
+
+      return data;
+    } catch (error) {
+      return;
+    }
+  }
+
+  public async refreshKickToken(
+    refreshToken: string | null,
+  ): Promise<ITwitchUser | undefined> {
+    if (!refreshToken) {
+      return;
+    }
+
+    try {
+      const { data } = await this.axios.get<ITwitchUser>(
+        `${this.baseUrl}/auth/kick/refresh`,
         {
           params: {
             refreshToken,
