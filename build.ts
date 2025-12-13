@@ -38,9 +38,6 @@ if (!pathOption) {
 }
 
 (async (): Promise<void> => {
-  // eslint-disable-next-line no-console
-  console.log('build start');
-
   await Promise.all(
     ['yarn run build:api', 'yarn run build:app'].map((command) => {
       return new Promise((resolve) => {
@@ -53,9 +50,6 @@ if (!pathOption) {
       });
     }),
   );
-
-  // eslint-disable-next-line no-console
-  console.log('build done');
 
   const options: Options = {
     dir: './',

@@ -34,20 +34,23 @@ process.on('unhandledRejection', (error) => {
   console.log('lastTag', lastTag);
 
   const shortReleaseNote = readlineSync.question(
-    `enter an additional commit note, dash will be added automatically${os.EOL}`,
+    `enter an additional commit note${os.EOL}`,
   );
 
   const changesList = childProcess
-    .execSync(`git log "${lastTag}..HEAD" --pretty=format:"- %s"`, {
+    .execSync(`git log "${lastTag}..HEAD" --pretty=format:"%s"`, {
       encoding: 'utf-8',
     })
-    .trim();
+    .trim()
+    .split(os.EOL);
 
-  let commitNote = changesList;
+  changesList.unshift(`release ${newVersion}`);
 
   if (shortReleaseNote) {
-    commitNote += `${os.EOL}- ${shortReleaseNote}`;
+    changesList.push(shortReleaseNote);
   }
+
+  const commitNote = changesList.join(os.EOL);
 
   // eslint-disable-next-line no-console
   console.log(commitNote);
@@ -61,6 +64,8 @@ process.on('unhandledRejection', (error) => {
   });
 
   childProcess.execSync(`git tag ${newVersion}`, { stdio: 'inherit' });
+
+  childProcess.execSync(`git push --no-verify`, { stdio: 'inherit' });
 
   childProcess.execSync(`git push --tags --no-verify`, { stdio: 'inherit' });
 })();
