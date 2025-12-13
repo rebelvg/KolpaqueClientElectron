@@ -42,7 +42,8 @@ process.on('unhandledRejection', (error) => {
       encoding: 'utf-8',
     })
     .trim()
-    .split(os.EOL);
+    .split(os.EOL)
+    .filter((line) => !line.startsWith('release'));
 
   changesList.unshift(`release ${newVersion}`);
 
