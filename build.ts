@@ -3,7 +3,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as archiver from 'archiver';
-import { Options, packager } from '@electron/packager';
+import {
+  OfficialPlatform,
+  Options,
+  packager,
+  SupportedArch,
+} from '@electron/packager';
 import * as childProcess from 'child_process';
 
 process.on('unhandledRejection', (error) => {
@@ -12,16 +17,16 @@ process.on('unhandledRejection', (error) => {
 
 const [, , platformArg, buildPathArg] = process.argv;
 
-let platformOption: string | undefined;
+let platformOption: OfficialPlatform | undefined;
 let pathOption: string;
 
 if (!platformArg) {
   platformOption = readlineSync.question(
-    `select platform. all - for all platforms or win32, darwin, linux. (empty will default to current platform)${os.EOL}`,
-  );
+    `select platform. win32, darwin, linux. (empty will default to current platform)${os.EOL}`,
+  ) as OfficialPlatform;
 } else {
   if (platformArg !== 'CURRENT_OS') {
-    platformOption = platformArg;
+    platformOption = platformArg as OfficialPlatform;
   }
 }
 
@@ -51,11 +56,17 @@ if (!pathOption) {
     }),
   );
 
+  const arch: SupportedArch[] = ['x64'];
+
+  if (platformOption === 'darwin') {
+    arch.push('arm64');
+  }
+
   const options: Options = {
     dir: './',
     tmpdir: false,
     icon: './icons/icon.png',
-    arch: 'x64',
+    arch,
     ignore: [
       /\/.git/,
       /\/.vscode/,
@@ -77,13 +88,7 @@ if (!pathOption) {
     out: undefined,
   };
 
-  let platforms;
-
-  if (platformOption === 'all') {
-    platforms = ['win32', 'darwin', 'linux'];
-  } else {
-    platforms = [platformOption];
-  }
+  const platforms = [platformOption];
 
   if (!fs.existsSync(pathOption)) {
     throw new Error('no_folder');
@@ -123,13 +128,22 @@ if (!pathOption) {
         path.resolve(process.cwd(), '.build', path.basename(appPath)),
         {
           recursive: true,
+          force: true,
+          verbatimSymlinks: true,
+          dereference: false,
         },
       );
+
+      // eslint-disable-next-line no-console
+      console.log('cp', appPath);
 
       await fs.promises.copyFile(
         archivePath,
         path.resolve(process.cwd(), '.build', path.basename(archivePath)),
       );
+
+      // eslint-disable-next-line no-console
+      console.log('copyFile', archivePath);
     }
   }
 })();
