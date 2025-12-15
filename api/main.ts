@@ -295,6 +295,8 @@ app.on('ready', () => {
   appIcon.setToolTip('Kolpaque Client');
   appIcon.setIgnoreDoubleClickEvents(true);
 
+  refreshTrayIconMenuLinux();
+
   appIcon.on('middle-click', () => {
     addLogs('info', 'middle_click_event');
   });
