@@ -21,10 +21,14 @@ ipcMain.on('logs_open_folder', () => {
   shell.openPath(path.resolve(clientAppDataPath));
 });
 
-const { size } = fs.statSync(appLogPath);
+try {
+  const { size } = fs.statSync(appLogPath);
 
-if (size > 256 * 1024 * 1024) {
-  fs.renameSync(appLogPath, `${appLogPath}.old`);
+  if (size > 256 * 1024 * 1024) {
+    fs.renameSync(appLogPath, `${appLogPath}.old`);
+  }
+} catch (error) {
+  addLogs('error', error);
 }
 
 export function addLogs(

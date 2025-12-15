@@ -285,8 +285,6 @@ export function refreshTrayIconMenuLinux() {
 function showTrayContextMenu(): void {
   const contextMenu = rebuildIconMenu();
 
-  // AppIndicators (e.g., KDE Plasma) require a registered menu; set it before popping up.
-  appIcon.setContextMenu(contextMenu);
   appIcon.popUpContextMenu(contextMenu);
 }
 
@@ -296,9 +294,6 @@ app.on('ready', () => {
   appIcon = new Tray(nativeImage.createFromPath(iconPathTray));
   appIcon.setToolTip('Kolpaque Client');
   appIcon.setIgnoreDoubleClickEvents(true);
-
-  // Initialize the tray menu so AppIndicator-based trays can display it.
-  appIcon.setContextMenu(rebuildIconMenu());
 
   appIcon.on('middle-click', () => {
     addLogs('info', 'middle_click_event');
@@ -334,16 +329,12 @@ app.on('ready', () => {
   appIcon.on('right-click', () => {
     addLogs('info', 'right_click_event');
 
-    appIcon.setContextMenu(rebuildIconMenu());
-
     switch (process.platform) {
       case 'win32':
         showTrayContextMenu();
 
         break;
       case 'linux':
-        showTrayContextMenu();
-
         break;
       case 'darwin':
         toggleHideClient();
