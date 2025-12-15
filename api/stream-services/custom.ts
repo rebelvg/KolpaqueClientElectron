@@ -27,7 +27,7 @@ async function getStats(
             [channel.link, 'best', '--twitch-disable-hosting', '--json'],
             (err, stdout) => {
               if (err) {
-                addLogs('error', err, stdout);
+                addLogs('warn', err, stdout);
 
                 return;
               }
@@ -41,7 +41,7 @@ async function getStats(
                   channel.setOffline();
                 }
               } catch (error) {
-                addLogs('error', error, stdout);
+                addLogs('warn', error, stdout);
               }
 
               resolve();

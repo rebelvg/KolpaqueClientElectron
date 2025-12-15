@@ -187,7 +187,7 @@ async function addImportedChannels(
       }),
     );
   } catch (error) {
-    addLogs('error', error);
+    addLogs('warn', error);
 
     return;
   }
@@ -244,7 +244,7 @@ async function importBase(
       }
     }
   } catch (error) {
-    addLogs('error', error);
+    addLogs('warn', error);
 
     return;
   }
@@ -304,7 +304,7 @@ async function doImport(
       }),
     );
   } catch (error) {
-    addLogs('error', error);
+    addLogs('warn', error);
 
     return [];
   }

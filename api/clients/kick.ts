@@ -103,7 +103,7 @@ class KickClient {
 
       return channelData;
     } catch (error) {
-      addLogs('error', error);
+      addLogs('warn', error);
 
       return;
     }

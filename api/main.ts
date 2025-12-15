@@ -64,7 +64,7 @@ ipcMain.on('client_ready', async () => {
       new Promise<void>((resolve) => setTimeout(resolve, 5000)),
     ]);
   } catch (error) {
-    addLogs('error', 'init_failed', error);
+    addLogs('warn', 'init_failed', error);
   }
 
   addLogs('info', 'init_done', Date.now() - startTime);

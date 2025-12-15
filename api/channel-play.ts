@@ -83,7 +83,7 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
 
     channel._windows.push(window);
   } catch (error) {
-    addLogs('error', error, embedLink);
+    addLogs('warn', error, embedLink);
 
     window.close();
 
@@ -172,7 +172,7 @@ async function launchStreamlink(
         });
 
         pipeProcess.on('error', (error) => {
-          addLogs('error', 'spawn_command_error', command, commandArgs, error);
+          addLogs('warn', 'spawn_command_error', command, commandArgs, error);
 
           reject([error, stdoutString, stderrString]);
         });
@@ -214,7 +214,7 @@ async function launchStreamlink(
     } catch (exception) {
       const [error, stdout, stderr] = exception;
 
-      addLogs('error', 'streamlink_error', channel.link, error, stdout, stderr);
+      addLogs('warn', 'streamlink_error', channel.link, error, stdout, stderr);
 
       if ((error as any).code === 'ENOENT') {
         await dialog.showMessageBox({

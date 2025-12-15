@@ -59,7 +59,7 @@ export async function getStatsBase(channelId: string): Promise<boolean> {
 
     return isLive;
   } catch (error) {
-    addLogs('error', error);
+    addLogs('warn', error);
 
     return false;
   }
@@ -95,7 +95,7 @@ async function getStats(
         channel.setOffline();
       }
     } catch (error) {
-      addLogs('error', error);
+      addLogs('warn', error);
     }
   }
 }

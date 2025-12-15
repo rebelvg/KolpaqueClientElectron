@@ -75,7 +75,7 @@ function streamlinkVersionCheck(): Promise<boolean> {
   return new Promise((resolve) => {
     execFile('streamlink', ['--version-check'], (error: Error, data) => {
       if (error) {
-        addLogs('error', error);
+        addLogs('warn', error);
 
         if (error['code'] === 'ENOENT') {
           return resolve(false);

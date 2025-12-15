@@ -20,7 +20,7 @@ export function getAxios() {
       return config;
     },
     (error) => {
-      addLogs('error', 'axios_req', error);
+      addLogs('warn', 'axios_req', error);
 
       return Promise.reject(error);
     },
@@ -33,7 +33,7 @@ export function getAxios() {
       return res;
     },
     (error) => {
-      addLogs('error', 'axios_res', error);
+      addLogs('warn', 'axios_res', error);
 
       return Promise.reject(error);
     },

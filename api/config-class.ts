@@ -279,7 +279,7 @@ export class Config extends EventEmitter {
     try {
       return new Channel(channelLink);
     } catch (error) {
-      addLogs('error', error);
+      addLogs('warn', error);
 
       return;
     }

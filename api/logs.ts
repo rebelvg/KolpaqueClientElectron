@@ -28,7 +28,7 @@ try {
     fs.renameSync(appLogPath, `${appLogPath}.old`);
   }
 } catch (error) {
-  addLogs('error', error);
+  addLogs('warn', error);
 }
 
 export function addLogs(
