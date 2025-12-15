@@ -25,9 +25,11 @@ if (!platformArg) {
     `select platform. win32, darwin, linux. (empty will default to current platform)${os.EOL}`,
   ) as OfficialPlatform;
 } else {
-  if (platformArg !== 'CURRENT_OS') {
-    platformOption = platformArg as OfficialPlatform;
-  }
+  platformOption = platformArg as OfficialPlatform;
+}
+
+if (!platformOption) {
+  platformOption = process.platform as OfficialPlatform;
 }
 
 if (!buildPathArg) {
