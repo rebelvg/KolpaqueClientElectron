@@ -42,7 +42,7 @@ async function getStats(
   }
 }
 
-class KickStreamService extends BaseStreamService {
+export class KickStreamService extends BaseStreamService {
   public name = ServiceNamesEnum.KICK;
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.kick.com', 'kick.com'];
@@ -56,9 +56,7 @@ class KickStreamService extends BaseStreamService {
       encoding: null,
     },
   );
-  public play(
-    channel: Channel,
-  ): Promise<{
+  public play(channel: Channel): Promise<{
     playLink: string;
     params: string[];
   }> {
@@ -82,5 +80,3 @@ class KickStreamService extends BaseStreamService {
     return `${this.protocols[0]}//${this.hosts[0]}/${channelName}`;
   }
 }
-
-export const kickStreamService = new KickStreamService();

@@ -34,7 +34,9 @@ if (!platformOption) {
 
 if (!buildPathArg) {
   pathOption = readlineSync.question(
-    `select output folder. (empty will default to tmp dir)${os.EOL}`,
+    `select output folder. (empty will default to ${path.resolve(
+      './.build',
+    )} dir)${os.EOL}`,
   );
 } else {
   pathOption = buildPathArg;

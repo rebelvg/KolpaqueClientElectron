@@ -6,27 +6,18 @@ import { eye } from 'react-icons-kit/fa/eye';
 import { youtubePlay } from 'react-icons-kit/fa/youtubePlay';
 
 const Services = {
+  'kolpaque-rtmp': {
+    asset: './static/icons/klpq_vps.svg',
+    isImage: true,
+    color: null,
+  },
   twitch: {
     asset: twitch,
     isImage: false,
     padding: 1,
     color: '#6441a5',
   },
-  'klpq-vps-rtmp': {
-    asset: './static/icons/klpq_vps.svg',
-    isImage: true,
-    color: null,
-  },
-  'klpq-vps-http': {
-    asset: './static/icons/klpq_vps.svg',
-    isImage: true,
-    color: null,
-  },
-  'klpq-vps-mpd': {
-    asset: './static/icons/klpq_vps.svg',
-    isImage: true,
-    color: null,
-  },
+
   'youtube-user': {
     asset: youtubePlay,
     isImage: false,
@@ -41,16 +32,6 @@ const Services = {
     asset: youtubePlay,
     isImage: false,
     color: '#E62117',
-  },
-  'klpq-vps-http-new': {
-    asset: './static/icons/klpq_vps.svg',
-    isImage: true,
-    color: null,
-  },
-  'klpq-vps-mpd-new': {
-    asset: './static/icons/klpq_vps.svg',
-    isImage: true,
-    color: null,
   },
   kick: {
     asset: './static/icons/kick.ico',

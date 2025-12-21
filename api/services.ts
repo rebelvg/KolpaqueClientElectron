@@ -1,39 +1,27 @@
 import * as _ from 'lodash';
 import { addLogs } from './logs';
 import { ChaturbateStreamService } from './stream-services/chaturbate';
-import { customStreamService } from './stream-services/custom';
-import {
-  KolpaqueVpsHttpStreamService,
-  KolpaqueVpsHttpStreamServiceNew,
-} from './stream-services/kolpaque-vps-http';
-import {
-  KolpaqueVpsMpdStreamService,
-  KolpaqueVpsMpdStreamServiceNew,
-} from './stream-services/kolpaque-vps-mpd';
-import { KolpaqueVpsRtmpStreamService } from './stream-services/kolpaque-vps-rtmp';
-import { twitchStreamService } from './stream-services/twitch';
+import { CustomStreamService } from './stream-services/custom';
+import { KolpaqueRtmpStreamService } from './stream-services/kolpaque-rtmp';
+import { TwitchStreamService } from './stream-services/twitch';
 import { YoutubeChannelStreamService } from './stream-services/youtube-channel';
 import { YoutubeUserStreamService } from './stream-services/youtube-user';
 import { YoutubeUsernameStreamService } from './stream-services/youtube-username';
 import { Channel } from './channel-class';
 import { BaseStreamService, ServiceNamesEnum } from './stream-services/_base';
 import { refreshTrayIconMenuLinux } from './main';
-import { kickStreamService } from './stream-services/kick';
+import { KickStreamService } from './stream-services/kick';
 
 class ServiceManager {
   public services: BaseStreamService[] = [
-    new KolpaqueVpsHttpStreamServiceNew(),
-    new KolpaqueVpsMpdStreamServiceNew(),
-    new KolpaqueVpsRtmpStreamService(),
-    new KolpaqueVpsHttpStreamService(),
-    new KolpaqueVpsMpdStreamService(),
-    twitchStreamService,
+    new KolpaqueRtmpStreamService(),
+    new TwitchStreamService(),
     new YoutubeUserStreamService(),
     new YoutubeChannelStreamService(),
     new ChaturbateStreamService(),
-    customStreamService,
+    new CustomStreamService(),
     new YoutubeUsernameStreamService(),
-    kickStreamService,
+    new KickStreamService(),
   ];
 
   public async checkChannels(channels: Channel[], printBalloon: boolean) {

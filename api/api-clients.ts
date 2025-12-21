@@ -360,38 +360,30 @@ class TwitchClient {
 }
 
 export interface IKlpqStreamChannel {
-  isLive: boolean;
-}
-
-export interface IKlpqChannelsList {
-  channels: string[];
+  streams: {
+    isLive: boolean;
+    name: string;
+    protocol: 'rtmp' | 'flv' | 'hls' | 'mpd';
+    app: string;
+    urls: {
+      web: string;
+      edge: string;
+    };
+  }[];
 }
 
 class KlpqStreamClient {
-  private baseUrl = 'https://stats-api.klpq.io';
+  private baseUrl = 'https://stats-api.klpq.io/v1';
 
   private axios = getAxios();
 
   public async getChannel(
     channelName: string,
-    host: string,
   ): Promise<IKlpqStreamChannel | undefined> {
-    const url = `${this.baseUrl}/channels/${host}/live/${channelName}`;
+    const url = `${this.baseUrl}/channels/${channelName}`;
 
     try {
       const { data } = await this.axios.get<IKlpqStreamChannel>(url);
-
-      return data;
-    } catch (error) {
-      return;
-    }
-  }
-
-  public async getChannelsList(): Promise<IKlpqChannelsList | undefined> {
-    const url = `${this.baseUrl}/channels/list`;
-
-    try {
-      const { data } = await this.axios.get<IKlpqChannelsList>(url);
 
       return data;
     } catch (error) {

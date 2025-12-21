@@ -79,8 +79,8 @@ export function run() {
 
     ipcMain.emit('settings_check_tokens');
 
-    await serviceManager.getInfo(ServiceNamesEnum.KLPQ_VPS_RTMP);
+    await serviceManager.getInfo(ServiceNamesEnum.KOLPAQUE_RTMP);
 
-    await serviceManager.doImport(ServiceNamesEnum.KLPQ_VPS_RTMP, true);
+    await serviceManager.doImport(ServiceNamesEnum.KOLPAQUE_RTMP, true);
   });
 }

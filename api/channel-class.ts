@@ -12,7 +12,7 @@ import {
   ProtocolsEnum,
   ServiceNamesEnum,
 } from './stream-services/_base';
-import { customStreamService } from './stream-services/custom';
+
 import { launchPlayerChannel, playInWindow } from './channel-play';
 import { main, refreshTrayIconMenuLinux } from './main';
 import { ISavedSettingsFile } from './config-class';
@@ -23,7 +23,7 @@ import { serviceManager } from './services';
 export class Channel extends EventEmitter {
   public readonly id: string;
   public serviceName: ServiceNamesEnum = ServiceNamesEnum.CUSTOM;
-  public serviceObj: BaseStreamService = customStreamService;
+  public serviceObj: BaseStreamService = new BaseStreamService();
   public name: string;
   public link: string;
   public protocol: ProtocolsEnum;

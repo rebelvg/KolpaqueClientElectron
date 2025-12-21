@@ -53,7 +53,7 @@ async function getStats(
   }
 }
 
-class CustomStreamService extends BaseStreamService {
+export class CustomStreamService extends BaseStreamService {
   public name = ServiceNamesEnum.CUSTOM;
   public protocols = [];
   public hosts = [];
@@ -65,5 +65,3 @@ class CustomStreamService extends BaseStreamService {
     return `${channelName}`;
   }
 }
-
-export const customStreamService = new CustomStreamService();
