@@ -30,13 +30,6 @@ process.on('unhandledRejection', (error) => {
     })
     .trim();
 
-  // eslint-disable-next-line no-console
-  console.log('lastTag', lastTag);
-
-  const shortReleaseNote = readlineSync.question(
-    `enter an additional commit note${os.EOL}`,
-  );
-
   const changesList = childProcess
     .execSync(`git log "${lastTag}..HEAD" --pretty=format:"%s"`, {
       encoding: 'utf-8',
@@ -44,6 +37,13 @@ process.on('unhandledRejection', (error) => {
     .trim()
     .split(os.EOL)
     .filter((line) => !line.startsWith('release'));
+
+  // eslint-disable-next-line no-console
+  console.log('lastTag', lastTag, changesList.join(os.EOL));
+
+  const shortReleaseNote = readlineSync.question(
+    `enter an additional commit note${os.EOL}`,
+  );
 
   changesList.unshift(`release ${newVersion}`);
 
