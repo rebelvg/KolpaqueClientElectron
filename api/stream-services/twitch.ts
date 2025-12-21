@@ -126,9 +126,8 @@ async function getInfo(allChannels: Channel[]): Promise<undefined> {
 
         _downloadedLogosCount++;
 
-        const logoBuffer = await commonClient.getContentAsBuffer(
-          profileImageUrl,
-        );
+        const logoBuffer =
+          await commonClient.getContentAsBuffer(profileImageUrl);
 
         channel._iconChecked = true;
 
@@ -300,9 +299,8 @@ export class TwitchStreamService extends BaseStreamService {
       addLogs('warn', error);
     }
 
-    const { channelsAdded, channelNames } = await this.addImportedChannels(
-      channelsToAdd,
-    );
+    const { channelsAdded, channelNames } =
+      await this.addImportedChannels(channelsToAdd);
 
     channelsAdded.forEach((channel) => channelsAddedAll.push(channel));
 

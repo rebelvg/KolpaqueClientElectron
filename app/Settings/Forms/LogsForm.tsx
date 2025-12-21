@@ -4,9 +4,8 @@ import { withTheme } from 'styled-components';
 import ReactJson from 'react-json-view';
 import { IpcRenderer } from 'electron';
 
-const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
-  'electron',
-);
+const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
+  window.require('electron');
 
 @withTheme
 export default class LogsForm extends Component<any, any> {

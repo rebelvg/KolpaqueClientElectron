@@ -13,9 +13,8 @@ import { getChannels } from '../Helpers/IPCHelpers';
 
 import { IpcRenderer } from 'electron';
 
-const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
-  'electron',
-);
+const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
+  window.require('electron');
 
 @withTheme
 class ChannelContainer extends PureComponent<any, any> {

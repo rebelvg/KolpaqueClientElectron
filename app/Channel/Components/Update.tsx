@@ -3,9 +3,8 @@ import styled from 'styled-components';
 
 import { IpcRenderer } from 'electron';
 
-const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
-  'electron',
-);
+const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
+  window.require('electron');
 
 export default class Update extends Component<any, any> {
   constructor(props) {

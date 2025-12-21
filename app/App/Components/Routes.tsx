@@ -8,9 +8,8 @@ import SettingsContainer from '../../Settings/Containers/SettingsContainer';
 import { IpcRenderer } from 'electron';
 import Loading from '../../Shared/Loading';
 
-const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
-  'electron',
-);
+const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
+  window.require('electron');
 
 class Routes extends Component<any, any> {
   constructor(props) {

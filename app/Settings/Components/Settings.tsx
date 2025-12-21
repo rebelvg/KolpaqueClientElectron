@@ -6,9 +6,8 @@ import 'react-select/dist/react-select.css';
 import { Form } from 'react-final-form';
 import { IpcRenderer } from 'electron';
 
-const { ipcRenderer }: { ipcRenderer: IpcRenderer } = window.require(
-  'electron',
-);
+const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
+  window.require('electron');
 
 import SettingsForm from '../../Settings/Forms/SettingsForm';
 import ImportForm from '../../Settings/Forms/ImportForm';
