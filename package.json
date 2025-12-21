@@ -2,6 +2,7 @@
   "name": "KolpaqueClientElectron",
   "version": "0.6.24",
   "description": "Multiplatform GUI for Streamlink",
+  "main": "./dist-api/main.js",
   "scripts": {
     "prepush": "yarn run lint",
     "prettier": "prettier \"**/*\" --list-different --ignore-unknown",
