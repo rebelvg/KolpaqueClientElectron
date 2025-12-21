@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { Component } from 'react';
 import { withTheme } from 'styled-components';
 import ReactJson from 'react-json-view';

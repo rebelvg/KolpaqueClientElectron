@@ -211,7 +211,6 @@ export class Config extends EventEmitter {
         const channel = this.addChannelLink(parsedChannel.link, null);
 
         if (channel) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { link, ...updateData } = parsedChannel;
 
           channel.update({
@@ -237,7 +236,6 @@ export class Config extends EventEmitter {
   }
 
   private async saveLoop(): Promise<void> {
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       await this.saveFile();
 

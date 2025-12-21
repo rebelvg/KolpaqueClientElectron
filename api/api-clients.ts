@@ -826,7 +826,6 @@ class KlpqEncodeClient {
 
 export function clientLoop() {
   (async () => {
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       await Promise.allSettled([
         klpqServiceClient.refreshKlpqToken(),

@@ -97,7 +97,6 @@ function streamlinkVersionCheck(): Promise<boolean> {
 
 export function loop(): void {
   (async (): Promise<void> => {
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const hasUpdate = await clientVersionCheck();
 
@@ -112,7 +111,6 @@ export function loop(): void {
   })();
 
   (async (): Promise<void> => {
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const hasUpdate = await streamlinkVersionCheck();
 

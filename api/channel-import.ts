@@ -47,7 +47,6 @@ export async function loop(): Promise<void> {
   await serviceManager.doImports(false);
 
   (async (): Promise<void> => {
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       await sleep(10 * 60 * 1000);
 

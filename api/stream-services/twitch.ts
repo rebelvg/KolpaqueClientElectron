@@ -268,7 +268,6 @@ export class TwitchStreamService extends BaseStreamService {
     try {
       let cursor = '';
 
-      // eslint-disable-next-line no-constant-condition
       while (true) {
         const followedChannelsData = await twitchClient.getFollowedChannels(
           channelId,

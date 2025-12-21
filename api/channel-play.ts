@@ -132,7 +132,6 @@ async function launchStreamlink(
 
   channel._playingProcesses++;
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     addLogs(
       'info',
