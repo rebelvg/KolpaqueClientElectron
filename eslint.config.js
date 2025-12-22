@@ -1,6 +1,6 @@
-import tseslint from 'typescript-eslint';
+const tseslint = require('typescript-eslint');
 
-export default [
+module.exports = [
   { ignores: ['./dist-api/**', './dist-app/**'] },
   {
     files: ['./api/**/*.ts', './app/**/*.tsx'],
