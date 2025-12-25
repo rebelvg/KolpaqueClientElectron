@@ -8,7 +8,6 @@ import { Channel } from './channel-class';
 import { addLogs } from './logs';
 import { contextMenuTemplate, main } from './main';
 import { sleep } from './helpers';
-import { syncSettings } from './sync-settings';
 import { SourcesEnum } from './enums';
 import { config } from './settings-file';
 import { serviceManager } from './services';
@@ -403,13 +402,9 @@ export class Config extends EventEmitter {
     main.mainWindow!.webContents.send('runChannelUpdates', source);
   }
 
-  public async setSettings(settingName: string, settingValue: any) {
+  public setSettings(settingName: string, settingValue: any) {
     if (settingName === 'showNotifications') {
       contextMenuTemplate[3]!.checked = settingValue as boolean;
-    }
-
-    if (settingName === 'enableSync') {
-      await syncSettings.save();
     }
 
     this.updateSettingsPage();

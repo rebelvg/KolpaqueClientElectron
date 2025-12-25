@@ -4,7 +4,6 @@ import { loop as importLoop } from './channel-import';
 import { loop as versionLoop } from './version-check';
 import { addLogs, run as runLogs } from './logs';
 import { run as runSocket } from './socket-client';
-import { syncSettings } from './sync-settings';
 import { clientLoop } from './api-clients';
 
 export async function init(): Promise<void> {
@@ -17,8 +16,6 @@ export async function init(): Promise<void> {
   await importLoop();
   await channelLoop();
   await versionLoop();
-
-  await syncSettings.init();
 
   await infoLoop();
 

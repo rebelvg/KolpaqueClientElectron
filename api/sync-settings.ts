@@ -189,5 +189,3 @@ class SyncSettings {
     return newSyncId;
   }
 }
-
-export const syncSettings = new SyncSettings();
