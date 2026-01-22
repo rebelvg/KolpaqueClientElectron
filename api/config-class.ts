@@ -240,7 +240,7 @@ export class Config extends EventEmitter {
     while (true) {
       await this.saveFile();
 
-      await sleep(5 * 1000);
+      await sleep(30 * 1000);
     }
   }
 

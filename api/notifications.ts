@@ -20,12 +20,12 @@ export function printNotification(
   if (
     config.settings.showNotificationsOnlyFavorites &&
     channel &&
-    channel.isPinned
+    !channel.isPinned
   ) {
-    printNewNotification(title, content, channel);
-  } else {
-    printNewNotification(title, content, channel);
+    return;
   }
+
+  printNewNotification(title, content, channel);
 }
 
 function printNewNotification(
