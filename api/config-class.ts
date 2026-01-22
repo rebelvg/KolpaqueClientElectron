@@ -108,6 +108,7 @@ const sortChannels = (
 interface ISettings {
   LQ: boolean;
   showNotifications: boolean;
+  showNotificationsOnlyFavorites: boolean;
   enableNotificationSounds: boolean;
   minimizeAtStart: boolean;
   launchOnBalloonClick: boolean;
@@ -150,6 +151,7 @@ export class Config extends EventEmitter {
   public settings: ISettings = {
     LQ: false,
     showNotifications: true,
+    showNotificationsOnlyFavorites: false,
     enableNotificationSounds: false,
     minimizeAtStart: false,
     launchOnBalloonClick: true,

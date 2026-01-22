@@ -17,7 +17,15 @@ export function printNotification(
     return;
   }
 
-  printNewNotification(title, content, channel);
+  if (
+    config.settings.showNotificationsOnlyFavorites &&
+    channel &&
+    channel.isPinned
+  ) {
+    printNewNotification(title, content, channel);
+  } else {
+    printNewNotification(title, content, channel);
+  }
 }
 
 function printNewNotification(

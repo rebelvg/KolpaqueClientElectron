@@ -72,6 +72,17 @@ const SettingsForm: FunctionComponent<any> = ({
       </FieldWrapper>
 
       <FieldWrapper>
+        <Label>Show Channel Notifications Only Pinned</Label>
+        <InputWrapper>
+          <Field
+            name="showNotificationsOnlyFavorites"
+            component={ToggleAdapter}
+            toggle={changeSetting}
+          />
+        </InputWrapper>
+      </FieldWrapper>
+
+      <FieldWrapper>
         <Label>Enable Notification Sounds</Label>
         <InputWrapper>
           <Field
