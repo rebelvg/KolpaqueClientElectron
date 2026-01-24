@@ -84,7 +84,7 @@ ipcMain.on('channel_openPage', (event, id) => {
   return true;
 });
 
-ipcMain.on('channel_openChat', (event, id) => {
+ipcMain.on('channel_openChat', async (event, id) => {
   addLogs('info', 'channel_openChat', id);
 
   const channel = config.findById(id);
@@ -101,20 +101,32 @@ ipcMain.on('channel_openChat', (event, id) => {
 
   if (config.settings.playInWindow) {
     const window = new BrowserWindow({
-      width: 405,
+      width: 640,
       height: 720,
       webPreferences: {
         nodeIntegration: false,
+        partition: 'nopersist',
       },
+      autoHideMenuBar: true,
     });
 
-    window.loadURL(chatLink);
-
     main.mainWindow!.on('closed', () => {
-      if (window) {
+      if (window && !window.isDestroyed()) {
         window.close();
       }
     });
+
+    window.setMenu(null);
+
+    try {
+      await window.loadURL(chatLink);
+    } catch (error) {
+      addLogs('warn', error, chatLink);
+
+      window.close();
+
+      return false;
+    }
   } else {
     shell.openExternal(chatLink);
   }

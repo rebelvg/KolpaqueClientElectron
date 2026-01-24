@@ -60,6 +60,7 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
     height: 720,
     webPreferences: {
       nodeIntegration: false,
+      partition: 'nopersist',
     },
     autoHideMenuBar: true,
   });
@@ -69,7 +70,7 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
   });
 
   main.mainWindow!.on('closed', () => {
-    if (window && !window.isDestroyed) {
+    if (window && !window.isDestroyed()) {
       window.close();
     }
   });

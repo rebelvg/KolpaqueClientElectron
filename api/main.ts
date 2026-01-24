@@ -115,6 +115,8 @@ if (process.env.NODE_ENV !== 'dev') {
   }
 }
 
+app.commandLine.appendSwitch('disable-http-cache');
+
 function createWindow(): void {
   remoteMain.initialize();
 
@@ -130,6 +132,7 @@ function createWindow(): void {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      partition: 'nopersist',
     },
   });
 
