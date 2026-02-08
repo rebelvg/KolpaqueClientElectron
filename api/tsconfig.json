@@ -9,7 +9,7 @@
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitThis": true,
-    "outDir": "../dist-api"
+    "outDir": "./dist"
   },
-  "include": ["../api/**/*"]
+  "include": ["./**/*"]
 }

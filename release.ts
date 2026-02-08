@@ -56,7 +56,7 @@ process.on('unhandledRejection', (error) => {
   // eslint-disable-next-line no-console
   console.log(commitNote);
 
-  childProcess.execSync(`yarn run lint:fix`, { stdio: 'inherit' });
+  childProcess.execSync(`pnpm run lint:fix`, { stdio: 'inherit' });
 
   childProcess.execSync(`git add .`, { stdio: 'inherit' });
 

@@ -1,43 +1,36 @@
 {
   "name": "KolpaqueClientElectron",
+  "packageManager": "pnpm@10.29.1",
   "version": "0.6.25",
   "description": "Multiplatform GUI for Streamlink",
-  "main": "./dist-api/main.js",
   "scripts": {
-    "prepush": "yarn run lint",
+    "prepush": "pnpm run lint",
     "prettier": "prettier \"**/*\" --list-different --ignore-unknown",
     "prettier:fix": "prettier \"**/*\" --write --ignore-unknown",
-    "lint": "eslint . && yarn run prettier && tsc --project api/tsconfig.json --noEmit",
-    "lint:fix": "eslint . --fix && yarn run prettier:fix && tsc --project api/tsconfig.json --noEmit",
-    "build:api": "tsc --project api/tsconfig.json",
-    "build:app": "yarn workspace app run build",
+    "lint": "eslint . && pnpm run prettier && tsc --project api/tsconfig.json --noEmit",
+    "lint:fix": "eslint . --fix && pnpm run prettier:fix && tsc --project api/tsconfig.json --noEmit",
+    "build:api": "pnpm --filter api run build",
+    "build:app": "pnpm --filter app run build",
     "build": "ts-node build.ts",
-    "release": "yarn ts-node release.ts",
-    "start:api": "yarn run build:api && cross-env NODE_ENV=dev REACT_ENV=dev electron . --ozone-platform=wayland",
-    "start:dev": "concurrently --kill-others \"yarn run start:api\" \"yarn workspace app run start\"",
-    "start": "yarn run build:api && yarn run build:app && cross-env NODE_ENV=dev electron . --ozone-platform=wayland",
+    "release": "ts-node release.ts",
+    "start:api": "pnpm --filter api run start",
+    "start:app": "pnpm --filter app run start",
+    "start:dev": "concurrently --kill-others \"pnpm run start:api\" \"pnpm run start:app\"",
+    "start": "pnpm run build:api && pnpm run build:app && pnpm run start:api",
     "prepare": "husky"
   },
   "author": "KLPQ",
   "license": "CC0-1.0",
   "private": true,
-  "workspaces": [
-    "api",
-    "app"
-  ],
   "devDependencies": {
-    "@electron/packager": "^19.0.1",
     "@types/archiver": "^6.0.3",
-    "@types/lodash": "4.17.21",
-    "@types/node": "24.9.2",
-    "@types/readline-sync": "^1.4.8",
-    "@types/semver": "^7.5.8",
-    "@types/socket.io-client": "^1.4.32",
-    "@types/uuid": "^8.3.0",
+    "@types/readline-sync": "^1.4.8"
+  },
+  "dependencies": {
+    "@electron/packager": "^19.0.1",
     "archiver": "^4.0.1",
     "concurrently": "^5.3.0",
     "cross-env": "^5.0.5",
-    "electron": "^39.0.0",
     "eslint": "^9.39.2",
     "husky": "^9.1.7",
     "prettier": "^3.7.4",
@@ -45,18 +38,5 @@
     "ts-node": "^10.9.2",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.50.0"
-  },
-  "dependencies": {
-    "@electron/remote": "^2.1.3",
-    "axios": "^1.7.8",
-    "electron-default-menu": "^1.0.1",
-    "fix-path": "^2.1.0",
-    "lodash": "^4.17.21",
-    "querystring": "^0.2.0",
-    "semver": "^7.6.3",
-    "socket.io-client": "^2.3.0",
-    "source-map-support": "^0.5.19",
-    "uuid": "^8.0.0",
-    "youtubei.js": "^16.0.1"
   }
 }

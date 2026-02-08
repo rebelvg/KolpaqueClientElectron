@@ -68,13 +68,13 @@ yarn install
 ### Run
 
 ```
-yarn run start
+pnpm run start
 ```
 
 ### Build
 
 ```
-yarn run build
+pnpm run build
 ```
 
 xhost +local:$(id -un)

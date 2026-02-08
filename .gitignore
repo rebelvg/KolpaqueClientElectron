@@ -1,12 +1,12 @@
 node_modules/
 
 /.vscode
-/dist-api
 /dist-app
+/api/dist
 *.log
 /scripts
-/.config/*
-!/.config/.gitkeep
+/api/.config/*
+!/api/.config/.gitkeep
 /.build/*
 !/.build/.gitkeep
-/.yarn
+/.pnpm-store

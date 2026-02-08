@@ -48,7 +48,7 @@ if (!pathOption) {
 
 (async (): Promise<void> => {
   await Promise.all(
-    ['yarn run build:api', 'yarn run build:app'].map((command) => {
+    ['pnpm run build:api', 'pnpm run build:app'].map((command) => {
       return new Promise<void>((resolve, reject) => {
         const process = childProcess.spawn(command, {
           stdio: ['inherit', 'inherit', 'inherit'],

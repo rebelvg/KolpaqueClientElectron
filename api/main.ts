@@ -13,10 +13,10 @@ import {
 import * as path from 'path';
 import * as url from 'url';
 import * as fixPath from 'fix-path';
-import * as defaultMenu from 'electron-default-menu';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as remoteMain from '@electron/remote/main';
+import * as defaultMenu from 'electron-default-menu';
 
 app.commandLine.appendSwitch(
   'disable-features',
@@ -151,7 +151,7 @@ function createWindow(): void {
   } else {
     mainWindow.loadURL(
       url.format({
-        pathname: path.join(__dirname, '../dist-app', 'index.html'),
+        pathname: path.join(__dirname, '../../dist-app', 'index.html'),
         protocol: 'file:',
         slashes: true,
       }),
