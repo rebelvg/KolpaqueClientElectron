@@ -77,17 +77,9 @@ if (!pathOption) {
   const options: Options = {
     dir: './',
     tmpdir: false,
-    icon: './icons/icon.png',
+    icon: './api/icons/klpq.png',
     arch,
-    ignore: [
-      /\/.git/,
-      /\/.vscode/,
-      /\/.idea/,
-      /\/node_modules\/api/,
-      /\/node_modules\/app/,
-      /\/.config/,
-      /\/.build/,
-    ],
+    ignore: [/\/.git/, /\/.vscode/, /\/.config/, /\/.build/],
     overwrite: true,
     win32metadata: {
       ProductName: 'KolpaqueClientElectron',
@@ -98,6 +90,7 @@ if (!pathOption) {
     asar: true,
     prune: true,
     out: undefined,
+    derefSymlinks: false,
   };
 
   const platforms = [platformOption];
@@ -110,7 +103,7 @@ if (!pathOption) {
   console.log(options, pathOption);
 
   for (const platform of platforms) {
-    const appPaths: string[] = await packager({
+    const appPaths = await packager({
       ...options,
       platform,
       out: pathOption,

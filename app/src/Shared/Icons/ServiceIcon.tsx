@@ -7,7 +7,7 @@ import { youtubePlay } from 'react-icons-kit/fa/youtubePlay';
 
 const Services = {
   'kolpaque-rtmp': {
-    asset: './static/icons/klpq_vps.svg',
+    asset: './icons/klpq.svg',
     isImage: true,
     color: null,
   },
@@ -34,7 +34,7 @@ const Services = {
     color: '#E62117',
   },
   kick: {
-    asset: './static/icons/kick.ico',
+    asset: './icons/kick.ico',
     isImage: true,
     color: null,
   },

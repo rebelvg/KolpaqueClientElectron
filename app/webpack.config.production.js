@@ -5,7 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   mode: 'production',
   target: 'electron-renderer',
-  entry: './index.tsx',
+  entry: './src/index.tsx',
   module: {
     rules: [
       {
@@ -19,7 +19,7 @@ module.exports = {
       },
       {
         test: /\.(jpe?g|gif|png|wav|mp3)$/,
-        include: [path.resolve(__dirname, './static')],
+        include: [path.resolve(__dirname, './icons')],
         loader: 'url-loader',
         options: {
           limit: 8192,
@@ -27,7 +27,7 @@ module.exports = {
       },
       {
         test: /\.(woff|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        include: [path.resolve(__dirname, './static')],
+        include: [path.resolve(__dirname, './icons')],
         loader: 'file-loader',
       },
     ],
@@ -39,11 +39,11 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Kolpaque Client',
     }),
-    new CopyWebpackPlugin([{ from: './static', to: 'static' }]),
+    new CopyWebpackPlugin([{ from: './icons', to: 'icons' }]),
   ],
   output: {
     filename: 'bundle.js',
     publicPath: './',
-    path: path.resolve(__dirname, '../dist-app'),
+    path: path.resolve(__dirname, './dist'),
   },
 };

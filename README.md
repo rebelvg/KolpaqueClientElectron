@@ -8,7 +8,7 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 
 ## Automated builds
 
-- https://rebelvg.visualstudio.com/kolpaque/_build?definitionId=1
+- https://rebelvg.visualstudio.com/kolpaque/_build
 
 ## Features
 
@@ -71,10 +71,10 @@ yarn install
 yarn run start
 ```
 
-### Build
+### Pack
 
 ```
-yarn run build
+yarn run pack
 ```
 
 xhost +local:$(id -un)

@@ -1,4 +1,4 @@
-dist-api/
-dist-app/
-.config/
-.build/
+/api/dist
+/app/dist
+/.config
+/.build

@@ -1,7 +1,7 @@
 const tseslint = require('typescript-eslint');
 
 module.exports = [
-  { ignores: ['./dist-api/**', './dist-app/**'] },
+  { ignores: ['./api/dist/**', './app/dist/**'] },
   {
     files: ['./api/**/*.ts', './app/**/*.tsx'],
     ignores: [],

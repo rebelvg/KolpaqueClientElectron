@@ -1,8 +1,8 @@
 node_modules/
 
 /.vscode
-/dist-api
-/dist-app
+/api/dist
+/app/dist
 *.log
 /scripts
 /.config/*

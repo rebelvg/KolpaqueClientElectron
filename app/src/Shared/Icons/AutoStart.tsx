@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import styled, { withTheme } from 'styled-components';
 
-const AUTOSTART_ON = './static/icons/autostart_on.svg';
-const AUTOSTART_ON_INVERT = './static/icons/autostart_on_invert.svg';
-const AUTOSTART_OFF = './static/icons/autostart_off.svg';
+const AUTOSTART_ON = './icons/autostart_on.svg';
+const AUTOSTART_ON_INVERT = './icons/autostart_on_invert.svg';
+const AUTOSTART_OFF = './icons/autostart_off.svg';
 
 @withTheme
 export class AutoStart extends Component<any> {
