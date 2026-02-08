@@ -77,16 +77,15 @@ if (!pathOption) {
   const options: Options = {
     dir: './',
     tmpdir: false,
-    icon: './icons/icon.png',
+    icon: './api/icons/icon.png',
     arch,
     ignore: [
       /\/.git/,
       /\/.vscode/,
-      /\/.idea/,
-      /\/node_modules\/api/,
-      /\/node_modules\/app/,
-      /\/.config/,
+      /\/api\/.config/,
       /\/.build/,
+      /\/.pnpm-store/,
+      /\/node_modules\/.pnpm/,
     ],
     overwrite: true,
     win32metadata: {
@@ -96,7 +95,7 @@ if (!pathOption) {
       OriginalFilename: 'KolpaqueClientElectron.exe',
     },
     asar: true,
-    prune: true,
+    prune: false,
     out: undefined,
   };
 
@@ -110,7 +109,7 @@ if (!pathOption) {
   console.log(options, pathOption);
 
   for (const platform of platforms) {
-    const appPaths: string[] = await packager({
+    const appPaths = await packager({
       ...options,
       platform,
       out: pathOption,

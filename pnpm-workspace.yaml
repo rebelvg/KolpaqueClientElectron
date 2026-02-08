@@ -1,3 +1,8 @@
 packages:
   - api
   - app
+
+onlyBuiltDependencies:
+  - electron
+  - fsevents
+  - react-final-form
