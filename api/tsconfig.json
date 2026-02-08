@@ -11,5 +11,5 @@
     "noImplicitThis": true,
     "outDir": "./dist"
   },
-  "include": ["./**/*"]
+  "include": ["./src/**/*"]
 }

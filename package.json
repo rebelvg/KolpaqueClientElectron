@@ -15,7 +15,7 @@
     "release": "ts-node release.ts",
     "start:api": "pnpm --filter api run start",
     "start:app": "pnpm --filter app run start",
-    "start:dev": "concurrently --kill-others \"pnpm run start:api\" \"pnpm run start:app\"",
+    "start:dev": "cross-env REACT_ENV=dev concurrently --kill-others \"pnpm run start:api\" \"pnpm run start:app\"",
     "start": "pnpm run build:api && pnpm run build:app && pnpm run start:api",
     "prepare": "husky"
   },

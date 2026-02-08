@@ -8,7 +8,6 @@
     "start": "cross-env NODE_ENV=dev electron . --ozone-platform=wayland"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
     "@types/lodash": "4.17.21",
     "@types/socket.io-client": "^1.4.32",
     "@types/semver": "^7.5.8",
