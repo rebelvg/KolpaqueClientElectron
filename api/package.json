@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "./dist/main.js",
   "scripts": {
+    "typecheck": "tsc --project tsconfig.json --noEmit",
     "build": "tsc --project tsconfig.json",
     "start": "cross-env NODE_ENV=dev electron . --ozone-platform=wayland"
   },
