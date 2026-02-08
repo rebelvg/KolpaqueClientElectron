@@ -82,7 +82,7 @@ xhost +local:$(id -un)
 podman build -t electron-dev .
 
 podman run --rm -it \
- --name electron-dev-wl \
+ --name electron-dev \
  --userns=keep-id \
  --user "$(id -u):$(id -g)" \
  \
