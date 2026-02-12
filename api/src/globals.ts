@@ -1,8 +1,9 @@
+import { app } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 
 const packageJson = JSON.parse(
-  fs.readFileSync(path.resolve(process.cwd(), './package.json'), {
+  fs.readFileSync(path.resolve(app.getAppPath(), './package.json'), {
     encoding: 'utf-8',
   }),
 );

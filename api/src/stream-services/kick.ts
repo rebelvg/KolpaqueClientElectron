@@ -6,6 +6,7 @@ import { Channel } from '../channel-class';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { kickClient } from '../clients/kick';
 import { sleep } from '../helpers';
+import { app } from 'electron';
 
 async function getStats(
   channels: Channel[],
@@ -51,7 +52,7 @@ export class KickStreamService extends BaseStreamService {
     return `${this.embedLink(channel)}/chat`;
   }
   public icon = fs.readFileSync(
-    path.normalize(path.join(process.cwd(), './api/icons', 'kick.png')),
+    path.normalize(path.join(app.getAppPath(), './api/icons', 'kick.png')),
     {
       encoding: null,
     },

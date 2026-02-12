@@ -5,6 +5,7 @@ import { Channel } from '../channel-class';
 import { getStatsBase } from './youtube-user';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { addLogs } from '../logs';
+import { app } from 'electron';
 
 async function getStats(
   channels: Channel[],
@@ -29,7 +30,7 @@ export class YoutubeChannelStreamService extends BaseStreamService {
   public hosts = ['www.youtube.com', 'youtube.com'];
   public paths = [/^\/channel\/(\S+)\/+/gi, /^\/channel\/(\S+)\/*/gi];
   public icon = fs.readFileSync(
-    path.normalize(path.join(process.cwd(), './api/icons', 'youtube.png')),
+    path.normalize(path.join(app.getAppPath(), './api/icons', 'youtube.png')),
     {
       encoding: null,
     },

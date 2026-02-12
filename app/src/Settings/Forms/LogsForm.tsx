@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 
 interface LogsFormState {
   logs: unknown[];
@@ -42,7 +43,7 @@ export default class LogsForm extends Component<
 
   render() {
     return (
-      <div>
+      <LogsWrapper>
         <button
           onClick={() => {
             window.electronAPI.send('logs_open_folder');
@@ -50,7 +51,18 @@ export default class LogsForm extends Component<
         >
           Show Folder
         </button>
-      </div>
+      </LogsWrapper>
     );
   }
 }
+
+const LogsWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;

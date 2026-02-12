@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import Select from 'react-select';
 import { Form } from 'react-final-form';
 
 import SettingsForm from '../../Settings/Forms/SettingsForm';
@@ -86,12 +85,17 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
       <Container>
         <SettingSelect
           name="form-field-name"
-          value={options.find((option) => option.value === activeKey)}
-          options={options}
-          onChange={this.changeWindow}
-          isClearable={false}
-          isSearchable={false}
-        />
+          value={activeKey}
+          onChange={(e) =>
+            this.changeWindow({ value: e.target.value as SettingsState['activeKey'] })
+          }
+        >
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </SettingSelect>
 
         {activeKey === 'general' && (
           <Form
@@ -128,13 +132,25 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
   }
 }
 
-const SettingSelect = styled(Select)`
-  margin-bottom: 10px;
+const SettingSelect = styled.select`
+  margin: 0 0 12px 0;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 4px;
+  border: 1px solid ${(props) => props.theme.outline};
+  background: ${(props) => props.theme.client.bg};
+  color: ${(props) => props.theme.client.color};
+  font-size: 15px;
 `;
 
 const Container = styled.div`
   width: 100%;
   height: 100%;
   background-color: ${(props) => props.theme.channel.bg};
-  overflow-y: scroll;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;

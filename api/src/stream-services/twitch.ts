@@ -13,7 +13,7 @@ import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { config } from '../settings-file';
 import { addLogs } from '../logs';
 import { SourcesEnum } from '../enums';
-import { nativeImage } from 'electron';
+import { app, nativeImage } from 'electron';
 
 async function getStats(
   channels: Channel[],
@@ -157,7 +157,7 @@ export class TwitchStreamService extends BaseStreamService {
     return `${this.embedLink(channel)}/chat`;
   }
   public icon = fs.readFileSync(
-    path.normalize(path.join(process.cwd(), './api/icons', 'twitch.png')),
+    path.normalize(path.join(app.getAppPath(), './api/icons', 'twitch.png')),
     {
       encoding: null,
     },

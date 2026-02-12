@@ -1,9 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { Field, FormRenderProps } from 'react-final-form';
-import Toggle from 'react-toggle-button';
 import styled from 'styled-components';
-import Select from 'react-select';
 import { openMenu } from '../../Channel/constants';
 import { Integrations, Settings } from '../../Shared/types';
 
@@ -28,23 +26,31 @@ interface ToggleAdapterProps {
 export const ToggleAdapter: FunctionComponent<ToggleAdapterProps> = ({
   input: { onChange, name, value },
   toggle,
-  ...rest
 }) => (
-  <Toggle
-    value={value}
-    onToggle={(value) => {
+  <ToggleTrack
+    role="switch"
+    aria-checked={!!value}
+    tabIndex={0}
+    onClick={() => {
       toggle(!value, name);
       onChange(!value);
     }}
-    inactiveLabel={''}
-    activeLabel={''}
-    {...rest}
-  />
+    onKeyDown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle(!value, name);
+        onChange(!value);
+      }
+    }}
+    $checked={!!value}
+  >
+    <ToggleThumb $checked={!!value} />
+  </ToggleTrack>
 );
 
 const ToggleAdapterField = ToggleAdapter as any;
 
-type ReactSelectAdapterProps = {
+type NativeSelectAdapterProps = {
   input: {
     name: string;
     value: any;
@@ -56,24 +62,27 @@ type ReactSelectAdapterProps = {
   options: { value: string; label: string }[];
 };
 
-const ReactSelectAdapter = ({
+const NativeSelectAdapter = ({
   input,
   select,
-  ...rest
-}: ReactSelectAdapterProps) => (
-  <Select
-    {...input}
-    {...rest}
-    onChange={(selected) => {
-      if (!selected) {
-        return;
-      }
-      input.onChange(selected.value);
-      select(selected.value, input.name);
+  options,
+}: NativeSelectAdapterProps) => (
+  <SelectEl
+    name={input.name}
+    value={input.value}
+    onChange={(event) => {
+      const selected = event.target.value;
+
+      input.onChange(selected);
+      select(selected, input.name);
     }}
-    isClearable={false}
-    isSearchable={false}
-  />
+  >
+    {options.map((option) => (
+      <option key={option.value} value={option.value}>
+        {option.label}
+      </option>
+    ))}
+  </SelectEl>
 );
 
 type SettingsFormProps = FormRenderProps<any> & {
@@ -193,7 +202,7 @@ const SettingsForm: FunctionComponent<SettingsFormProps> = ({
         <Label>Sort Mode</Label>
         <SelectField
           name="sortType"
-          component={ReactSelectAdapter}
+          component={NativeSelectAdapter}
           options={sortTypes}
           select={changeSetting}
         />
@@ -381,6 +390,8 @@ const SelectWrapper = styled.div`
 
 const SelectField = styled(Field)`
   margin-bottom: 20px;
+  width: 100%;
+  display: block;
 `;
 
 interface FieldWrapperProps {
@@ -410,6 +421,40 @@ const StyledField = styled(Field)`
   margin: 0px;
   position: relative;
   z-index: 100000;
+`;
+
+const ToggleTrack = styled.div<{ $checked: boolean }>`
+  width: 38px;
+  height: 20px;
+  border-radius: 999px;
+  background: ${(props) =>
+    props.$checked ? props.theme.clientSecondary.color : props.theme.outline};
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s ease-out;
+  outline: none;
+`;
+
+const ToggleThumb = styled.div<{ $checked: boolean }>`
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: ${(props) => props.theme.client.bg};
+  position: absolute;
+  top: 2px;
+  left: ${(props) => (props.$checked ? '20px' : '2px')};
+  transition: left 0.15s ease-out, background 0.15s ease-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+`;
+
+const SelectEl = styled.select`
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid ${(props) => props.theme.outline};
+  background: ${(props) => props.theme.client.bg};
+  color: ${(props) => props.theme.client.color};
+  font-size: 14px;
 `;
 
 export default SettingsForm;

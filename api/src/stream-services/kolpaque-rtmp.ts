@@ -8,6 +8,7 @@ import { klpqStreamClient } from '../api-clients';
 import { config } from '../settings-file';
 import { SourcesEnum } from '../enums';
 import { addLogs } from '../logs';
+import { app } from 'electron';
 
 async function getStatsBase(
   channel: Channel,
@@ -116,7 +117,7 @@ export class KolpaqueRtmpStreamService extends BaseStreamService {
     return `https://stream.klpq.io/${channel.name}`;
   }
   public icon = fs.readFileSync(
-    path.normalize(path.join(process.cwd(), './api/icons', 'klpq_vps.png')),
+    path.normalize(path.join(app.getAppPath(), './api/icons', 'klpq_vps.png')),
     {
       encoding: null,
     },
