@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-import { IpcRenderer } from 'electron';
 import { FunctionComponent } from 'react';
-
-const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
-  window.require('electron');
 
 interface UpdateProps {
   updateNotification?: string;
@@ -13,7 +9,7 @@ interface UpdateProps {
 
 const Update: FunctionComponent<UpdateProps> = ({ updateNotification }) => {
   const sendInfo = () => {
-    ipcRenderer.send('client_getInfo');
+    window.electronAPI.send('client_getInfo');
   };
 
   if (!updateNotification) {

@@ -1,4 +1,11 @@
-import { BrowserWindow, ipcMain, shell, clipboard } from 'electron';
+import {
+  BrowserWindow,
+  ipcMain,
+  shell,
+  clipboard,
+  IpcMainEvent,
+  IpcMainInvokeEvent,
+} from 'electron';
 import * as _ from 'lodash';
 
 import { Config } from './config-class';
@@ -9,8 +16,17 @@ import { SourcesEnum } from './enums';
 
 export const config = new Config();
 
+const isTrustedSender = (event: IpcMainEvent | IpcMainInvokeEvent) =>
+  main.mainWindow ? event.sender === main.mainWindow.webContents : false;
+
 ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
   addLogs('info', 'config_changeSetting', settingName, settingValue);
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'config_changeSetting_blocked');
+
+    return;
+  }
 
   if (settingName === 'twitchImport') {
     settingValue = _.uniq(settingValue);
@@ -21,6 +37,12 @@ ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
 
 ipcMain.on('channel_add', async (event, channelLink) => {
   addLogs('info', 'channel_add', channelLink);
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'channel_add_blocked');
+
+    return;
+  }
 
   const channel = config.addChannelLink(channelLink, SourcesEnum.MANUAL_ACTION);
 
@@ -36,6 +58,12 @@ ipcMain.on('channel_add', async (event, channelLink) => {
 ipcMain.on('channel_remove', (event, id) => {
   addLogs('info', 'channel_remove', id);
 
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'channel_remove_blocked');
+
+    return;
+  }
+
   return config.removeChannelById(id);
 });
 
@@ -43,6 +71,12 @@ ipcMain.on(
   'channel_changeSettingSync',
   (event, id, settingName, settingValue) => {
     addLogs('info', 'channel_changeSettingSync', id, settingName, settingValue);
+
+    if (!isTrustedSender(event)) {
+      addLogs('warn', 'channel_changeSettingSync_blocked');
+
+      return;
+    }
 
     const channel = config.findById(id);
 
@@ -69,6 +103,12 @@ ipcMain.on(
 ipcMain.on('channel_openPage', (event, id) => {
   addLogs('info', 'channel_openPage', id);
 
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'channel_openPage_blocked');
+
+    return false;
+  }
+
   const channel = config.findById(id);
 
   if (!channel) {
@@ -86,6 +126,12 @@ ipcMain.on('channel_openPage', (event, id) => {
 
 ipcMain.on('channel_openChat', async (event, id) => {
   addLogs('info', 'channel_openChat', id);
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'channel_openChat_blocked');
+
+    return false;
+  }
 
   const channel = config.findById(id);
 
@@ -105,6 +151,8 @@ ipcMain.on('channel_openChat', async (event, id) => {
       height: 720,
       webPreferences: {
         nodeIntegration: false,
+        contextIsolation: true,
+        sandbox: true,
         partition: 'nopersist',
       },
       autoHideMenuBar: true,
@@ -137,15 +185,35 @@ ipcMain.on('channel_openChat', async (event, id) => {
 ipcMain.on('channel_copyClipboard', (event, channelLink) => {
   addLogs('info', 'channel_copyClipboard', channelLink);
 
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'channel_copyClipboard_blocked');
+
+    return false;
+  }
+
   clipboard.writeText(channelLink);
 
   return true;
 });
 
-ipcMain.on('getSettings', (event) => (event.returnValue = config.settings));
+ipcMain.on('getSettings', (event) => {
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'getSettings_blocked');
+
+    return;
+  }
+
+  event.returnValue = config.settings;
+});
 
 ipcMain.handle('config_find', (event, query) => {
   addLogs('info', 'config_find', query);
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'config_find_blocked');
+
+    return { channels: [], count: { online: 0, offline: 0 } };
+  }
 
   const find = config.find(query);
 

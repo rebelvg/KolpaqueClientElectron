@@ -1,4 +1,4 @@
-import { ipcMain, shell } from 'electron';
+import { ipcMain, shell, IpcMainEvent, IpcMainInvokeEvent } from 'electron';
 import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -6,6 +6,7 @@ import * as path from 'path';
 import { app } from 'electron';
 import * as util from 'util';
 import { AxiosError } from 'axios';
+import { main } from './main';
 
 const clientAppDataPath =
   process.env.NODE_ENV !== 'dev' ? app.getPath('userData') : './.config';
@@ -13,10 +14,27 @@ const clientAppDataPath =
 export const appLogPath = path.join(clientAppDataPath, 'app.log');
 export const crashLogPath = path.join(clientAppDataPath, 'crash.log');
 
-ipcMain.handle('config_logs', () => []);
+const isTrustedSender = (event: IpcMainEvent | IpcMainInvokeEvent) =>
+  main.mainWindow ? event.sender === main.mainWindow.webContents : false;
 
-ipcMain.on('logs_open_folder', () => {
+ipcMain.handle('config_logs', (event) => {
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'config_logs_blocked');
+
+    return [];
+  }
+
+  return [];
+});
+
+ipcMain.on('logs_open_folder', (event) => {
   addLogs('info', 'logs_open_folder');
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'logs_open_folder_blocked');
+
+    return;
+  }
 
   shell.openPath(path.resolve(clientAppDataPath));
 });

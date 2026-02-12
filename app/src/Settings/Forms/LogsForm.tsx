@@ -1,8 +1,4 @@
 import React, { Component } from 'react';
-import { IpcRenderer } from 'electron';
-
-const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
-  window.require('electron');
 
 interface LogsFormState {
   logs: unknown[];
@@ -23,14 +19,14 @@ export default class LogsForm extends Component<
   }
 
   async componentDidMount(): Promise<void> {
-    const logs = await ipcRenderer.invoke('config_logs');
+    const logs = await window.electronAPI.invoke<unknown[]>('config_logs');
 
     this.setState({
       logs,
     });
 
     this.getLogsInterval = setInterval(async () => {
-      const logs = await ipcRenderer.invoke('config_logs');
+      const logs = await window.electronAPI.invoke<unknown[]>('config_logs');
 
       this.setState({
         logs,
@@ -49,7 +45,7 @@ export default class LogsForm extends Component<
       <div>
         <button
           onClick={() => {
-            ipcRenderer.send('logs_open_folder');
+            window.electronAPI.send('logs_open_folder');
           }}
         >
           Show Folder

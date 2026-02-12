@@ -1,6 +1,3 @@
-import { menuTemplate } from '../../Channel/Helpers/menu';
-import { Menu } from '@electron/remote';
-import * as remote from '@electron/remote';
 import {
   Channel,
   ChannelCount,
@@ -9,14 +6,12 @@ import {
   Settings,
 } from '../../Shared/types';
 
-const { ipcRenderer } = window.require('electron');
-
 export const addChannel = (channel: string) => {
-  ipcRenderer.send('channel_add', channel);
+  window.electronAPI.send('channel_add', channel);
 };
 
 export const deleteChannel = (channel: Channel) => {
-  ipcRenderer.send('channel_remove', channel.id);
+  window.electronAPI.send('channel_remove', channel.id);
 };
 
 export const changeChannelSetting = (
@@ -24,15 +19,20 @@ export const changeChannelSetting = (
   settingName: keyof Channel | keyof Settings,
   settingValue: unknown,
 ) => {
-  ipcRenderer.send('channel_changeSettingSync', id, settingName, settingValue);
+  window.electronAPI.send(
+    'channel_changeSettingSync',
+    id,
+    settingName,
+    settingValue,
+  );
 };
 
 export const playChannel = (channel: Channel) => {
-  ipcRenderer.send('channel_play', channel.id);
+  window.electronAPI.send('channel_play', channel.id);
 };
 
 export const getVersion = (): string => {
-  return ipcRenderer.sendSync('client_getVersion');
+  return window.electronAPI.sendSync('client_getVersion') as string;
 };
 
 export const getSettings = (): {
@@ -40,20 +40,22 @@ export const getSettings = (): {
   integrations: Integrations;
 } => {
   return {
-    settings: ipcRenderer.sendSync('getSettings'),
-    integrations: ipcRenderer.sendSync('getIntegrations'),
+    settings: window.electronAPI.sendSync('getSettings') as Settings,
+    integrations: window.electronAPI.sendSync(
+      'getIntegrations',
+    ) as Integrations,
   };
 };
 
 export const importChannel = (name: string) => {
-  return ipcRenderer.send('config_twitchImport', name);
+  return window.electronAPI.send('config_twitchImport', name);
 };
 
 export const changeSetting = (
   name: keyof Settings | string,
   value: unknown,
 ) => {
-  return ipcRenderer.send('config_changeSetting', name, value);
+  return window.electronAPI.send('config_changeSetting', name, value);
 };
 
 export const getChannels = (
@@ -63,7 +65,10 @@ export const getChannels = (
   channels: Channel[];
   count: ChannelCount;
 }> => {
-  return ipcRenderer.invoke('config_find', {
+  return window.electronAPI.invoke<{
+    channels: Channel[];
+    count: ChannelCount;
+  }>('config_find', {
     ...query,
     caller,
   });
@@ -73,11 +78,25 @@ export const openChannelMenu = (
   channel: Channel,
   func: (channel: Channel) => void,
 ) => {
-  const menu = new Menu();
+  let unsubscribe: (() => void) | null = null;
 
-  const template = menuTemplate(channel, func);
+  unsubscribe = window.electronAPI.onChannelRename((renamedChannel) => {
+    if (renamedChannel.id !== channel.id) {
+      return;
+    }
 
-  template.map((item) => menu.append(item));
+    if (unsubscribe) {
+      unsubscribe();
+      unsubscribe = null;
+    }
 
-  menu.popup({ window: remote.getCurrentWindow() });
+    func(renamedChannel);
+  });
+
+  window.electronAPI.openChannelMenu(channel, () => {
+    if (unsubscribe) {
+      unsubscribe();
+      unsubscribe = null;
+    }
+  });
 };

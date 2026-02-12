@@ -1,5 +1,3 @@
-import { Menu } from '@electron/remote';
-import * as remote from '@electron/remote';
 import { MenuItemConstructorOptions } from 'electron';
 import { Channel } from '../Shared/types';
 
@@ -58,7 +56,5 @@ export const template: MenuItemConstructorOptions[] = [
 ];
 
 export const openMenu = () => {
-  const macMenu = Menu.buildFromTemplate(template);
-
-  macMenu.popup({ window: remote.getCurrentWindow() });
+  window.electronAPI.showEditMenu(template);
 };

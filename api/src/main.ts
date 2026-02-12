@@ -9,6 +9,7 @@ import {
   Tray,
   nativeImage,
   MenuItem,
+  IpcMainEvent,
 } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
@@ -16,7 +17,6 @@ import * as fixPath from 'fix-path';
 import * as defaultMenu from 'electron-default-menu';
 import * as fs from 'fs';
 import * as os from 'os';
-import * as remoteMain from '@electron/remote/main';
 
 app.commandLine.appendSwitch(
   'disable-features',
@@ -45,7 +45,13 @@ let forceQuit = false;
 
 let initDone = false;
 
-ipcMain.on('client_ready', async () => {
+ipcMain.on('client_ready', async (event: IpcMainEvent) => {
+  if (main.mainWindow && event.sender !== main.mainWindow.webContents) {
+    addLogs('warn', 'client_ready_blocked');
+
+    return;
+  }
+
   addLogs('info', 'client_ready');
 
   if (initDone) {
@@ -120,8 +126,6 @@ if (process.env.NODE_ENV !== 'dev') {
 app.commandLine.appendSwitch('disable-http-cache');
 
 function createWindow(): void {
-  remoteMain.initialize();
-
   const mainWindow = new BrowserWindow({
     title: 'Kolpaque Client',
     minWidth: 300,
@@ -132,13 +136,13 @@ function createWindow(): void {
     fullscreenable: false,
     icon: iconPath,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: false,
       partition: 'nopersist',
+      preload: path.join(__dirname, 'preload.js'),
     },
   });
-
-  remoteMain.enable(mainWindow.webContents);
 
   main.mainWindow = mainWindow;
 
@@ -229,6 +233,69 @@ app.on('ready', () => {
   }
 
   main.mainWindow!.hide();
+});
+
+ipcMain.handle(
+  'show_edit_menu',
+  (event: IpcMainEvent, template: Electron.MenuItemConstructorOptions[]) => {
+    if (main.mainWindow && event.sender !== main.mainWindow.webContents) {
+      addLogs('warn', 'show_edit_menu_blocked');
+
+      return;
+    }
+
+    const win = BrowserWindow.fromWebContents(event.sender);
+    const menu = Menu.buildFromTemplate(template);
+
+    menu.popup({ window: win ?? undefined });
+  },
+);
+
+ipcMain.handle('open_channel_menu', (event: IpcMainEvent, channel) => {
+  if (main.mainWindow && event.sender !== main.mainWindow.webContents) {
+    addLogs('warn', 'open_channel_menu_blocked');
+
+    return;
+  }
+
+  const win = BrowserWindow.fromWebContents(event.sender);
+
+  const menu = Menu.buildFromTemplate([
+    {
+      label: 'Play (Ctrl - Low Quality, Shift - Auto-Restart)',
+      click: (_menuItem, _browserWindow, menuEvent) => {
+        ipcMain.emit(
+          'channel_play',
+          event,
+          channel.id,
+          !!menuEvent?.ctrlKey,
+          menuEvent?.shiftKey ? true : null,
+        );
+      },
+    },
+    {
+      label: 'Open Page',
+      click: () => ipcMain.emit('channel_openPage', event, channel.id),
+    },
+    {
+      label: 'Open Chat',
+      click: () => ipcMain.emit('channel_openChat', event, channel.id),
+    },
+    {
+      label: 'Rename Channel',
+      click: () => event.sender.send('channel_rename', channel),
+    },
+    {
+      label: 'Copy to Clipboard',
+      click: () => ipcMain.emit('channel_copyClipboard', event, channel.link),
+    },
+    {
+      label: 'Remove Channel',
+      click: () => ipcMain.emit('channel_remove', event, channel.id),
+    },
+  ]);
+
+  menu.popup({ window: win ?? undefined });
 });
 
 export const contextMenuTemplate: Electron.MenuItemConstructorOptions[] = [

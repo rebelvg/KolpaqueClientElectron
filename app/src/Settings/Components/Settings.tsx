@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import Select from 'react-select';
 import { Form } from 'react-final-form';
-import { IpcRenderer } from 'electron';
-
-const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
-  window.require('electron');
 
 import SettingsForm from '../../Settings/Forms/SettingsForm';
 import ImportForm from '../../Settings/Forms/ImportForm';
@@ -39,7 +35,7 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
   }
 
   componentDidMount(): void {
-    ipcRenderer.send('settings_check_tokens');
+    window.electronAPI.send('settings_check_tokens');
   }
 
   componentDidUpdate(
@@ -50,7 +46,7 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
     const { activeKey } = this.state;
 
     if (prevState.activeKey !== activeKey && activeKey === 'general') {
-      ipcRenderer.send('settings_check_tokens');
+      window.electronAPI.send('settings_check_tokens');
     }
   }
 

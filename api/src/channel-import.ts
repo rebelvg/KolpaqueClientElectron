@@ -1,13 +1,23 @@
-import { ipcMain, dialog } from 'electron';
+import { ipcMain, dialog, IpcMainEvent } from 'electron';
 import * as _ from 'lodash';
 
 import { sleep } from './helpers';
 import { addLogs } from './logs';
 import { ServiceNamesEnum } from './stream-services/_base';
 import { serviceManager } from './services';
+import { main } from './main';
+
+const isTrustedSender = (event: IpcMainEvent) =>
+  main.mainWindow ? event.sender === main.mainWindow.webContents : false;
 
 ipcMain.on('config_changeSetting', async (event, settingName, settingValue) => {
   addLogs('info', 'config_changeSetting', settingName, settingValue);
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'config_changeSetting_blocked');
+
+    return;
+  }
 
   if (settingName === 'enableTwitchImport' && settingValue) {
     await serviceManager.doImport(ServiceNamesEnum.TWITCH, true);
@@ -16,6 +26,12 @@ ipcMain.on('config_changeSetting', async (event, settingName, settingValue) => {
 
 ipcMain.on('config_twitchImport', (event, channelName) => {
   addLogs('info', 'config_twitchImport', channelName);
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'config_twitchImport_blocked');
+
+    return false;
+  }
 
   return twitchImportAndMessage();
 });

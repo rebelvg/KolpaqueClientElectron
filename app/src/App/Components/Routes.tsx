@@ -5,12 +5,8 @@ import styled from 'styled-components';
 import ChannelContainer from '../../Channel/Containers/ChannelContainer';
 import SettingsContainer from '../../Settings/Containers/SettingsContainer';
 
-import { IpcRenderer } from 'electron';
 import Loading from '../../Shared/Loading';
 import { Integrations, Settings } from '../../Shared/types';
-
-const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
-  window.require('electron');
 
 interface RoutesProps {
   settings: Settings;
@@ -26,26 +22,33 @@ class Routes extends Component<RoutesProps, RoutesState> {
   constructor(props: RoutesProps) {
     super(props);
 
-    this.state = {
-      isLoading: true,
-      updateNotification: '',
-    };
-
-    ipcRenderer.on('backend_ready', () => {
+    const backendReadyCleanup = window.electronAPI.on('backend_ready', () => {
       this.setState({
         isLoading: false,
       });
     });
 
-    ipcRenderer.on('client_showInfo', (_event, updateNotification) => {
-      this.setState({
-        updateNotification,
-      });
-    });
+    const showInfoCleanup = window.electronAPI.on(
+      'client_showInfo',
+      (_event, updateNotification) => {
+        this.setState({
+          updateNotification: updateNotification as string,
+        });
+      },
+    );
+
+    this.state = {
+      isLoading: true,
+      updateNotification: '',
+    };
+
+    this.cleanupFns = [backendReadyCleanup, showInfoCleanup];
   }
 
+  private cleanupFns: Array<() => void> = [];
+
   componentWillUnmount() {
-    ipcRenderer.removeAllListeners('client_showInfo');
+    this.cleanupFns.forEach((fn) => fn && fn());
   }
 
   render() {

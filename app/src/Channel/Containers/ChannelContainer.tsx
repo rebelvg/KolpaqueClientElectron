@@ -11,11 +11,7 @@ import Tabs from '../../Channel/Components/Tabs';
 import Channels from '../../Channel/Components/Channels';
 import { getChannels } from '../Helpers/IPCHelpers';
 
-import { IpcRenderer } from 'electron';
 import { Channel, ChannelCount } from '../../Shared/types';
-
-const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
-  window.require('electron');
 
 interface ChannelContainerProps {
   filter?: string;
@@ -35,6 +31,8 @@ class ChannelContainer extends PureComponent<
   ChannelContainerProps,
   ChannelContainerState
 > {
+  private cleanupFns: Array<() => void> = [];
+
   constructor(props: ChannelContainerProps) {
     super(props);
 
@@ -66,23 +64,23 @@ class ChannelContainer extends PureComponent<
   };
 
   async componentDidMount() {
-    ipcRenderer.on('channel_changeSettingSync', () => {
-      this.updateView('channel_changeSettingSync');
-    });
-    ipcRenderer.on('runChannelUpdates', (event, args) => {
-      this.updateView('runChannelUpdates', args);
-    });
-    ipcRenderer.on('channel_removeSync', () => {
-      this.updateView('channel_removeSync');
-    });
+    this.cleanupFns = [
+      window.electronAPI.on('channel_changeSettingSync', () => {
+        this.updateView('channel_changeSettingSync');
+      }),
+      window.electronAPI.on('runChannelUpdates', (_event, args) => {
+        this.updateView('runChannelUpdates', args);
+      }),
+      window.electronAPI.on('channel_removeSync', () => {
+        this.updateView('channel_removeSync');
+      }),
+    ];
 
     await this.updateView('componentDidMount');
   }
 
   componentWillUnmount() {
-    ipcRenderer.removeAllListeners('channel_changeSettingSync');
-    ipcRenderer.removeAllListeners('runChannelUpdates');
-    ipcRenderer.removeAllListeners('channel_removeSync');
+    this.cleanupFns.forEach((fn) => fn && fn());
   }
 
   setFilter = async (value: { filter?: string }) => {

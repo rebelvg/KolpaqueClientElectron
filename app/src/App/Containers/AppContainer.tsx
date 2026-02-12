@@ -3,8 +3,6 @@ import { HashRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import styled from 'styled-components';
 
-const { ipcRenderer } = window.require('electron');
-
 import Routes from '../../App/Components/Routes';
 import { themes } from '../../Themes';
 import { getSettings } from '../../Channel/Helpers/IPCHelpers';
@@ -31,7 +29,7 @@ export default class AppContainer extends Component<
   }
 
   componentDidMount() {
-    ipcRenderer.on('config_changeSetting', () => {
+    this.cleanup = window.electronAPI.on('config_changeSetting', () => {
       const { settings, integrations } = getSettings();
 
       this.setState({
@@ -40,12 +38,16 @@ export default class AppContainer extends Component<
       });
     });
 
-    ipcRenderer.send('client_ready');
+    window.electronAPI.send('client_ready');
   }
 
   componentWillUnmount() {
-    ipcRenderer.removeAllListeners('config_changeSetting');
+    if (this.cleanup) {
+      this.cleanup();
+    }
   }
+
+  private cleanup: (() => void) | null = null;
 
   render() {
     const { settings, integrations } = this.state;

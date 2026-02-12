@@ -1,4 +1,4 @@
-import { ipcMain, dialog, shell, BrowserWindow } from 'electron';
+import { ipcMain, dialog, shell, BrowserWindow, IpcMainEvent } from 'electron';
 import { spawn } from 'child_process';
 import * as _ from 'lodash';
 
@@ -13,9 +13,18 @@ import { main } from './main';
 const AUTO_RESTART_ATTEMPTS = 3;
 const AUTO_RESTART_TIMEOUT = 60;
 
+const isTrustedSender = (event: IpcMainEvent) =>
+  main.mainWindow ? event.sender === main.mainWindow.webContents : false;
+
 ipcMain.on(
   'channel_play',
   async (event, id, altQuality = false, autoRestart = null) => {
+    if (!isTrustedSender(event)) {
+      addLogs('warn', 'channel_play_blocked', id);
+
+      return;
+    }
+
     addLogs('info', 'channel_play', id, altQuality, autoRestart);
 
     const channel = config.findById(id);
@@ -60,6 +69,8 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
     height: 720,
     webPreferences: {
       nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: true,
       partition: 'nopersist',
     },
     autoHideMenuBar: true,

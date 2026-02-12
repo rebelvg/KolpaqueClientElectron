@@ -1,4 +1,4 @@
-import { ipcMain, shell } from 'electron';
+import { ipcMain, shell, IpcMainEvent } from 'electron';
 import { execFile } from 'child_process';
 import * as _ from 'lodash';
 import { printNotification } from './notifications';
@@ -8,6 +8,9 @@ import { CLIENT_VERSION } from './globals';
 import { main } from './main';
 import { sleep } from './helpers';
 import * as semver from 'semver';
+
+const isTrustedSender = (event: IpcMainEvent) =>
+  main.mainWindow ? event.sender === main.mainWindow.webContents : false;
 
 const SERVICES = [
   {
@@ -22,8 +25,14 @@ const SERVICES = [
 
 const UPDATES: string[] = [];
 
-ipcMain.on('client_getInfo', async () => {
+ipcMain.on('client_getInfo', async (event) => {
   addLogs('info', 'client_getInfo');
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'client_getInfo_blocked');
+
+    return;
+  }
 
   await Promise.all(
     SERVICES.map((service) => {
@@ -34,13 +43,17 @@ ipcMain.on('client_getInfo', async () => {
   );
 });
 
-ipcMain.on(
-  'client_getVersion',
-  (event) =>
-    (event.returnValue = `${CLIENT_VERSION}${
-      process.env.NODE_ENV === 'dev' ? ' DEV' : ''
-    }`),
-);
+ipcMain.on('client_getVersion', (event) => {
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'client_getVersion_blocked');
+
+    return;
+  }
+
+  event.returnValue = `${CLIENT_VERSION}${
+    process.env.NODE_ENV === 'dev' ? ' DEV' : ''
+  }`;
+});
 
 function sendInfo(update: string): void {
   UPDATES.push(update);

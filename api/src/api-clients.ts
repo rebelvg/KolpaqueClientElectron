@@ -2,11 +2,15 @@ import axios, { AxiosError } from 'axios';
 import { addLogs } from './logs';
 import { config } from './settings-file';
 import * as qs from 'querystring';
-import { shell, ipcMain } from 'electron';
+import { shell, ipcMain, IpcMainEvent } from 'electron';
 import * as uuid from 'uuid';
 import { sleep } from './helpers';
 import { CLIENT_VERSION } from './globals';
 import { kickClient } from './clients/kick';
+import { main } from './main';
+
+const isTrustedSender = (event: IpcMainEvent) =>
+  main.mainWindow ? event.sender === main.mainWindow.webContents : false;
 
 export function getAxios() {
   const axiosInstance = axios.create({
@@ -63,13 +67,24 @@ const integrationState: {
   kick: null,
 };
 
-ipcMain.on(
-  'getIntegrations',
-  (event) => (event.returnValue = integrationState),
-);
+ipcMain.on('getIntegrations', (event) => {
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'getIntegrations_blocked');
 
-ipcMain.on('settings_check_tokens', async () => {
+    return;
+  }
+
+  event.returnValue = integrationState;
+});
+
+ipcMain.on('settings_check_tokens', async (event) => {
   addLogs('info', 'settings_check_tokens');
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'settings_check_tokens_blocked');
+
+    return;
+  }
 
   integrationState.twitch = null;
   integrationState.klpq = null;
@@ -103,26 +118,50 @@ ipcMain.on('settings_check_tokens', async () => {
   config.updateSettingsPage();
 });
 
-ipcMain.on('twitch_login', async () => {
+ipcMain.on('twitch_login', async (event) => {
   addLogs('info', 'twitch_login');
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'twitch_login_blocked');
+
+    return;
+  }
 
   await klpqServiceClient.getTwitchUser();
 });
 
-ipcMain.on('kick_login', async () => {
+ipcMain.on('kick_login', async (event) => {
   addLogs('info', 'kick_login');
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'kick_login_blocked');
+
+    return;
+  }
 
   await klpqServiceClient.getKickUser();
 });
 
-ipcMain.on('youtube_login', async () => {
+ipcMain.on('youtube_login', async (event) => {
   addLogs('info', 'youtube_login');
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'youtube_login_blocked');
+
+    return;
+  }
 
   await klpqServiceClient.getYoutubeUser();
 });
 
-ipcMain.on('klpq_login', async () => {
+ipcMain.on('klpq_login', async (event) => {
   addLogs('info', 'klpq_login');
+
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'klpq_login_blocked');
+
+    return;
+  }
 
   await klpqServiceClient.getKlpqUser();
 });

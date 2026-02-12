@@ -7,8 +7,6 @@ import Select from 'react-select';
 import { openMenu } from '../../Channel/constants';
 import { Integrations, Settings } from '../../Shared/types';
 
-const { shell, ipcRenderer } = window.require('electron');
-
 const sortTypes = [
   { value: 'lastAdded', label: 'Last Added' },
   { value: 'lastUpdated', label: 'Last Changed Status' },
@@ -293,7 +291,7 @@ const SettingsForm: FunctionComponent<SettingsFormProps> = ({
 
       <button
         onClick={() => {
-          ipcRenderer.send('twitch_login');
+          window.electronAPI.send('twitch_login');
         }}
       >
         Twitch Login
