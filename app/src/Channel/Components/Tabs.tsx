@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { TABS } from '../../Channel/constants';
+import { TABS, TabValue } from '../../Channel/constants';
+import { ChannelCount } from '../../Shared/types';
 
-class Tabs extends Component<any> {
-  onChange = (value) => {
+interface TabsProps {
+  activeTab: TabValue;
+  count: ChannelCount;
+  handleActiveTab: (activeTab: TabValue) => void | Promise<void>;
+}
+
+class Tabs extends Component<TabsProps> {
+  onChange = (value: TabValue) => {
     this.props.handleActiveTab(value);
   };
 

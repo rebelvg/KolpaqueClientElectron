@@ -2,10 +2,18 @@ import React, { Component } from 'react';
 import Icon from 'react-icons-kit';
 import styled, { withTheme } from 'styled-components';
 import { star } from 'react-icons-kit/fa/star';
+import { Channel } from '../../Shared/types';
+import { DefaultTheme } from 'styled-components';
+
+interface PinButtonProps {
+  channel: Channel;
+  toggle: (id: string, name: keyof Channel, value: boolean) => void;
+  theme?: DefaultTheme;
+}
 
 @withTheme
-export class PinButton extends Component<any> {
-  onClick = (e) => {
+export class PinButton extends Component<PinButtonProps> {
+  onClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const {
       channel: { isPinned, id },
       toggle,
@@ -26,7 +34,7 @@ export class PinButton extends Component<any> {
       <Wrapper onClick={this.onClick}>
         <PinnedIcon
           icon={star}
-          color={!isPinned ? '#979797' : theme.client.color}
+          color={!isPinned ? '#979797' : theme?.client.color ?? '#979797'}
         />
       </Wrapper>
     );

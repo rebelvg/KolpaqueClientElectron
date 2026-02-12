@@ -4,8 +4,8 @@ import ChannelForm from '../../Channel/Forms/ChannelForm';
 import { addChannel } from '../../Channel/Helpers/IPCHelpers';
 import { Form } from 'react-final-form';
 
-export default class Footer extends Component {
-  submit = ({ channel }) => {
+export default class Footer extends Component<Record<string, never>> {
+  submit = ({ channel }: { channel?: string }) => {
     if (channel) {
       addChannel(channel);
     }

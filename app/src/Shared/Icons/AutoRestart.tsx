@@ -2,10 +2,18 @@ import React, { Component } from 'react';
 import Icon from 'react-icons-kit';
 import styled, { withTheme } from 'styled-components';
 import { refresh } from 'react-icons-kit/fa/refresh';
+import { Channel } from '../../Shared/types';
+import { DefaultTheme } from 'styled-components';
+
+interface AutoRestartProps {
+  channel: Channel;
+  toggle: (id: string, name: keyof Channel, value: boolean) => void;
+  theme?: DefaultTheme;
+}
 
 @withTheme
-export class AutoRestart extends Component<any> {
-  onClick = (e) => {
+export class AutoRestart extends Component<AutoRestartProps> {
+  onClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const {
       channel: { id, onAutoRestart, autoRestart },
       toggle,
@@ -29,7 +37,7 @@ export class AutoRestart extends Component<any> {
     if (onAutoRestart) {
       return '#119400';
     } else {
-      return autoRestart ? theme.client.color : '#979797';
+      return autoRestart ? theme?.client.color ?? '#979797' : '#979797';
     }
   };
 

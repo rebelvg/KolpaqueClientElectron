@@ -51,7 +51,7 @@ export class KickStreamService extends BaseStreamService {
     return `${this.embedLink(channel)}/chat`;
   }
   public icon = fs.readFileSync(
-    path.normalize(path.join(__dirname, '../../icons', 'kick.png')),
+    path.normalize(path.join(process.cwd(), './api/icons', 'kick.png')),
     {
       encoding: null,
     },

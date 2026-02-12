@@ -157,7 +157,7 @@ export class TwitchStreamService extends BaseStreamService {
     return `${this.embedLink(channel)}/chat`;
   }
   public icon = fs.readFileSync(
-    path.normalize(path.join(__dirname, '../../icons', 'twitch.png')),
+    path.normalize(path.join(process.cwd(), './api/icons', 'twitch.png')),
     {
       encoding: null,
     },

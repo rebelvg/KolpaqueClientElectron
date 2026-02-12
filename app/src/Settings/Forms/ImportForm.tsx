@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
-import { Field } from 'react-final-form';
-import styled, { withTheme } from 'styled-components';
+import { Field, FormRenderProps } from 'react-final-form';
+import styled from 'styled-components';
 import { ToggleAdapter } from './SettingsForm';
+import { Settings } from '../../Shared/types';
 
-@withTheme
-export default class ImportForm extends Component<any> {
-  removeMember = (member) => {
+type ImportFormProps = FormRenderProps & {
+  members: string[];
+  submit: (members: string[]) => void;
+  importChannel: (name: string) => void;
+  changeSetting?: (value: boolean, name: string) => void;
+};
+
+export default class ImportForm extends Component<ImportFormProps> {
+  removeMember = (member: string) => {
     const { members, submit } = this.props;
 
     submit([...members.filter((m) => m !== member)]);
@@ -14,22 +21,24 @@ export default class ImportForm extends Component<any> {
   addMember = () => {
     const { values, reset, importChannel } = this.props;
 
-    const member = values.member;
+    const member = (values as Settings & { member?: string }).member;
 
-    importChannel(member);
+    if (member) {
+      importChannel(member);
+    }
 
     reset();
   };
 
-  submit = (data) => {
+  submit = (event?: React.FormEvent<HTMLFormElement>) => {
     const { handleSubmit, values, reset, submit, members } = this.props;
 
-    const member = values.member;
+    const member = (values as Settings & { member?: string }).member;
 
     if (member) {
       submit([...members, member]);
     }
-    handleSubmit(data);
+    handleSubmit(event);
     reset();
   };
 

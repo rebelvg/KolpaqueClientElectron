@@ -1,26 +1,28 @@
 import React, { Component } from 'react';
-import { withTheme } from 'styled-components';
-import ReactJson from 'react-json-view';
 import { IpcRenderer } from 'electron';
 
 const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
   window.require('electron');
 
-@withTheme
-export default class LogsForm extends Component<any, any> {
-  getLogsInterval;
+interface LogsFormState {
+  logs: unknown[];
+}
 
-  constructor(props) {
+export default class LogsForm extends Component<
+  Record<string, never>,
+  LogsFormState
+> {
+  getLogsInterval: NodeJS.Timeout | undefined;
+
+  constructor(props: Record<string, never>) {
     super(props);
-
-    this.getLogsInterval;
 
     this.state = {
       logs: [],
     };
   }
 
-  async componentDidMount() {
+  async componentDidMount(): Promise<void> {
     const logs = await ipcRenderer.invoke('config_logs');
 
     this.setState({
@@ -36,29 +38,23 @@ export default class LogsForm extends Component<any, any> {
     }, 1000);
   }
 
-  componentWillUnmount() {
-    clearInterval(this.getLogsInterval);
+  componentWillUnmount(): void {
+    if (this.getLogsInterval) {
+      clearInterval(this.getLogsInterval);
+    }
   }
 
   render() {
     return (
-      <button
-        onClick={() => {
-          ipcRenderer.send('logs_open_folder');
-        }}
-      >
-        Show Folder
-      </button>
-    );
-
-    return (
-      <ReactJson
-        src={this.state.logs}
-        // @ts-ignore
-        quotesOnKeys={false}
-        collapsed={false}
-        enableClipboard={false}
-      />
+      <div>
+        <button
+          onClick={() => {
+            ipcRenderer.send('logs_open_folder');
+          }}
+        >
+          Show Folder
+        </button>
+      </div>
     );
   }
 }

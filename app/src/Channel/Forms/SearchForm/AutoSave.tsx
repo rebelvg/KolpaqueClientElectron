@@ -1,11 +1,24 @@
 import React from 'react';
 import { FormSpy } from 'react-final-form';
-import { debounce, isEqual } from 'lodash';
+import { debounce, isEqual, DebouncedFunc } from 'lodash';
 
-class AutoSave extends React.Component<any, any> {
-  private saveDebounce;
+type AutoSaveValues = Record<string, unknown>;
 
-  constructor(props) {
+interface AutoSaveProps {
+  values: AutoSaveValues;
+  save: (values: AutoSaveValues) => void;
+  debounce: number;
+}
+
+interface AutoSaveState {
+  values: AutoSaveValues;
+  submitting: boolean;
+}
+
+class AutoSave extends React.Component<AutoSaveProps, AutoSaveState> {
+  private saveDebounce: DebouncedFunc<() => void>;
+
+  constructor(props: AutoSaveProps) {
     super(props);
 
     this.state = { values: props.values, submitting: false };
@@ -37,6 +50,12 @@ class AutoSave extends React.Component<any, any> {
   }
 }
 
-export default (props) => (
-  <FormSpy {...props} subscription={{ values: true }} component={AutoSave} />
+type AutoSaveWrapperProps = Omit<AutoSaveProps, 'values'>;
+
+export default (props: AutoSaveWrapperProps) => (
+  <FormSpy subscription={{ values: true }}>
+    {({ values }) => (
+      <AutoSave {...props} values={(values as AutoSaveValues) ?? {}} />
+    )}
+  </FormSpy>
 );

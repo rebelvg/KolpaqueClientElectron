@@ -2,37 +2,28 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 import { IpcRenderer } from 'electron';
+import { FunctionComponent } from 'react';
 
 const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
   window.require('electron');
 
-export default class Update extends Component<any, any> {
-  constructor(props) {
-    super(props);
-  }
+interface UpdateProps {
+  updateNotification?: string;
+}
 
-  sendInfo = () => {
+const Update: FunctionComponent<UpdateProps> = ({ updateNotification }) => {
+  const sendInfo = () => {
     ipcRenderer.send('client_getInfo');
   };
 
-  render() {
-    const { updateNotification } = this.props;
-
-    return (
-      <div>
-        {updateNotification && (
-          <UpdateWrapper
-            onClick={() => {
-              this.sendInfo();
-            }}
-          >
-            {updateNotification}
-          </UpdateWrapper>
-        )}
-      </div>
-    );
+  if (!updateNotification) {
+    return null;
   }
-}
+
+  return <UpdateWrapper onClick={sendInfo}>{updateNotification}</UpdateWrapper>;
+};
+
+export default Update;
 
 const UpdateWrapper = styled.div`
   position: fixed;

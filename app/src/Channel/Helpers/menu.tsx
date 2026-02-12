@@ -1,8 +1,12 @@
 import { MenuItem } from '@electron/remote';
+import { Channel } from '../../Shared/types';
 
 const { ipcRenderer } = window.require('electron');
 
-export const menuTemplate = (channel, edit) => [
+export const menuTemplate = (
+  channel: Channel,
+  edit: (channel: Channel) => void,
+) => [
   new MenuItem({
     label: 'Play (Ctrl - Low Quality, Shift - Auto-Restart)',
     click: function (menuItem, browserWindow, event) {

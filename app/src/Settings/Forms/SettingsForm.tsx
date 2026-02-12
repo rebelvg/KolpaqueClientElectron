@@ -1,10 +1,11 @@
 import React, { FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
-import { Field } from 'react-final-form';
+import { Field, FormRenderProps } from 'react-final-form';
 import Toggle from 'react-toggle-button';
 import styled from 'styled-components';
 import Select from 'react-select';
 import { openMenu } from '../../Channel/constants';
+import { Integrations, Settings } from '../../Shared/types';
 
 const { shell, ipcRenderer } = window.require('electron');
 
@@ -15,7 +16,18 @@ const sortTypes = [
   { value: 'visibleName', label: 'By Name' },
 ];
 
-export const ToggleAdapter: FunctionComponent<any> = ({
+interface ToggleAdapterProps {
+  input: {
+    name: string;
+    value: any;
+    onBlur: (...args: any[]) => void;
+    onChange: (...args: any[]) => void;
+    onFocus: (...args: any[]) => void;
+  };
+  toggle: (value: boolean, name: string) => void;
+}
+
+export const ToggleAdapter: FunctionComponent<ToggleAdapterProps> = ({
   input: { onChange, name, value },
   toggle,
   ...rest
@@ -32,7 +44,21 @@ export const ToggleAdapter: FunctionComponent<any> = ({
   />
 );
 
-const ReactSelectAdapter = ({ input, select, ...rest }) => (
+const ToggleAdapterField = ToggleAdapter as any;
+
+type ReactSelectAdapterProps = {
+  input: {
+    name: string;
+    value: any;
+    onBlur: (...args: any[]) => void;
+    onChange: (...args: any[]) => void;
+    onFocus: (...args: any[]) => void;
+  };
+  select: (value: string, name: string) => void;
+  options: { value: string; label: string }[];
+};
+
+const ReactSelectAdapter = ({ input, select, ...rest }: ReactSelectAdapterProps) => (
   <Select
     {...input}
     {...rest}
@@ -45,10 +71,14 @@ const ReactSelectAdapter = ({ input, select, ...rest }) => (
   />
 );
 
-const SettingsForm: FunctionComponent<any> = ({
+type SettingsFormProps = FormRenderProps & {
+  changeSetting: (value: unknown, name: string, text?: boolean) => void;
+  integrations: Integrations;
+};
+
+const SettingsForm: FunctionComponent<SettingsFormProps> = ({
   handleSubmit,
   changeSetting,
-  initialValues,
   integrations,
 }) => {
   return (
@@ -56,7 +86,7 @@ const SettingsForm: FunctionComponent<any> = ({
       <FieldWrapper>
         <Label>LQ</Label>
         <InputWrapper>
-          <Field name="LQ" component={ToggleAdapter} toggle={changeSetting} />
+          <Field name="LQ" component={ToggleAdapterField} toggle={changeSetting} />
         </InputWrapper>
       </FieldWrapper>
 
@@ -65,7 +95,7 @@ const SettingsForm: FunctionComponent<any> = ({
         <InputWrapper>
           <Field
             name="showNotifications"
-            component={ToggleAdapter}
+            component={ToggleAdapterField}
             toggle={changeSetting}
           />
         </InputWrapper>
@@ -76,7 +106,7 @@ const SettingsForm: FunctionComponent<any> = ({
         <InputWrapper>
           <Field
             name="showNotificationsOnlyFavorites"
-            component={ToggleAdapter}
+            component={ToggleAdapterField}
             toggle={changeSetting}
           />
         </InputWrapper>
@@ -87,7 +117,7 @@ const SettingsForm: FunctionComponent<any> = ({
         <InputWrapper>
           <Field
             name="enableNotificationSounds"
-            component={ToggleAdapter}
+            component={ToggleAdapterField}
             toggle={changeSetting}
           />
         </InputWrapper>
@@ -98,7 +128,7 @@ const SettingsForm: FunctionComponent<any> = ({
         <InputWrapper>
           <Field
             name="minimizeAtStart"
-            component={ToggleAdapter}
+            component={ToggleAdapterField}
             toggle={changeSetting}
           />
         </InputWrapper>
@@ -109,7 +139,7 @@ const SettingsForm: FunctionComponent<any> = ({
         <InputWrapper>
           <Field
             name="launchOnBalloonClick"
-            component={ToggleAdapter}
+            component={ToggleAdapterField}
             toggle={changeSetting}
           />
         </InputWrapper>
@@ -120,7 +150,7 @@ const SettingsForm: FunctionComponent<any> = ({
         <InputWrapper>
           <Field
             name="nightMode"
-            component={ToggleAdapter}
+            component={ToggleAdapterField}
             toggle={changeSetting}
           />
         </InputWrapper>
@@ -131,7 +161,7 @@ const SettingsForm: FunctionComponent<any> = ({
         <InputWrapper>
           <Field
             name="confirmAutoStart"
-            component={ToggleAdapter}
+            component={ToggleAdapterField}
             toggle={changeSetting}
           />
         </InputWrapper>
@@ -142,7 +172,7 @@ const SettingsForm: FunctionComponent<any> = ({
         <InputWrapper>
           <Field
             name="playInWindow"
-            component={ToggleAdapter}
+            component={ToggleAdapterField}
             toggle={changeSetting}
           />
         </InputWrapper>
@@ -165,7 +195,7 @@ const SettingsForm: FunctionComponent<any> = ({
         <InputWrapper>
           <Field
             name="sortReverse"
-            component={ToggleAdapter}
+            component={ToggleAdapterField}
             toggle={changeSetting}
           />
         </InputWrapper>
@@ -200,7 +230,7 @@ const SettingsForm: FunctionComponent<any> = ({
         <InputWrapper>
           <Field
             name="useStreamlinkForCustomChannels"
-            component={ToggleAdapter}
+            component={ToggleAdapterField}
             toggle={changeSetting}
           />
         </InputWrapper>
@@ -242,7 +272,7 @@ const SettingsForm: FunctionComponent<any> = ({
         <InputWrapper>
           <Field
             name="enableTwitchImport"
-            component={ToggleAdapter}
+            component={ToggleAdapterField}
             toggle={changeSetting}
           />
         </InputWrapper>

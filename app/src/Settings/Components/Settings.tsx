@@ -11,6 +11,7 @@ const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
 import SettingsForm from '../../Settings/Forms/SettingsForm';
 import ImportForm from '../../Settings/Forms/ImportForm';
 import Logs from '../../Settings/Forms/LogsForm';
+import { Integrations, Settings as SettingsType } from '../../Shared/types';
 
 const options = [
   { value: 'general', label: 'General Settings' },
@@ -18,8 +19,19 @@ const options = [
   { value: 'logs', label: 'Logs' },
 ];
 
-export default class Settings extends Component<any, any> {
-  constructor(props) {
+interface SettingsProps {
+  settings: SettingsType;
+  integrations: Integrations;
+  changeSettings: (name: string, value: unknown) => void;
+  importChannel: (name: string) => void;
+}
+
+interface SettingsState {
+  activeKey: 'general' | 'import' | 'logs';
+}
+
+export default class Settings extends Component<SettingsProps, SettingsState> {
+  constructor(props: SettingsProps) {
     super(props);
 
     this.state = {
@@ -32,9 +44,9 @@ export default class Settings extends Component<any, any> {
   }
 
   componentDidUpdate(
-    prevProps: Readonly<any>,
-    prevState: Readonly<any>,
-    snapshot?: any,
+    prevProps: Readonly<SettingsProps>,
+    prevState: Readonly<SettingsState>,
+    snapshot?: unknown,
   ): void {
     const { activeKey } = this.state;
 
@@ -43,19 +55,19 @@ export default class Settings extends Component<any, any> {
     }
   }
 
-  changeWindow = (selected) => {
+  changeWindow = (selected: { value: SettingsState['activeKey'] }) => {
     this.setState({
       activeKey: selected.value,
     });
   };
 
-  submitImports = (members) => {
+  submitImports = (members: string[]) => {
     this.props.changeSettings('twitchImport', members);
   };
 
-  importChannel = (name) => this.props.importChannel(name);
+  importChannel = (name: string) => this.props.importChannel(name);
 
-  changeSetting = (value: any, name: string, text = false) => {
+  changeSetting = (value: unknown, name: string, text = false) => {
     if (!text) {
       value = value ? value : false;
     } else {
@@ -65,7 +77,7 @@ export default class Settings extends Component<any, any> {
     this.props.changeSettings(name, value);
   };
 
-  submit = (values) => values;
+  submit = (values: SettingsType) => values;
 
   render() {
     const { settings, integrations } = this.props;
@@ -84,30 +96,34 @@ export default class Settings extends Component<any, any> {
         {activeKey === 'general' && (
           <Form
             onSubmit={this.submit}
-            // @ts-ignore
-            changeSetting={this.changeSetting}
             initialValues={{ ...settings }}
-            integrations={{ ...integrations }}
-            render={(props) => <SettingsForm {...props} />}
+            render={(props) => (
+              <SettingsForm
+                {...props}
+                changeSetting={this.changeSetting}
+                integrations={integrations}
+              />
+            )}
           />
         )}
 
         {activeKey === 'import' && (
           <Form
-            // @ts-ignore
-            members={settings.twitchImport}
             onSubmit={this.submit}
-            submit={this.submitImports}
-            importChannel={this.importChannel}
             initialValues={{ ...settings }}
-            changeSetting={this.changeSetting}
-            render={(props) => <ImportForm {...props} />}
+            render={(props) => (
+              <ImportForm
+                {...props}
+                members={settings.twitchImport ?? []}
+                submit={this.submitImports}
+                importChannel={this.importChannel}
+              />
+            )}
           />
         )}
 
         {activeKey === 'logs' && (
-          // @ts-ignore
-          <Form render={(props) => <Logs {...props} />} />
+          <Logs />
         )}
       </Container>
     );

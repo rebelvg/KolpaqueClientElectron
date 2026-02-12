@@ -12,13 +12,31 @@ import Channels from '../../Channel/Components/Channels';
 import { getChannels } from '../Helpers/IPCHelpers';
 
 import { IpcRenderer } from 'electron';
+import { Channel, ChannelCount } from '../../Shared/types';
 
 const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
   window.require('electron');
 
+interface ChannelContainerProps {
+  filter?: string;
+  updateNotification?: string;
+}
+
+interface ChannelContainerState {
+  selected: Channel | null;
+  editChannel: Channel | null;
+  channels: Channel[];
+  activeTab: 'online' | 'offline';
+  filter: string;
+  count: ChannelCount;
+}
+
 @withTheme
-class ChannelContainer extends PureComponent<any, any> {
-  constructor(props) {
+class ChannelContainer extends PureComponent<
+  ChannelContainerProps,
+  ChannelContainerState
+> {
+  constructor(props: ChannelContainerProps) {
     super(props);
 
     this.state = {
@@ -31,7 +49,7 @@ class ChannelContainer extends PureComponent<any, any> {
     };
   }
 
-  private updateView = async (caller: string, args?) => {
+  private updateView = async (caller: string, args?: unknown) => {
     const { activeTab, filter } = this.state;
 
     const { channels, count } = await getChannels(
@@ -68,7 +86,7 @@ class ChannelContainer extends PureComponent<any, any> {
     ipcRenderer.removeAllListeners('channel_removeSync');
   }
 
-  setFilter = async (value) => {
+  setFilter = async (value: { filter?: string }) => {
     const { activeTab } = this.state;
 
     const filter = value.filter ? value.filter : '';
@@ -88,7 +106,7 @@ class ChannelContainer extends PureComponent<any, any> {
     });
   };
 
-  handleActiveTab = async (activeTab) => {
+  handleActiveTab = async (activeTab: ChannelContainerState['activeTab']) => {
     const { filter } = this.state;
 
     const { channels, count } = await getChannels(

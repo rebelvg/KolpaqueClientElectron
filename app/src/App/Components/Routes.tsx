@@ -7,12 +7,23 @@ import SettingsContainer from '../../Settings/Containers/SettingsContainer';
 
 import { IpcRenderer } from 'electron';
 import Loading from '../../Shared/Loading';
+import { Integrations, Settings } from '../../Shared/types';
 
 const { ipcRenderer }: { ipcRenderer: IpcRenderer } =
   window.require('electron');
 
-class Routes extends Component<any, any> {
-  constructor(props) {
+interface RoutesProps {
+  settings: Settings;
+  integrations: Integrations;
+}
+
+interface RoutesState {
+  isLoading: boolean;
+  updateNotification: string;
+}
+
+class Routes extends Component<RoutesProps, RoutesState> {
+  constructor(props: RoutesProps) {
     super(props);
 
     this.state = {

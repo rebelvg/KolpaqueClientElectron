@@ -8,9 +8,15 @@ const { ipcRenderer } = window.require('electron');
 import Routes from '../../App/Components/Routes';
 import { themes } from '../../Themes';
 import { getSettings } from '../../Channel/Helpers/IPCHelpers';
+import { Integrations, Settings } from '../../Shared/types';
 
-export default class AppContainer extends Component<any, any> {
-  constructor(props) {
+interface AppContainerState {
+  settings: Settings;
+  integrations: Integrations;
+}
+
+export default class AppContainer extends Component<Record<string, never>, AppContainerState> {
+  constructor(props: Record<string, never>) {
     super(props);
 
     const { settings, integrations } = getSettings();

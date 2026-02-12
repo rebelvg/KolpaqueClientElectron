@@ -1,17 +1,27 @@
 import React, { Component } from 'react';
 import styled, { withTheme } from 'styled-components';
 import { openMenu } from '../constants';
+import { Channel } from '../../Shared/types';
+
+interface EditFormProps {
+  channel: Channel;
+  nameChange: (value: string, id: string) => void;
+}
+
+interface EditFormState {
+  value: string;
+}
 
 @withTheme
-export default class EditForm extends Component<any, any> {
-  constructor(props) {
+export default class EditForm extends Component<EditFormProps, EditFormState> {
+  constructor(props: EditFormProps) {
     super(props);
     this.state = {
-      value: props.channel.visibleName,
+      value: props.channel.visibleName ?? '',
     };
   }
 
-  onChange = (v) => {
+  onChange = (v: string) => {
     this.setState({ value: v });
   };
 

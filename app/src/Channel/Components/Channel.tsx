@@ -12,18 +12,35 @@ import {
   ServiceIcon,
   PinButton,
 } from '../../Shared/Icons';
+import {
+  ActionPayloadMap,
+  ActionType,
+  Channel as ChannelType,
+} from '../../Shared/types';
+
+interface ChannelProps {
+  channel: ChannelType;
+  pinned?: boolean;
+  editMode?: boolean;
+  selected?: boolean;
+  handleAction: <T extends ActionType>(
+    type: T,
+    data: ActionPayloadMap[T],
+  ) => void;
+}
 
 @withTheme
-class Channel extends PureComponent<any> {
-  contextMenu = (name, channel) =>
+class Channel extends PureComponent<ChannelProps> {
+  contextMenu = (name: string, channel: ChannelType) =>
     !name && this.props.handleAction('OPEN_MENU', [channel]);
 
-  selectChannel = (name, which, channel) =>
+  selectChannel = (name: string, which: number, channel: ChannelType) =>
     !name && this.props.handleAction('SELECT', [which, channel]);
 
-  renameChannel = (value, id) => this.props.handleAction('RENAME', [value, id]);
+  renameChannel = (value: string, id: string) =>
+    this.props.handleAction('RENAME', [value, id]);
 
-  changeSetting = (id, name, value) => {
+  changeSetting = (id: string, name: keyof ChannelType, value: boolean) => {
     changeChannelSetting(id, name, value);
   };
 
@@ -48,7 +65,6 @@ class Channel extends PureComponent<any> {
 
           {editMode ? (
             <EditForm
-              onSubmit={this.renameChannel}
               channel={channel}
               nameChange={this.renameChannel}
             />

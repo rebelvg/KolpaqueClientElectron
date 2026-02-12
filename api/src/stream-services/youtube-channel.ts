@@ -29,7 +29,7 @@ export class YoutubeChannelStreamService extends BaseStreamService {
   public hosts = ['www.youtube.com', 'youtube.com'];
   public paths = [/^\/channel\/(\S+)\/+/gi, /^\/channel\/(\S+)\/*/gi];
   public icon = fs.readFileSync(
-    path.normalize(path.join(__dirname, '../../icons', 'youtube.png')),
+    path.normalize(path.join(process.cwd(), './api/icons', 'youtube.png')),
     {
       encoding: null,
     },

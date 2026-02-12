@@ -4,13 +4,16 @@ import { Field } from 'react-final-form';
 import Icon from 'react-icons-kit';
 import { plus } from 'react-icons-kit/fa/plus';
 import { openMenu } from '../constants';
+import { FormRenderProps } from 'react-final-form';
+
+type ChannelFormProps = Pick<FormRenderProps, 'handleSubmit' | 'reset'>;
 
 @withTheme
-export default class ChannelForm extends Component<any> {
-  handleSubmit = (data) => {
+export default class ChannelForm extends Component<ChannelFormProps> {
+  handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
     const { handleSubmit, reset } = this.props;
 
-    handleSubmit(data);
+    handleSubmit(event);
 
     reset();
   };

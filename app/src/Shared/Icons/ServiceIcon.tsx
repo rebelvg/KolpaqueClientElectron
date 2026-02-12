@@ -1,11 +1,19 @@
 import React, { Component } from 'react';
 import Icon from 'react-icons-kit';
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 import { twitch } from 'react-icons-kit/fa/twitch';
 import { eye } from 'react-icons-kit/fa/eye';
 import { youtubePlay } from 'react-icons-kit/fa/youtubePlay';
+import { Channel } from '../../Shared/types';
 
-const Services = {
+type Service = {
+  asset: any;
+  isImage: boolean;
+  color: string | null;
+  padding?: number;
+};
+
+const Services: Record<string, Service> = {
   'kolpaque-rtmp': {
     asset: './icons/klpq.svg',
     isImage: true,
@@ -45,19 +53,22 @@ const Services = {
   },
 };
 
-@withTheme
-export class ServiceIcon extends Component<any> {
-  getIcon = (serviceName) => {
+interface ServiceIconProps {
+  service: Channel['service'];
+}
+
+export class ServiceIcon extends Component<ServiceIconProps> {
+  getIcon = (serviceName: string): Service => {
     return Services[serviceName] ? Services[serviceName] : Services['default'];
   };
 
-  renderImage = (asset) => (
+  renderImage = (asset: string) => (
     <IconWithImage>
       <img src={asset} />
     </IconWithImage>
   );
 
-  renderSVG = ({ asset, color, padding }) => (
+  renderSVG = ({ asset, color, padding }: Service) => (
     <IconWithService
       style={{ paddingTop: padding || 0 }}
       icon={asset}
@@ -65,7 +76,7 @@ export class ServiceIcon extends Component<any> {
     />
   );
 
-  renderIcon = (icon) => {
+  renderIcon = (icon: Service) => {
     if (icon.isImage) {
       return this.renderImage(icon.asset);
     } else {

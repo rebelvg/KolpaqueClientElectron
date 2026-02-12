@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 
 import Settings from '../../Settings/Components/Settings';
 import {
@@ -8,10 +8,22 @@ import {
   getVersion,
   importChannel,
 } from '../../Channel/Helpers/IPCHelpers';
+import { Integrations, Settings as SettingsType } from '../../Shared/types';
 
-@withTheme
-export default class SettingsContainer extends Component<any, any> {
-  constructor(props) {
+interface SettingsContainerProps {
+  settings: SettingsType;
+  integrations: Integrations;
+}
+
+interface SettingsContainerState {
+  version: string;
+}
+
+export default class SettingsContainer extends Component<
+  SettingsContainerProps,
+  SettingsContainerState
+> {
+  constructor(props: SettingsContainerProps) {
     super(props);
 
     const version = getVersion();

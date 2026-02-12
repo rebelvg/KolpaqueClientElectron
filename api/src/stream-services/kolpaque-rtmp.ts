@@ -116,7 +116,7 @@ export class KolpaqueRtmpStreamService extends BaseStreamService {
     return `https://stream.klpq.io/${channel.name}`;
   }
   public icon = fs.readFileSync(
-    path.normalize(path.join(__dirname, '../../icons', 'klpq_vps.png')),
+    path.normalize(path.join(process.cwd(), './api/icons', 'klpq_vps.png')),
     {
       encoding: null,
     },

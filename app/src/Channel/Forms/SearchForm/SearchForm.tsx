@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 import { Field } from 'react-final-form';
 import Icon from 'react-icons-kit';
 import { search } from 'react-icons-kit/fa/search';
 import AutoSave from './AutoSave';
 import { openMenu } from '../../constants';
 
-@withTheme
-class SearchForm extends Component<any> {
+interface SearchFormProps {
+  save: (values: { filter?: string }) => void;
+}
+
+class SearchForm extends Component<SearchFormProps> {
   render() {
     const { save } = this.props;
 

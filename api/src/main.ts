@@ -72,11 +72,15 @@ ipcMain.on('client_ready', async () => {
   main.mainWindow!.webContents.send('backend_ready');
 });
 
-const iconPath = path.normalize(path.join(__dirname, '../icons', 'klpq.png'));
-let iconPathTray = path.normalize(path.join(__dirname, '../icons', 'klpq.png'));
+const iconPath = path.normalize(
+  path.join(process.cwd(), './api/icons', 'klpq.png'),
+);
+let iconPathTray = path.normalize(
+  path.join(process.cwd(), './api/icons', 'klpq.png'),
+);
 
 export const iconPathBalloon = path.normalize(
-  path.join(__dirname, '../icons', 'klpq.png'),
+  path.join(process.cwd(), './api/icons', 'klpq.png'),
 );
 
 if (process.platform === 'darwin') {
@@ -86,7 +90,7 @@ if (process.platform === 'darwin') {
   }
 
   iconPathTray = path.normalize(
-    path.join(__dirname, '../icons', 'iconTemplate.png'),
+    path.join(process.cwd(), './api/icons', 'iconTemplate.png'),
   );
 }
 
@@ -149,7 +153,7 @@ function createWindow(): void {
   } else {
     mainWindow.loadURL(
       url.format({
-        pathname: path.join(__dirname, '../../app/dist', 'index.html'),
+        pathname: path.join(process.cwd(), './app/dist', 'index.html'),
         protocol: 'file:',
         slashes: true,
       }),

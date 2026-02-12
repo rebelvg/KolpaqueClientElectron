@@ -1,15 +1,25 @@
 import { Menu } from '@electron/remote';
 import * as remote from '@electron/remote';
 import { MenuItemConstructorOptions } from 'electron';
+import { Channel } from '../Shared/types';
 
-export const getTab = (tab) => {
+export type TabValue = 'online' | 'offline';
+
+export interface Tab {
+  name: string;
+  value: TabValue;
+  filter: keyof Channel;
+  filterValue: boolean;
+}
+
+export const getTab = (tab: TabValue): Tab | undefined => {
   return TABS.find((t) => t.value === tab);
 };
 
-export const visibleByTab = (channel, tab) =>
+export const visibleByTab = (channel: Channel, tab: Tab) =>
   channel[tab.filter] === tab.filterValue;
 
-export const TABS = [
+export const TABS: Tab[] = [
   {
     name: 'Online',
     value: 'online',
