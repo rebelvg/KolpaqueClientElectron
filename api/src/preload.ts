@@ -5,17 +5,7 @@ type IpcListener = (
   ...args: unknown[]
 ) => void;
 
-type ChannelLike = {
-  id: string;
-  link: string;
-  visibleName?: string;
-};
-
-const channelRenameListeners = new Set<(channel: ChannelLike) => void>();
-
-function emitChannelRename(channel: ChannelLike) {
-  channelRenameListeners.forEach((listener) => listener(channel));
-}
+const CHANNEL_RENAME_MAP = {};
 
 contextBridge.exposeInMainWorld('electronAPI', {
   send: (channel: string, ...args: unknown[]) =>
@@ -39,33 +29,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openExternal: (url: string) => shell.openExternal(url),
   showEditMenu: (template: Electron.MenuItemConstructorOptions[]) =>
     ipcRenderer.invoke('show_edit_menu', template),
-  openChannelMenu: (channel: ChannelLike, onClose?: () => void) => {
-    const handler = (
-      _event: Electron.IpcRendererEvent,
-      renamed: ChannelLike,
-    ) => {
-      if (renamed.id === channel.id) {
-        emitChannelRename(renamed);
-      }
-    };
+  openChannelMenu: (channelId: string, callback: () => void) => {
+    CHANNEL_RENAME_MAP[channelId] = callback;
 
-    ipcRenderer.on('channel_rename', handler);
-
-    ipcRenderer.invoke('open_channel_menu', channel).finally(() => {
-      ipcRenderer.removeListener('channel_rename', handler);
-
-      if (onClose) {
-        onClose();
-      }
-    });
-  },
-  onChannelRename: (listener: (channel: ChannelLike) => void) => {
-    channelRenameListeners.add(listener);
-
-    return () => channelRenameListeners.delete(listener);
+    ipcRenderer.invoke('open_channel_menu', channelId);
   },
 });
 
-ipcRenderer.on('channel_rename', (_event, channel: ChannelLike) => {
-  emitChannelRename(channel);
+ipcRenderer.on('channel_rename', (_event, channelId: string) => {
+  CHANNEL_RENAME_MAP[channelId]?.();
 });

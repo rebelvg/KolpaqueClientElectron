@@ -13,7 +13,7 @@ interface ChannelsProps {
 
 interface ChannelsState {
   selected: Channel | null;
-  edit: Channel | null;
+  editId: string | null;
 }
 
 class Channels extends PureComponent<ChannelsProps, ChannelsState> {
@@ -22,22 +22,24 @@ class Channels extends PureComponent<ChannelsProps, ChannelsState> {
 
     this.state = {
       selected: null,
-      edit: null,
+      editId: null,
     };
   }
 
-  edit = (channel: Channel) => {
-    this.setState({ edit: channel });
+  edit = (id: string) => {
+    this.setState({ editId: id });
   };
 
   openMenu = (channel: Channel) => {
-    openChannelMenu(channel, () => this.edit(channel));
+    openChannelMenu(channel.id, () => {
+      this.edit(channel.id);
+    });
   };
 
   renameChannel = (name: string, id: string) => {
     changeChannelSetting(id, 'visibleName', name);
 
-    this.setState({ edit: null });
+    this.setState({ editId: null });
   };
 
   selectChannel = (button: number, channel: Channel) => {
@@ -79,7 +81,7 @@ class Channels extends PureComponent<ChannelsProps, ChannelsState> {
 
   render() {
     const { channels } = this.props;
-    const { edit, selected } = this.state;
+    const { editId, selected } = this.state;
 
     return (
       <ChannelWrap>
@@ -87,7 +89,7 @@ class Channels extends PureComponent<ChannelsProps, ChannelsState> {
           <ChannelItem
             key={channel.id}
             handleAction={this.handleAction}
-            editMode={edit?.id === channel.id}
+            editMode={editId === channel.id}
             selected={selected?.link === channel.link}
             channel={channel}
           />

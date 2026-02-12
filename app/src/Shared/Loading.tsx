@@ -2,15 +2,18 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import Icon from 'react-icons-kit';
 import { loadC } from 'react-icons-kit/ionicons/loadC';
-import { getVersion } from '../Channel/Helpers/IPCHelpers';
+import { getName, getVersion } from '../Channel/Helpers/IPCHelpers';
 
+const name = getName();
 const version = getVersion();
 
 const Loading = () => (
   <LoadingWrapper>
     <LoadingIcon icon={loadC} />
     <LoadingText>Initializing Client</LoadingText>
-    <Version>Kolpaque Client {version}</Version>
+    <Version>
+      {name} {version}
+    </Version>
   </LoadingWrapper>
 );
 

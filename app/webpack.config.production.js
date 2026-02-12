@@ -2,6 +2,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+const { name } = require('../package.json');
+
 module.exports = {
   mode: 'production',
   target: 'electron-renderer',
@@ -37,7 +39,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Kolpaque Client',
+      title: name,
     }),
     new CopyWebpackPlugin({
       patterns: [{ from: path.resolve(__dirname, './icons'), to: 'icons' }],

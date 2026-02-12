@@ -31,6 +31,10 @@ export const playChannel = (channel: Channel) => {
   window.electronAPI.send('channel_play', channel.id);
 };
 
+export const getName = (): string => {
+  return window.electronAPI.sendSync('client_getName') as string;
+};
+
 export const getVersion = (): string => {
   return window.electronAPI.sendSync('client_getVersion') as string;
 };
@@ -74,29 +78,6 @@ export const getChannels = (
   });
 };
 
-export const openChannelMenu = (
-  channel: Channel,
-  func: (channel: Channel) => void,
-) => {
-  let unsubscribe: (() => void) | null = null;
-
-  unsubscribe = window.electronAPI.onChannelRename((renamedChannel) => {
-    if (renamedChannel.id !== channel.id) {
-      return;
-    }
-
-    if (unsubscribe) {
-      unsubscribe();
-      unsubscribe = null;
-    }
-
-    func(renamedChannel);
-  });
-
-  window.electronAPI.openChannelMenu(channel, () => {
-    if (unsubscribe) {
-      unsubscribe();
-      unsubscribe = null;
-    }
-  });
+export const openChannelMenu = (channelId: string, callback: () => void) => {
+  window.electronAPI.openChannelMenu(channelId, callback);
 };

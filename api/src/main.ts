@@ -31,7 +31,9 @@ import { rebuildIconMenu } from './tray-icon';
 
 import { addLogs, crashLogPath } from './logs';
 import { init } from './client-init';
-import { CLIENT_VERSION } from './globals';
+import { CLIENT_NAME, CLIENT_VERSION } from './globals';
+import { Channel } from './channel-class';
+import { Config } from './config-class';
 
 addLogs(
   'info',
@@ -108,8 +110,8 @@ export const main: {
   createdWindows: [],
 };
 
-app.setName('Kolpaque Client');
-app.setAppUserModelId('Kolpaque Client');
+app.setName(CLIENT_NAME);
+app.setAppUserModelId(CLIENT_NAME);
 
 if (process.env.NODE_ENV !== 'dev') {
   app.on('second-instance', () => {
@@ -127,7 +129,7 @@ app.commandLine.appendSwitch('disable-http-cache');
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
-    title: 'Kolpaque Client',
+    title: CLIENT_NAME,
     minWidth: 300,
     minHeight: 400,
     width: config.settings.size[0],
@@ -150,10 +152,6 @@ function createWindow(): void {
 
   if (process.env.REACT_ENV === 'dev') {
     mainWindow.loadURL('http://localhost:10000');
-
-    mainWindow.webContents.openDevTools({
-      mode: 'detach',
-    });
   } else {
     mainWindow.loadURL(
       url.format({
@@ -162,6 +160,12 @@ function createWindow(): void {
         slashes: true,
       }),
     );
+  }
+
+  if (process.env.NODE_ENV === 'dev') {
+    mainWindow.webContents.openDevTools({
+      mode: 'detach',
+    });
   }
 
   mainWindow.on('minimize', () => {
@@ -251,52 +255,58 @@ ipcMain.handle(
   },
 );
 
-ipcMain.handle('open_channel_menu', (event: IpcMainEvent, channel) => {
-  if (main.mainWindow && event.sender !== main.mainWindow.webContents) {
-    addLogs('warn', 'open_channel_menu_blocked');
+ipcMain.handle(
+  'open_channel_menu',
+  (event: IpcMainEvent, channelId: string) => {
+    if (main.mainWindow && event.sender !== main.mainWindow.webContents) {
+      addLogs('warn', 'open_channel_menu_blocked');
 
-    return;
-  }
+      return;
+    }
 
-  const win = BrowserWindow.fromWebContents(event.sender);
+    const channel = config.findById(channelId);
 
-  const menu = Menu.buildFromTemplate([
-    {
-      label: 'Play (Ctrl - Low Quality, Shift - Auto-Restart)',
-      click: (_menuItem, _browserWindow, menuEvent) => {
-        ipcMain.emit(
-          'channel_play',
-          event,
-          channel.id,
-          !!menuEvent?.ctrlKey,
-          menuEvent?.shiftKey ? true : null,
-        );
+    const window = BrowserWindow.fromWebContents(event.sender);
+
+    const menu = Menu.buildFromTemplate([
+      {
+        label: 'Play (Ctrl - Low Quality, Shift - Auto-Restart)',
+        click: (_menuItem, _browserWindow, menuEvent) => {
+          ipcMain.emit(
+            'channel_play',
+            event,
+            channelId,
+            !!menuEvent?.ctrlKey,
+            menuEvent?.shiftKey ? true : null,
+          );
+        },
       },
-    },
-    {
-      label: 'Open Page',
-      click: () => ipcMain.emit('channel_openPage', event, channel.id),
-    },
-    {
-      label: 'Open Chat',
-      click: () => ipcMain.emit('channel_openChat', event, channel.id),
-    },
-    {
-      label: 'Rename Channel',
-      click: () => event.sender.send('channel_rename', channel),
-    },
-    {
-      label: 'Copy to Clipboard',
-      click: () => ipcMain.emit('channel_copyClipboard', event, channel.link),
-    },
-    {
-      label: 'Remove Channel',
-      click: () => ipcMain.emit('channel_remove', event, channel.id),
-    },
-  ]);
+      {
+        label: 'Open Page',
+        click: () => ipcMain.emit('channel_openPage', event, channelId),
+      },
+      {
+        label: 'Open Chat',
+        click: () => ipcMain.emit('channel_openChat', event, channelId),
+      },
+      {
+        label: 'Rename Channel',
+        click: () => event.sender.send('channel_rename', channelId),
+      },
+      {
+        label: 'Copy to Clipboard',
+        click: () =>
+          ipcMain.emit('channel_copyClipboard', event, channel?.link),
+      },
+      {
+        label: 'Remove Channel',
+        click: () => ipcMain.emit('channel_remove', event, channelId),
+      },
+    ]);
 
-  menu.popup({ window: win ?? undefined });
-});
+    menu.popup({ window: window ?? undefined });
+  },
+);
 
 export const contextMenuTemplate: Electron.MenuItemConstructorOptions[] = [
   {
@@ -364,7 +374,7 @@ let appIcon: Tray;
 
 app.on('ready', () => {
   appIcon = new Tray(nativeImage.createFromPath(iconPathTray));
-  appIcon.setToolTip('Kolpaque Client');
+  appIcon.setToolTip(CLIENT_NAME);
   appIcon.setIgnoreDoubleClickEvents(true);
 
   refreshTrayIconMenuLinux();

@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { printNotification } from './notifications';
 import { addLogs } from './logs';
 import { githubClient } from './api-clients';
-import { CLIENT_VERSION } from './globals';
+import { CLIENT_NAME, CLIENT_VERSION } from './globals';
 import { main } from './main';
 import { sleep } from './helpers';
 import * as semver from 'semver';
@@ -41,6 +41,16 @@ ipcMain.on('client_getInfo', async (event) => {
       }
     }),
   );
+});
+
+ipcMain.on('client_getName', (event) => {
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'client_getName_blocked');
+
+    return;
+  }
+
+  event.returnValue = CLIENT_NAME;
 });
 
 ipcMain.on('client_getVersion', (event) => {

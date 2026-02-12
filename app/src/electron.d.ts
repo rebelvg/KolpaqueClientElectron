@@ -16,8 +16,7 @@ declare global {
       removeAllListeners: (channel: string) => void;
       openExternal: (url: string) => Promise<void>;
       showEditMenu: (template: Electron.MenuItemConstructorOptions[]) => void;
-      openChannelMenu: (channel: Channel, onClose?: () => void) => void;
-      onChannelRename: (listener: (channel: Channel) => void) => () => void;
+      openChannelMenu: (channelId: string, callback: () => void) => void;
     };
   }
 }
