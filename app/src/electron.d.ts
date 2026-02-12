@@ -1,5 +1,3 @@
-import type { Channel } from './Shared/types';
-
 type IpcListener = (
   event: Electron.IpcRendererEvent,
   ...args: unknown[]

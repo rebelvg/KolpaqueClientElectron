@@ -140,7 +140,7 @@ function createWindow(): void {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: false,
+      sandbox: true,
       partition: 'nopersist',
       preload: path.join(__dirname, 'preload.js'),
     },
