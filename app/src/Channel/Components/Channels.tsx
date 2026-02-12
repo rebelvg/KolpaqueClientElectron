@@ -5,7 +5,6 @@ import {
   changeChannelSetting,
   openChannelMenu,
 } from '../../Channel/Helpers/IPCHelpers';
-import ReactList from 'react-list';
 import { ActionPayloadMap, ActionType, Channel } from '../../Shared/types';
 
 interface ChannelsProps {
@@ -84,30 +83,15 @@ class Channels extends PureComponent<ChannelsProps, ChannelsState> {
 
     return (
       <ChannelWrap>
-        <ReactList
-          type={'uniform'}
-          length={channels.length}
-          useStaticSize={true}
-          threshold={500}
-          itemRenderer={(index) => {
-            const channel = channels[index];
-
-            if (!channel) {
-              return null;
-            }
-
-            return (
-              <div key={channel.id}>
-                <ChannelItem
-                  handleAction={this.handleAction}
-                  editMode={edit?.id === channel.id}
-                  selected={selected?.link === channel.link}
-                  channel={channel}
-                />
-              </div>
-            );
-          }}
-        />
+        {channels.map((channel) => (
+          <ChannelItem
+            key={channel.id}
+            handleAction={this.handleAction}
+            editMode={edit?.id === channel.id}
+            selected={selected?.link === channel.link}
+            channel={channel}
+          />
+        ))}
       </ChannelWrap>
     );
   }
@@ -117,6 +101,14 @@ export default Channels;
 
 const ChannelWrap = styled.div`
   color: black;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   height: 100%;
+  flex: 1;
+  min-height: 0;
+  /* hide scrollbar but keep scrolling */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;

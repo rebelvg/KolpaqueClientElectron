@@ -2,8 +2,8 @@
   "name": "app",
   "version": "1.0.0",
   "scripts": {
-    "build": "cross-env NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider webpack --config webpack.config.production",
-    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server"
+    "build": "cross-env NODE_ENV=production webpack --config webpack.config.production",
+    "start": "cross-env webpack-dev-server"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
@@ -19,7 +19,6 @@
     "react-final-form": "^7.0.0",
     "react-hot-loader": "^4.13.1",
     "react-icons-kit": "^2.0.0",
-    "react-list": "^0.8.18",
     "react-router": "^7.13.0",
     "react-router-dom": "^7.13.0",
     "react-select": "^5.10.2",

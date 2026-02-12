@@ -347,9 +347,11 @@ class TwitchClient {
   }
 
   public async validateToken() {
-    const url = new URL(`https://id.twitch.tv/oauth2/validate`);
+    if (!this._accessToken) {
+      throw new Error('no_token');
+    }
 
-    await this.axios.get(url.href);
+    await this.axios.get(`https://id.twitch.tv/oauth2/validate`);
   }
 
   private handleError(error: AxiosError): void {

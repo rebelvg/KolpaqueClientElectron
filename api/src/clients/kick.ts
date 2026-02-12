@@ -110,6 +110,10 @@ class KickClient {
   }
 
   public async validateToken() {
+    if (!this._accessToken) {
+      throw new Error('no_token');
+    }
+
     await this.axios.post(`${this.baseUrl}/public/v1/token/introspect`);
   }
 
