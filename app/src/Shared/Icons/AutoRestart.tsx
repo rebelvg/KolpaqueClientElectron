@@ -37,7 +37,7 @@ export class AutoRestart extends Component<AutoRestartProps> {
     if (onAutoRestart) {
       return '#119400';
     } else {
-      return autoRestart ? theme?.client.color ?? '#979797' : '#979797';
+      return autoRestart ? (theme?.client.color ?? '#979797') : '#979797';
     }
   };
 

@@ -35,7 +35,10 @@ export const getVersion = (): string => {
   return ipcRenderer.sendSync('client_getVersion');
 };
 
-export const getSettings = (): { settings: Settings; integrations: Integrations } => {
+export const getSettings = (): {
+  settings: Settings;
+  integrations: Integrations;
+} => {
   return {
     settings: ipcRenderer.sendSync('getSettings'),
     integrations: ipcRenderer.sendSync('getIntegrations'),
@@ -46,7 +49,10 @@ export const importChannel = (name: string) => {
   return ipcRenderer.send('config_twitchImport', name);
 };
 
-export const changeSetting = (name: keyof Settings | string, value: unknown) => {
+export const changeSetting = (
+  name: keyof Settings | string,
+  value: unknown,
+) => {
   return ipcRenderer.send('config_changeSetting', name, value);
 };
 

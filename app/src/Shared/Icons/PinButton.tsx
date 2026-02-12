@@ -34,7 +34,7 @@ export class PinButton extends Component<PinButtonProps> {
       <Wrapper onClick={this.onClick}>
         <PinnedIcon
           icon={star}
-          color={!isPinned ? '#979797' : theme?.client.color ?? '#979797'}
+          color={!isPinned ? '#979797' : (theme?.client.color ?? '#979797')}
         />
       </Wrapper>
     );

@@ -64,10 +64,7 @@ class Channel extends PureComponent<ChannelProps> {
           </StyledIcon>
 
           {editMode ? (
-            <EditForm
-              channel={channel}
-              nameChange={this.renameChannel}
-            />
+            <EditForm channel={channel} nameChange={this.renameChannel} />
           ) : (
             <StyledName title={`${channel.visibleName} (${channel.link})`}>
               {/*{channel.isPinned && <Pinned/>}*/}

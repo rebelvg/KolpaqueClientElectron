@@ -58,7 +58,11 @@ type ReactSelectAdapterProps = {
   options: { value: string; label: string }[];
 };
 
-const ReactSelectAdapter = ({ input, select, ...rest }: ReactSelectAdapterProps) => (
+const ReactSelectAdapter = ({
+  input,
+  select,
+  ...rest
+}: ReactSelectAdapterProps) => (
   <Select
     {...input}
     {...rest}
@@ -86,7 +90,11 @@ const SettingsForm: FunctionComponent<SettingsFormProps> = ({
       <FieldWrapper>
         <Label>LQ</Label>
         <InputWrapper>
-          <Field name="LQ" component={ToggleAdapterField} toggle={changeSetting} />
+          <Field
+            name="LQ"
+            component={ToggleAdapterField}
+            toggle={changeSetting}
+          />
         </InputWrapper>
       </FieldWrapper>
 

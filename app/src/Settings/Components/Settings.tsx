@@ -122,9 +122,7 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
           />
         )}
 
-        {activeKey === 'logs' && (
-          <Logs />
-        )}
+        {activeKey === 'logs' && <Logs />}
       </Container>
     );
   }

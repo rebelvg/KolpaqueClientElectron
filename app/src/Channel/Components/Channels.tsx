@@ -57,16 +57,19 @@ class Channels extends PureComponent<ChannelsProps, ChannelsState> {
     switch (type) {
       case 'RENAME': {
         const [name, id] = data as ActionPayloadMap['RENAME'];
+
         this.renameChannel(name, id);
         break;
       }
       case 'OPEN_MENU': {
         const [channel] = data as ActionPayloadMap['OPEN_MENU'];
+
         this.openMenu(channel);
         break;
       }
       case 'SELECT': {
         const [button, channel] = data as ActionPayloadMap['SELECT'];
+
         this.selectChannel(button, channel);
         break;
       }

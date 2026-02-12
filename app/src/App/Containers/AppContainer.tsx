@@ -15,7 +15,10 @@ interface AppContainerState {
   integrations: Integrations;
 }
 
-export default class AppContainer extends Component<Record<string, never>, AppContainerState> {
+export default class AppContainer extends Component<
+  Record<string, never>,
+  AppContainerState
+> {
   constructor(props: Record<string, never>) {
     super(props);
 
