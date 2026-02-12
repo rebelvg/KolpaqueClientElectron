@@ -443,7 +443,9 @@ const ToggleThumb = styled.div<{ $checked: boolean }>`
   position: absolute;
   top: 2px;
   left: ${(props) => (props.$checked ? '20px' : '2px')};
-  transition: left 0.15s ease-out, background 0.15s ease-out;
+  transition:
+    left 0.15s ease-out,
+    background 0.15s ease-out;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 `;
 

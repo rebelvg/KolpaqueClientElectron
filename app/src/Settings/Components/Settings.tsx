@@ -87,7 +87,9 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
           name="form-field-name"
           value={activeKey}
           onChange={(e) =>
-            this.changeWindow({ value: e.target.value as SettingsState['activeKey'] })
+            this.changeWindow({
+              value: e.target.value as SettingsState['activeKey'],
+            })
           }
         >
           {options.map((opt) => (
