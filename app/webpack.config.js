@@ -5,12 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   mode: 'development',
   target: 'electron-renderer',
-  entry: [
-    'react-hot-loader/patch',
-    'webpack-dev-server/client?http://localhost:10000',
-    'webpack/hot/only-dev-server',
-    './src/index.tsx',
-  ],
+  entry: './src/index.tsx',
   module: {
     rules: [
       {
@@ -42,9 +37,8 @@ module.exports = {
       title: 'Webpack Dev Server',
     }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.IgnorePlugin(new RegExp('^(fs|ipc)$')),
+    new webpack.IgnorePlugin({ resourceRegExp: /^(fs|ipc)$/ }),
   ],
   devtool: 'source-map',
   resolve: {
@@ -54,7 +48,9 @@ module.exports = {
     hot: true,
     host: 'localhost',
     historyApiFallback: true,
-    publicPath: '/',
+    devMiddleware: {
+      publicPath: '/',
+    },
     port: 10000,
   },
 };

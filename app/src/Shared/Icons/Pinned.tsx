@@ -1,14 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Icon from 'react-icons-kit';
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 import { thumbTack } from 'react-icons-kit/fa/thumbTack';
 
-@withTheme
-export class Pinned extends Component<Record<string, never>> {
-  render() {
-    return <PinnedIcon icon={thumbTack} color={'#979797'} />;
-  }
-}
+export const Pinned: React.FC<Record<string, never>> = () => (
+  <PinnedIcon icon={thumbTack} color={'#979797'} />
+);
 
 const PinnedIcon = styled(Icon)`
   width: 16px;

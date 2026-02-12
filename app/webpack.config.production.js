@@ -15,7 +15,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader',
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(jpe?g|gif|png|wav|mp3)$/,
@@ -39,7 +39,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Kolpaque Client',
     }),
-    new CopyWebpackPlugin([{ from: './icons', to: 'icons' }]),
+    new CopyWebpackPlugin({
+      patterns: [{ from: path.resolve(__dirname, './icons'), to: 'icons' }],
+    }),
   ],
   output: {
     filename: 'bundle.js',

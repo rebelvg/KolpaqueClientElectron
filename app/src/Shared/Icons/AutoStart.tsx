@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
-import styled, { withTheme } from 'styled-components';
+import React from 'react';
+import styled, { DefaultTheme, useTheme } from 'styled-components';
 import { Channel } from '../../Shared/types';
-import { DefaultTheme } from 'styled-components';
 
 const AUTOSTART_ON = './icons/autostart_on.svg';
 const AUTOSTART_ON_INVERT = './icons/autostart_on_invert.svg';
@@ -10,27 +9,21 @@ const AUTOSTART_OFF = './icons/autostart_off.svg';
 interface AutoStartProps {
   channel: Channel;
   toggle: (id: string, name: keyof Channel, value: boolean) => void;
-  theme?: DefaultTheme;
 }
 
-@withTheme
-export class AutoStart extends Component<AutoStartProps> {
-  onClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const {
-      channel: { autoStart, id },
-      toggle,
-    } = this.props;
+export const AutoStart: React.FC<AutoStartProps> = ({ channel, toggle }) => {
+  const theme = useTheme() as DefaultTheme;
+
+  const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { autoStart, id } = channel;
 
     e.preventDefault();
     e.stopPropagation();
     toggle(id, 'autoStart', !autoStart);
   };
 
-  getIcon = () => {
-    const {
-      channel: { autoStart },
-      theme,
-    } = this.props;
+  const getIcon = () => {
+    const { autoStart } = channel;
 
     if (autoStart) {
       return theme?.nightMode ? AUTOSTART_ON_INVERT : AUTOSTART_ON;
@@ -39,14 +32,12 @@ export class AutoStart extends Component<AutoStartProps> {
     }
   };
 
-  render() {
-    return (
-      <Wrapper onClick={this.onClick}>
-        <img width="12px" height="12px" src={this.getIcon()} />
-      </Wrapper>
-    );
-  }
-}
+  return (
+    <Wrapper onClick={onClick}>
+      <img width="12px" height="12px" src={getIcon()} />
+    </Wrapper>
+  );
+};
 
 const Wrapper = styled.div`
   display: flex;

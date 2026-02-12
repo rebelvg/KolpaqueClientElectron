@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 import { openMenu } from '../constants';
 import { Channel } from '../../Shared/types';
 
@@ -12,7 +12,6 @@ interface EditFormState {
   value: string;
 }
 
-@withTheme
 export default class EditForm extends Component<EditFormProps, EditFormState> {
   constructor(props: EditFormProps) {
     super(props);
@@ -39,13 +38,14 @@ export default class EditForm extends Component<EditFormProps, EditFormState> {
       <Form onSubmit={this.renameChannel}>
         <StyledField
           name="visibleName"
-          component="input"
           type="text"
           value={value}
           onContextMenu={() => {
             openMenu();
           }}
-          onChange={(e) => this.onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            this.onChange(e.target.value)
+          }
           onBlur={() => this.renameChannel()}
         />
       </Form>

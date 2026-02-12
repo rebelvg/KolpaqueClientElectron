@@ -1,23 +1,22 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Icon from 'react-icons-kit';
-import styled, { withTheme } from 'styled-components';
+import styled, { DefaultTheme, useTheme } from 'styled-components';
 import { refresh } from 'react-icons-kit/fa/refresh';
 import { Channel } from '../../Shared/types';
-import { DefaultTheme } from 'styled-components';
 
 interface AutoRestartProps {
   channel: Channel;
   toggle: (id: string, name: keyof Channel, value: boolean) => void;
-  theme?: DefaultTheme;
 }
 
-@withTheme
-export class AutoRestart extends Component<AutoRestartProps> {
-  onClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const {
-      channel: { id, onAutoRestart, autoRestart },
-      toggle,
-    } = this.props;
+export const AutoRestart: React.FC<AutoRestartProps> = ({
+  channel,
+  toggle,
+}) => {
+  const theme = useTheme() as DefaultTheme;
+
+  const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { id, onAutoRestart, autoRestart } = channel;
 
     e.preventDefault();
     e.stopPropagation();
@@ -28,11 +27,8 @@ export class AutoRestart extends Component<AutoRestartProps> {
     }
   };
 
-  getColor = () => {
-    const {
-      theme,
-      channel: { onAutoRestart, autoRestart },
-    } = this.props;
+  const getColor = () => {
+    const { onAutoRestart, autoRestart } = channel;
 
     if (onAutoRestart) {
       return '#119400';
@@ -41,14 +37,12 @@ export class AutoRestart extends Component<AutoRestartProps> {
     }
   };
 
-  render() {
-    return (
-      <Wrapper onClick={this.onClick}>
-        <IconBase icon={refresh} style={{ color: this.getColor() }} />
-      </Wrapper>
-    );
-  }
-}
+  return (
+    <Wrapper onClick={onClick}>
+      <IconBase icon={refresh} style={{ color: getColor() }} />
+    </Wrapper>
+  );
+};
 
 const Wrapper = styled.div`
   display: flex;

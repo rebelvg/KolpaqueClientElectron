@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import Icon from 'react-icons-kit';
 import { cog } from 'react-icons-kit/fa/cog';
 import { Link } from 'react-router-dom';
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 import { Form } from 'react-final-form';
 import Update from '../../Channel/Components/Update';
 import SearchForm from '../../Channel/Forms/SearchForm/SearchForm';
@@ -31,7 +31,6 @@ interface ChannelContainerState {
   count: ChannelCount;
 }
 
-@withTheme
 class ChannelContainer extends PureComponent<
   ChannelContainerProps,
   ChannelContainerState
@@ -132,9 +131,8 @@ class ChannelContainer extends PureComponent<
       <Wrapper>
         <ChannelSearchForm
           onSubmit={this.setFilter}
-          save={this.setFilter}
           initialValues={{ filter }}
-          render={(props) => <SearchForm {...props} />}
+          render={(props) => <SearchForm {...props} save={this.setFilter} />}
           subscription={{}}
         />
 
@@ -173,7 +171,11 @@ const Wrapper = styled.div`
   margin-bottom: 48px;
 `;
 
-const TabPanel = styled.div`
+interface TabPanelProps {
+  updateNotification?: string;
+}
+
+const TabPanel = styled.div<TabPanelProps>`
   width: 100%;
   padding-bottom: ${({ updateNotification }) =>
     updateNotification ? 28 : 0}px;

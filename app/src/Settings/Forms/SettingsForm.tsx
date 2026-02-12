@@ -67,15 +67,18 @@ const ReactSelectAdapter = ({
     {...input}
     {...rest}
     onChange={(selected) => {
+      if (!selected) {
+        return;
+      }
       input.onChange(selected.value);
       select(selected.value, input.name);
     }}
-    clearable={false}
-    searchable={false}
+    isClearable={false}
+    isSearchable={false}
   />
 );
 
-type SettingsFormProps = FormRenderProps & {
+type SettingsFormProps = FormRenderProps<any> & {
   changeSetting: (value: unknown, name: string, text?: boolean) => void;
   integrations: Integrations;
 };
@@ -267,7 +270,7 @@ const SettingsForm: FunctionComponent<SettingsFormProps> = ({
           onContextMenu={() => {
             openMenu();
           }}
-          onChange={(event) => {
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             changeSetting(event.target.value, 'customRtmpClientCommand', true);
           }}
         />
@@ -382,7 +385,11 @@ const SelectField = styled(Field)`
   margin-bottom: 20px;
 `;
 
-const FieldWrapper = styled.div`
+interface FieldWrapperProps {
+  full?: boolean;
+}
+
+const FieldWrapper = styled.div<FieldWrapperProps>`
   display: flex;
   flex-direction: ${(props) => (props.full ? 'column' : 'row')};
   justify-content: space-between;

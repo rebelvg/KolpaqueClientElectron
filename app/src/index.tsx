@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import AppContainer from './App/Containers/AppContainer';
 import 'normalize.css/normalize.css';
 import './style.css';
@@ -9,8 +9,10 @@ const appElement = document.createElement('div');
 appElement.setAttribute('id', 'app');
 document.body.appendChild(appElement);
 
-ReactDOM.render(<AppContainer />, document.getElementById('app'));
+const root = createRoot(appElement);
 
-if (module['hot']) {
-  module['hot'].accept();
+root.render(<AppContainer />);
+
+if ((module as any).hot) {
+  (module as any).hot.accept();
 }

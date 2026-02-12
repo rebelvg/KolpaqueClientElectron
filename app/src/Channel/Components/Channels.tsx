@@ -83,7 +83,7 @@ class Channels extends PureComponent<ChannelsProps, ChannelsState> {
     const { edit, selected } = this.state;
 
     return (
-      <ChannelWrap isUpdate={false}>
+      <ChannelWrap>
         <ReactList
           type={'uniform'}
           length={channels.length}

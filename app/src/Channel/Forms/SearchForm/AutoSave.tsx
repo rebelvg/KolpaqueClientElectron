@@ -45,7 +45,7 @@ class AutoSave extends React.Component<AutoSaveProps, AutoSaveState> {
     this.saveDebounce();
   }
 
-  render() {
+  render(): null {
     return null;
   }
 }

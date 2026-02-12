@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ToggleAdapter } from './SettingsForm';
 import { Settings } from '../../Shared/types';
 
-type ImportFormProps = FormRenderProps & {
+type ImportFormProps = FormRenderProps<any> & {
   members: string[];
   submit: (members: string[]) => void;
   importChannel: (name: string) => void;
@@ -19,7 +19,7 @@ export default class ImportForm extends Component<ImportFormProps> {
   };
 
   addMember = () => {
-    const { values, reset, importChannel } = this.props;
+    const { values, form, importChannel } = this.props;
 
     const member = (values as Settings & { member?: string }).member;
 
@@ -27,11 +27,11 @@ export default class ImportForm extends Component<ImportFormProps> {
       importChannel(member);
     }
 
-    reset();
+    form.reset();
   };
 
   submit = (event?: React.FormEvent<HTMLFormElement>) => {
-    const { handleSubmit, values, reset, submit, members } = this.props;
+    const { handleSubmit, values, form, submit, members } = this.props;
 
     const member = (values as Settings & { member?: string }).member;
 
@@ -39,7 +39,7 @@ export default class ImportForm extends Component<ImportFormProps> {
       submit([...members, member]);
     }
     handleSubmit(event);
-    reset();
+    form.reset();
   };
 
   render() {
@@ -68,7 +68,11 @@ const Form = styled.form`
   flex-direction: column;
 `;
 
-const FieldWrapper = styled.div`
+interface FieldWrapperProps {
+  full?: boolean;
+}
+
+const FieldWrapper = styled.div<FieldWrapperProps>`
   display: flex;
   flex-direction: ${(props) => (props.full ? 'column' : 'row')};
   justify-content: space-between;

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 
 import {
   playChannel,
@@ -29,7 +29,6 @@ interface ChannelProps {
   ) => void;
 }
 
-@withTheme
 class Channel extends PureComponent<ChannelProps> {
   contextMenu = (name: string, channel: ChannelType) =>
     !name && this.props.handleAction('OPEN_MENU', [channel]);
@@ -49,13 +48,15 @@ class Channel extends PureComponent<ChannelProps> {
 
     return (
       <ChannelWrapper
-        onMouseDown={({ target: { name }, button }) =>
-          this.selectChannel(name, button, channel)
-        }
+        onMouseDown={(event: React.MouseEvent<HTMLDivElement>) => {
+          const target = event.target as HTMLInputElement;
+          this.selectChannel(target.name, event.button, channel);
+        }}
         selected={selected}
-        onContextMenu={({ target: { name } }) =>
-          this.contextMenu(name, channel)
-        }
+        onContextMenu={(event: React.MouseEvent<HTMLDivElement>) => {
+          const target = event.target as HTMLInputElement;
+          this.contextMenu(target.name, channel);
+        }}
         pinned={pinned}
       >
         <ChannelData onDoubleClick={() => !editMode && playChannel(channel)}>
@@ -83,7 +84,12 @@ class Channel extends PureComponent<ChannelProps> {
   }
 }
 
-const ChannelWrapper = styled.div`
+interface ChannelWrapperProps {
+  selected?: boolean;
+  pinned?: boolean;
+}
+
+const ChannelWrapper = styled.div<ChannelWrapperProps>`
   display: flex;
   user-select: none;
   cursor: pointer;

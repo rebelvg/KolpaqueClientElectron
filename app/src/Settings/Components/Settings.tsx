@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Select from 'react-select';
-import 'react-select/dist/react-select.css';
 import { Form } from 'react-final-form';
 import { IpcRenderer } from 'electron';
 
@@ -55,7 +54,11 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
     }
   }
 
-  changeWindow = (selected: { value: SettingsState['activeKey'] }) => {
+  changeWindow = (selected: { value: SettingsState['activeKey'] } | null) => {
+    if (!selected) {
+      return;
+    }
+
     this.setState({
       activeKey: selected.value,
     });
@@ -87,10 +90,11 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
       <Container>
         <SettingSelect
           name="form-field-name"
-          value={activeKey}
+          value={options.find((option) => option.value === activeKey)}
           options={options}
           onChange={this.changeWindow}
-          clearable={false}
+          isClearable={false}
+          isSearchable={false}
         />
 
         {activeKey === 'general' && (
@@ -99,7 +103,7 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
             initialValues={{ ...settings }}
             render={(props) => (
               <SettingsForm
-                {...props}
+                {...(props as any)}
                 changeSetting={this.changeSetting}
                 integrations={integrations}
               />
@@ -113,7 +117,7 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
             initialValues={{ ...settings }}
             render={(props) => (
               <ImportForm
-                {...props}
+                {...(props as any)}
                 members={settings.twitchImport ?? []}
                 submit={this.submitImports}
                 importChannel={this.importChannel}

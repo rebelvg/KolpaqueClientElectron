@@ -1,45 +1,36 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Icon from 'react-icons-kit';
-import styled, { withTheme } from 'styled-components';
+import styled, { DefaultTheme, useTheme } from 'styled-components';
 import { star } from 'react-icons-kit/fa/star';
 import { Channel } from '../../Shared/types';
-import { DefaultTheme } from 'styled-components';
 
 interface PinButtonProps {
   channel: Channel;
   toggle: (id: string, name: keyof Channel, value: boolean) => void;
-  theme?: DefaultTheme;
 }
 
-@withTheme
-export class PinButton extends Component<PinButtonProps> {
-  onClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const {
-      channel: { isPinned, id },
-      toggle,
-    } = this.props;
+export const PinButton: React.FC<PinButtonProps> = ({ channel, toggle }) => {
+  const theme = useTheme() as DefaultTheme;
+
+  const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { isPinned, id } = channel;
 
     e.preventDefault();
     e.stopPropagation();
     toggle(id, 'isPinned', !isPinned);
   };
 
-  render() {
-    const {
-      channel: { isPinned },
-      theme,
-    } = this.props;
+  const { isPinned } = channel;
 
-    return (
-      <Wrapper onClick={this.onClick}>
-        <PinnedIcon
-          icon={star}
-          color={!isPinned ? '#979797' : (theme?.client.color ?? '#979797')}
-        />
-      </Wrapper>
-    );
-  }
-}
+  return (
+    <Wrapper onClick={onClick}>
+      <PinnedIcon
+        icon={star}
+        color={!isPinned ? '#979797' : (theme?.client.color ?? '#979797')}
+      />
+    </Wrapper>
+  );
+};
 
 const Wrapper = styled.div`
   display: flex;

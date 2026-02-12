@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { Field } from 'react-final-form';
+import { Field, FormRenderProps } from 'react-final-form';
 import Icon from 'react-icons-kit';
 import { search } from 'react-icons-kit/fa/search';
 import AutoSave from './AutoSave';
 import { openMenu } from '../../constants';
 
-interface SearchFormProps {
+type SearchFormProps = FormRenderProps<Record<string, any>> & {
   save: (values: { filter?: string }) => void;
-}
+};
 
 class SearchForm extends Component<SearchFormProps> {
   render() {

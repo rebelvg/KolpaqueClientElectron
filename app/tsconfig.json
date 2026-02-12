@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
+    "module": "esnext",
     "sourceMap": false,
     "declaration": false,
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "incremental": false,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
     "outDir": "./dist"
   },
   "include": ["../app/src/**/*"]

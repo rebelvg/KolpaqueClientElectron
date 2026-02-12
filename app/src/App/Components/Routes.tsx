@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes as RouterRoutes } from 'react-router-dom';
 import styled from 'styled-components';
 
 import ChannelContainer from '../../Channel/Containers/ChannelContainer';
@@ -58,26 +58,21 @@ class Routes extends Component<RoutesProps, RoutesState> {
 
     return (
       <RouterWrapper>
-        <Route
-          exact
-          path="/"
-          render={(props) => (
-            <ChannelContainer
-              updateNotification={updateNotification}
-              {...props}
-            />
-          )}
-        />
-        <Route
-          path="/about"
-          render={(props) => (
-            <SettingsContainer
-              settings={settings}
-              integrations={integrations}
-              {...props}
-            />
-          )}
-        />
+        <RouterRoutes>
+          <Route
+            path="/"
+            element={<ChannelContainer updateNotification={updateNotification} />}
+          />
+          <Route
+            path="/about"
+            element={
+              <SettingsContainer
+                settings={settings}
+                integrations={integrations}
+              />
+            }
+          />
+        </RouterRoutes>
       </RouterWrapper>
     );
   }

@@ -46,7 +46,11 @@ const TabList = styled.div`
   z-index: 1000;
 `;
 
-const Tab = styled.div`
+interface TabProps {
+  active: boolean;
+}
+
+const Tab = styled.div<TabProps>`
   user-select: none;
   display: flex;
   justify-content: center;
