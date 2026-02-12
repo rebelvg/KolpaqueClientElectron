@@ -61,7 +61,9 @@ class Routes extends Component<RoutesProps, RoutesState> {
         <RouterRoutes>
           <Route
             path="/"
-            element={<ChannelContainer updateNotification={updateNotification} />}
+            element={
+              <ChannelContainer updateNotification={updateNotification} />
+            }
           />
           <Route
             path="/about"

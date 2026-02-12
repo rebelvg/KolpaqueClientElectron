@@ -50,11 +50,13 @@ class Channel extends PureComponent<ChannelProps> {
       <ChannelWrapper
         onMouseDown={(event: React.MouseEvent<HTMLDivElement>) => {
           const target = event.target as HTMLInputElement;
+
           this.selectChannel(target.name, event.button, channel);
         }}
         selected={selected}
         onContextMenu={(event: React.MouseEvent<HTMLDivElement>) => {
           const target = event.target as HTMLInputElement;
+
           this.contextMenu(target.name, channel);
         }}
         pinned={pinned}
