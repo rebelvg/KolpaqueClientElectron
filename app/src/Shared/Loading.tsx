@@ -26,6 +26,8 @@ const LoadingWrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  background: ${(props) => props.theme.client.bg};
+  color: ${(props) => props.theme.client.color};
 `;
 
 const LoadingText = styled.div`
@@ -38,7 +40,7 @@ const rotate360 = keyframes`
 `;
 
 const LoadingIcon = styled(Icon)`
-  color: #347eff;
+  color: ${(props) => props.theme.klpq};
   animation: ${rotate360} 2s linear infinite;
   margin-bottom: 50px;
   & > svg {

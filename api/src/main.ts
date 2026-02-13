@@ -128,6 +128,9 @@ if (process.env.NODE_ENV !== 'dev') {
 app.commandLine.appendSwitch('disable-http-cache');
 
 function createWindow(): void {
+  // Match splash background to chosen theme to avoid white flash before the app renders.
+  const backgroundColor = config.settings.nightMode ? '#282e33' : '#d8d8d8';
+
   const mainWindow = new BrowserWindow({
     title: CLIENT_NAME,
     minWidth: 300,
@@ -137,6 +140,7 @@ function createWindow(): void {
     resizable: true,
     fullscreenable: false,
     icon: iconPath,
+    backgroundColor,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
