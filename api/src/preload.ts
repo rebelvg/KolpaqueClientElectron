@@ -7,8 +7,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.send(eventName, ...args),
   sendSync: <T>(eventName: string, ...args: unknown[]): T =>
     ipcRenderer.sendSync(eventName, ...args),
-  invoke: <T>(eventName: string, ...args: unknown[]) =>
-    ipcRenderer.invoke(eventName, ...args) as Promise<T>,
+  invoke: <T>(eventName: string, ...args: unknown[]): Promise<T> =>
+    ipcRenderer.invoke(eventName, ...args),
   on: (
     eventName: string,
     listener: (event: Electron.IpcRendererEvent, ...args: unknown[]) => void,

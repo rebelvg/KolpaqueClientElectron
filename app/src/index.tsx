@@ -1,4 +1,3 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import AppContainer from './App/Containers/AppContainer';
 import 'normalize.css/normalize.css';
@@ -13,6 +12,6 @@ const root = createRoot(appElement);
 
 root.render(<AppContainer />);
 
-if ((module as any).hot) {
-  (module as any).hot.accept();
+if (module['hot']) {
+  module['hot'].accept();
 }

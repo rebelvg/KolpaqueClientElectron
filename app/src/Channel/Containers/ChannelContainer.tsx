@@ -80,7 +80,7 @@ class ChannelContainer extends PureComponent<
   }
 
   componentWillUnmount() {
-    this.cleanupFns.forEach((fn) => fn && fn());
+    this.cleanupFns.forEach((fn) => fn());
   }
 
   setFilter = async (value: { filter?: string }) => {

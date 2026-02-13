@@ -1,11 +1,11 @@
 declare global {
   interface Window {
     electronAPI: {
-      send: (channel: string, ...args: unknown[]) => void;
-      sendSync: <T>(channel: string, ...args: unknown[]) => T;
-      invoke: <T>(channel: string, ...args: unknown[]) => Promise<T>;
+      send: (eventName: string, ...args: unknown[]) => void;
+      sendSync: <T>(eventName: string, ...args: unknown[]) => T;
+      invoke: <T>(eventName: string, ...args: unknown[]) => Promise<T>;
       on: (
-        channel: string,
+        eventName: string,
         listener: (
           event: Electron.IpcRendererEvent,
           ...args: unknown[]

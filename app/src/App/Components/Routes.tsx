@@ -22,33 +22,32 @@ class Routes extends Component<RoutesProps, RoutesState> {
   constructor(props: RoutesProps) {
     super(props);
 
-    const backendReadyCleanup = window.electronAPI.on('backend_ready', () => {
-      this.setState({
-        isLoading: false,
-      });
-    });
-
-    const showInfoCleanup = window.electronAPI.on(
-      'client_showInfo',
-      (_event, updateNotification) => {
-        this.setState({
-          updateNotification: updateNotification as string,
-        });
-      },
-    );
-
     this.state = {
       isLoading: true,
       updateNotification: '',
     };
 
-    this.cleanupFns = [backendReadyCleanup, showInfoCleanup];
+    this.cleanupFns = [
+      window.electronAPI.on('backend_ready', () => {
+        this.setState({
+          isLoading: false,
+        });
+      }),
+      window.electronAPI.on(
+        'client_showInfo',
+        (_event, updateNotification: string) => {
+          this.setState({
+            updateNotification,
+          });
+        },
+      ),
+    ];
   }
 
   private cleanupFns: Array<() => void> = [];
 
   componentWillUnmount() {
-    this.cleanupFns.forEach((fn) => fn && fn());
+    this.cleanupFns.forEach((fn) => fn());
   }
 
   render() {

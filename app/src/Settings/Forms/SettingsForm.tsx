@@ -15,10 +15,10 @@ const sortTypes = [
 interface ToggleAdapterProps {
   input: {
     name: string;
-    value: any;
-    onBlur: (...args: any[]) => void;
-    onChange: (...args: any[]) => void;
-    onFocus: (...args: any[]) => void;
+    value: unknown;
+    onBlur: (...args: unknown[]) => void;
+    onChange: (...args: unknown[]) => void;
+    onFocus: (...args: unknown[]) => void;
   };
   toggle: (value: boolean, name: string) => void;
 }
@@ -54,9 +54,9 @@ type NativeSelectAdapterProps = {
   input: {
     name: string;
     value: any;
-    onBlur: (...args: any[]) => void;
-    onChange: (...args: any[]) => void;
-    onFocus: (...args: any[]) => void;
+    onBlur: (...args: unknown[]) => void;
+    onChange: (...args: unknown[]) => void;
+    onFocus: (...args: unknown[]) => void;
   };
   select: (value: string, name: string) => void;
   options: { value: string; label: string }[];

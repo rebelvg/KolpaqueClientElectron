@@ -105,7 +105,7 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
             initialValues={{ ...settings }}
             render={(props) => (
               <SettingsForm
-                {...(props as any)}
+                {...props}
                 changeSetting={this.changeSetting}
                 integrations={integrations}
               />
@@ -119,7 +119,7 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
             initialValues={{ ...settings }}
             render={(props) => (
               <ImportForm
-                {...(props as any)}
+                {...props}
                 members={settings.twitchImport ?? []}
                 submit={this.submitImports}
                 importChannel={this.importChannel}

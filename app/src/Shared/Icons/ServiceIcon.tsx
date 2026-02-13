@@ -7,7 +7,7 @@ import { youtubePlay } from 'react-icons-kit/fa/youtubePlay';
 import { Channel } from '../../Shared/types';
 
 type Service = {
-  asset: any;
+  asset: string;
   isImage: boolean;
   color: string | null;
   padding?: number;
