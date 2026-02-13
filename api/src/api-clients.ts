@@ -93,7 +93,7 @@ export async function refreshIntegrationState(source: string) {
   }
 
   try {
-    await klpqServiceClient.refreshKlpqToken();
+    await kolpaqueClientServiceClient.refreshKlpqToken();
 
     integrationState.klpq = true;
   } catch (error) {
@@ -120,7 +120,7 @@ ipcMain.on('settings_check_tokens', async (event) => {
     return;
   }
 
-  await refreshIntegrationState('ipc');
+  await refreshIntegrationState('app');
 });
 
 ipcMain.on('twitch_login', async (event) => {
@@ -132,7 +132,7 @@ ipcMain.on('twitch_login', async (event) => {
     return;
   }
 
-  await klpqServiceClient.getTwitchUser();
+  await kolpaqueClientServiceClient.getTwitchUser();
 });
 
 ipcMain.on('kick_login', async (event) => {
@@ -144,7 +144,7 @@ ipcMain.on('kick_login', async (event) => {
     return;
   }
 
-  await klpqServiceClient.getKickUser();
+  await kolpaqueClientServiceClient.getKickUser();
 });
 
 ipcMain.on('youtube_login', async (event) => {
@@ -156,7 +156,7 @@ ipcMain.on('youtube_login', async (event) => {
     return;
   }
 
-  await klpqServiceClient.getYoutubeUser();
+  await kolpaqueClientServiceClient.getYoutubeUser();
 });
 
 ipcMain.on('klpq_login', async (event) => {
@@ -168,7 +168,7 @@ ipcMain.on('klpq_login', async (event) => {
     return;
   }
 
-  await klpqServiceClient.getKlpqUser();
+  await kolpaqueClientServiceClient.getKlpqUser();
 });
 
 export interface ITwitchClientUsers {
@@ -245,7 +245,7 @@ class TwitchClient {
     }
 
     const promise = new Promise<void>((resolve, reject) => {
-      klpqServiceClient
+      kolpaqueClientServiceClient
         .refreshTwitchToken(this.refreshToken)
         .then((user) => {
           this._accessTokenPromise = undefined;
@@ -391,7 +391,7 @@ class TwitchClient {
   }
 
   public async validateToken() {
-    if (!this._accessToken) {
+    if (!this.refreshToken) {
       throw new Error('no_token');
     }
 
@@ -418,7 +418,7 @@ export interface IKlpqStreamChannel {
   }[];
 }
 
-class KlpqStreamClient {
+class KolpaqueStreamClient {
   private baseUrl = 'https://stats-api.klpq.io/v1';
 
   private axios = getAxios();
@@ -480,7 +480,7 @@ class YoutubeClient {
     }
 
     const promise = new Promise<void>((resolve, reject) => {
-      klpqServiceClient
+      kolpaqueClientServiceClient
         .refreshYoutubeToken(this.refreshToken)
         .then((user) => {
           this._accessTokenPromise = undefined;
@@ -507,7 +507,9 @@ class YoutubeClient {
   }
 
   public async validateToken() {
-    const res = await klpqServiceClient.refreshYoutubeToken(this.refreshToken);
+    const res = await kolpaqueClientServiceClient.refreshYoutubeToken(
+      this.refreshToken,
+    );
 
     if (!res) {
       throw new Error('no_token');
@@ -521,7 +523,9 @@ class YoutubeClient {
       return false;
     }
 
-    const user = await klpqServiceClient.refreshYoutubeToken(this.refreshToken);
+    const user = await kolpaqueClientServiceClient.refreshYoutubeToken(
+      this.refreshToken,
+    );
 
     if (!user) {
       return false;
@@ -541,7 +545,7 @@ class YoutubeClient {
     }
 
     try {
-      const data = await klpqServiceClient.getYoutubeChannels(
+      const data = await kolpaqueClientServiceClient.getYoutubeChannels(
         channelName,
         forHandle,
       );
@@ -560,7 +564,8 @@ class YoutubeClient {
     }
 
     try {
-      const data = await klpqServiceClient.getYoutubeStreams(channelId);
+      const data =
+        await kolpaqueClientServiceClient.getYoutubeStreams(channelId);
 
       return data;
     } catch (error) {
@@ -608,7 +613,7 @@ class ChaturbateClient {
   }
 }
 
-class KlpqServiceClient {
+class KolpaqueClientServiceClient {
   private baseUrl = KLPQ_SERVICE_URL;
 
   private axios = getAxios();
@@ -704,7 +709,7 @@ class KlpqServiceClient {
 
   public async refreshKlpqToken() {
     if (!this.jwtToken) {
-      return;
+      throw new Error('no_token');
     }
 
     try {
@@ -852,7 +857,7 @@ class GithubClient {
   }
 }
 
-class KlpqEncodeClient {
+class KolpaqueEncodeClient {
   private baseUrl = 'https://encode.klpq.io';
 
   private axios = getAxios();
@@ -874,8 +879,9 @@ export function clientLoop() {
   (async () => {
     while (true) {
       await Promise.allSettled([
-        klpqServiceClient.refreshKlpqToken(),
+        kolpaqueClientServiceClient.refreshKlpqToken(),
         twitchClient.getAccessToken(true),
+        kickClient.getAccessToken(true),
       ]);
 
       await sleep(30 * 60 * 1000);
@@ -884,10 +890,10 @@ export function clientLoop() {
 }
 
 export const twitchClient = new TwitchClient();
-export const klpqStreamClient = new KlpqStreamClient();
+export const kolpaqueStreamClient = new KolpaqueStreamClient();
 export const youtubeClient = new YoutubeClient();
 export const chaturbateClient = new ChaturbateClient();
-export const klpqServiceClient = new KlpqServiceClient();
+export const kolpaqueClientServiceClient = new KolpaqueClientServiceClient();
 export const commonClient = new CommonClient();
 export const githubClient = new GithubClient();
-export const klpqEncodeClient = new KlpqEncodeClient();
+export const kolpaqueEncodeClient = new KolpaqueEncodeClient();

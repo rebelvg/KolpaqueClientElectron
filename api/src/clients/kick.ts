@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { getAxios, klpqServiceClient } from '../api-clients';
+import { getAxios, kolpaqueClientServiceClient } from '../api-clients';
 import { addLogs } from '../logs';
 import { config } from '../settings-file';
 
@@ -49,7 +49,7 @@ class KickClient {
     }
 
     const promise = new Promise<void>((resolve, reject) => {
-      klpqServiceClient
+      kolpaqueClientServiceClient
         .refreshKickToken(this.refreshToken)
         .then((user) => {
           this._accessTokenPromise = undefined;
@@ -110,7 +110,7 @@ class KickClient {
   }
 
   public async validateToken() {
-    if (!this._accessToken) {
+    if (!this.refreshToken) {
       throw new Error('no_token');
     }
 

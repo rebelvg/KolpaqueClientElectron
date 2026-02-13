@@ -23,7 +23,7 @@ import { serviceManager } from './services';
 export class Channel extends EventEmitter {
   public readonly id: string;
   public serviceName: ServiceNamesEnum = ServiceNamesEnum.CUSTOM;
-  public serviceObj: BaseStreamService = new BaseStreamService();
+  public service: BaseStreamService = new BaseStreamService();
   public name: string;
   public link: string;
   public protocol: ProtocolsEnum;
@@ -67,16 +67,16 @@ export class Channel extends EventEmitter {
       throw new Error('empty_hostname');
     }
 
-    for (const serviceObj of serviceManager.services) {
-      if (!serviceObj.protocols.includes(protocol)) {
+    for (const service of serviceManager.services) {
+      if (!service.protocols.includes(protocol)) {
         continue;
       }
 
-      if (!serviceObj.hosts.includes(host)) {
+      if (!service.hosts.includes(host)) {
         continue;
       }
 
-      _.forEach(serviceObj.paths, (path) => {
+      _.forEach(service.paths, (path) => {
         const regRes = new RegExp(path).exec(channelURL.pathname);
 
         if (!regRes) {
@@ -85,13 +85,11 @@ export class Channel extends EventEmitter {
 
         const [, channelName] = regRes;
 
-        this.serviceName = serviceObj.name;
-        this.serviceObj = serviceObj;
+        this.serviceName = service.name;
+        this.service = service;
         this.name = channelName!;
 
-        const newChannelUrl = new URL(
-          serviceObj.buildChannelLink(channelName!),
-        );
+        const newChannelUrl = new URL(service.buildChannelLink(channelName!));
 
         this.link = newChannelUrl.href;
 
@@ -127,7 +125,7 @@ export class Channel extends EventEmitter {
       this.changeSetting(settingName, settingValue);
     });
 
-    main.mainWindow!.webContents.send('channel_changeSettingSync');
+    main.mainWindow!.webContents.send('channel_changeSetting_api');
 
     return true;
   }
@@ -150,19 +148,19 @@ export class Channel extends EventEmitter {
   }
 
   public play() {
-    return this.serviceObj.play(this);
+    return this.service.play(this);
   }
 
   public playLQ() {
-    return this.serviceObj.playLQ(this);
+    return this.service.playLQ(this);
   }
 
   public embedLink() {
-    return this.serviceObj.embedLink(this);
+    return this.service.embedLink(this);
   }
 
   public icon() {
-    return this._icon ? this._icon : this.serviceObj.icon;
+    return this._icon ? this._icon : this.service.icon;
   }
 
   public trayIcon() {
@@ -170,19 +168,19 @@ export class Channel extends EventEmitter {
       return this._trayIcon;
     }
 
-    if (this.serviceObj._trayIcon) {
-      return this.serviceObj._trayIcon;
+    if (this.service._trayIcon) {
+      return this.service._trayIcon;
     }
 
     return;
   }
 
   public chatLink() {
-    return this.serviceObj.chatLink(this);
+    return this.service.chatLink(this);
   }
 
   public checkLiveConfirmation() {
-    return this.serviceObj.checkLiveConfirmation;
+    return this.service.checkLiveConfirmation;
   }
 
   public setOnline(printBalloon: boolean) {
@@ -273,7 +271,7 @@ export class Channel extends EventEmitter {
     return true;
   }
 
-  private settingsActions(settingName: string, settingValue: any) {
+  private settingsActions(settingName: string, settingValue: unknown) {
     if (settingName === 'visibleName') {
       if (!settingValue) {
         this[settingName] = this.name;
@@ -290,6 +288,6 @@ export class Channel extends EventEmitter {
   }
 
   public async getStats(printBalloon: boolean) {
-    await this.serviceObj.getStats([this], printBalloon);
+    await this.service.getStats([this], printBalloon);
   }
 }

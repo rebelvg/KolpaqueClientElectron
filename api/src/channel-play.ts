@@ -25,9 +25,9 @@ ipcMain.on(
       return;
     }
 
-    addLogs('info', 'channel_play', id, altQuality, autoRestart);
-
     const channel = config.findById(id);
+
+    addLogs('info', 'channel_play', channel?.link, altQuality, autoRestart);
 
     if (!channel) {
       return false;
@@ -134,10 +134,6 @@ async function launchStreamlink(
 ) {
   addLogs('info', playLink, params, channel.link);
 
-  if (!playLink) {
-    return;
-  }
-
   let firstStart = true;
   let autoRestartAttempts = 0;
   let startTime = Date.now();
@@ -223,11 +219,11 @@ async function launchStreamlink(
       firstStart = false;
       startTime = Date.now();
     } catch (exception) {
-      const [error, stdout, stderr] = exception;
+      const [error, stdout, stderr]: [Error, string, string] = exception;
 
       addLogs('warn', 'streamlink_error', channel.link, error, stdout, stderr);
 
-      if ((error as any).code === 'ENOENT') {
+      if (error['code'] === 'ENOENT') {
         await dialog.showMessageBox({
           type: 'error',
           message: 'Streamlink not found.',

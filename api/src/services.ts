@@ -30,7 +30,7 @@ class ServiceManager {
     await Promise.all(
       _.map(this.services, async (service) => {
         const serviceChannels = _.filter(channels, {
-          serviceObj: service,
+          service: service,
         });
 
         addLogs(
@@ -96,7 +96,7 @@ class ServiceManager {
     await Promise.all(
       _.map(this.services, async (service) => {
         const serviceChannels = _.filter(channels, {
-          serviceObj: service,
+          service: service,
         });
 
         addLogs(

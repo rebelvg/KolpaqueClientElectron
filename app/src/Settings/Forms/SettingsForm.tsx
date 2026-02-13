@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
-import { Field, FormRenderProps } from 'react-final-form';
+import { Field, FieldRenderProps, FormRenderProps } from 'react-final-form';
 import styled from 'styled-components';
 import { openMenu } from '../../Channel/constants';
 import { Integrations, Settings } from '../../Shared/types';
@@ -12,16 +12,9 @@ const sortTypes = [
   { value: 'visibleName', label: 'By Name' },
 ];
 
-interface ToggleAdapterProps {
-  input: {
-    name: string;
-    value: unknown;
-    onBlur: (...args: unknown[]) => void;
-    onChange: (...args: unknown[]) => void;
-    onFocus: (...args: unknown[]) => void;
-  };
+type ToggleAdapterProps = FieldRenderProps<boolean> & {
   toggle: (value: boolean, name: string) => void;
-}
+};
 
 export const ToggleAdapter: FunctionComponent<ToggleAdapterProps> = ({
   input: { onChange, name, value },
@@ -48,16 +41,9 @@ export const ToggleAdapter: FunctionComponent<ToggleAdapterProps> = ({
   </ToggleTrack>
 );
 
-const ToggleAdapterField = ToggleAdapter as any;
+const ToggleAdapterField = ToggleAdapter;
 
-type NativeSelectAdapterProps = {
-  input: {
-    name: string;
-    value: any;
-    onBlur: (...args: unknown[]) => void;
-    onChange: (...args: unknown[]) => void;
-    onFocus: (...args: unknown[]) => void;
-  };
+type NativeSelectAdapterProps = FieldRenderProps<string> & {
   select: (value: string, name: string) => void;
   options: { value: string; label: string }[];
 };
@@ -85,7 +71,7 @@ const NativeSelectAdapter = ({
   </SelectEl>
 );
 
-type SettingsFormProps = FormRenderProps<any> & {
+type SettingsFormProps = FormRenderProps<Settings> & {
   changeSetting: (value: unknown, name: string, text?: boolean) => void;
   integrations: Integrations;
 };
@@ -120,7 +106,7 @@ const SettingsForm: FunctionComponent<SettingsFormProps> = ({
       </FieldWrapper>
 
       <FieldWrapper>
-        <Label>Show Channel Notifications Only Pinned</Label>
+        <Label>Show Notifications Only Pinned Channels</Label>
         <InputWrapper>
           <Field
             name="showNotificationsOnlyFavorites"
@@ -153,7 +139,7 @@ const SettingsForm: FunctionComponent<SettingsFormProps> = ({
       </FieldWrapper>
 
       <FieldWrapper>
-        <Label>Handle Notification Click</Label>
+        <Label>Play On Notification Click</Label>
         <InputWrapper>
           <Field
             name="launchOnBalloonClick"

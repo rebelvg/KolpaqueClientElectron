@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import { ToggleAdapter } from './SettingsForm';
 import { Settings } from '../../Shared/types';
 
-type ImportFormProps = FormRenderProps<any> & {
+type ImportFormValues = Settings & { member?: string };
+
+type ImportFormProps = FormRenderProps<ImportFormValues> & {
   members: string[];
   submit: (members: string[]) => void;
   importChannel: (name: string) => void;
@@ -21,7 +23,7 @@ export default class ImportForm extends Component<ImportFormProps> {
   addMember = () => {
     const { values, form, importChannel } = this.props;
 
-    const member = (values as Settings & { member?: string }).member;
+    const member = values.member;
 
     if (member) {
       importChannel(member);
@@ -30,15 +32,17 @@ export default class ImportForm extends Component<ImportFormProps> {
     form.reset();
   };
 
-  submit = (event?: React.FormEvent<HTMLFormElement>) => {
+  submit = (event?: React.SyntheticEvent<HTMLFormElement>) => {
     const { handleSubmit, values, form, submit, members } = this.props;
 
-    const member = (values as Settings & { member?: string }).member;
+    const member = values.member;
 
     if (member) {
       submit([...members, member]);
     }
+
     handleSubmit(event);
+
     form.reset();
   };
 

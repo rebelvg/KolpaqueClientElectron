@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 import { Channel } from '../channel-class';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
-import { klpqStreamClient } from '../api-clients';
+import { kolpaqueStreamClient } from '../api-clients';
 import { config } from '../settings-file';
 import { SourcesEnum } from '../enums';
 import { addLogs } from '../logs';
@@ -14,7 +14,7 @@ async function getStatsBase(
   channel: Channel,
   printBalloon: boolean,
 ): Promise<void> {
-  const channelData = await klpqStreamClient.getChannel(channel.name);
+  const channelData = await kolpaqueStreamClient.getChannel(channel.name);
 
   if (!channelData) {
     return;
@@ -126,7 +126,7 @@ export class KolpaqueRtmpStreamService extends BaseStreamService {
   public async play(
     channel: Channel,
   ): Promise<{ playLink: string | null; params: string[] }> {
-    const channelData = await klpqStreamClient.getChannel(channel.name);
+    const channelData = await kolpaqueStreamClient.getChannel(channel.name);
 
     if (!channelData) {
       return {
@@ -155,7 +155,7 @@ export class KolpaqueRtmpStreamService extends BaseStreamService {
   public async playLQ(
     channel: Channel,
   ): Promise<{ playLink: string | null; params: string[] }> {
-    const channelData = await klpqStreamClient.getChannel(channel.name);
+    const channelData = await kolpaqueStreamClient.getChannel(channel.name);
 
     if (!channelData) {
       return {

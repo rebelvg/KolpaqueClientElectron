@@ -101,7 +101,7 @@ export class BaseStreamService implements AbstractStreamService {
     throw 'not_implemented';
   }
   get channels() {
-    return _.filter(config.channels, { serviceObj: this });
+    return _.filter(config.channels, { service: this });
   }
   get _trayIcon() {
     if (this.icon) {

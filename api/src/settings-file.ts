@@ -19,11 +19,11 @@ export const config = new Config();
 const isTrustedSender = (event: IpcMainEvent | IpcMainInvokeEvent) =>
   main.mainWindow ? event.sender === main.mainWindow.webContents : false;
 
-ipcMain.on('config_changeSetting', (event, settingName, settingValue) => {
-  addLogs('info', 'config_changeSetting', settingName, settingValue);
+ipcMain.on('config_changeSetting_app', (event, settingName, settingValue) => {
+  addLogs('info', 'config_changeSetting_app', settingName, settingValue);
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'config_changeSetting_blocked');
+    addLogs('warn', 'config_changeSetting_app_blocked');
 
     return;
   }
@@ -68,12 +68,12 @@ ipcMain.on('channel_remove', (event, id) => {
 });
 
 ipcMain.on(
-  'channel_changeSettingSync',
+  'channel_changeSetting_app',
   (event, id, settingName, settingValue) => {
-    addLogs('info', 'channel_changeSettingSync', id, settingName, settingValue);
+    addLogs('info', 'channel_changeSetting_app', id, settingName, settingValue);
 
     if (!isTrustedSender(event)) {
-      addLogs('warn', 'channel_changeSettingSync_blocked');
+      addLogs('warn', 'channel_changeSetting_app_blocked');
 
       return;
     }

@@ -20,7 +20,7 @@ export const changeChannelSetting = (
   settingValue: unknown,
 ) => {
   window.electronAPI.send(
-    'channel_changeSettingSync',
+    'channel_changeSetting_app',
     id,
     settingName,
     settingValue,
@@ -57,7 +57,7 @@ export const changeSetting = (
   name: keyof Settings | string,
   value: unknown,
 ) => {
-  return window.electronAPI.send('config_changeSetting', name, value);
+  return window.electronAPI.send('config_changeSetting_app', name, value);
 };
 
 export const getChannels = (

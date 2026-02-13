@@ -404,7 +404,7 @@ export class Config extends EventEmitter {
     main.mainWindow!.webContents.send('runChannelUpdates', source);
   }
 
-  public setSettings(settingName: string, settingValue: any) {
+  public setSettings(settingName: string, settingValue: unknown) {
     if (settingName === 'showNotifications') {
       contextMenuTemplate[3]!.checked = settingValue as boolean;
     }
@@ -413,7 +413,7 @@ export class Config extends EventEmitter {
   }
 
   public updateSettingsPage() {
-    main.mainWindow!.webContents.send('config_changeSetting');
+    main.mainWindow!.webContents.send('config_changeSetting_api');
   }
 
   public generateSaveChannels(): ISavedSettingsFile['channels'] {

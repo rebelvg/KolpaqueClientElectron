@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
 
-import { klpqServiceClient } from './api-clients';
+import { kolpaqueClientServiceClient } from './api-clients';
 import { Channel } from './channel-class';
 import { addLogs } from './logs';
 import { main } from './main';
@@ -29,7 +29,7 @@ if (!fs.existsSync(SYNC_ENCRYPTION_KEY_FILE_PATH)) {
   encryptionKey = fs.readFileSync(SYNC_ENCRYPTION_KEY_FILE_PATH);
 }
 
-function encryptData(data: any): Buffer {
+function encryptData(data: unknown): Buffer {
   const cipher = crypto.createCipheriv(
     'aes-256-cbc',
     encryptionKey.slice(0, 32),
@@ -44,7 +44,7 @@ function encryptData(data: any): Buffer {
   return encrypted;
 }
 
-function decryptData(encrypted: Buffer): any {
+function decryptData<T>(encrypted: Buffer): T {
   const decipher = crypto.createDecipheriv(
     'aes-256-cbc',
     encryptionKey.slice(0, 32),
@@ -100,7 +100,8 @@ class SyncSettings {
       return;
     }
 
-    const encryptedChannels = await klpqServiceClient.getSyncChannels(syncId);
+    const encryptedChannels =
+      await kolpaqueClientServiceClient.getSyncChannels(syncId);
 
     if (!encryptedChannels) {
       return;
@@ -109,7 +110,8 @@ class SyncSettings {
     let syncedChannels: ISavedSettingsFile['channels'] | undefined;
 
     try {
-      syncedChannels = decryptData(encryptedChannels);
+      syncedChannels =
+        decryptData<ISavedSettingsFile['channels']>(encryptedChannels);
     } catch (error) {
       addLogs('error', error);
     }
@@ -165,7 +167,7 @@ class SyncSettings {
 
     const channels = config.generateSaveChannels();
 
-    const newSyncId = await klpqServiceClient.saveSyncChannels(
+    const newSyncId = await kolpaqueClientServiceClient.saveSyncChannels(
       syncId,
       encryptData(channels),
     );
@@ -177,12 +179,6 @@ class SyncSettings {
     }
 
     this.syncId = newSyncId;
-
-    main.mainWindow?.webContents.send(
-      'config_changeSetting',
-      'syncId',
-      this.syncId,
-    );
 
     config.deletedChannels = [];
 

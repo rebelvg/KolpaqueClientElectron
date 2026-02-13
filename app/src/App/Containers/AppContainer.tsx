@@ -29,7 +29,7 @@ export default class AppContainer extends Component<
   }
 
   componentDidMount() {
-    this.cleanup = window.electronAPI.on('config_changeSetting', () => {
+    this.cleanup = window.electronAPI.on('config_changeSetting_api', () => {
       const { settings, integrations } = getSettings();
 
       this.setState({

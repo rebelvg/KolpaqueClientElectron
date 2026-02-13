@@ -51,7 +51,7 @@ try {
 
 export function addLogs(
   level: 'fatal' | 'error' | 'warn' | 'info' | 'debug',
-  ...logs: any[]
+  ...logs: unknown[]
 ): void {
   _.forEach(logs, (value, key) => {
     if (!value) {

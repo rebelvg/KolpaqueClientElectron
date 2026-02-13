@@ -3,7 +3,7 @@ import * as SocketClient from 'socket.io-client';
 import { addLogs } from './logs';
 import {
   twitchClient,
-  klpqServiceClient,
+  kolpaqueClientServiceClient,
   youtubeClient,
   KLPQ_SERVICE_URL,
   SOCKET_CLIENT_ID,
@@ -36,7 +36,7 @@ export function run() {
 
     printNotification('Auth', 'Twitch Login Successful');
 
-    await refreshIntegrationState('main');
+    void refreshIntegrationState('app').catch();
 
     await serviceManager.getInfo(ServiceNamesEnum.TWITCH);
 
@@ -50,7 +50,7 @@ export function run() {
 
     printNotification('Auth', 'Kick Login Successful');
 
-    await refreshIntegrationState('main');
+    void refreshIntegrationState('app').catch();
 
     await serviceManager.getInfo(ServiceNamesEnum.KICK);
 
@@ -64,7 +64,7 @@ export function run() {
 
     printNotification('Auth', 'Youtube Login Successful');
 
-    await refreshIntegrationState('main');
+    void refreshIntegrationState('app').catch();
 
     await serviceManager.getInfo(ServiceNamesEnum.YOUTUBE_USER);
 
@@ -74,11 +74,11 @@ export function run() {
   io.on('klpq_user', async (signedJwt: string) => {
     addLogs('info', 'socket_got_klpq_user', signedJwt);
 
-    klpqServiceClient.jwtToken = signedJwt;
+    kolpaqueClientServiceClient.jwtToken = signedJwt;
 
     printNotification('Auth', 'Kolpaque Login Successful');
 
-    await refreshIntegrationState('main');
+    void refreshIntegrationState('app').catch();
 
     await serviceManager.getInfo(ServiceNamesEnum.KOLPAQUE_RTMP);
 

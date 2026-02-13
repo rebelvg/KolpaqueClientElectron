@@ -65,8 +65,8 @@ class ChannelContainer extends PureComponent<
 
   async componentDidMount() {
     this.cleanupFns = [
-      window.electronAPI.on('channel_changeSettingSync', () => {
-        this.updateView('channel_changeSettingSync');
+      window.electronAPI.on('channel_changeSetting_api', () => {
+        this.updateView('channel_changeSetting_api');
       }),
       window.electronAPI.on('runChannelUpdates', (_event, args) => {
         this.updateView('runChannelUpdates', args);

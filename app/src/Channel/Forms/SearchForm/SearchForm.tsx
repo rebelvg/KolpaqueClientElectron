@@ -6,7 +6,9 @@ import { search } from 'react-icons-kit/fa/search';
 import AutoSave from './AutoSave';
 import { openMenu } from '../../constants';
 
-type SearchFormProps = FormRenderProps<Record<string, any>> & {
+type SearchFormValues = { filter?: string };
+
+type SearchFormProps = FormRenderProps<SearchFormValues> & {
   save: (values: { filter?: string }) => void;
 };
 

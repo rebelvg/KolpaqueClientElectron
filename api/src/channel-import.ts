@@ -10,19 +10,22 @@ import { main } from './main';
 const isTrustedSender = (event: IpcMainEvent) =>
   main.mainWindow ? event.sender === main.mainWindow.webContents : false;
 
-ipcMain.on('config_changeSetting', async (event, settingName, settingValue) => {
-  addLogs('info', 'config_changeSetting', settingName, settingValue);
+ipcMain.on(
+  'config_changeSetting_app',
+  async (event, settingName, settingValue) => {
+    addLogs('info', 'config_changeSetting_app', settingName, settingValue);
 
-  if (!isTrustedSender(event)) {
-    addLogs('warn', 'config_changeSetting_blocked');
+    if (!isTrustedSender(event)) {
+      addLogs('warn', 'config_changeSetting_app_blocked');
 
-    return;
-  }
+      return;
+    }
 
-  if (settingName === 'enableTwitchImport' && settingValue) {
-    await serviceManager.doImport(ServiceNamesEnum.TWITCH, true);
-  }
-});
+    if (settingName === 'enableTwitchImport' && settingValue) {
+      await serviceManager.doImport(ServiceNamesEnum.TWITCH, true);
+    }
+  },
+);
 
 ipcMain.on('config_twitchImport', (event, channelName) => {
   addLogs('info', 'config_twitchImport', channelName);
