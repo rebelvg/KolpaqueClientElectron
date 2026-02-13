@@ -8,6 +8,7 @@ import {
   KLPQ_SERVICE_URL,
   SOCKET_CLIENT_ID,
   ITwitchUser,
+  refreshIntegrationState,
 } from './api-clients';
 import { printNotification } from './notifications';
 import { ipcMain } from 'electron';
@@ -35,7 +36,7 @@ export function run() {
 
     printNotification('Auth', 'Twitch Login Successful');
 
-    ipcMain.emit('settings_check_tokens');
+    await refreshIntegrationState('main');
 
     await serviceManager.getInfo(ServiceNamesEnum.TWITCH);
 
@@ -49,7 +50,7 @@ export function run() {
 
     printNotification('Auth', 'Kick Login Successful');
 
-    ipcMain.emit('settings_check_tokens');
+    await refreshIntegrationState('main');
 
     await serviceManager.getInfo(ServiceNamesEnum.KICK);
 
@@ -63,7 +64,7 @@ export function run() {
 
     printNotification('Auth', 'Youtube Login Successful');
 
-    ipcMain.emit('settings_check_tokens');
+    await refreshIntegrationState('main');
 
     await serviceManager.getInfo(ServiceNamesEnum.YOUTUBE_USER);
 
@@ -75,9 +76,9 @@ export function run() {
 
     klpqServiceClient.jwtToken = signedJwt;
 
-    printNotification('Auth', 'KLPQ Login Successful');
+    printNotification('Auth', 'Kolpaque Login Successful');
 
-    ipcMain.emit('settings_check_tokens');
+    await refreshIntegrationState('main');
 
     await serviceManager.getInfo(ServiceNamesEnum.KOLPAQUE_RTMP);
 

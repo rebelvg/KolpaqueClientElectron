@@ -248,10 +248,10 @@ ipcMain.handle(
       return;
     }
 
-    const win = BrowserWindow.fromWebContents(event.sender);
+    const window = BrowserWindow.fromWebContents(event.sender);
     const menu = Menu.buildFromTemplate(template);
 
-    menu.popup({ window: win ?? undefined });
+    menu.popup({ window: window ?? undefined });
   },
 );
 

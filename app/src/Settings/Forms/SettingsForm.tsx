@@ -343,7 +343,7 @@ const SettingsForm: FunctionComponent<SettingsFormProps> = ({
           ipcRenderer.send('klpq_login');
         }}
       >
-        KLPQ Login
+        Kolpaque Login
       </button> */}
 
       {/* <Label>

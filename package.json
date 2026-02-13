@@ -20,7 +20,7 @@
     "start": "yarn run build:api && yarn run build:app && yarn run start:api",
     "prepare": "husky"
   },
-  "author": "KLPQ",
+  "author": "Kolpaque",
   "license": "CC0-1.0",
   "private": true,
   "workspaces": [

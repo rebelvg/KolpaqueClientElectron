@@ -31,12 +31,12 @@ export const playChannel = (channel: Channel) => {
   window.electronAPI.send('channel_play', channel.id);
 };
 
-export const getName = (): string => {
-  return window.electronAPI.sendSync('client_getName') as string;
+export const getName = () => {
+  return window.electronAPI.sendSync<string>('client_getName');
 };
 
-export const getVersion = (): string => {
-  return window.electronAPI.sendSync('client_getVersion') as string;
+export const getVersion = () => {
+  return window.electronAPI.sendSync<string>('client_getVersion');
 };
 
 export const getSettings = (): {
@@ -44,10 +44,8 @@ export const getSettings = (): {
   integrations: Integrations;
 } => {
   return {
-    settings: window.electronAPI.sendSync('getSettings') as Settings,
-    integrations: window.electronAPI.sendSync(
-      'getIntegrations',
-    ) as Integrations,
+    settings: window.electronAPI.sendSync<Settings>('getSettings'),
+    integrations: window.electronAPI.sendSync<Integrations>('getIntegrations'),
   };
 };
 

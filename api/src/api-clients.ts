@@ -67,27 +67,12 @@ const integrationState: {
   kick: null,
 };
 
-ipcMain.on('getIntegrations', (event) => {
-  if (!isTrustedSender(event)) {
-    addLogs('warn', 'getIntegrations_blocked');
-
-    return;
-  }
-
-  event.returnValue = integrationState;
-});
-
-ipcMain.on('settings_check_tokens', async (event) => {
-  addLogs('info', 'settings_check_tokens');
-
-  if (!isTrustedSender(event)) {
-    addLogs('warn', 'settings_check_tokens_blocked');
-
-    return;
-  }
+export async function refreshIntegrationState(source: string) {
+  addLogs('info', 'settings_check_tokens', source);
 
   integrationState.twitch = null;
   integrationState.klpq = null;
+  integrationState.kick = null;
 
   config.updateSettingsPage();
 
@@ -116,6 +101,26 @@ ipcMain.on('settings_check_tokens', async (event) => {
   }
 
   config.updateSettingsPage();
+}
+
+ipcMain.on('getIntegrations', (event) => {
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'getIntegrations_blocked');
+
+    return;
+  }
+
+  event.returnValue = integrationState;
+});
+
+ipcMain.on('settings_check_tokens', async (event) => {
+  if (!isTrustedSender(event)) {
+    addLogs('warn', 'settings_check_tokens_blocked');
+
+    return;
+  }
+
+  await refreshIntegrationState('ipc');
 });
 
 ipcMain.on('twitch_login', async (event) => {

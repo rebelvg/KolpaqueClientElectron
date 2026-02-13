@@ -56,5 +56,5 @@ export const template: MenuItemConstructorOptions[] = [
 ];
 
 export const openMenu = () => {
-  window.electronAPI.showEditMenu(template);
+  window.electronAPI.invoke('show_edit_menu', template);
 };
