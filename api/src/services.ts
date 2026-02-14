@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { addLogs } from './logs';
+import { logger } from './logs';
 import { ChaturbateStreamService } from './stream-services/chaturbate';
 import { CustomStreamService } from './stream-services/custom';
 import { KolpaqueRtmpStreamService } from './stream-services/kolpaque-rtmp';
@@ -25,7 +25,7 @@ class ServiceManager {
   ];
 
   public async checkChannels(channels: Channel[], printBalloon: boolean) {
-    addLogs('info', 'channel_check_stats', channels.length, printBalloon);
+    logger('info', 'channel_check_stats', channels.length, printBalloon);
 
     await Promise.all(
       _.map(this.services, async (service) => {
@@ -33,7 +33,7 @@ class ServiceManager {
           service: service,
         });
 
-        addLogs(
+        logger(
           'debug',
           'channel_check_stats',
           service.name,
@@ -42,7 +42,7 @@ class ServiceManager {
 
         await service.getStats(serviceChannels, printBalloon);
 
-        addLogs(
+        logger(
           'debug',
           'channel_check_stats_done',
           service.name,
@@ -51,17 +51,17 @@ class ServiceManager {
       }),
     );
 
-    addLogs('info', 'channel_check_stats_done', channels.length, printBalloon);
+    logger('info', 'channel_check_stats_done', channels.length, printBalloon);
   }
 
   public async doImport(serviceName: ServiceNamesEnum, emitEvent: boolean) {
     const channels: Channel[] = [];
 
-    addLogs('info', 'channel_import_start', serviceName, emitEvent);
+    logger('info', 'channel_import_start', serviceName, emitEvent);
 
     await Promise.all(
       _.map(this.services, async (service) => {
-        addLogs('debug', 'channel_import_start', service.name);
+        logger('debug', 'channel_import_start', service.name);
 
         if (service.name === serviceName) {
           const newChannels = await service.doImportSettings(emitEvent);
@@ -69,11 +69,11 @@ class ServiceManager {
           channels.push(...newChannels);
         }
 
-        addLogs('debug', 'channel_import_done', service.name);
+        logger('debug', 'channel_import_done', service.name);
       }),
     );
 
-    addLogs('info', 'channel_import_start_done', serviceName, emitEvent);
+    logger('info', 'channel_import_start_done', serviceName, emitEvent);
 
     return channels;
   }
@@ -99,7 +99,7 @@ class ServiceManager {
           service: service,
         });
 
-        addLogs(
+        logger(
           'info',
           'channel_info_start',
           service.name,
@@ -110,7 +110,7 @@ class ServiceManager {
 
         refreshTrayIconMenuLinux();
 
-        addLogs(
+        logger(
           'info',
           'channel_info_done',
           service.name,

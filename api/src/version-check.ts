@@ -2,7 +2,7 @@ import { ipcMain, shell, IpcMainEvent } from 'electron';
 import { execFile } from 'child_process';
 import * as _ from 'lodash';
 import { printNotification } from './notifications';
-import { addLogs } from './logs';
+import { logger } from './logs';
 import { githubClient } from './api-clients';
 import { CLIENT_NAME, CLIENT_VERSION } from './globals';
 import { main } from './main';
@@ -26,10 +26,10 @@ const SERVICES = [
 const UPDATES: string[] = [];
 
 ipcMain.on('client_getInfo', async (event) => {
-  addLogs('info', 'client_getInfo');
+  logger('info', 'client_getInfo');
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'client_getInfo_blocked');
+    logger('warn', 'client_getInfo_blocked');
 
     return;
   }
@@ -45,7 +45,7 @@ ipcMain.on('client_getInfo', async (event) => {
 
 ipcMain.on('client_getName', (event) => {
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'client_getName_blocked');
+    logger('warn', 'client_getName_blocked');
 
     return;
   }
@@ -55,7 +55,7 @@ ipcMain.on('client_getName', (event) => {
 
 ipcMain.on('client_getVersion', (event) => {
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'client_getVersion_blocked');
+    logger('warn', 'client_getVersion_blocked');
 
     return;
   }
@@ -98,7 +98,7 @@ function streamlinkVersionCheck(): Promise<boolean> {
   return new Promise((resolve) => {
     execFile('streamlink', ['--version-check'], (error: Error, data) => {
       if (error) {
-        addLogs('warn', error);
+        logger('warn', error);
 
         if (error['code'] === 'ENOENT') {
           return resolve(false);
@@ -118,7 +118,7 @@ function streamlinkVersionCheck(): Promise<boolean> {
   });
 }
 
-export function loop(): void {
+export function init(): void {
   (async (): Promise<void> => {
     while (true) {
       const hasUpdate = await clientVersionCheck();

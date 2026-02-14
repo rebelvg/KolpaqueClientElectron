@@ -1,7 +1,7 @@
 import { shell, Notification, nativeImage, NativeImage } from 'electron';
 
 import { config } from './settings-file';
-import { addLogs } from './logs';
+import { logger } from './logs';
 import { iconPathBalloon } from './main';
 import { Channel } from './channel-class';
 import { sleep } from './helpers';
@@ -11,7 +11,7 @@ export function printNotification(
   content: string,
   channel: Channel | null = null,
 ): void {
-  addLogs('info', 'printNotification', title, content);
+  logger('info', 'printNotification', title, content);
 
   if (!config.settings.showNotifications) {
     return;
@@ -68,7 +68,7 @@ async function onBalloonClick(
   content: string,
   channel: Channel | null,
 ) {
-  addLogs('info', 'balloon_click', title, content);
+  logger('info', 'balloon_click', title, content);
 
   if (!config.settings.launchOnBalloonClick) {
     return;

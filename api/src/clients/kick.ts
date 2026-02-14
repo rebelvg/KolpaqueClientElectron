@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { getAxios, kolpaqueClientServiceClient } from '../api-clients';
-import { addLogs } from '../logs';
+import { logger } from '../logs';
 import { config } from '../settings-file';
 
 export interface IKickClientChannels {
@@ -32,7 +32,7 @@ class KickClient {
   }
 
   public set refreshToken(refreshToken: string) {
-    addLogs('info', 'KickClient', 'refreshToken', refreshToken);
+    logger('info', 'KickClient', 'refreshToken', refreshToken);
 
     config.settings.kickRefreshToken = refreshToken;
   }
@@ -103,7 +103,7 @@ class KickClient {
 
       return channelData;
     } catch (error) {
-      addLogs('warn', error);
+      logger('warn', error);
 
       return;
     }

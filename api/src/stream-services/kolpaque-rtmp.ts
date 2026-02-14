@@ -7,7 +7,7 @@ import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { kolpaqueStreamClient } from '../api-clients';
 import { config } from '../settings-file';
 import { SourcesEnum } from '../enums';
-import { addLogs } from '../logs';
+import { logger } from '../logs';
 import { app } from 'electron';
 
 async function getStatsBase(
@@ -76,7 +76,7 @@ async function _doImport(
       if (channel) {
         channelsAdded.push(channel);
 
-        addLogs('info', 'kolpaque_vps_http_imported_channel', channel.link);
+        logger('info', 'kolpaque_vps_http_imported_channel', channel.link);
       }
     }
   }

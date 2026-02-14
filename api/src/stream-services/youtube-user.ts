@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 import { Channel } from '../channel-class';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
-import { addLogs } from '../logs';
+import { logger } from '../logs';
 import { Innertube } from 'youtubei.js';
 import { app } from 'electron';
 
@@ -60,7 +60,7 @@ export async function getStatsBase(channelId: string): Promise<boolean> {
 
     return isLive;
   } catch (error) {
-    addLogs('warn', error);
+    logger('warn', error);
 
     return false;
   }
@@ -88,7 +88,7 @@ async function getStats(
         youtubeNavigation.payload.browseId,
       );
 
-      addLogs('info', channel.name, channelStatus);
+      logger('info', channel.name, channelStatus);
 
       if (channelStatus) {
         channel.setOnline(printBalloon);
@@ -96,7 +96,7 @@ async function getStats(
         channel.setOffline();
       }
     } catch (error) {
-      addLogs('warn', error);
+      logger('warn', error);
     }
   }
 }

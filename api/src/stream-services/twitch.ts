@@ -11,7 +11,7 @@ import {
 } from '../api-clients';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { config } from '../settings-file';
-import { addLogs } from '../logs';
+import { logger } from '../logs';
 import { SourcesEnum } from '../enums';
 import { app, nativeImage } from 'electron';
 
@@ -92,7 +92,7 @@ async function getInfo(allChannels: Channel[]): Promise<undefined> {
   const chunkedChannels = _.chunk(filteredChannels, TWITCH_CHUNK_LIMIT);
 
   for (const channels of chunkedChannels) {
-    addLogs('info', 'channel_info_twitch_start', channels.length);
+    logger('info', 'channel_info_twitch_start', channels.length);
 
     const userData = await twitchClient.getUsersByLogin(
       channels.map((channel) => channel.name),
@@ -103,7 +103,7 @@ async function getInfo(allChannels: Channel[]): Promise<undefined> {
       continue;
     }
 
-    addLogs(
+    logger(
       'info',
       'channel_info_twitch_user_data',
       channels.length,
@@ -139,7 +139,7 @@ async function getInfo(allChannels: Channel[]): Promise<undefined> {
       }
     }
 
-    addLogs(
+    logger(
       'info',
       'channel_info_twitch_done',
       channels.length,
@@ -209,7 +209,7 @@ export class TwitchStreamService extends BaseStreamService {
         }),
       );
     } catch (error) {
-      addLogs('warn', error);
+      logger('warn', error);
 
       return [];
     }
@@ -225,7 +225,7 @@ export class TwitchStreamService extends BaseStreamService {
         _.pull(channel.sources, SourcesEnum.AUTO_IMPORT);
 
         if (channel.sources.length === 0) {
-          addLogs('info', 'twitch_imported_channel_delete', channel.name);
+          logger('info', 'twitch_imported_channel_delete', channel.name);
 
           channelIdsToDelete.push(channel.id);
         }
@@ -295,7 +295,7 @@ export class TwitchStreamService extends BaseStreamService {
         }
       }
     } catch (error) {
-      addLogs('warn', error);
+      logger('warn', error);
     }
 
     const { channelsAdded, channelNames } =
@@ -338,13 +338,13 @@ export class TwitchStreamService extends BaseStreamService {
             if (channel) {
               channelsAdded.push(channel);
 
-              addLogs('info', 'twitch_imported_channel', channel.link);
+              logger('info', 'twitch_imported_channel', channel.link);
             }
           }
         }),
       );
     } catch (error) {
-      addLogs('warn', error);
+      logger('warn', error);
     }
 
     return { channelsAdded, channelNames };

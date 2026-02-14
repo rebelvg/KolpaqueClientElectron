@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { Channel } from '../channel-class';
 import { getStatsBase } from './youtube-user';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
-import { addLogs } from '../logs';
+import { logger } from '../logs';
 import { app } from 'electron';
 
 async function getStats(
@@ -14,7 +14,7 @@ async function getStats(
   for (const channel of channels) {
     const channelStatus = await getStatsBase(channel.name);
 
-    addLogs('info', channel.name, channelStatus);
+    logger('info', channel.name, channelStatus);
 
     if (channelStatus) {
       channel.setOnline(printBalloon);

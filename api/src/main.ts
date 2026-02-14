@@ -29,13 +29,13 @@ import { config } from './settings-file';
 import { launchPlayerLink } from './channel-play';
 import { rebuildIconMenu } from './tray-icon';
 
-import { addLogs, crashLogPath } from './logs';
+import { logger, crashLogPath } from './logs';
 import { init } from './client-init';
 import { CLIENT_NAME, CLIENT_VERSION } from './globals';
 import { Channel } from './channel-class';
 import { Config } from './config-class';
 
-addLogs(
+logger(
   'info',
   'is_dev',
   process.env.NODE_ENV === 'dev',
@@ -49,12 +49,12 @@ let initDone = false;
 
 ipcMain.on('client_ready', async (event: IpcMainEvent) => {
   if (main.mainWindow && event.sender !== main.mainWindow.webContents) {
-    addLogs('warn', 'client_ready_blocked');
+    logger('warn', 'client_ready_blocked');
 
     return;
   }
 
-  addLogs('info', 'client_ready');
+  logger('info', 'client_ready');
 
   if (initDone) {
     main.mainWindow!.webContents.send('backend_ready');
@@ -72,10 +72,10 @@ ipcMain.on('client_ready', async (event: IpcMainEvent) => {
       new Promise<void>((resolve) => setTimeout(resolve, 5000)),
     ]);
   } catch (error) {
-    addLogs('warn', 'init_failed', error);
+    logger('warn', 'init_failed', error);
   }
 
-  addLogs('info', 'init_done', Date.now() - startTime);
+  logger('info', 'init_done', Date.now() - startTime);
 
   main.mainWindow!.webContents.send('backend_ready');
 });
@@ -173,7 +173,7 @@ function createWindow(): void {
   }
 
   mainWindow.on('minimize', () => {
-    addLogs('info', 'minimize', mainWindow.isVisible());
+    logger('info', 'minimize', mainWindow.isVisible());
 
     mainWindow.hide();
   });
@@ -181,7 +181,7 @@ function createWindow(): void {
   mainWindow.on('close', (e) => {
     e.preventDefault();
 
-    addLogs('info', 'close', 'force_quit', forceQuit, mainWindow.isDestroyed());
+    logger('info', 'close', 'force_quit', forceQuit, mainWindow.isDestroyed());
 
     config.saveFile();
 
@@ -199,7 +199,7 @@ function createWindow(): void {
 
     const childWindows = main.createdWindows;
 
-    addLogs('info', 'close', childWindows.length);
+    logger('info', 'close', childWindows.length);
 
     for (const childWindow of childWindows) {
       if (!childWindow.isDestroyed()) {
@@ -215,7 +215,7 @@ function createWindow(): void {
   });
 
   mainWindow.on('closed', () => {
-    addLogs('info', 'closed', forceQuit, mainWindow.isDestroyed());
+    logger('info', 'closed', forceQuit, mainWindow.isDestroyed());
 
     main.mainWindow = undefined;
   });
@@ -247,7 +247,7 @@ ipcMain.handle(
   'show_edit_menu',
   (event: IpcMainEvent, template: Electron.MenuItemConstructorOptions[]) => {
     if (main.mainWindow && event.sender !== main.mainWindow.webContents) {
-      addLogs('warn', 'show_edit_menu_blocked');
+      logger('warn', 'show_edit_menu_blocked');
 
       return;
     }
@@ -263,7 +263,7 @@ ipcMain.handle(
   'open_channel_menu',
   (event: IpcMainEvent, channelId: string) => {
     if (main.mainWindow && event.sender !== main.mainWindow.webContents) {
-      addLogs('warn', 'open_channel_menu_blocked');
+      logger('warn', 'open_channel_menu_blocked');
 
       return;
     }
@@ -384,15 +384,15 @@ app.on('ready', () => {
   refreshTrayIconMenuLinux();
 
   appIcon.on('middle-click', () => {
-    addLogs('info', 'middle_click_event');
+    logger('info', 'middle_click_event');
   });
 
   appIcon.on('double-click', () => {
-    addLogs('info', 'double_click_event');
+    logger('info', 'double_click_event');
   });
 
   appIcon.on('click', () => {
-    addLogs('info', 'left_click_event');
+    logger('info', 'left_click_event');
 
     switch (process.platform) {
       case 'win32':
@@ -415,7 +415,7 @@ app.on('ready', () => {
   });
 
   appIcon.on('right-click', () => {
-    addLogs('info', 'right_click_event');
+    logger('info', 'right_click_event');
 
     switch (process.platform) {
       case 'win32':
@@ -443,13 +443,13 @@ app.on('ready', () => {
 });
 
 process.on('unhandledRejection', (err) => {
-  addLogs('fatal', 'unhandledRejection', err);
+  logger('fatal', 'unhandledRejection', err);
 
   throw err;
 });
 
 process.on('uncaughtException', (err) => {
-  addLogs('fatal', 'uncaughtException', err);
+  logger('fatal', 'uncaughtException', err);
 
   fs.appendFileSync(crashLogPath, `${err.stack}${os.EOL}`);
 

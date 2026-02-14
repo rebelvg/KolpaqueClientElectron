@@ -3,10 +3,10 @@ import { BrowserWindow, Menu, MenuItem } from 'electron';
 import { config } from './settings-file';
 import { contextMenuTemplate } from './main';
 import { Channel } from './channel-class';
-import { addLogs } from './logs';
+import { logger } from './logs';
 
 export function rebuildIconMenu(): Menu {
-  addLogs('info', 'rebuildIconMenu');
+  logger('info', 'rebuildIconMenu');
 
   const onlineChannels = config.find({
     isLive: true,

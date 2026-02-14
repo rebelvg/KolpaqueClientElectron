@@ -3,7 +3,7 @@ import * as childProcess from 'child_process';
 
 import { Channel } from '../channel-class';
 import { config } from '../settings-file';
-import { addLogs } from '../logs';
+import { logger } from '../logs';
 import { BaseStreamService, ServiceNamesEnum } from './_base';
 
 async function getStats(
@@ -27,7 +27,7 @@ async function getStats(
             [channel.link, 'best', '--twitch-disable-hosting', '--json'],
             (err, stdout) => {
               if (err) {
-                addLogs('warn', err, stdout);
+                logger('warn', err, stdout);
 
                 return;
               }
@@ -41,7 +41,7 @@ async function getStats(
                   channel.setOffline();
                 }
               } catch (error) {
-                addLogs('warn', error, stdout);
+                logger('warn', error, stdout);
               }
 
               resolve();

@@ -6,7 +6,7 @@ import { config } from './settings-file';
 import { Config } from './config-class';
 import { printNotification } from './notifications';
 import { Channel } from './channel-class';
-import { addLogs } from './logs';
+import { logger } from './logs';
 import { ProtocolsEnum, ServiceNamesEnum } from './stream-services/_base';
 import { main } from './main';
 
@@ -20,14 +20,14 @@ ipcMain.on(
   'channel_play',
   async (event, id, altQuality = false, autoRestart = null) => {
     if (!isTrustedSender(event)) {
-      addLogs('warn', 'channel_play_blocked', id);
+      logger('warn', 'channel_play_blocked', id);
 
       return;
     }
 
     const channel = config.findById(id);
 
-    addLogs('info', 'channel_play', channel?.link, altQuality, autoRestart);
+    logger('info', 'channel_play', channel?.link, altQuality, autoRestart);
 
     if (!channel) {
       return false;
@@ -41,7 +41,7 @@ export async function launchPlayerLink(
   channelLink: string,
   LQ: boolean,
 ): Promise<boolean> {
-  addLogs('info', 'launchPlayerLink', {
+  logger('info', 'launchPlayerLink', {
     channelLink,
     LQ,
   });
@@ -95,7 +95,7 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
 
     channel._windows.push(window);
   } catch (error) {
-    addLogs('warn', error, embedLink);
+    logger('warn', error, embedLink);
 
     window.close();
 
@@ -132,7 +132,7 @@ async function launchStreamlink(
   params: string[],
   channel: Channel,
 ) {
-  addLogs('info', playLink, params, channel.link);
+  logger('info', playLink, params, channel.link);
 
   let firstStart = true;
   let autoRestartAttempts = 0;
@@ -141,7 +141,7 @@ async function launchStreamlink(
   channel._playingProcesses++;
 
   while (true) {
-    addLogs(
+    logger(
       'info',
       'streamlink_starting',
       channel.link,
@@ -161,7 +161,7 @@ async function launchStreamlink(
           : ['streamlink', playLink, 'best', ...params];
 
       await new Promise<void>((resolve, reject) => {
-        addLogs('info', 'spawn_command', command, commandArgs);
+        logger('info', 'spawn_command', command, commandArgs);
 
         const pipeProcess = spawn(command!, commandArgs);
 
@@ -179,13 +179,13 @@ async function launchStreamlink(
         });
 
         pipeProcess.on('error', (error) => {
-          addLogs('warn', 'spawn_command_error', command, commandArgs, error);
+          logger('warn', 'spawn_command_error', command, commandArgs, error);
 
           reject([error, stdoutString, stderrString]);
         });
 
         pipeProcess.on('close', (code, signal) => {
-          addLogs(
+          logger(
             'info',
             'spawn_command_exit',
             code,
@@ -208,7 +208,7 @@ async function launchStreamlink(
         });
       });
 
-      addLogs('info', 'streamlink_exited', channel.link);
+      logger('info', 'streamlink_exited', channel.link);
 
       if (Date.now() - startTime < AUTO_RESTART_TIMEOUT * 1000) {
         autoRestartAttempts++;
@@ -221,7 +221,7 @@ async function launchStreamlink(
     } catch (exception) {
       const [error, stdout, stderr]: [Error, string, string] = exception;
 
-      addLogs('warn', 'streamlink_error', channel.link, error, stdout, stderr);
+      logger('warn', 'streamlink_error', channel.link, error, stdout, stderr);
 
       if (error['code'] === 'ENOENT') {
         await dialog.showMessageBox({
@@ -260,7 +260,7 @@ async function launchStreamlink(
     }
   }
 
-  addLogs('info', 'playing_closing', channel.link, channel._playingProcesses);
+  logger('info', 'playing_closing', channel.link, channel._playingProcesses);
 
   channel._playingProcesses--;
 

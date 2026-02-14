@@ -2,7 +2,7 @@ import { ipcMain, dialog, IpcMainEvent } from 'electron';
 import * as _ from 'lodash';
 
 import { sleep } from './helpers';
-import { addLogs } from './logs';
+import { logger } from './logs';
 import { ServiceNamesEnum } from './stream-services/_base';
 import { serviceManager } from './services';
 import { main } from './main';
@@ -13,10 +13,10 @@ const isTrustedSender = (event: IpcMainEvent) =>
 ipcMain.on(
   'config_changeSetting_app',
   async (event, settingName, settingValue) => {
-    addLogs('info', 'config_changeSetting_app', settingName, settingValue);
+    logger('info', 'config_changeSetting_app', settingName, settingValue);
 
     if (!isTrustedSender(event)) {
-      addLogs('warn', 'config_changeSetting_app_blocked');
+      logger('warn', 'config_changeSetting_app_blocked');
 
       return;
     }
@@ -28,10 +28,10 @@ ipcMain.on(
 );
 
 ipcMain.on('config_twitchImport', (event, channelName) => {
-  addLogs('info', 'config_twitchImport', channelName);
+  logger('info', 'config_twitchImport', channelName);
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'config_twitchImport_blocked');
+    logger('warn', 'config_twitchImport_blocked');
 
     return false;
   }
@@ -62,7 +62,7 @@ async function twitchImportAndMessage(): Promise<boolean> {
   }
 }
 
-export async function loop(): Promise<void> {
+export async function init(): Promise<void> {
   await serviceManager.doImports(false);
 
   (async (): Promise<void> => {

@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 
 import { Channel } from './channel-class';
-import { addLogs } from './logs';
+import { logger } from './logs';
 import { contextMenuTemplate, main } from './main';
 import { sleep } from './helpers';
 import { SourcesEnum } from './enums';
@@ -202,7 +202,7 @@ export class Config extends EventEmitter {
 
       parseJson = this.runMigrations(parseJson);
     } catch (error) {
-      addLogs('error', error);
+      logger('error', error);
 
       return;
     }
@@ -230,7 +230,7 @@ export class Config extends EventEmitter {
       this.migrations = parseJson.migrations || [];
       this.deletedChannels = parseJson.deletedChannels || [];
     } catch (error) {
-      addLogs('error', error, parseJson);
+      logger('error', error, parseJson);
 
       throw error;
     }
@@ -278,7 +278,7 @@ export class Config extends EventEmitter {
     try {
       return new Channel(channelLink);
     } catch (error) {
-      addLogs('warn', error);
+      logger('warn', error);
 
       return;
     }
@@ -378,11 +378,11 @@ export class Config extends EventEmitter {
 
       fs.renameSync(tmpPath, SETTINGS_FILE_PATH);
 
-      addLogs('info', 'settings_saved');
+      logger('info', 'settings_saved');
 
       return true;
     } catch (error) {
-      addLogs('error', error);
+      logger('error', error);
 
       return false;
     }

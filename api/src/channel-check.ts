@@ -4,7 +4,7 @@ import { config } from './settings-file';
 import { sleep } from './helpers';
 import { serviceManager } from './services';
 
-export async function loop(): Promise<void> {
+export async function init(): Promise<void> {
   await serviceManager.checkChannels(config.channels, false);
 
   _.forEach(serviceManager.services, async (service) => {

@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 import { Config } from './config-class';
 import { Channel } from './channel-class';
 import { main } from './main';
-import { addLogs } from './logs';
+import { logger } from './logs';
 import { SourcesEnum } from './enums';
 
 export const config = new Config();
@@ -20,10 +20,10 @@ const isTrustedSender = (event: IpcMainEvent | IpcMainInvokeEvent) =>
   main.mainWindow ? event.sender === main.mainWindow.webContents : false;
 
 ipcMain.on('config_changeSetting_app', (event, settingName, settingValue) => {
-  addLogs('info', 'config_changeSetting_app', settingName, settingValue);
+  logger('info', 'config_changeSetting_app', settingName, settingValue);
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'config_changeSetting_app_blocked');
+    logger('warn', 'config_changeSetting_app_blocked');
 
     return;
   }
@@ -36,10 +36,10 @@ ipcMain.on('config_changeSetting_app', (event, settingName, settingValue) => {
 });
 
 ipcMain.on('channel_add', async (event, channelLink) => {
-  addLogs('info', 'channel_add', channelLink);
+  logger('info', 'channel_add', channelLink);
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'channel_add_blocked');
+    logger('warn', 'channel_add_blocked');
 
     return;
   }
@@ -56,10 +56,10 @@ ipcMain.on('channel_add', async (event, channelLink) => {
 });
 
 ipcMain.on('channel_remove', (event, id) => {
-  addLogs('info', 'channel_remove', id);
+  logger('info', 'channel_remove', id);
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'channel_remove_blocked');
+    logger('warn', 'channel_remove_blocked');
 
     return;
   }
@@ -70,10 +70,10 @@ ipcMain.on('channel_remove', (event, id) => {
 ipcMain.on(
   'channel_changeSetting_app',
   (event, id, settingName, settingValue) => {
-    addLogs('info', 'channel_changeSetting_app', id, settingName, settingValue);
+    logger('info', 'channel_changeSetting_app', id, settingName, settingValue);
 
     if (!isTrustedSender(event)) {
-      addLogs('warn', 'channel_changeSetting_app_blocked');
+      logger('warn', 'channel_changeSetting_app_blocked');
 
       return;
     }
@@ -101,10 +101,10 @@ ipcMain.on(
 );
 
 ipcMain.on('channel_openPage', (event, id) => {
-  addLogs('info', 'channel_openPage', id);
+  logger('info', 'channel_openPage', id);
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'channel_openPage_blocked');
+    logger('warn', 'channel_openPage_blocked');
 
     return false;
   }
@@ -125,10 +125,10 @@ ipcMain.on('channel_openPage', (event, id) => {
 });
 
 ipcMain.on('channel_openChat', async (event, id) => {
-  addLogs('info', 'channel_openChat', id);
+  logger('info', 'channel_openChat', id);
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'channel_openChat_blocked');
+    logger('warn', 'channel_openChat_blocked');
 
     return false;
   }
@@ -169,7 +169,7 @@ ipcMain.on('channel_openChat', async (event, id) => {
     try {
       await window.loadURL(chatLink);
     } catch (error) {
-      addLogs('warn', error, chatLink);
+      logger('warn', error, chatLink);
 
       window.close();
 
@@ -183,10 +183,10 @@ ipcMain.on('channel_openChat', async (event, id) => {
 });
 
 ipcMain.on('channel_copyClipboard', (event, channelLink) => {
-  addLogs('info', 'channel_copyClipboard', channelLink);
+  logger('info', 'channel_copyClipboard', channelLink);
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'channel_copyClipboard_blocked');
+    logger('warn', 'channel_copyClipboard_blocked');
 
     return false;
   }
@@ -198,7 +198,7 @@ ipcMain.on('channel_copyClipboard', (event, channelLink) => {
 
 ipcMain.on('getSettings', (event) => {
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'getSettings_blocked');
+    logger('warn', 'getSettings_blocked');
 
     return;
   }
@@ -207,10 +207,10 @@ ipcMain.on('getSettings', (event) => {
 });
 
 ipcMain.handle('config_find', (event, query) => {
-  addLogs('info', 'config_find', query);
+  logger('info', 'config_find', query);
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'config_find_blocked');
+    logger('warn', 'config_find_blocked');
 
     return { channels: [], count: { online: 0, offline: 0 } };
   }

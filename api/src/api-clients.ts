@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { addLogs } from './logs';
+import { logger } from './logs';
 import { config } from './settings-file';
 import * as qs from 'querystring';
 import { shell, ipcMain, IpcMainEvent } from 'electron';
@@ -19,12 +19,12 @@ export function getAxios() {
 
   axiosInstance.interceptors.request.use(
     (config) => {
-      addLogs('debug', 'axios', config.method, config.url, config.params);
+      logger('debug', 'axios', config.method, config.url, config.params);
 
       return config;
     },
     (error) => {
-      addLogs('warn', 'axios_req', error);
+      logger('warn', 'axios_req', error);
 
       return Promise.reject(error);
     },
@@ -32,12 +32,12 @@ export function getAxios() {
 
   axiosInstance.interceptors.response.use(
     (res) => {
-      addLogs('debug', 'axios', res.config.method, res.config.url, res.status);
+      logger('debug', 'axios', res.config.method, res.config.url, res.status);
 
       return res;
     },
     (error) => {
-      addLogs('warn', 'axios_res', error);
+      logger('warn', 'axios_res', error);
 
       return Promise.reject(error);
     },
@@ -68,7 +68,7 @@ const integrationState: {
 };
 
 export async function refreshIntegrationState(source: string) {
-  addLogs('info', 'settings_check_tokens', source);
+  logger('info', 'settings_check_tokens', source);
 
   integrationState.twitch = null;
   integrationState.klpq = null;
@@ -105,7 +105,7 @@ export async function refreshIntegrationState(source: string) {
 
 ipcMain.on('getIntegrations', (event) => {
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'getIntegrations_blocked');
+    logger('warn', 'getIntegrations_blocked');
 
     return;
   }
@@ -115,7 +115,7 @@ ipcMain.on('getIntegrations', (event) => {
 
 ipcMain.on('settings_check_tokens', async (event) => {
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'settings_check_tokens_blocked');
+    logger('warn', 'settings_check_tokens_blocked');
 
     return;
   }
@@ -124,10 +124,10 @@ ipcMain.on('settings_check_tokens', async (event) => {
 });
 
 ipcMain.on('twitch_login', async (event) => {
-  addLogs('info', 'twitch_login');
+  logger('info', 'twitch_login');
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'twitch_login_blocked');
+    logger('warn', 'twitch_login_blocked');
 
     return;
   }
@@ -136,10 +136,10 @@ ipcMain.on('twitch_login', async (event) => {
 });
 
 ipcMain.on('kick_login', async (event) => {
-  addLogs('info', 'kick_login');
+  logger('info', 'kick_login');
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'kick_login_blocked');
+    logger('warn', 'kick_login_blocked');
 
     return;
   }
@@ -148,10 +148,10 @@ ipcMain.on('kick_login', async (event) => {
 });
 
 ipcMain.on('youtube_login', async (event) => {
-  addLogs('info', 'youtube_login');
+  logger('info', 'youtube_login');
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'youtube_login_blocked');
+    logger('warn', 'youtube_login_blocked');
 
     return;
   }
@@ -160,10 +160,10 @@ ipcMain.on('youtube_login', async (event) => {
 });
 
 ipcMain.on('klpq_login', async (event) => {
-  addLogs('info', 'klpq_login');
+  logger('info', 'klpq_login');
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'klpq_login_blocked');
+    logger('warn', 'klpq_login_blocked');
 
     return;
   }
@@ -211,7 +211,10 @@ class TwitchClient {
 
   constructor() {
     this.axios.interceptors.request.use(async (config) => {
-      await this.getAccessToken();
+      await this.getAccessToken(false, {
+        caller: 'interceptors',
+        ...config,
+      });
 
       if (this._accessToken) {
         config.headers.set('Authorization', `Bearer ${this._accessToken}`);
@@ -228,12 +231,12 @@ class TwitchClient {
   }
 
   public set refreshToken(refreshToken: string) {
-    addLogs('info', 'TwitchClient', 'refreshToken', refreshToken);
+    logger('info', 'TwitchClient', 'refreshToken', refreshToken);
 
     config.settings.twitchRefreshToken = refreshToken;
   }
 
-  public getAccessToken(force = false): Promise<void> {
+  public getAccessToken(force = false, source: object): Promise<void> {
     if (!force) {
       if (this._accessToken) {
         return Promise.resolve();
@@ -246,7 +249,12 @@ class TwitchClient {
 
     const promise = new Promise<void>((resolve, reject) => {
       kolpaqueClientServiceClient
-        .refreshTwitchToken(this.refreshToken)
+        .refreshTwitchToken(this.refreshToken, {
+          force,
+          _accessTokenPromise: !!this._accessTokenPromise,
+          _accessToken: this._accessToken,
+          ...source,
+        })
         .then((user) => {
           this._accessTokenPromise = undefined;
 
@@ -465,7 +473,7 @@ class YoutubeClient {
   }
 
   public set refreshToken(refreshToken: string) {
-    addLogs('info', 'YoutubeClient', 'refreshToken', refreshToken);
+    logger('info', 'YoutubeClient', 'refreshToken', refreshToken);
 
     config.settings.youtubeRefreshToken = refreshToken;
   }
@@ -632,7 +640,7 @@ class KolpaqueClientServiceClient {
   }
 
   public set jwtToken(jwtToken: string | null) {
-    addLogs('info', 'KlpqServiceClient', 'jwtToken', jwtToken);
+    logger('info', 'KlpqServiceClient', 'jwtToken', jwtToken);
 
     config.settings.klpqJwtToken = jwtToken;
   }
@@ -663,6 +671,7 @@ class KolpaqueClientServiceClient {
 
   public async refreshTwitchToken(
     refreshToken: string | null,
+    source: object,
   ): Promise<ITwitchUser | undefined> {
     if (!refreshToken) {
       return;
@@ -875,12 +884,14 @@ class KolpaqueEncodeClient {
   }
 }
 
-export function clientLoop() {
+export function init() {
   (async () => {
     while (true) {
       await Promise.allSettled([
         kolpaqueClientServiceClient.refreshKlpqToken(),
-        twitchClient.getAccessToken(true),
+        twitchClient.getAccessToken(true, {
+          caller: 'clientLoop',
+        }),
         kickClient.getAccessToken(true),
       ]);
 

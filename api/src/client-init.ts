@@ -1,25 +1,25 @@
-import { loop as channelLoop } from './channel-check';
-import { loop as infoLoop } from './channel-info';
-import { loop as importLoop } from './channel-import';
-import { loop as versionLoop } from './version-check';
-import { addLogs, run as runLogs } from './logs';
-import { run as runSocket } from './socket-client';
-import { clientLoop } from './api-clients';
+import { init as checkInit } from './channel-check';
+import { init as infoInit } from './channel-info';
+import { init as importInit } from './channel-import';
+import { init as versionInit } from './version-check';
+import { init as logsInit, logger } from './logs';
+import { init as socketInit } from './socket-client';
+import { init as clientsInit } from './api-clients';
 
 export async function init(): Promise<void> {
-  addLogs('info', 'init_start');
+  logger('info', 'init_start');
 
-  runLogs();
+  logsInit();
 
-  runSocket();
+  socketInit();
 
-  await importLoop();
-  await channelLoop();
-  await versionLoop();
+  await clientsInit();
 
-  await infoLoop();
+  await checkInit();
+  await importInit();
+  await versionInit();
 
-  await clientLoop();
+  await infoInit();
 
-  addLogs('info', 'init_done');
+  logger('info', 'init_done');
 }

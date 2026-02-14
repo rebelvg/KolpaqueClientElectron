@@ -19,7 +19,7 @@ const isTrustedSender = (event: IpcMainEvent | IpcMainInvokeEvent) =>
 
 ipcMain.handle('config_logs', (event) => {
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'config_logs_blocked');
+    logger('warn', 'config_logs_blocked');
 
     return [];
   }
@@ -28,10 +28,10 @@ ipcMain.handle('config_logs', (event) => {
 });
 
 ipcMain.on('logs_open_folder', (event) => {
-  addLogs('info', 'logs_open_folder');
+  logger('info', 'logs_open_folder');
 
   if (!isTrustedSender(event)) {
-    addLogs('warn', 'logs_open_folder_blocked');
+    logger('warn', 'logs_open_folder_blocked');
 
     return;
   }
@@ -46,10 +46,10 @@ try {
     fs.renameSync(appLogPath, `${appLogPath}.old`);
   }
 } catch (error) {
-  addLogs('warn', error);
+  logger('warn', error);
 }
 
-export function addLogs(
+export function logger(
   level: 'fatal' | 'error' | 'warn' | 'info' | 'debug',
   ...logs: unknown[]
 ): void {
@@ -153,11 +153,11 @@ export function addLogs(
   }
 }
 
-export function run() {
-  addLogs('info', 'memory_usage', process.memoryUsage());
+export function init() {
+  logger('info', 'memory_usage', process.memoryUsage());
 
   setInterval(
-    () => addLogs('info', 'memory_usage', process.memoryUsage()),
+    () => logger('info', 'memory_usage', process.memoryUsage()),
     100 * 1000,
   );
 }

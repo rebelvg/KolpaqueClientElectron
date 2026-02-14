@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 import * as uuid from 'uuid';
 
-import { addLogs } from './logs';
+import { logger } from './logs';
 import { printNotification } from './notifications';
 import { config } from './settings-file';
 import {
@@ -190,7 +190,7 @@ export class Channel extends EventEmitter {
       return;
     }
 
-    addLogs('info', this.link, 'went_online');
+    logger('info', this.link, 'went_online');
 
     if (printBalloon) {
       if (!this.autoStart) {
@@ -248,7 +248,7 @@ export class Channel extends EventEmitter {
       return;
     }
 
-    addLogs('info', this.link, 'went_offline');
+    logger('info', this.link, 'went_offline');
 
     this.changeSettings({
       lastUpdated: Date.now(),

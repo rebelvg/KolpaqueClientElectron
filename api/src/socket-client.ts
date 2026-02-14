@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-import { addLogs } from './logs';
+import { logger } from './logs';
 import {
   twitchClient,
   kolpaqueClientServiceClient,
@@ -16,21 +16,21 @@ import { serviceManager } from './services';
 import { ServiceNamesEnum } from './stream-services/_base';
 import { kickClient } from './clients/kick';
 
-export function run() {
+export function init() {
   const client = io(KLPQ_SERVICE_URL, { timeout: 120 * 1000 });
 
   client.on('connect', () => {
-    addLogs('info', 'socket_connected');
+    logger('info', 'socket_connected');
 
     client.emit('request_id', SOCKET_CLIENT_ID);
   });
 
   client.on('connect_error', (error) => {
-    addLogs('warn', 'connect_error', error);
+    logger('warn', 'connect_error', error);
   });
 
   client.on('twitch_user', async (user: ITwitchUser) => {
-    addLogs('info', 'socket_got_twitch_user', user);
+    logger('info', 'socket_got_twitch_user', user);
 
     twitchClient.refreshToken = user.refreshToken;
 
@@ -44,7 +44,7 @@ export function run() {
   });
 
   client.on('kick_user', async (user: ITwitchUser) => {
-    addLogs('info', 'socket_got_kick_user', user);
+    logger('info', 'socket_got_kick_user', user);
 
     kickClient.refreshToken = user.refreshToken;
 
@@ -58,7 +58,7 @@ export function run() {
   });
 
   client.on('youtube_user', async (user: ITwitchUser) => {
-    addLogs('info', 'socket_got_youtube_user', user);
+    logger('info', 'socket_got_youtube_user', user);
 
     youtubeClient.refreshToken = user.refreshToken;
 
@@ -72,7 +72,7 @@ export function run() {
   });
 
   client.on('klpq_user', async (signedJwt: string) => {
-    addLogs('info', 'socket_got_klpq_user', signedJwt);
+    logger('info', 'socket_got_klpq_user', signedJwt);
 
     kolpaqueClientServiceClient.jwtToken = signedJwt;
 

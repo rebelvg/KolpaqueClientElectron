@@ -5,7 +5,7 @@ import * as crypto from 'crypto';
 
 import { kolpaqueClientServiceClient } from './api-clients';
 import { Channel } from './channel-class';
-import { addLogs } from './logs';
+import { logger } from './logs';
 import { main } from './main';
 import { config } from './settings-file';
 import { ISavedSettingsFile } from './config-class';
@@ -85,7 +85,7 @@ class SyncSettings {
   }
 
   public async init() {
-    addLogs('info', 'sync_init');
+    logger('info', 'sync_init');
 
     const { enableSync } = config.settings;
     const { syncId } = this;
@@ -113,11 +113,11 @@ class SyncSettings {
       syncedChannels =
         decryptData<ISavedSettingsFile['channels']>(encryptedChannels);
     } catch (error) {
-      addLogs('error', error);
+      logger('error', error);
     }
 
     if (!syncedChannels) {
-      addLogs('error', 'bad_sync_id', syncId);
+      logger('error', 'bad_sync_id', syncId);
 
       return;
     }
@@ -134,7 +134,7 @@ class SyncSettings {
       });
 
       if (!findLocalChannel) {
-        addLogs('info', 'sync_adding_channel', syncedChannel.link);
+        logger('info', 'sync_adding_channel', syncedChannel.link);
 
         const channel = config.addChannelLink(syncedChannel.link, null);
 
