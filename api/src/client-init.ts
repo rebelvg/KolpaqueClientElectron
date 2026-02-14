@@ -16,10 +16,10 @@ export async function init(): Promise<void> {
   await clientsInit();
 
   await checkInit();
+  await infoInit();
+
   await importInit();
   await versionInit();
-
-  await infoInit();
 
   logger('info', 'init_done');
 }

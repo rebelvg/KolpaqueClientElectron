@@ -19,10 +19,10 @@ import { ISavedSettingsFile } from './config-class';
 import { SourcesEnum } from './enums';
 import { sleep } from './helpers';
 import { serviceManager } from './services';
+import { ChildProcessWithoutNullStreams } from 'child_process';
 
 export class Channel extends EventEmitter {
   public readonly id: string;
-  public serviceName: ServiceNamesEnum = ServiceNamesEnum.CUSTOM;
   public service: BaseStreamService = new BaseStreamService();
   public name: string;
   public url: string;
@@ -38,12 +38,13 @@ export class Channel extends EventEmitter {
   public isPinned = false;
   public autoStart = false;
   public autoRestart = false;
-  public _playingProcesses = 0;
+  public _playingProcesses: ChildProcessWithoutNullStreams[] = [];
   public channelAdded: Date;
   public sources: SourcesEnum[] = [];
   public meta: Record<string, string> = {};
   public _trayIcon: NativeImage;
   public _iconChecked = false;
+  public _iconUrl: string | null = null;
 
   constructor(inputUrl: string) {
     super();
@@ -81,7 +82,6 @@ export class Channel extends EventEmitter {
           continue;
         }
 
-        this.serviceName = service.name;
         this.service = service;
         this.name = channelName;
 
@@ -183,7 +183,7 @@ export class Channel extends EventEmitter {
       printBalloon &&
       config.settings.showNotifications &&
       this.autoStart &&
-      this._playingProcesses === 0
+      this._playingProcesses.length === 0
     ) {
       if (config.settings.confirmAutoStart) {
         dialog

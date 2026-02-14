@@ -9,7 +9,7 @@ import { YoutubeUserStreamService } from './stream-services/youtube-user';
 import { YoutubeUsernameStreamService } from './stream-services/youtube-username';
 import { Channel } from './channel-class';
 import { BaseStreamService, ServiceNamesEnum } from './stream-services/_base';
-import { refreshTrayIconMenuLinux } from './main';
+import { main, refreshTrayIconMenuLinux } from './main';
 import { KickStreamService } from './stream-services/kick';
 
 class ServiceManager {
@@ -34,8 +34,8 @@ class ServiceManager {
     logger('info', 'check_done', service.name, channels.length, printBalloon);
   }
 
-  public async import(serviceName: ServiceNamesEnum, emitEvent: boolean) {
-    logger('info', 'import', serviceName, emitEvent);
+  public async import(serviceName: ServiceNamesEnum) {
+    logger('info', 'import', serviceName);
 
     const channels: Channel[] = [];
 
@@ -45,27 +45,40 @@ class ServiceManager {
     );
 
     if (service) {
-      const newChannels = await service.doImportSettings(emitEvent);
+      const newChannels = await service.doImportSettings();
 
       channels.push(...newChannels);
     }
 
-    logger('info', 'import_done', serviceName, channels.length, emitEvent);
+    logger('info', 'import_done', serviceName, channels.length);
 
     return channels;
   }
 
   public async info(serviceName: ServiceNamesEnum) {
+    logger('info', 'info', serviceName);
+
     const service = _.find(
       this.services,
       (service) => service.name === serviceName,
     );
 
     if (service) {
-      const channels = service.channels;
+      const online = service.channels.filter((c) => c.isLive);
+      const offline = service.channels.filter((c) => !c.isLive);
 
-      await service.getInfo(channels);
+      for (const channels of [online, offline]) {
+        const count = await service.getInfo(channels);
+
+        if (count > 0) {
+          refreshTrayIconMenuLinux();
+
+          main.mainWindow!.webContents.send('runChannelUpdates', __filename);
+        }
+      }
     }
+
+    logger('info', 'info_done', serviceName);
   }
 }
 

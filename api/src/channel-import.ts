@@ -22,7 +22,7 @@ ipcMain.on(
     }
 
     if (settingName === 'enableTwitchImport' && settingValue) {
-      await serviceManager.import(ServiceNamesEnum.TWITCH, true);
+      await serviceManager.import(ServiceNamesEnum.TWITCH);
     }
   },
 );
@@ -41,10 +41,7 @@ ipcMain.on('config_twitchImport', (event, channelName) => {
 
 async function twitchImportAndMessage(): Promise<boolean> {
   try {
-    const newChannels = await serviceManager.import(
-      ServiceNamesEnum.TWITCH,
-      true,
-    );
+    const newChannels = await serviceManager.import(ServiceNamesEnum.TWITCH);
 
     dialog.showMessageBox({
       type: 'info',
@@ -62,22 +59,16 @@ async function twitchImportAndMessage(): Promise<boolean> {
   }
 }
 
-export async function init(): Promise<void> {
-  await Promise.all(
-    serviceManager.services.map((service) =>
-      serviceManager.import(service.name, false),
-    ),
-  );
-
+export function init() {
   (async (): Promise<void> => {
     while (true) {
-      await sleep(10 * 60 * 1000);
-
       await Promise.all(
         serviceManager.services.map((service) =>
-          serviceManager.import(service.name, false),
+          serviceManager.import(service.name),
         ),
       );
+
+      await sleep(10 * 60 * 1000);
     }
   })();
 }

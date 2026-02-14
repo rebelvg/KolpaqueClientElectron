@@ -102,22 +102,24 @@ export function logger(
     })
     .join(' ');
 
+  const consoleLogLine = [`level:${level}`, logLine];
+
   if (process.env.NODE_ENV === 'dev') {
     switch (level) {
       case 'fatal':
       case 'error':
         // eslint-disable-next-line no-console
-        console.error(level, logLine);
+        console.error(...consoleLogLine);
         break;
       case 'warn':
         // eslint-disable-next-line no-console
-        console.warn(level, logLine);
+        console.warn(...consoleLogLine);
         break;
       case 'debug':
         break;
       default:
         // eslint-disable-next-line no-console
-        console.log(level, logLine);
+        console.log(...consoleLogLine);
         break;
     }
   } else {
@@ -125,11 +127,11 @@ export function logger(
       case 'fatal':
       case 'error':
         // eslint-disable-next-line no-console
-        console.error(level, logLine);
+        console.error(...consoleLogLine);
         break;
       case 'warn':
         // eslint-disable-next-line no-console
-        console.warn(level, logLine);
+        console.warn(...consoleLogLine);
         break;
       default:
         break;

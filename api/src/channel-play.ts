@@ -11,7 +11,7 @@ import { ProtocolsEnum, ServiceNamesEnum } from './stream-services/_base';
 import { main } from './main';
 
 const AUTO_RESTART_ATTEMPTS = 3;
-const AUTO_RESTART_TIMEOUT = 60;
+const AUTO_RESTART_TIMEOUT_MS = 60 * 1000;
 
 const isTrustedSender = (event: IpcMainEvent) =>
   main.mainWindow ? event.sender === main.mainWindow.webContents : false;
@@ -138,8 +138,6 @@ async function launchStreamlink(
   let autoRestartAttempts = 0;
   let startTime = Date.now();
 
-  channel._playingProcesses++;
-
   while (true) {
     logger(
       'info',
@@ -147,35 +145,45 @@ async function launchStreamlink(
       channel.url,
       firstStart,
       autoRestartAttempts,
-      channel._playingProcesses,
+      channel._playingProcesses.length,
     );
 
     try {
-      const [command, ...commandArgs] =
+      let command = 'streamlink';
+      let commandArgs = [playUrl, 'best', ...params];
+
+      if (
         [ProtocolsEnum.RTMP, ProtocolsEnum.RTMPS].includes(channel.protocol) &&
-        config.settings.customRtmpClientCommand.includes('{{RTMP_URL}}')
-          ? config.settings.customRtmpClientCommand
-              .replace('{{RTMP_URL}}', playUrl)
-              .split(' ')
-              .map((a) => a.trim())
-          : ['streamlink', playUrl, 'best', ...params];
+        config.settings.customRtmpClientCommand
+      ) {
+        const [customCommand, ...customCommandArgs] =
+          config.settings.customRtmpClientCommand
+            .replace('{{RTMP_URL}}', playUrl)
+            .split(' ')
+            .map((a) => a.trim());
+
+        command = customCommand!;
+        commandArgs = customCommandArgs;
+      }
+
+      logger('info', 'spawn_command', command, commandArgs);
+
+      const pipeProcess = spawn(command, commandArgs);
+
+      channel._playingProcesses.push(pipeProcess);
 
       await new Promise<void>((resolve, reject) => {
-        logger('info', 'spawn_command', command, commandArgs);
-
-        const pipeProcess = spawn(command!, commandArgs);
-
-        let stdoutString = '';
-        let stderrString = '';
+        const stdoutString: string[] = [];
+        const stderrString: string[] = [];
 
         pipeProcess.stdout.on('data', (data: Buffer) => {
-          if (command!.toLowerCase() === 'streamlink') {
-            stdoutString += data.toString('utf-8');
+          if (command.toLowerCase() === 'streamlink') {
+            stdoutString.push(data.toString('utf-8'));
           }
         });
 
         pipeProcess.stderr.on('data', (data: Buffer) => {
-          stderrString += data.toString('utf-8');
+          stderrString.push(data.toString('utf-8'));
         });
 
         pipeProcess.on('error', (error) => {
@@ -208,18 +216,19 @@ async function launchStreamlink(
         });
       });
 
+      _.pull(channel._playingProcesses, pipeProcess);
+
       logger('info', 'streamlink_exited', channel.url);
 
-      if (Date.now() - startTime < AUTO_RESTART_TIMEOUT * 1000) {
-        autoRestartAttempts++;
-      } else {
+      if (Date.now() - startTime > AUTO_RESTART_TIMEOUT_MS) {
         autoRestartAttempts = 0;
-      }
 
-      firstStart = false;
-      startTime = Date.now();
+        startTime = Date.now();
+      } else {
+        autoRestartAttempts++;
+      }
     } catch (exception) {
-      const [error, stdout, stderr]: [Error, string, string] = exception;
+      const [error, stdout, stderr]: [Error, string[], string[]] = exception;
 
       logger('warn', 'streamlink_error', channel.url, error, stdout, stderr);
 
@@ -237,17 +246,17 @@ async function launchStreamlink(
       }
 
       if (firstStart) {
-        printNotification('Streamlink Error', error.message);
+        const [, message = error.message] = stdout
+          .join('')
+          .split('[cli][error]');
 
-        const [, message] = stdout.split('[cli][error]');
-
-        if (message) {
-          printNotification('Streamlink Error', message?.trim());
-        }
+        printNotification('Streamlink Error', message.trim());
       }
     }
 
-    if (channel.serviceName !== ServiceNamesEnum.CUSTOM && !channel.isLive) {
+    firstStart = false;
+
+    if (!channel.isLive) {
       break;
     }
 
@@ -260,9 +269,12 @@ async function launchStreamlink(
     }
   }
 
-  logger('info', 'playing_closing', channel.url, channel._playingProcesses);
-
-  channel._playingProcesses--;
+  logger(
+    'info',
+    'playing_closing',
+    channel.url,
+    channel._playingProcesses.length,
+  );
 
   channel.changeSettings({
     onAutoRestart: false,

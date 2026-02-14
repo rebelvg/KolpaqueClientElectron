@@ -7,6 +7,8 @@ export interface Channel {
   autoStart: boolean;
   autoRestart: boolean;
   onAutoRestart: boolean;
+  _iconUrl: string | null;
+  isLive: boolean;
 }
 
 export interface ChannelCount {

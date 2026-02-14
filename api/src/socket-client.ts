@@ -40,7 +40,7 @@ export function init() {
 
     await serviceManager.info(ServiceNamesEnum.TWITCH);
 
-    await serviceManager.import(ServiceNamesEnum.TWITCH, true);
+    await serviceManager.import(ServiceNamesEnum.TWITCH);
   });
 
   client.on('kick_user', async (user: ITwitchUser) => {
@@ -54,7 +54,7 @@ export function init() {
 
     await serviceManager.info(ServiceNamesEnum.KICK);
 
-    await serviceManager.import(ServiceNamesEnum.KICK, true);
+    await serviceManager.import(ServiceNamesEnum.KICK);
   });
 
   client.on('youtube_user', async (user: ITwitchUser) => {
@@ -68,7 +68,7 @@ export function init() {
 
     await serviceManager.info(ServiceNamesEnum.YOUTUBE_USER);
 
-    await serviceManager.import(ServiceNamesEnum.YOUTUBE_USER, true);
+    await serviceManager.import(ServiceNamesEnum.YOUTUBE_USER);
   });
 
   client.on('klpq_user', async (signedJwt: string) => {
@@ -82,6 +82,6 @@ export function init() {
 
     await serviceManager.info(ServiceNamesEnum.KOLPAQUE_RTMP);
 
-    await serviceManager.import(ServiceNamesEnum.KOLPAQUE_RTMP, true);
+    await serviceManager.import(ServiceNamesEnum.KOLPAQUE_RTMP);
   });
 }

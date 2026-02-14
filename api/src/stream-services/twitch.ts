@@ -14,6 +14,7 @@ import { config } from '../settings-file';
 import { logger } from '../logs';
 import { SourcesEnum } from '../enums';
 import { app, nativeImage } from 'electron';
+import { serviceManager } from '../services';
 
 async function getStats(
   channels: Channel[],
@@ -79,15 +80,17 @@ async function getStats(
   }
 }
 
-async function getInfo(allChannels: Channel[]): Promise<undefined> {
+async function getInfo(allChannels: Channel[]): Promise<number> {
   const filteredChannels = _.filter(
     allChannels,
     (channel) => !channel._iconChecked,
   );
 
   if (filteredChannels.length === 0) {
-    return;
+    return 0;
   }
+
+  let _downloadedLogosCount = 0;
 
   const chunkedChannels = _.chunk(filteredChannels, TWITCH_CHUNK_LIMIT);
 
@@ -110,8 +113,6 @@ async function getInfo(allChannels: Channel[]): Promise<undefined> {
       !!userData,
     );
 
-    let _downloadedLogosCount = 0;
-
     for (const channel of channels) {
       for (const user of userData.data) {
         if (user.login !== channel.name) {
@@ -130,6 +131,7 @@ async function getInfo(allChannels: Channel[]): Promise<undefined> {
           await commonClient.getContentAsBuffer(profileImageUrl);
 
         channel._iconChecked = true;
+        channel._iconUrl = profileImageUrl;
 
         if (logoBuffer) {
           channel._trayIcon = nativeImage
@@ -146,6 +148,8 @@ async function getInfo(allChannels: Channel[]): Promise<undefined> {
       _downloadedLogosCount,
     );
   }
+
+  return _downloadedLogosCount;
 }
 
 export class TwitchStreamService extends BaseStreamService {
@@ -180,13 +184,21 @@ export class TwitchStreamService extends BaseStreamService {
   public checkLiveConfirmation = 3;
   public getStats = getStats;
   public getInfo = getInfo;
-  public doImport = async (channelNames: string[], emitEvent: boolean) => {
+  public doImport = async () => {
     if (!config.settings.enableTwitchImport) {
       return [];
     }
 
     const channels: Channel[] = [];
     const allImportedChannelNames: string[] = [];
+
+    const service = _.find(serviceManager.services, {
+      name: ServiceNamesEnum.TWITCH,
+    });
+
+    if (!service) {
+      return [];
+    }
 
     try {
       const res = await twitchClient.getUsers();
@@ -198,9 +210,9 @@ export class TwitchStreamService extends BaseStreamService {
       await Promise.all(
         _.map(res.data, async (twitchChannel) => {
           const { channelsAddedAll, channelNames } = await this.importBase(
+            service,
             twitchChannel.id,
             twitchChannel.login,
-            emitEvent,
           );
 
           channels.push(...channelsAddedAll);
@@ -216,17 +228,14 @@ export class TwitchStreamService extends BaseStreamService {
 
     const channelIdsToDelete: string[] = [];
 
-    for (const channel of config.channels) {
+    for (const channel of service.channels) {
       if (
-        channel.serviceName === ServiceNamesEnum.TWITCH &&
         channel.sources.includes(SourcesEnum.AUTO_IMPORT) &&
         !allImportedChannelNames.includes(channel.name)
       ) {
         _.pull(channel.sources, SourcesEnum.AUTO_IMPORT);
 
         if (channel.sources.length === 0) {
-          logger('info', 'twitch_imported_channel_delete', channel.name);
-
           channelIdsToDelete.push(channel.id);
         }
       }
@@ -238,19 +247,17 @@ export class TwitchStreamService extends BaseStreamService {
 
     return channels;
   };
-  public doImportSettings(emitEvent: boolean) {
-    const channelNames = config.settings.twitchImport;
-
-    return this.doImport(channelNames, emitEvent);
+  public doImportSettings() {
+    return this.doImport();
   }
   public buildUrl(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/${channelName}`;
   }
 
   private async importBase(
+    service: BaseStreamService,
     channelId: string,
     channelName: string,
-    emitEvent: boolean,
   ) {
     const channelsAddedAll: Channel[] = [];
 
@@ -284,9 +291,7 @@ export class TwitchStreamService extends BaseStreamService {
           break;
         }
 
-        followedChannels.forEach((followedChannel) =>
-          channelsToAdd.push(followedChannel),
-        );
+        channelsToAdd.push(...followedChannels);
 
         cursor = followedChannelsData.pagination.cursor;
 
@@ -303,9 +308,7 @@ export class TwitchStreamService extends BaseStreamService {
 
     channelsAdded.forEach((channel) => channelsAddedAll.push(channel));
 
-    if (emitEvent) {
-      await config.runChannelUpdates(channelsAdded, emitEvent, 'importBase');
-    }
+    await config.runChannelUpdates(service, channelsAdded, 'doImport');
 
     return { channelsAddedAll, channelNames };
   }
@@ -315,15 +318,22 @@ export class TwitchStreamService extends BaseStreamService {
 
     const channelNames: string[] = [];
 
+    const service = _.find(serviceManager.services, {
+      name: ServiceNamesEnum.TWITCH,
+    });
+
+    if (!service) {
+      return { channelsAdded, channelNames };
+    }
+
     try {
       await Promise.all(
         channels.map((importedChannel) => {
           channelNames.push(importedChannel.broadcaster_login);
 
-          const foundChannel = config.findByQuery({
-            serviceName: ServiceNamesEnum.TWITCH,
-            name: importedChannel.broadcaster_login,
-          });
+          const foundChannel = service.channels.find(
+            (c) => c.name === importedChannel.broadcaster_login,
+          );
 
           if (foundChannel) {
             if (!foundChannel.sources.includes(SourcesEnum.AUTO_IMPORT)) {

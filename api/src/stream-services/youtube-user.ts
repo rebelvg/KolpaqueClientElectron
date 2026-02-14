@@ -86,8 +86,6 @@ async function getStats(
         youtubeNavigation.payload.browseId,
       );
 
-      logger('info', channel.name, channelStatus);
-
       if (channelStatus) {
         channel.setOnline(printBalloon);
       } else {

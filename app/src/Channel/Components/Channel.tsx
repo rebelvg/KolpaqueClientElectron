@@ -63,7 +63,11 @@ class Channel extends PureComponent<ChannelProps> {
       >
         <ChannelData onDoubleClick={() => !editMode && playChannel(channel)}>
           <StyledIcon>
-            <ServiceIcon serviceName={channel.serviceName} />
+            <ServiceIcon
+              serviceName={channel.serviceName}
+              iconUrl={channel._iconUrl}
+              isLive={channel.isLive}
+            />
           </StyledIcon>
 
           {editMode ? (

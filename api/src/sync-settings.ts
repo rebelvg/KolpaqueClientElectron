@@ -9,6 +9,7 @@ import { logger } from './logs';
 import { main } from './main';
 import { config } from './settings-file';
 import { ISavedSettingsFile } from './config-class';
+import { serviceManager } from './services';
 
 const SYNC_ID_FILE_PATH = path.join(
   process.env.NODE_ENV !== 'dev' ? app.getPath('documents') : './.config',
@@ -129,9 +130,9 @@ class SyncSettings {
         continue;
       }
 
-      const findLocalChannel = config.findByQuery({
-        url: syncedChannel.url,
-      });
+      const findLocalChannel = config.channels.find(
+        (c) => c.url === syncedChannel.url,
+      );
 
       if (!findLocalChannel) {
         logger('info', 'sync_adding_channel', syncedChannel.url);
@@ -149,8 +150,6 @@ class SyncSettings {
 
       findLocalChannel.update(syncedChannel);
     }
-
-    await config.runChannelUpdates(newChannels, false, 'init');
   }
 
   public async save() {

@@ -9,6 +9,7 @@ import { config } from '../settings-file';
 import { SourcesEnum } from '../enums';
 import { logger } from '../logs';
 import { app } from 'electron';
+import { serviceManager } from '../services';
 
 async function getStatsBase(
   channel: Channel,
@@ -38,11 +39,7 @@ async function getStats(
   );
 }
 
-async function _doImport(
-  this: BaseStreamService,
-  channelNames: string[],
-  emitEvent: boolean,
-): Promise<Channel[]> {
+async function _doImport(this: BaseStreamService): Promise<Channel[]> {
   if (!config.settings.enableKolpaqueImport) {
     return [];
   }
@@ -57,11 +54,16 @@ async function _doImport(
 
   const channelsAdded: Channel[] = [];
 
+  const service = _.find(serviceManager.services, {
+    name: ServiceNamesEnum.KOLPAQUE_RTMP,
+  });
+
+  if (!service) {
+    return [];
+  }
+
   for (const channelName of channels) {
-    const foundChannel = config.findByQuery({
-      serviceName: ServiceNamesEnum.KOLPAQUE_RTMP,
-      name: channelName,
-    });
+    const foundChannel = service.channels.find((c) => c.name === channelName);
 
     if (foundChannel) {
       if (!foundChannel.sources.includes(SourcesEnum.AUTO_IMPORT)) {
@@ -75,17 +77,14 @@ async function _doImport(
 
       if (channel) {
         channelsAdded.push(channel);
-
-        logger('info', 'kolpaque_vps_http_imported_channel', channel.url);
       }
     }
   }
 
   const channelIdsToDelete: string[] = [];
 
-  for (const channel of config.channels) {
+  for (const channel of service.channels) {
     if (
-      channel.serviceName === ServiceNamesEnum.KOLPAQUE_RTMP &&
       channel.sources.includes(SourcesEnum.AUTO_IMPORT) &&
       !channels.includes(channel.name)
     ) {
@@ -101,9 +100,7 @@ async function _doImport(
     config.removeChannelById(channelId);
   }
 
-  if (emitEvent) {
-    await config.runChannelUpdates(channelsAdded, emitEvent, 'doImport');
-  }
+  await config.runChannelUpdates(service, channelsAdded, 'doImport');
 
   return channelsAdded;
 }

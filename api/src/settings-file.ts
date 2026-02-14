@@ -50,7 +50,7 @@ ipcMain.on('channel_add', async (event, url) => {
     return;
   }
 
-  await config.runChannelUpdates([channel], true, 'channel_add');
+  await config.runChannelUpdates(channel.service, [channel], 'channel_add');
 
   return channel;
 });
@@ -89,7 +89,7 @@ ipcMain.on(
     };
 
     if (settingName === 'autoRestart') {
-      if (channel._playingProcesses > 0 && settingValue) {
+      if (channel._playingProcesses.length > 0 && settingValue) {
         newSettings['onAutoRestart'] = true;
       }
     }
@@ -222,21 +222,25 @@ ipcMain.handle('config_find', (event, query) => {
       ({
         id,
         url,
-        serviceName,
+        service,
         visibleName,
         isPinned,
         autoStart,
         autoRestart,
         onAutoRestart,
+        _iconUrl,
+        isLive,
       }) => ({
         id,
         url,
-        serviceName,
+        serviceName: service.name,
         visibleName,
         isPinned,
         autoStart,
         autoRestart,
         onAutoRestart,
+        _iconUrl,
+        isLive,
       }),
     ),
     count: count,

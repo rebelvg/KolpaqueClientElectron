@@ -363,6 +363,8 @@ function toggleHideClient(): void {
 
 export function refreshTrayIconMenuLinux() {
   if (process.platform === 'linux') {
+    logger('info', 'refreshTrayIconMenuLinux');
+
     appIcon.setContextMenu(rebuildIconMenu());
   }
 }

@@ -11,6 +11,7 @@ import { sleep } from './helpers';
 import { SourcesEnum } from './enums';
 import { config } from './settings-file';
 import { serviceManager } from './services';
+import { BaseStreamService } from './stream-services/_base';
 
 const SETTINGS_FILE_PATH = path.join(
   process.env.NODE_ENV !== 'dev' ? app.getPath('documents') : './.config',
@@ -254,12 +255,9 @@ export class Config extends EventEmitter {
       return;
     }
 
-    const res = this.findByQuery({
-      serviceName: channel.serviceName,
-      name: channel.name,
-    });
+    const foundChannel = this.channels.find((c) => c.url === channel.url);
 
-    if (res) {
+    if (foundChannel) {
       return;
     }
 
@@ -328,10 +326,6 @@ export class Config extends EventEmitter {
     return channel;
   }
 
-  findByQuery(params: Partial<Channel>): Channel | undefined {
-    return _.find(this.channels, params);
-  }
-
   find(query: { filter?: string; isLive?: boolean } = {}): {
     channels: Channel[];
     count: {
@@ -395,17 +389,13 @@ export class Config extends EventEmitter {
   }
 
   public async runChannelUpdates(
+    service: BaseStreamService,
     channels: Channel[],
-    updateChannelInfo: boolean,
     source: string,
   ) {
-    for (const channel of channels) {
-      await channel.getStats(false);
+    await service.getStats(channels, false);
 
-      if (updateChannelInfo) {
-        await channel.getInfo();
-      }
-    }
+    await service.getInfo(channels);
 
     main.mainWindow!.webContents.send('runChannelUpdates', source);
   }

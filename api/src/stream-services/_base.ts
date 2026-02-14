@@ -41,12 +41,9 @@ abstract class AbstractStreamService {
     channels: Channel[],
     printBalloon: boolean,
   ): Promise<void>;
-  public abstract getInfo(channels: Channel[]): Promise<void>;
-  public abstract doImport(
-    channels: string[],
-    emitEvent: boolean,
-  ): Promise<Channel[]>;
-  public abstract doImportSettings(emitEvent: boolean): Promise<Channel[]>;
+  public abstract getInfo(channels: Channel[]): Promise<number>;
+  public abstract doImport(): Promise<Channel[]>;
+  public abstract doImportSettings(): Promise<Channel[]>;
   public abstract buildUrl(channelName: string): string;
 }
 
@@ -85,17 +82,14 @@ export class BaseStreamService implements AbstractStreamService {
   public getStats(channels: Channel[], printBalloon: boolean): Promise<void> {
     return Promise.resolve();
   }
-  public getInfo(channels: Channel[]): Promise<void> {
-    return Promise.resolve();
+  public getInfo(channels: Channel[]): Promise<number> {
+    return Promise.resolve(0);
   }
-  public async doImport(
-    channels: string[],
-    emitEvent: boolean,
-  ): Promise<Channel[]> {
+  public async doImport(): Promise<Channel[]> {
     return await [];
   }
-  public doImportSettings(emitEvent: boolean): Promise<Channel[]> {
-    return this.doImport([], emitEvent);
+  public doImportSettings(): Promise<Channel[]> {
+    return this.doImport();
   }
   public buildUrl(channelName: string): string {
     throw 'not_implemented';
@@ -103,7 +97,7 @@ export class BaseStreamService implements AbstractStreamService {
   get channels() {
     return _.filter(
       config.channels,
-      ({ serviceName }) => serviceName === this.name,
+      ({ service }) => service.name === this.name,
     );
   }
   get _trayIcon() {

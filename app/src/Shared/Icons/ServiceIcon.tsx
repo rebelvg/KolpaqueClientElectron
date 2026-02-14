@@ -55,16 +55,39 @@ const Services: Record<string, Service> = {
 
 interface ServiceIconProps {
   serviceName: Channel['serviceName'];
+  iconUrl?: Channel['_iconUrl'];
+  isLive?: Channel['isLive'];
 }
 
-export class ServiceIcon extends Component<ServiceIconProps> {
+interface ServiceIconState {
+  failedCustomIcon: boolean;
+}
+
+export class ServiceIcon extends Component<ServiceIconProps, ServiceIconState> {
+  state: ServiceIconState = { failedCustomIcon: false };
+
+  componentDidUpdate(prevProps: ServiceIconProps) {
+    if (
+      this.props.iconUrl !== prevProps.iconUrl ||
+      this.props.isLive !== prevProps.isLive
+    ) {
+      this.setState({ failedCustomIcon: false });
+    }
+  }
+
   getIcon = (serviceName: string): Service => {
     return Services[serviceName] ? Services[serviceName] : Services['default'];
   };
 
-  renderImage = (asset: string) => (
+  handleIconError = () => this.setState({ failedCustomIcon: true });
+
+  renderImage = (asset: string, withFallback = false) => (
     <IconWithImage>
-      <img src={asset} />
+      <img
+        src={asset}
+        onError={withFallback ? this.handleIconError : undefined}
+        alt=""
+      />
     </IconWithImage>
   );
 
@@ -85,7 +108,12 @@ export class ServiceIcon extends Component<ServiceIconProps> {
   };
 
   render() {
-    const { serviceName } = this.props;
+    const { serviceName, iconUrl, isLive } = this.props;
+
+    if (isLive && iconUrl && !this.state.failedCustomIcon) {
+      return this.renderImage(iconUrl, true);
+    }
+
     const icon = this.getIcon(serviceName);
 
     return this.renderIcon(icon);
