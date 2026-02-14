@@ -14,8 +14,6 @@ async function getStats(
   for (const channel of channels) {
     const channelStatus = await getStatsBase(channel.name);
 
-    logger('info', channel.name, channelStatus);
-
     if (channelStatus) {
       channel.setOnline(printBalloon);
     } else {
@@ -36,22 +34,22 @@ export class YoutubeChannelStreamService extends BaseStreamService {
     },
   );
   public async playLQ(channel: Channel) {
-    const { playLink, params } = await this.play(channel);
+    const { playUrl, params } = await this.play(channel);
 
     return {
-      playLink,
+      playUrl,
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     };
   }
   public checkLiveTimeout = 300;
   public checkLiveConfirmation = 3;
   public getStats = getStats;
-  public buildChannelLink(channelName: string) {
+  public buildUrl(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/channel/${channelName}`;
   }
-  public embedLink(channel: Channel): string {
-    const link = super.embedLink(channel);
+  public embedUrl(channel: Channel): string {
+    const url = super.embedUrl(channel);
 
-    return `${link}/streams`;
+    return `${url}/streams`;
   }
 }

@@ -38,9 +38,9 @@ export function init() {
 
     void refreshIntegrationState('app').catch();
 
-    await serviceManager.getInfo(ServiceNamesEnum.TWITCH);
+    await serviceManager.info(ServiceNamesEnum.TWITCH);
 
-    await serviceManager.doImport(ServiceNamesEnum.TWITCH, true);
+    await serviceManager.import(ServiceNamesEnum.TWITCH, true);
   });
 
   client.on('kick_user', async (user: ITwitchUser) => {
@@ -52,9 +52,9 @@ export function init() {
 
     void refreshIntegrationState('app').catch();
 
-    await serviceManager.getInfo(ServiceNamesEnum.KICK);
+    await serviceManager.info(ServiceNamesEnum.KICK);
 
-    await serviceManager.doImport(ServiceNamesEnum.KICK, true);
+    await serviceManager.import(ServiceNamesEnum.KICK, true);
   });
 
   client.on('youtube_user', async (user: ITwitchUser) => {
@@ -66,9 +66,9 @@ export function init() {
 
     void refreshIntegrationState('app').catch();
 
-    await serviceManager.getInfo(ServiceNamesEnum.YOUTUBE_USER);
+    await serviceManager.info(ServiceNamesEnum.YOUTUBE_USER);
 
-    await serviceManager.doImport(ServiceNamesEnum.YOUTUBE_USER, true);
+    await serviceManager.import(ServiceNamesEnum.YOUTUBE_USER, true);
   });
 
   client.on('klpq_user', async (signedJwt: string) => {
@@ -80,8 +80,8 @@ export function init() {
 
     void refreshIntegrationState('app').catch();
 
-    await serviceManager.getInfo(ServiceNamesEnum.KOLPAQUE_RTMP);
+    await serviceManager.info(ServiceNamesEnum.KOLPAQUE_RTMP);
 
-    await serviceManager.doImport(ServiceNamesEnum.KOLPAQUE_RTMP, true);
+    await serviceManager.import(ServiceNamesEnum.KOLPAQUE_RTMP, true);
   });
 }

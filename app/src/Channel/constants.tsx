@@ -6,7 +6,7 @@ export type TabValue = 'online' | 'offline';
 export interface Tab {
   name: string;
   value: TabValue;
-  filter: keyof Channel;
+  filter: 'isLive';
   filterValue: boolean;
 }
 

@@ -26,15 +26,15 @@ abstract class AbstractStreamService {
   public abstract protocols: ProtocolsEnum[];
   public abstract hosts: string[];
   public abstract paths: RegExp[];
-  public abstract embedLink(channel: Channel): string;
-  public abstract chatLink(channel: Channel): string;
+  public abstract embedUrl(channel: Channel): string;
+  public abstract chatUrl(channel: Channel): string;
   public abstract icon: Buffer | null;
   public abstract play(
     channel: Channel,
-  ): Promise<{ playLink: string | null; params: string[] }>;
+  ): Promise<{ playUrl: string | null; params: string[] }>;
   public abstract playLQ(
     channel: Channel,
-  ): Promise<{ playLink: string | null; params: string[] }>;
+  ): Promise<{ playUrl: string | null; params: string[] }>;
   public abstract checkLiveTimeout: number;
   public abstract checkLiveConfirmation: number;
   public abstract getStats(
@@ -47,7 +47,7 @@ abstract class AbstractStreamService {
     emitEvent: boolean,
   ): Promise<Channel[]>;
   public abstract doImportSettings(emitEvent: boolean): Promise<Channel[]>;
-  public abstract buildChannelLink(channelName: string): string;
+  public abstract buildUrl(channelName: string): string;
 }
 
 export class BaseStreamService implements AbstractStreamService {
@@ -55,28 +55,28 @@ export class BaseStreamService implements AbstractStreamService {
   public protocols: ProtocolsEnum[] = [];
   public hosts: string[] = [];
   public paths: RegExp[] = [];
-  public embedLink(channel: Channel) {
-    return channel.link;
+  public embedUrl(channel: Channel) {
+    return channel.url;
   }
-  public chatLink(channel: Channel) {
-    return this.embedLink(channel);
+  public chatUrl(channel: Channel) {
+    return this.embedUrl(channel);
   }
   public icon: Buffer | null = null;
   public play(
     channel: Channel,
-  ): Promise<{ playLink: string | null; params: string[] }> {
+  ): Promise<{ playUrl: string | null; params: string[] }> {
     return Promise.resolve({
-      playLink: channel._customPlayUrl || channel.link,
+      playUrl: channel._customPlayUrl || channel.url,
       params: [],
     });
   }
   public async playLQ(
     channel: Channel,
-  ): Promise<{ playLink: string | null; params: string[] }> {
-    const { playLink, params } = await this.play(channel);
+  ): Promise<{ playUrl: string | null; params: string[] }> {
+    const { playUrl, params } = await this.play(channel);
 
     return {
-      playLink,
+      playUrl,
       params,
     };
   }
@@ -97,15 +97,18 @@ export class BaseStreamService implements AbstractStreamService {
   public doImportSettings(emitEvent: boolean): Promise<Channel[]> {
     return this.doImport([], emitEvent);
   }
-  public buildChannelLink(channelName: string): string {
+  public buildUrl(channelName: string): string {
     throw 'not_implemented';
   }
   get channels() {
-    return _.filter(config.channels, { service: this });
+    return _.filter(
+      config.channels,
+      ({ serviceName }) => serviceName === this.name,
+    );
   }
   get _trayIcon() {
-    if (this.icon) {
-      return nativeImage.createFromBuffer(this.icon).resize({ height: 16 });
-    }
+    return this.icon
+      ? nativeImage.createFromBuffer(this.icon).resize({ height: 16 })
+      : null;
   }
 }

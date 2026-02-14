@@ -24,7 +24,7 @@ async function getStats(
         return new Promise<void>((resolve) => {
           childProcess.execFile(
             'streamlink',
-            [channel.link, 'best', '--twitch-disable-hosting', '--json'],
+            [channel.url, 'best', '--twitch-disable-hosting', '--json'],
             (err, stdout) => {
               if (err) {
                 logger('warn', err, stdout);
@@ -61,7 +61,7 @@ export class CustomStreamService extends BaseStreamService {
   public checkLiveTimeout = 120;
   public checkLiveConfirmation = 3;
   public getStats = getStats;
-  public buildChannelLink(channelName: string) {
+  public buildUrl(channelName: string) {
     return `${channelName}`;
   }
 }

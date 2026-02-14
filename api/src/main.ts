@@ -26,7 +26,7 @@ app.commandLine.appendSwitch(
 fixPath();
 
 import { config } from './settings-file';
-import { launchPlayerLink } from './channel-play';
+import { launchPlayerUrl } from './channel-play';
 import { rebuildIconMenu } from './tray-icon';
 
 import { logger, crashLogPath } from './logs';
@@ -299,8 +299,7 @@ ipcMain.handle(
       },
       {
         label: 'Copy to Clipboard',
-        click: () =>
-          ipcMain.emit('channel_copyClipboard', event, channel?.link),
+        click: () => ipcMain.emit('channel_copyClipboard', event, channel?.url),
       },
       {
         label: 'Remove Channel',
@@ -332,7 +331,7 @@ export const contextMenuTemplate: Electron.MenuItemConstructorOptions[] = [
     type: 'normal',
     visible: true,
     click: async (menuItem: MenuItem, browserWindow: BrowserWindow, event) => {
-      await launchPlayerLink(clipboard.readText('clipboard'), !!event.ctrlKey);
+      await launchPlayerUrl(clipboard.readText('clipboard'), !!event.ctrlKey);
     },
   },
   {
@@ -451,7 +450,10 @@ process.on('unhandledRejection', (err) => {
 process.on('uncaughtException', (err) => {
   logger('fatal', 'uncaughtException', err);
 
-  fs.appendFileSync(crashLogPath, `${err.stack}${os.EOL}`);
+  fs.appendFileSync(
+    crashLogPath,
+    `${new Date().toISOString()} ${err.stack}${os.EOL}`,
+  );
 
   throw err;
 });

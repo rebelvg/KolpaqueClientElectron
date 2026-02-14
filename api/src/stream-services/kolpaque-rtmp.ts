@@ -68,15 +68,15 @@ async function _doImport(
         foundChannel.sources.push(SourcesEnum.AUTO_IMPORT);
       }
     } else {
-      const channel = await config.addChannelLink(
-        `${this.buildChannelLink(channelName)}`,
+      const channel = await config.addChannelByUrl(
+        `${this.buildUrl(channelName)}`,
         SourcesEnum.AUTO_IMPORT,
       );
 
       if (channel) {
         channelsAdded.push(channel);
 
-        logger('info', 'kolpaque_vps_http_imported_channel', channel.link);
+        logger('info', 'kolpaque_vps_http_imported_channel', channel.url);
       }
     }
   }
@@ -113,7 +113,7 @@ export class KolpaqueRtmpStreamService extends BaseStreamService {
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['stream.klpq.io'];
   public paths = [/^\/(\S+)\/.*/gi, /^\/(\S+)$/gi];
-  public embedLink(channel: Channel): string {
+  public embedUrl(channel: Channel): string {
     return `https://stream.klpq.io/${channel.name}`;
   }
   public icon = fs.readFileSync(
@@ -125,12 +125,12 @@ export class KolpaqueRtmpStreamService extends BaseStreamService {
 
   public async play(
     channel: Channel,
-  ): Promise<{ playLink: string | null; params: string[] }> {
+  ): Promise<{ playUrl: string | null; params: string[] }> {
     const channelData = await kolpaqueStreamClient.getChannel(channel.name);
 
     if (!channelData) {
       return {
-        playLink: null,
+        playUrl: null,
         params: [],
       };
     }
@@ -141,25 +141,25 @@ export class KolpaqueRtmpStreamService extends BaseStreamService {
 
     if (!stream) {
       return {
-        playLink: null,
+        playUrl: null,
         params: [],
       };
     }
 
     return Promise.resolve({
-      playLink: stream.urls.edge,
+      playUrl: stream.urls.edge,
       params: [],
     });
   }
 
   public async playLQ(
     channel: Channel,
-  ): Promise<{ playLink: string | null; params: string[] }> {
+  ): Promise<{ playUrl: string | null; params: string[] }> {
     const channelData = await kolpaqueStreamClient.getChannel(channel.name);
 
     if (!channelData) {
       return {
-        playLink: null,
+        playUrl: null,
         params: [],
       };
     }
@@ -172,20 +172,20 @@ export class KolpaqueRtmpStreamService extends BaseStreamService {
 
     if (!stream) {
       return {
-        playLink: null,
+        playUrl: null,
         params: [],
       };
     }
 
     return Promise.resolve({
-      playLink: stream.urls.edge,
+      playUrl: stream.urls.edge,
       params: [],
     });
   }
   public checkLiveTimeout = 5;
   public checkLiveConfirmation = 0;
   public getStats = getStats;
-  public buildChannelLink(channelName: string) {
+  public buildUrl(channelName: string) {
     return `https://stream.klpq.io/${channelName}`;
   }
 }

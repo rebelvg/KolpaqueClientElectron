@@ -1,13 +1,12 @@
 export interface Channel {
   id: string;
-  link: string;
-  service: string;
-  visibleName?: string;
-  isLive?: boolean;
-  isPinned?: boolean;
-  autoStart?: boolean;
-  autoRestart?: boolean;
-  onAutoRestart?: boolean;
+  url: string;
+  serviceName: string;
+  visibleName: string;
+  isPinned: boolean;
+  autoStart: boolean;
+  autoRestart: boolean;
+  onAutoRestart: boolean;
 }
 
 export interface ChannelCount {

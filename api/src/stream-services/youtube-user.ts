@@ -26,11 +26,9 @@ interface IYoutubeLiveStreams {
   };
 }
 
-const youtubePromise = Innertube.create({});
-
 export async function getStatsBase(channelId: string): Promise<boolean> {
   try {
-    const youtube = await youtubePromise;
+    const youtube = await Innertube.create({});
 
     const channel = await youtube.getChannel(channelId);
 
@@ -60,7 +58,7 @@ export async function getStatsBase(channelId: string): Promise<boolean> {
 
     return isLive;
   } catch (error) {
-    logger('warn', error);
+    logger('debug', error, channelId);
 
     return false;
   }
@@ -72,9 +70,9 @@ async function getStats(
 ): Promise<void> {
   for (const channel of channels) {
     try {
-      const youtube = await youtubePromise;
+      const youtube = await Innertube.create({});
 
-      const youtubeNavigation = (await youtube.resolveURL(channel.link)) as {
+      const youtubeNavigation = (await youtube.resolveURL(channel.url)) as {
         payload?: {
           browseId?: string;
         };
@@ -96,7 +94,7 @@ async function getStats(
         channel.setOffline();
       }
     } catch (error) {
-      logger('warn', error);
+      logger('debug', error, channel.url);
     }
   }
 }
@@ -113,22 +111,22 @@ export class YoutubeUserStreamService extends BaseStreamService {
     },
   );
   public async playLQ(channel: Channel) {
-    const { playLink, params } = await this.play(channel);
+    const { playUrl, params } = await this.play(channel);
 
     return {
-      playLink,
+      playUrl,
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     };
   }
   public checkLiveTimeout = 300;
   public checkLiveConfirmation = 3;
   public getStats = getStats;
-  public buildChannelLink(channelName: string) {
+  public buildUrl(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/user/${channelName}`;
   }
-  public embedLink(channel: Channel): string {
-    const link = super.embedLink(channel);
+  public embedUrl(channel: Channel): string {
+    const url = super.embedUrl(channel);
 
-    return `${link}/streams`;
+    return `${url}/streams`;
   }
 }

@@ -25,7 +25,7 @@ export class Channel extends EventEmitter {
   public serviceName: ServiceNamesEnum = ServiceNamesEnum.CUSTOM;
   public service: BaseStreamService = new BaseStreamService();
   public name: string;
-  public link: string;
+  public url: string;
   public protocol: ProtocolsEnum;
   public isLive = false;
   public onAutoRestart = false;
@@ -45,63 +45,59 @@ export class Channel extends EventEmitter {
   public _trayIcon: NativeImage;
   public _iconChecked = false;
 
-  constructor(channelLink: string) {
+  constructor(inputUrl: string) {
     super();
 
-    channelLink = channelLink.trim();
+    inputUrl = inputUrl.trim().toLowerCase();
 
     this.id = uuid.v4();
-    this.link = channelLink;
-    this.name = this.link;
+    this.url = inputUrl;
+    this.name = this.url;
     this.channelAdded = new Date();
 
-    const channelURL = new URL(channelLink);
+    const { hostname, protocol, pathname } = new URL(inputUrl);
 
-    const protocol = channelURL.protocol.toLowerCase() as ProtocolsEnum;
-
-    this.protocol = protocol;
-
-    const host = channelURL.host.toLowerCase();
-
-    if (host.length === 0) {
-      throw new Error('empty_hostname');
-    }
+    this.protocol = protocol as ProtocolsEnum;
 
     for (const service of serviceManager.services) {
-      if (!service.protocols.includes(protocol)) {
+      if (!service.protocols.includes(this.protocol)) {
         continue;
       }
 
-      if (!service.hosts.includes(host)) {
+      if (!service.hosts.includes(hostname)) {
         continue;
       }
 
-      _.forEach(service.paths, (path) => {
-        const regRes = new RegExp(path).exec(channelURL.pathname);
+      for (const path of service.paths) {
+        const regRes = new RegExp(path).exec(pathname);
 
         if (!regRes) {
-          return;
+          continue;
         }
 
         const [, channelName] = regRes;
 
+        if (!channelName) {
+          continue;
+        }
+
         this.serviceName = service.name;
         this.service = service;
-        this.name = channelName!;
+        this.name = channelName;
 
-        const newChannelUrl = new URL(service.buildChannelLink(channelName!));
+        const { href } = new URL(service.buildUrl(channelName));
 
-        this.link = newChannelUrl.href;
+        this.url = href;
 
-        return false;
-      });
+        break;
+      }
     }
 
     this.visibleName = this.name;
   }
 
   public update(
-    channelConfig: Omit<ISavedSettingsFile['channels'][0], 'link'>,
+    channelConfig: Omit<ISavedSettingsFile['channels'][0], 'url'>,
   ): void {
     _.forEach(channelConfig, (value, key) => {
       this[key] = value;
@@ -130,23 +126,6 @@ export class Channel extends EventEmitter {
     return true;
   }
 
-  public filterData() {
-    return {
-      id: this.id,
-      service: this.serviceName,
-      name: this.name,
-      link: this.link,
-      protocol: this.protocol,
-      isLive: this.isLive,
-      onAutoRestart: this.onAutoRestart,
-      lastUpdated: this.lastUpdated,
-      visibleName: this.visibleName,
-      isPinned: this.isPinned,
-      autoStart: this.autoStart,
-      autoRestart: this.autoRestart,
-    };
-  }
-
   public play() {
     return this.service.play(this);
   }
@@ -155,8 +134,8 @@ export class Channel extends EventEmitter {
     return this.service.playLQ(this);
   }
 
-  public embedLink() {
-    return this.service.embedLink(this);
+  public embedUrl() {
+    return this.service.embedUrl(this);
   }
 
   public icon() {
@@ -168,15 +147,11 @@ export class Channel extends EventEmitter {
       return this._trayIcon;
     }
 
-    if (this.service._trayIcon) {
-      return this.service._trayIcon;
-    }
-
-    return;
+    return this.service._trayIcon;
   }
 
-  public chatLink() {
-    return this.service.chatLink(this);
+  public chatUrl() {
+    return this.service.chatUrl(this);
   }
 
   public checkLiveConfirmation() {
@@ -190,7 +165,7 @@ export class Channel extends EventEmitter {
       return;
     }
 
-    logger('info', this.link, 'went_online');
+    logger('info', this.url, 'went_online');
 
     if (printBalloon) {
       if (!this.autoStart) {
@@ -214,7 +189,7 @@ export class Channel extends EventEmitter {
         dialog
           .showMessageBox({
             type: 'none',
-            message: `${this.link} is trying to auto-start. Confirm?`,
+            message: `${this.url} is trying to auto-start. Confirm?`,
             buttons: ['Ok', 'Cancel'],
           })
           .then(async ({ response }) => {
@@ -248,7 +223,7 @@ export class Channel extends EventEmitter {
       return;
     }
 
-    logger('info', this.link, 'went_offline');
+    logger('info', this.url, 'went_offline');
 
     this.changeSettings({
       lastUpdated: Date.now(),
@@ -289,5 +264,9 @@ export class Channel extends EventEmitter {
 
   public async getStats(printBalloon: boolean) {
     await this.service.getStats([this], printBalloon);
+  }
+
+  public async getInfo() {
+    await this.service.getInfo([this]);
   }
 }

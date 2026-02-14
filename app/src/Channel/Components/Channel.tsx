@@ -63,15 +63,15 @@ class Channel extends PureComponent<ChannelProps> {
       >
         <ChannelData onDoubleClick={() => !editMode && playChannel(channel)}>
           <StyledIcon>
-            <ServiceIcon service={channel.service} />
+            <ServiceIcon serviceName={channel.serviceName} />
           </StyledIcon>
 
           {editMode ? (
             <EditForm channel={channel} nameChange={this.renameChannel} />
           ) : (
-            <StyledName title={`${channel.visibleName} (${channel.link})`}>
+            <StyledName title={`${channel.visibleName} (${channel.url})`}>
               {/*{channel.isPinned && <Pinned/>}*/}
-              {channel.visibleName || channel.link}{' '}
+              {channel.visibleName || channel.url}{' '}
             </StyledName>
           )}
         </ChannelData>

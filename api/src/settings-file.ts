@@ -35,8 +35,8 @@ ipcMain.on('config_changeSetting_app', (event, settingName, settingValue) => {
   return config.changeSetting(settingName, settingValue);
 });
 
-ipcMain.on('channel_add', async (event, channelLink) => {
-  logger('info', 'channel_add', channelLink);
+ipcMain.on('channel_add', async (event, url) => {
+  logger('info', 'channel_add', url);
 
   if (!isTrustedSender(event)) {
     logger('warn', 'channel_add_blocked');
@@ -44,7 +44,7 @@ ipcMain.on('channel_add', async (event, channelLink) => {
     return;
   }
 
-  const channel = config.addChannelLink(channelLink, SourcesEnum.MANUAL_ACTION);
+  const channel = config.addChannelByUrl(url, SourcesEnum.MANUAL_ACTION);
 
   if (!channel) {
     return;
@@ -115,10 +115,10 @@ ipcMain.on('channel_openPage', (event, id) => {
     return false;
   }
 
-  const embedLink = channel.embedLink();
+  const embedUrl = channel.embedUrl();
 
-  if (embedLink) {
-    shell.openExternal(embedLink);
+  if (embedUrl) {
+    shell.openExternal(embedUrl);
   }
 
   return true;
@@ -139,9 +139,9 @@ ipcMain.on('channel_openChat', async (event, id) => {
     return false;
   }
 
-  const chatLink = channel.chatLink();
+  const chatUrl = channel.chatUrl();
 
-  if (!chatLink) {
+  if (!chatUrl) {
     return false;
   }
 
@@ -167,23 +167,23 @@ ipcMain.on('channel_openChat', async (event, id) => {
     window.setMenu(null);
 
     try {
-      await window.loadURL(chatLink);
+      await window.loadURL(chatUrl);
     } catch (error) {
-      logger('warn', error, chatLink);
+      logger('warn', error, chatUrl);
 
       window.close();
 
       return false;
     }
   } else {
-    shell.openExternal(chatLink);
+    shell.openExternal(chatUrl);
   }
 
   return true;
 });
 
-ipcMain.on('channel_copyClipboard', (event, channelLink) => {
-  logger('info', 'channel_copyClipboard', channelLink);
+ipcMain.on('channel_copyClipboard', (event, url) => {
+  logger('info', 'channel_copyClipboard', url);
 
   if (!isTrustedSender(event)) {
     logger('warn', 'channel_copyClipboard_blocked');
@@ -191,7 +191,7 @@ ipcMain.on('channel_copyClipboard', (event, channelLink) => {
     return false;
   }
 
-  clipboard.writeText(channelLink);
+  clipboard.writeText(url);
 
   return true;
 });
@@ -215,12 +215,30 @@ ipcMain.handle('config_find', (event, query) => {
     return { channels: [], count: { online: 0, offline: 0 } };
   }
 
-  const find = config.find(query);
+  const { channels, count } = config.find(query);
 
   return {
-    channels: _.map(find.channels, (channel: Channel) => {
-      return channel.filterData();
-    }),
-    count: find.count,
+    channels: channels.map(
+      ({
+        id,
+        url,
+        serviceName,
+        visibleName,
+        isPinned,
+        autoStart,
+        autoRestart,
+        onAutoRestart,
+      }) => ({
+        id,
+        url,
+        serviceName,
+        visibleName,
+        isPinned,
+        autoStart,
+        autoRestart,
+        onAutoRestart,
+      }),
+    ),
+    count: count,
   };
 });

@@ -90,7 +90,7 @@ class Channels extends PureComponent<ChannelsProps, ChannelsState> {
             key={channel.id}
             handleAction={this.handleAction}
             editMode={editId === channel.id}
-            selected={selected?.link === channel.link}
+            selected={selected?.id === channel.id}
             channel={channel}
           />
         ))}

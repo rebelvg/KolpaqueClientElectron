@@ -54,7 +54,7 @@ const Services: Record<string, Service> = {
 };
 
 interface ServiceIconProps {
-  service: Channel['service'];
+  serviceName: Channel['serviceName'];
 }
 
 export class ServiceIcon extends Component<ServiceIconProps> {
@@ -85,8 +85,8 @@ export class ServiceIcon extends Component<ServiceIconProps> {
   };
 
   render() {
-    const { service } = this.props;
-    const icon = this.getIcon(service);
+    const { serviceName } = this.props;
+    const icon = this.getIcon(serviceName);
 
     return this.renderIcon(icon);
   }

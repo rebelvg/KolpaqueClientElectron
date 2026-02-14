@@ -125,18 +125,18 @@ class SyncSettings {
     const newChannels: Channel[] = [];
 
     for (const syncedChannel of syncedChannels) {
-      if (config.deletedChannels.includes(syncedChannel.link)) {
+      if (config.deletedChannels.includes(syncedChannel.url)) {
         continue;
       }
 
       const findLocalChannel = config.findByQuery({
-        link: syncedChannel.link,
+        url: syncedChannel.url,
       });
 
       if (!findLocalChannel) {
-        logger('info', 'sync_adding_channel', syncedChannel.link);
+        logger('info', 'sync_adding_channel', syncedChannel.url);
 
-        const channel = config.addChannelLink(syncedChannel.link, null);
+        const channel = config.addChannelByUrl(syncedChannel.url, null);
 
         if (channel) {
           channel.update(syncedChannel);

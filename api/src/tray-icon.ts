@@ -8,31 +8,29 @@ import { logger } from './logs';
 export function rebuildIconMenu(): Menu {
   logger('info', 'rebuildIconMenu');
 
-  const onlineChannels = config.find({
+  const { channels } = config.find({
     isLive: true,
-  }).channels;
+  });
 
-  contextMenuTemplate[1]!['submenu'] = onlineChannels.map(
-    (channel: Channel) => {
-      const icon = channel.trayIcon();
+  contextMenuTemplate[1]!['submenu'] = channels.map((channel) => {
+    const icon = channel.trayIcon() || undefined;
 
-      return {
-        label: !config.settings.LQ
-          ? channel.visibleName
-          : `${channel.visibleName} (LQ)`,
-        type: 'normal',
-        visible: true,
-        click: async (
-          menuItem: MenuItem,
-          browserWindow: BrowserWindow,
-          event,
-        ) => {
-          await channel.startPlaying(!!event.ctrlKey, !!event.shiftKey);
-        },
-        icon,
-      };
-    },
-  );
+    return {
+      label: !config.settings.LQ
+        ? channel.visibleName
+        : `${channel.visibleName} (LQ)`,
+      type: 'normal',
+      visible: true,
+      click: async (
+        menuItem: MenuItem,
+        browserWindow: BrowserWindow,
+        event,
+      ) => {
+        await channel.startPlaying(!!event.ctrlKey, !!event.shiftKey);
+      },
+      icon,
+    };
+  });
 
   return Menu.buildFromTemplate(contextMenuTemplate);
 }

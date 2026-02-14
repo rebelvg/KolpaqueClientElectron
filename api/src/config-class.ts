@@ -34,7 +34,7 @@ const filterChannel = (channel: Channel, filter: string): boolean => {
   });
 
   _.forEach(
-    [channel.link, channel.name, channel.visibleName],
+    [channel.url, channel.name, channel.visibleName],
     (searchString) => {
       _.forEach(searchFilters, (filter) => {
         const regExp = new RegExp(filter.pattern, 'gi');
@@ -133,7 +133,7 @@ interface ISettings {
 
 export interface ISavedSettingsFile {
   channels: {
-    link: string;
+    url: string;
     visibleName: string;
     isPinned: boolean;
     autoStart: boolean;
@@ -209,10 +209,10 @@ export class Config extends EventEmitter {
 
     try {
       for (const parsedChannel of parseJson.channels) {
-        const channel = this.addChannelLink(parsedChannel.link, null);
+        const channel = this.addChannelByUrl(parsedChannel.url, null);
 
         if (channel) {
-          const { link, ...updateData } = parsedChannel;
+          const { url, ...updateData } = parsedChannel;
 
           channel.update({
             ...updateData,
@@ -244,11 +244,11 @@ export class Config extends EventEmitter {
     }
   }
 
-  addChannelLink(
-    channelLink: string,
+  addChannelByUrl(
+    url: string,
     source: SourcesEnum | null,
   ): Channel | undefined {
-    const channel = Config.buildChannel(channelLink);
+    const channel = Config.buildChannel(url);
 
     if (!channel) {
       return;
@@ -274,9 +274,9 @@ export class Config extends EventEmitter {
     return channel;
   }
 
-  static buildChannel(channelLink: string): Channel | undefined {
+  static buildChannel(url: string): Channel | undefined {
     try {
-      return new Channel(channelLink);
+      return new Channel(url);
     } catch (error) {
       logger('warn', error);
 
@@ -297,7 +297,7 @@ export class Config extends EventEmitter {
 
     _.pull(this.channels, channel);
 
-    config.deletedChannels.push(channel.link);
+    config.deletedChannels.push(channel.url);
 
     main.mainWindow!.webContents.send('channel_removeSync');
 
@@ -332,7 +332,13 @@ export class Config extends EventEmitter {
     return _.find(this.channels, params);
   }
 
-  find(query: { filter?: string; isLive?: boolean } = {}) {
+  find(query: { filter?: string; isLive?: boolean } = {}): {
+    channels: Channel[];
+    count: {
+      online: number;
+      offline: number;
+    };
+  } {
     const sort = {
       type: this.settings.sortType,
       isReversed: this.settings.sortReverse,
@@ -393,12 +399,12 @@ export class Config extends EventEmitter {
     updateChannelInfo: boolean,
     source: string,
   ) {
-    if (channels.length > 0) {
-      await serviceManager.checkChannels(channels, false);
-    }
+    for (const channel of channels) {
+      await channel.getStats(false);
 
-    if (updateChannelInfo) {
-      await serviceManager.getInfoChannels(channels);
+      if (updateChannelInfo) {
+        await channel.getInfo();
+      }
     }
 
     main.mainWindow!.webContents.send('runChannelUpdates', source);
@@ -420,7 +426,7 @@ export class Config extends EventEmitter {
     return _.map(
       this.channels,
       ({
-        link,
+        url,
         visibleName,
         isPinned,
         autoStart,
@@ -428,7 +434,7 @@ export class Config extends EventEmitter {
         channelAdded,
         sources,
       }) => ({
-        link,
+        url,
         visibleName,
         isPinned,
         autoStart,
@@ -445,9 +451,9 @@ export class Config extends EventEmitter {
     }
 
     if (!parsedJson.migrations.includes('migration_1')) {
-      parsedJson.channels = parsedJson.channels.map((channel, id) => {
-        const dateNow = Date.now();
+      const dateNow = Date.now();
 
+      parsedJson.channels = parsedJson.channels.map((channel, id) => {
         return {
           ...channel,
           channelAdded: new Date(dateNow + id),
@@ -472,6 +478,17 @@ export class Config extends EventEmitter {
       parsedJson.settings.customRtmpClientCommand = '';
 
       parsedJson.migrations.push('migration_3');
+    }
+
+    if (!parsedJson.migrations.includes('migration_4')) {
+      parsedJson.channels = parsedJson.channels.map((channel, id) => {
+        return {
+          ...channel,
+          url: channel['link'] || channel.url,
+        };
+      });
+
+      parsedJson.migrations.push('migration_4');
     }
 
     return parsedJson;

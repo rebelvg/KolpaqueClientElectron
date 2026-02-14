@@ -15,11 +15,11 @@ const isTrustedSender = (event: IpcMainEvent) =>
 const SERVICES = [
   {
     name: 'client',
-    link: 'https://github.com/rebelvg/KolpaqueClientElectron/releases',
+    url: 'https://github.com/rebelvg/KolpaqueClientElectron/releases',
   },
   {
     name: 'streamlink',
-    link: 'https://github.com/streamlink/streamlink/releases',
+    url: 'https://github.com/streamlink/streamlink/releases',
   },
 ];
 
@@ -37,7 +37,7 @@ ipcMain.on('client_getInfo', async (event) => {
   await Promise.all(
     SERVICES.map((service) => {
       if (UPDATES.includes(service.name)) {
-        shell.openExternal(service.link);
+        shell.openExternal(service.url);
       }
     }),
   );
@@ -74,7 +74,7 @@ function sendInfo(update: string): void {
     return;
   }
 
-  printNotification(`${_.capitalize(update)} Update Available`, service.link);
+  printNotification(`${_.capitalize(update)} Update Available`, service.url);
 
   main.mainWindow!.webContents.send(
     'client_showInfo',

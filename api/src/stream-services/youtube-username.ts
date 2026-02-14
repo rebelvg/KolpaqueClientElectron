@@ -8,7 +8,7 @@ export class YoutubeUsernameStreamService extends YoutubeUserStreamService {
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.youtube.com', 'youtube.com'];
   public paths = [/^\/@(\S+)\/+/gi, /^\/@(\S+)\/*/gi];
-  public buildChannelLink(channelName: string) {
+  public buildUrl(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/@${channelName}`;
   }
 }

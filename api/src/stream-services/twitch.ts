@@ -153,8 +153,8 @@ export class TwitchStreamService extends BaseStreamService {
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.twitch.tv', 'twitch.tv', 'go.twitch.tv'];
   public paths = [/^\/(\S+)\/+/gi, /^\/(\S+)\/*/gi];
-  public chatLink(channel: Channel): string {
-    return `${this.embedLink(channel)}/chat`;
+  public chatUrl(channel: Channel): string {
+    return `${this.embedUrl(channel)}/chat`;
   }
   public icon = fs.readFileSync(
     path.normalize(path.join(app.getAppPath(), './api/icons', 'twitch.png')),
@@ -164,15 +164,15 @@ export class TwitchStreamService extends BaseStreamService {
   );
   public play(channel: Channel) {
     return Promise.resolve({
-      playLink: channel._customPlayUrl || channel.link,
+      playUrl: channel._customPlayUrl || channel.url,
       params: ['--twitch-disable-hosting', '--twitch-disable-ads'],
     });
   }
   public async playLQ(channel: Channel) {
-    const { playLink, params } = await this.play(channel);
+    const { playUrl, params } = await this.play(channel);
 
     return {
-      playLink,
+      playUrl,
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     };
   }
@@ -243,7 +243,7 @@ export class TwitchStreamService extends BaseStreamService {
 
     return this.doImport(channelNames, emitEvent);
   }
-  public buildChannelLink(channelName: string) {
+  public buildUrl(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/${channelName}`;
   }
 
@@ -254,8 +254,8 @@ export class TwitchStreamService extends BaseStreamService {
   ) {
     const channelsAddedAll: Channel[] = [];
 
-    const addedChannel = config.addChannelLink(
-      this.buildChannelLink(channelName),
+    const addedChannel = config.addChannelByUrl(
+      this.buildUrl(channelName),
       SourcesEnum.MANUAL_ACTION,
     );
 
@@ -330,15 +330,15 @@ export class TwitchStreamService extends BaseStreamService {
               foundChannel.sources.push(SourcesEnum.AUTO_IMPORT);
             }
           } else {
-            const channel = config.addChannelLink(
-              `${this.buildChannelLink(importedChannel.broadcaster_login)}`,
+            const channel = config.addChannelByUrl(
+              `${this.buildUrl(importedChannel.broadcaster_login)}`,
               SourcesEnum.AUTO_IMPORT,
             );
 
             if (channel) {
               channelsAdded.push(channel);
 
-              logger('info', 'twitch_imported_channel', channel.link);
+              logger('info', 'twitch_imported_channel', channel.url);
             }
           }
         }),

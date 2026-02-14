@@ -27,7 +27,7 @@ ipcMain.on(
 
     const channel = config.findById(id);
 
-    logger('info', 'channel_play', channel?.link, altQuality, autoRestart);
+    logger('info', 'channel_play', channel?.url, altQuality, autoRestart);
 
     if (!channel) {
       return false;
@@ -37,16 +37,16 @@ ipcMain.on(
   },
 );
 
-export async function launchPlayerLink(
-  channelLink: string,
+export async function launchPlayerUrl(
+  url: string,
   LQ: boolean,
 ): Promise<boolean> {
-  logger('info', 'launchPlayerLink', {
-    channelLink,
+  logger('info', 'launchPlayerUrl', {
+    url,
     LQ,
   });
 
-  const channel = Config.buildChannel(channelLink);
+  const channel = Config.buildChannel(url);
 
   if (!channel) {
     return false;
@@ -58,9 +58,9 @@ export async function launchPlayerLink(
 }
 
 export async function playInWindow(channel: Channel): Promise<boolean> {
-  const embedLink = channel.embedLink();
+  const embedUrl = channel.embedUrl();
 
-  if (!embedLink) {
+  if (!embedUrl) {
     return false;
   }
 
@@ -89,13 +89,13 @@ export async function playInWindow(channel: Channel): Promise<boolean> {
   window.setMenu(null);
 
   try {
-    await window.loadURL(embedLink);
+    await window.loadURL(embedUrl);
 
     main.createdWindows.push(window);
 
     channel._windows.push(window);
   } catch (error) {
-    logger('warn', error, embedLink);
+    logger('warn', error, embedUrl);
 
     window.close();
 
@@ -116,23 +116,23 @@ export async function launchPlayerChannel(
     onAutoRestart: autoRestart === null ? channel.autoRestart : autoRestart,
   });
 
-  const { playLink, params } = !LQ
+  const { playUrl, params } = !LQ
     ? await channel.play()
     : await channel.playLQ();
 
-  if (!playLink) {
+  if (!playUrl) {
     return;
   }
 
-  return launchStreamlink(playLink, params, channel);
+  return launchStreamlink(playUrl, params, channel);
 }
 
 async function launchStreamlink(
-  playLink: string,
+  playUrl: string,
   params: string[],
   channel: Channel,
 ) {
-  logger('info', playLink, params, channel.link);
+  logger('info', playUrl, params, channel.url);
 
   let firstStart = true;
   let autoRestartAttempts = 0;
@@ -144,7 +144,7 @@ async function launchStreamlink(
     logger(
       'info',
       'streamlink_starting',
-      channel.link,
+      channel.url,
       firstStart,
       autoRestartAttempts,
       channel._playingProcesses,
@@ -155,10 +155,10 @@ async function launchStreamlink(
         [ProtocolsEnum.RTMP, ProtocolsEnum.RTMPS].includes(channel.protocol) &&
         config.settings.customRtmpClientCommand.includes('{{RTMP_URL}}')
           ? config.settings.customRtmpClientCommand
-              .replace('{{RTMP_URL}}', playLink)
+              .replace('{{RTMP_URL}}', playUrl)
               .split(' ')
               .map((a) => a.trim())
-          : ['streamlink', playLink, 'best', ...params];
+          : ['streamlink', playUrl, 'best', ...params];
 
       await new Promise<void>((resolve, reject) => {
         logger('info', 'spawn_command', command, commandArgs);
@@ -208,7 +208,7 @@ async function launchStreamlink(
         });
       });
 
-      logger('info', 'streamlink_exited', channel.link);
+      logger('info', 'streamlink_exited', channel.url);
 
       if (Date.now() - startTime < AUTO_RESTART_TIMEOUT * 1000) {
         autoRestartAttempts++;
@@ -221,7 +221,7 @@ async function launchStreamlink(
     } catch (exception) {
       const [error, stdout, stderr]: [Error, string, string] = exception;
 
-      logger('warn', 'streamlink_error', channel.link, error, stdout, stderr);
+      logger('warn', 'streamlink_error', channel.url, error, stdout, stderr);
 
       if (error['code'] === 'ENOENT') {
         await dialog.showMessageBox({
@@ -260,7 +260,7 @@ async function launchStreamlink(
     }
   }
 
-  logger('info', 'playing_closing', channel.link, channel._playingProcesses);
+  logger('info', 'playing_closing', channel.url, channel._playingProcesses);
 
   channel._playingProcesses--;
 

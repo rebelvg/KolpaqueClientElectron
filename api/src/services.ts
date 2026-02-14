@@ -24,110 +24,48 @@ class ServiceManager {
     new KickStreamService(),
   ];
 
-  public async checkChannels(channels: Channel[], printBalloon: boolean) {
-    logger('info', 'channel_check_stats', channels.length, printBalloon);
+  public async check(service: BaseStreamService, printBalloon: boolean) {
+    logger('info', 'check', service.name, printBalloon);
 
-    await Promise.all(
-      _.map(this.services, async (service) => {
-        const serviceChannels = _.filter(channels, {
-          service: service,
-        });
+    const channels = service.channels;
 
-        logger(
-          'debug',
-          'channel_check_stats',
-          service.name,
-          serviceChannels.length,
-        );
+    await service.getStats(channels, printBalloon);
 
-        await service.getStats(serviceChannels, printBalloon);
-
-        logger(
-          'debug',
-          'channel_check_stats_done',
-          service.name,
-          serviceChannels.length,
-        );
-      }),
-    );
-
-    logger('info', 'channel_check_stats_done', channels.length, printBalloon);
+    logger('info', 'check_done', service.name, channels.length, printBalloon);
   }
 
-  public async doImport(serviceName: ServiceNamesEnum, emitEvent: boolean) {
+  public async import(serviceName: ServiceNamesEnum, emitEvent: boolean) {
+    logger('info', 'import', serviceName, emitEvent);
+
     const channels: Channel[] = [];
 
-    logger('info', 'channel_import_start', serviceName, emitEvent);
-
-    await Promise.all(
-      _.map(this.services, async (service) => {
-        logger('debug', 'channel_import_start', service.name);
-
-        if (service.name === serviceName) {
-          const newChannels = await service.doImportSettings(emitEvent);
-
-          channels.push(...newChannels);
-        }
-
-        logger('debug', 'channel_import_done', service.name);
-      }),
+    const service = _.find(
+      this.services,
+      (service) => service.name === serviceName,
     );
 
-    logger('info', 'channel_import_start_done', serviceName, emitEvent);
+    if (service) {
+      const newChannels = await service.doImportSettings(emitEvent);
+
+      channels.push(...newChannels);
+    }
+
+    logger('info', 'import_done', serviceName, channels.length, emitEvent);
 
     return channels;
   }
 
-  public async doImports(emitEvent: boolean) {
-    const channels: Channel[] = [];
-
-    await Promise.all(
-      _.map(this.services, async (service) => {
-        const newChannels = await this.doImport(service.name, emitEvent);
-
-        channels.push(...newChannels);
-      }),
+  public async info(serviceName: ServiceNamesEnum) {
+    const service = _.find(
+      this.services,
+      (service) => service.name === serviceName,
     );
 
-    return channels;
-  }
+    if (service) {
+      const channels = service.channels;
 
-  public async getInfoChannels(channels: Channel[]) {
-    await Promise.all(
-      _.map(this.services, async (service) => {
-        const serviceChannels = _.filter(channels, {
-          service: service,
-        });
-
-        logger(
-          'info',
-          'channel_info_start',
-          service.name,
-          serviceChannels.length,
-        );
-
-        await service.getInfo(serviceChannels);
-
-        refreshTrayIconMenuLinux();
-
-        logger(
-          'info',
-          'channel_info_done',
-          service.name,
-          serviceChannels.length,
-        );
-      }),
-    );
-  }
-
-  public async getInfo(serviceName: ServiceNamesEnum) {
-    await Promise.all(
-      _.map(this.services, async (service) => {
-        if (service.name === serviceName) {
-          await this.getInfoChannels(service.channels);
-        }
-      }),
-    );
+      await service.getInfo(channels);
+    }
   }
 }
 

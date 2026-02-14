@@ -35,7 +35,7 @@ export class ChaturbateStreamService extends BaseStreamService {
   public checkLiveTimeout = 120;
   public checkLiveConfirmation = 3;
   public getStats = getStats;
-  public buildChannelLink(channelName: string) {
+  public buildUrl(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/${channelName}`;
   }
 }

@@ -48,8 +48,8 @@ export class KickStreamService extends BaseStreamService {
   public protocols = [ProtocolsEnum.HTTPS, ProtocolsEnum.HTTP];
   public hosts = ['www.kick.com', 'kick.com'];
   public paths = [/^\/(\S+)\/+/gi, /^\/(\S+)\/*/gi];
-  public chatLink(channel: Channel): string {
-    return `${this.embedLink(channel)}/chat`;
+  public chatUrl(channel: Channel): string {
+    return `${this.embedUrl(channel)}/chat`;
   }
   public icon = fs.readFileSync(
     path.normalize(path.join(app.getAppPath(), './api/icons', 'kick.png')),
@@ -58,26 +58,26 @@ export class KickStreamService extends BaseStreamService {
     },
   );
   public play(channel: Channel): Promise<{
-    playLink: string;
+    playUrl: string;
     params: string[];
   }> {
     return Promise.resolve({
-      playLink: channel._customPlayUrl || channel.link,
+      playUrl: channel._customPlayUrl || channel.url,
       params: [],
     });
   }
   public async playLQ(channel: Channel) {
-    const { playLink, params } = await this.play(channel);
+    const { playUrl, params } = await this.play(channel);
 
     return {
-      playLink,
+      playUrl,
       params: params.concat(['--stream-sorting-excludes', '>=720p,>=high']),
     };
   }
   public checkLiveTimeout = 30;
   public checkLiveConfirmation = 3;
   public getStats = getStats;
-  public buildChannelLink(channelName: string) {
+  public buildUrl(channelName: string) {
     return `${this.protocols[0]}//${this.hosts[0]}/${channelName}`;
   }
 }

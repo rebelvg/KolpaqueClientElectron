@@ -5,6 +5,10 @@ import { serviceManager } from './services';
 
 export async function init() {
   try {
-    await serviceManager.getInfoChannels(config.channels);
+    await Promise.all(
+      serviceManager.services.map((service) =>
+        serviceManager.info(service.name),
+      ),
+    );
   } catch (error) {}
 }
