@@ -11,6 +11,8 @@ import {
 } from '@electron/packager';
 import * as childProcess from 'child_process';
 
+const { name } = require('./package.json');
+
 process.on('unhandledRejection', (error) => {
   throw error;
 });
@@ -82,10 +84,10 @@ if (!pathOption) {
     ignore: [/\/.git/, /\/.vscode/, /\/.config/, /\/.build/],
     overwrite: true,
     win32metadata: {
-      ProductName: 'KolpaqueClientElectron',
-      InternalName: 'KolpaqueClientElectron',
-      FileDescription: 'KolpaqueClientElectron',
-      OriginalFilename: 'KolpaqueClientElectron.exe',
+      ProductName: name,
+      InternalName: name,
+      FileDescription: name,
+      OriginalFilename: `${name}.exe`,
     },
     asar: true,
     prune: true,
