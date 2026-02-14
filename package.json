@@ -34,7 +34,6 @@
     "@types/node": "^24.9.2",
     "@types/readline-sync": "^1.4.8",
     "@types/semver": "^7.5.8",
-    "@types/socket.io-client": "^1.4.32",
     "@types/uuid": "^11.0.0",
     "archiver": "^4.0.1",
     "concurrently": "^9.2.1",
@@ -55,7 +54,7 @@
     "lodash": "^4.17.23",
     "querystring": "^0.2.0",
     "semver": "^7.7.4",
-    "socket.io-client": "^2.3.0",
+    "socket.io-client": "^4.8.3",
     "source-map-support": "^0.5.19",
     "uuid": "^13.0.0",
     "youtubei.js": "^16.0.1"
