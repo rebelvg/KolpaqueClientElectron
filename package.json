@@ -10,7 +10,7 @@
     "prettier:fix": "prettier \"**/*\" --write --ignore-unknown",
     "lint": "eslint . && yarn run prettier && yarn run typecheck",
     "lint:fix": "eslint . --fix && yarn run prettier:fix",
-    "pack": "ts-node pack.ts",
+    "package": "ts-node package.ts",
     "release": "ts-node release.ts",
     "build:api": "tsc --project api/tsconfig.json",
     "build:app": "yarn workspace app run build",

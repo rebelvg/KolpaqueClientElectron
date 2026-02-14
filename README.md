@@ -74,7 +74,7 @@ yarn run start
 ### Pack
 
 ```
-yarn run pack
+yarn run package
 ```
 
 xhost +local:$(id -un)
