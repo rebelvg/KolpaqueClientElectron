@@ -5,26 +5,8 @@ import * as _ from 'lodash';
 import { Channel } from '../channel-class';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { logger } from '../logs';
-import { Innertube } from 'youtubei.js';
+import { Innertube, YTNodes } from 'youtubei.js';
 import { app } from 'electron';
-
-interface IYoutubeLiveStreams {
-  current_tab?: {
-    content?: {
-      type: 'RichGrid';
-      contents?: {
-        type: 'RichItem';
-        content?: {
-          type: 'Video';
-          id: string;
-          duration?: {
-            text: 'LIVE';
-          };
-        };
-      }[];
-    };
-  };
-}
 
 export async function getStatsBase(channelId: string): Promise<boolean> {
   try {
@@ -32,9 +14,7 @@ export async function getStatsBase(channelId: string): Promise<boolean> {
 
     const channel = await youtube.getChannel(channelId);
 
-    await channel.getLiveStreams();
-
-    const streams = (await channel.getLiveStreams()) as IYoutubeLiveStreams;
+    const streams = await channel.getLiveStreams();
 
     if (streams.current_tab?.content?.type !== 'RichGrid') {
       return false;
@@ -42,19 +22,22 @@ export async function getStatsBase(channelId: string): Promise<boolean> {
 
     let isLive = false;
 
-    _.forEach(streams?.current_tab?.content?.contents, (stream) => {
-      if (stream?.type !== 'RichItem') {
-        return;
-      }
+    _.forEach(
+      streams.current_tab.content.as(YTNodes.RichGrid).contents,
+      (stream: YTNodes.RichItem) => {
+        if (stream.type !== 'RichItem') {
+          return;
+        }
 
-      if (stream.content?.type !== 'Video') {
-        return;
-      }
+        if (stream.content?.type !== 'Video') {
+          return;
+        }
 
-      if (stream.content.duration?.text === 'LIVE') {
-        isLive = true;
-      }
-    });
+        if (stream.content.as(YTNodes.Video).duration?.text === 'LIVE') {
+          isLive = true;
+        }
+      },
+    );
 
     return isLive;
   } catch (error) {
@@ -72,19 +55,14 @@ async function getStats(
     try {
       const youtube = await Innertube.create({});
 
-      const youtubeNavigation = (await youtube.resolveURL(channel.url)) as {
-        payload?: {
-          browseId?: string;
-        };
-      };
+      const { payload }: { payload?: { browseId?: string } } =
+        await youtube.resolveURL(channel.url);
 
-      if (!youtubeNavigation.payload?.browseId) {
+      if (!payload?.browseId) {
         return;
       }
 
-      const channelStatus = await getStatsBase(
-        youtubeNavigation.payload.browseId,
-      );
+      const channelStatus = await getStatsBase(payload.browseId);
 
       if (channelStatus) {
         channel.setOnline(printBalloon);
