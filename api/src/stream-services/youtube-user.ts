@@ -10,6 +10,12 @@ import { app } from 'electron';
 
 Log.setLevel(Log.Level.NONE);
 
+const isDev = process.env.NODE_ENV === 'dev';
+
+if (isDev) {
+  Log.setLevel(Log.Level.INFO);
+}
+
 export async function getStatsBase(channelId: string): Promise<boolean> {
   try {
     const youtube = await Innertube.create({});

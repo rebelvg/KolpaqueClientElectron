@@ -16,7 +16,7 @@
     "build:app": "yarn workspace app run build",
     "start:api": "cross-env NODE_ENV=dev electron . --ozone-platform=wayland",
     "start:app": "yarn workspace app run start",
-    "start:dev": "cross-env REACT_ENV=dev concurrently --kill-others \"yarn run build:api && yarn run start:api\" \"yarn run start:app\"",
+    "start:dev": "concurrently --kill-others \"yarn run start:app\" \"yarn run build:api && cross-env REACT_ENV=dev yarn run start:api\"",
     "start": "yarn run build:api && yarn run build:app && yarn run start:api",
     "prepare": "husky"
   },
