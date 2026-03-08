@@ -5,8 +5,10 @@ import * as _ from 'lodash';
 import { Channel } from '../channel-class';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
 import { logger } from '../logs';
-import { Innertube, YTNodes } from 'youtubei.js';
+import { Innertube, YTNodes, Log } from 'youtubei.js';
 import { app } from 'electron';
+
+Log.setLevel(Log.Level.NONE);
 
 export async function getStatsBase(channelId: string): Promise<boolean> {
   try {
