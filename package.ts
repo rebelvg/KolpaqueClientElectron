@@ -19,12 +19,18 @@ process.on('unhandledRejection', (error) => {
 
 const [, , platformArg, buildPathArg] = process.argv;
 
+export const OFFICIAL_PLATFORMS = [
+  'linux',
+  'win32',
+  'darwin',
+] as const satisfies readonly OfficialPlatform[];
+
 let platformOption: OfficialPlatform | undefined;
 let pathOption: string;
 
 if (!platformArg) {
   platformOption = readlineSync.question(
-    `select platform. win32, darwin, linux. (empty will default to current platform)${os.EOL}`,
+    `select platform. ${OFFICIAL_PLATFORMS.join(', ')}. (empty will default to current platform)${os.EOL}`,
   ) as OfficialPlatform;
 } else {
   platformOption = platformArg as OfficialPlatform;
