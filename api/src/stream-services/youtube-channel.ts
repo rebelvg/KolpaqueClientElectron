@@ -14,10 +14,17 @@ async function getStats(
   for (const channel of channels) {
     const channelStatus = await getStatsBase(channel.name);
 
-    if (channelStatus) {
-      channel.setOnline(printBalloon);
-    } else {
-      channel.setOffline();
+    switch (channelStatus) {
+      case true:
+        channel.setOnline(printBalloon);
+
+        break;
+      case false:
+        channel.setOffline();
+
+        break;
+      default:
+        break;
     }
   }
 }

@@ -31,14 +31,17 @@ async function getStats(
   for (const channel of channels) {
     const streamStatus = streamStatusMap[channel.name];
 
-    if (typeof streamStatus === 'undefined') {
-      continue;
-    }
+    switch (streamStatus) {
+      case true:
+        channel.setOnline(printBalloon);
 
-    if (!streamStatus) {
-      channel.setOffline();
-    } else {
-      channel.setOnline(printBalloon);
+        break;
+      case false:
+        channel.setOffline();
+
+        break;
+      default:
+        break;
     }
   }
 }

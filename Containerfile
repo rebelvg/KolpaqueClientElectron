@@ -1,4 +1,4 @@
-FROM docker.io/library/node:22-bookworm
+FROM mcr.microsoft.com/devcontainers/typescript-node:4-24-trixie
 
 RUN apt-get update && apt-get install -y \
   # Electron deps (as before)

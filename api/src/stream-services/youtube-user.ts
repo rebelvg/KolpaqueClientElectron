@@ -1,6 +1,5 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import * as _ from 'lodash';
 
 import { Channel } from '../channel-class';
 import { BaseStreamService, ProtocolsEnum, ServiceNamesEnum } from './_base';
@@ -16,7 +15,9 @@ if (isDev) {
   Log.setLevel(Log.Level.INFO);
 }
 
-export async function getStatsBase(channelId: string): Promise<boolean> {
+export async function getStatsBase(
+  channelId: string,
+): Promise<boolean | undefined> {
   try {
     const youtube = await Innertube.create({});
 
@@ -24,28 +25,38 @@ export async function getStatsBase(channelId: string): Promise<boolean> {
 
     const streams = await channel.getLiveStreams();
 
+    logger('debug', streams.current_tab?.content?.type);
+
     if (streams.current_tab?.content?.type !== 'RichGrid') {
-      return false;
+      return;
     }
 
-    let isLive = false;
+    let isLive: boolean | undefined = undefined;
 
-    _.forEach(
-      streams.current_tab.content.as(YTNodes.RichGrid).contents,
-      (stream: YTNodes.RichItem) => {
-        if (stream.type !== 'RichItem') {
-          return;
-        }
+    for (const stream of streams.current_tab.content.as(YTNodes.RichGrid)
+      .contents) {
+      if (!stream.is(YTNodes.RichItem)) {
+        logger('debug', streams.title);
 
-        if (stream.content?.type !== 'Video') {
-          return;
-        }
+        continue;
+      }
 
-        if (stream.content.as(YTNodes.Video).duration?.text === 'LIVE') {
-          isLive = true;
-        }
-      },
-    );
+      const content = stream.content;
+
+      if (!content || !content.is(YTNodes.Video)) {
+        logger('debug', !!content);
+
+        continue;
+      }
+
+      logger('debug', content.title);
+
+      if (content.duration?.text === 'LIVE') {
+        isLive = true;
+
+        break;
+      }
+    }
 
     return isLive;
   } catch (error) {
@@ -72,10 +83,17 @@ async function getStats(
 
       const channelStatus = await getStatsBase(payload.browseId);
 
-      if (channelStatus) {
-        channel.setOnline(printBalloon);
-      } else {
-        channel.setOffline();
+      switch (channelStatus) {
+        case true:
+          channel.setOnline(printBalloon);
+
+          break;
+        case false:
+          channel.setOffline();
+
+          break;
+        default:
+          break;
       }
     } catch (error) {
       logger('debug', error, channel.url);
