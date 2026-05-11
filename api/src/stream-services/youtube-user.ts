@@ -18,51 +18,24 @@ if (isDev) {
 export async function getStatsBase(
   channelId: string,
 ): Promise<boolean | undefined> {
-  try {
-    const youtube = await Innertube.create({});
+  const youtube = await Innertube.create({});
 
+  try {
     const channel = await youtube.getChannel(channelId);
 
     const streams = await channel.getLiveStreams();
 
-    logger('debug', streams.current_tab?.content?.type);
-
-    if (streams.current_tab?.content?.type !== 'RichGrid') {
-      return;
-    }
-
-    let isLive: boolean | undefined = undefined;
-
-    for (const stream of streams.current_tab.content.as(YTNodes.RichGrid)
-      .contents) {
-      if (!stream.is(YTNodes.RichItem)) {
-        logger('debug', streams.title);
-
-        continue;
-      }
-
-      const content = stream.content;
-
-      if (!content || !content.is(YTNodes.Video)) {
-        logger('debug', !!content);
-
-        continue;
-      }
-
-      logger('debug', content.title);
-
-      if (content.duration?.text === 'LIVE') {
-        isLive = true;
-
-        break;
-      }
-    }
-
-    return isLive;
+    return JSON.stringify(streams).includes(
+      `THUMBNAIL_OVERLAY_BADGE_STYLE_LIVE`,
+    );
   } catch (error) {
-    logger('debug', error, channelId);
+    if (error instanceof Error) {
+      if (error.message.includes(`Tab "streams" not found`)) {
+        return false;
+      }
+    }
 
-    return false;
+    logger('error', error);
   }
 }
 
@@ -96,7 +69,7 @@ async function getStats(
           break;
       }
     } catch (error) {
-      logger('debug', error, channel.url);
+      logger('error', error, channel.url);
     }
   }
 }

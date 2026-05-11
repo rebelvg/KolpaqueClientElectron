@@ -12,19 +12,23 @@ async function getStats(
   printBalloon: boolean,
 ): Promise<void> {
   for (const channel of channels) {
-    const channelStatus = await getStatsBase(channel.name);
+    try {
+      const channelStatus = await getStatsBase(channel.name);
 
-    switch (channelStatus) {
-      case true:
-        channel.setOnline(printBalloon);
+      switch (channelStatus) {
+        case true:
+          channel.setOnline(printBalloon);
 
-        break;
-      case false:
-        channel.setOffline();
+          break;
+        case false:
+          channel.setOffline();
 
-        break;
-      default:
-        break;
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      logger('error', error, channel.url);
     }
   }
 }
