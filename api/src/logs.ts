@@ -47,7 +47,7 @@ try {
 
   const { size } = fs.statSync(appLogPath);
 
-  if (size > 256 * 1024 * 1024) {
+  if (size > 64 * 1024 * 1024) {
     fs.renameSync(appLogPath, `${appLogPath}.old`);
   }
 } catch (error) {
