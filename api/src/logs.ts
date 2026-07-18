@@ -8,10 +8,13 @@ import * as util from 'util';
 import { AxiosError } from 'axios';
 import { main } from './main';
 
-const clientAppDataPath =
-  process.env.NODE_ENV !== 'dev' ? app.getPath('userData') : './.config';
+const isDev = process.env.NODE_ENV === 'dev';
 
-export const appLogPath = path.join(clientAppDataPath, 'app.log');
+const clientAppDataPath = isDev ? './.config' : app.getPath('userData');
+
+const appLogName = (level: string) =>
+  path.join(clientAppDataPath, `app-${level}.log`);
+
 export const crashLogPath = path.join(clientAppDataPath, 'crash.log');
 
 const isTrustedSender = (event: IpcMainEvent | IpcMainInvokeEvent) =>
@@ -40,6 +43,8 @@ ipcMain.on('logs_open_folder', (event) => {
 });
 
 try {
+  const appLogPath = appLogName('info');
+
   const { size } = fs.statSync(appLogPath);
 
   if (size > 256 * 1024 * 1024) {
@@ -104,7 +109,7 @@ export function logger(
 
   const consoleLogLine = [`level:${level}`, logLine];
 
-  if (process.env.NODE_ENV === 'dev') {
+  if (isDev) {
     switch (level) {
       case 'fatal':
       case 'error':
@@ -138,20 +143,31 @@ export function logger(
     }
   }
 
-  fs.promises
-    .appendFile(
-      appLogPath,
-      `${new Date().toISOString()} level:${level} ${logLine}${os.EOL}`,
-    )
-    .catch();
-
   if (['fatal', 'error', 'warn'].includes(level)) {
     fs.promises
       .appendFile(
-        `${appLogPath}-${level}`,
+        appLogName(level),
         `${new Date().toISOString()} ${logLine}${os.EOL}`,
       )
       .catch();
+  } else {
+    if (isDev) {
+      fs.promises
+        .appendFile(
+          appLogName(level),
+          `${new Date().toISOString()} level:${level} ${logLine}${os.EOL}`,
+        )
+        .catch();
+    } else {
+      if (['info'].includes(level)) {
+        fs.promises
+          .appendFile(
+            appLogName(level),
+            `${new Date().toISOString()} level:${level} ${logLine}${os.EOL}`,
+          )
+          .catch();
+      }
+    }
   }
 }
 

@@ -13,6 +13,10 @@ import * as childProcess from 'child_process';
 
 const { name } = require('./package.json');
 
+process.on('uncaughtException', (error) => {
+  throw error;
+});
+
 process.on('unhandledRejection', (error) => {
   throw error;
 });

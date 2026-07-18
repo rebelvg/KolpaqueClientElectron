@@ -27,6 +27,9 @@
     "api",
     "app"
   ],
+  "resolutions": {
+    "yauzl": "^3.3.1"
+  },
   "devDependencies": {
     "@electron/packager": "^19.0.3",
     "@types/archiver": "^6.0.3",
@@ -44,8 +47,8 @@
     "prettier": "^3.7.4",
     "readline-sync": "^1.4.10",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.55.0"
+    "typescript": "^6.0.0",
+    "typescript-eslint": "^8.64.0"
   },
   "dependencies": {
     "axios": "^1.13.5",

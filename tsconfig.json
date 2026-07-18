@@ -7,6 +7,9 @@
     "resolveJsonModule": true,
     "incremental": false,
     "strictNullChecks": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "strict": false,
+    "ignoreDeprecations": "6.0",
+    "esModuleInterop": false
   }
 }

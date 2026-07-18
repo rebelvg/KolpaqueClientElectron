@@ -10,7 +10,10 @@
     "incremental": false,
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "outDir": "./dist"
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": false,
+    "noUncheckedSideEffectImports": false
   },
   "include": ["../app/src/**/*"]
 }
