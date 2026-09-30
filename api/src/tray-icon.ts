@@ -129,7 +129,6 @@ export function rebuildIconMenu(): Menu {
 
   const template: Electron.MenuItemConstructorOptions[] = [
     ...contextMenuTemplate,
-    { type: 'separator' },
   ];
 
   if (process.platform === 'darwin') {
@@ -142,11 +141,14 @@ export function rebuildIconMenu(): Menu {
     });
   }
 
-  template.push({
-    label: 'Online Channels',
-    type: 'submenu',
-    submenu: channels.map(channelMenuItem),
-  });
+  if (channels.length > 0) {
+    template.push({ type: 'separator' });
+    template.push({
+      label: `Online Channels (${channels.length})`,
+      type: 'submenu',
+      submenu: channels.map(channelMenuItem),
+    });
+  }
   template.push(...favorites.map(channelMenuItem));
 
   return Menu.buildFromTemplate(template);
