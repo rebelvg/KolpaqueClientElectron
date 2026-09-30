@@ -8,7 +8,21 @@ Multiplatform desktop app for tracking statuses of your favorite channels on var
 
 ## Automated builds
 
-- https://rebelvg.visualstudio.com/kolpaque/_build
+- [GitHub Actions](https://github.com/rebelvg/KolpaqueClientElectron/actions/workflows/release.yml)
+
+Pushing a tag builds Linux x64, Windows x64, and macOS x64/arm64 ZIPs
+with Node.js 22, then publishes them together in a GitHub release for that tag.
+The existing `yarn run release` command pushes the version tag and triggers this
+workflow. Branch pushes and pull requests do not trigger release builds.
+
+No Azure connection or personal access token is needed. Build jobs have
+`contents: read`; only the publishing job has `contents: write`, using the
+repository's automatic `GITHUB_TOKEN`. Re-running a tag's workflow replaces
+assets with matching names. Releases are published without generated notes and
+are not marked as prereleases, matching the previous Azure release setup.
+
+Disable the old Azure build and release pipelines before pushing a new tag to
+avoid both systems publishing the same release.
 
 ## Features
 
