@@ -1,4 +1,5 @@
 import {
+  app,
   BrowserWindow,
   Menu,
   MenuItem,
@@ -6,8 +7,10 @@ import {
   NativeImage,
 } from 'electron';
 
+import * as path from 'path';
+
 import { config } from './settings-file';
-import { contextMenuTemplate } from './main';
+import { contextMenuTemplate, main, toggleHideClient } from './main';
 import { logger } from './logs';
 import { Channel } from './channel-class';
 
@@ -33,9 +36,15 @@ export function createLiveTrayIcon(
     return icon;
   }
 
-  const liveIcon = nativeImage.createEmpty();
-  const isTemplate = process.platform === 'darwin';
   const label = count > 9 ? '9+' : String(count);
+
+  if (process.platform === 'darwin') {
+    return nativeImage.createFromPath(
+      path.join(app.getAppPath(), 'api', 'icons', `live-${label}Template.png`),
+    );
+  }
+
+  const liveIcon = nativeImage.createEmpty();
 
   for (const scaleFactor of icon.getScaleFactors()) {
     const { width, height } = icon.getSize(scaleFactor);
@@ -60,13 +69,12 @@ export function createLiveTrayIcon(
         const isText =
           inside && textX >= 0 && glyph?.[textY]?.[textX % 4] === '1';
 
-        // Premultiplied BGRA: white text on a red badge, or transparent
-        // digits cut out of a macOS template badge that adapts to the menu bar.
-        const alpha = inside && !(isTemplate && isText) ? 255 : 0;
+        // Premultiplied BGRA: white text on a red badge.
+        const alpha = inside ? 255 : 0;
 
         bitmap[offset] = alpha && isText ? 255 : 0;
-        bitmap[offset + 1] = alpha ? (isText ? 255 : isTemplate ? 0 : 59) : 0;
-        bitmap[offset + 2] = alpha ? (isText ? 255 : isTemplate ? 0 : 239) : 0;
+        bitmap[offset + 1] = alpha ? (isText ? 255 : 59) : 0;
+        bitmap[offset + 2] = alpha ? (isText ? 255 : 239) : 0;
         bitmap[offset + 3] = alpha;
       }
     }
@@ -81,8 +89,6 @@ export function createLiveTrayIcon(
       dataURL: representation.toDataURL(),
     });
   }
-
-  liveIcon.setTemplateImage(isTemplate);
 
   return liveIcon;
 }
@@ -125,6 +131,16 @@ export function rebuildIconMenu(): Menu {
     ...contextMenuTemplate,
     { type: 'separator' },
   ];
+
+  if (process.platform === 'darwin') {
+    const window = main.mainWindow;
+
+    template.unshift({
+      label: window?.isVisible() ? 'Hide Client' : 'Open Client',
+      enabled: !!window && !window.isDestroyed(),
+      click: toggleHideClient,
+    });
+  }
 
   template.push({
     label: 'Online Channels',

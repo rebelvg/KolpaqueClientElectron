@@ -89,7 +89,12 @@ if (!pathOption) {
   const options: Options = {
     dir: './',
     tmpdir: false,
-    icon: './api/icons/klpq.png',
+    icon:
+      platformOption === 'darwin'
+        ? './api/icons/klpq.icns'
+        : platformOption === 'win32'
+          ? './api/icons/icon.ico'
+          : undefined,
     arch,
     ignore: [/\/.git/, /\/.vscode/, /\/.config/, /\/.build/],
     overwrite: true,
@@ -122,6 +127,27 @@ if (!pathOption) {
     });
 
     for (const appPath of appPaths) {
+      if (platform === 'darwin') {
+        const [sourceIcon, bundledIcon] = await Promise.all([
+          fs.promises.readFile('./api/icons/klpq.icns'),
+          fs.promises.readFile(
+            path.join(
+              appPath,
+              `${name}.app`,
+              'Contents',
+              'Resources',
+              'electron.icns',
+            ),
+          ),
+        ]);
+
+        if (!sourceIcon.equals(bundledIcon)) {
+          throw new Error(
+            `Packaged macOS app has an incorrect icon: ${appPath}`,
+          );
+        }
+      }
+
       const archivePath = await new Promise<string>((resolve) => {
         const folderName = path.basename(appPath);
 

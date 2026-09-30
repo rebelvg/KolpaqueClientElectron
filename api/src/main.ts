@@ -82,7 +82,11 @@ ipcMain.on('client_ready', async (event: IpcMainEvent) => {
 });
 
 const iconPath = path.normalize(
-  path.join(app.getAppPath(), './api/icons', 'klpq.png'),
+  path.join(
+    app.getAppPath(),
+    './api/icons',
+    process.platform === 'darwin' ? 'app-icon-macos.png' : 'klpq.png',
+  ),
 );
 let iconPathTray = path.normalize(
   path.join(app.getAppPath(), './api/icons', 'klpq.png'),
@@ -314,7 +318,7 @@ ipcMain.handle(
 
 export const contextMenuTemplate: Electron.MenuItemConstructorOptions[] = [
   {
-    label: 'Play / Clipboard',
+    label: 'Play from Clipboard',
     type: 'normal',
     visible: true,
     click: async (menuItem: MenuItem, browserWindow: BrowserWindow, event) => {
@@ -342,10 +346,14 @@ export const contextMenuTemplate: Electron.MenuItemConstructorOptions[] = [
   },
 ];
 
-function toggleHideClient(): void {
-  main.mainWindow!.isVisible()
-    ? main.mainWindow!.hide()
-    : main.mainWindow!.show();
+export function toggleHideClient(): void {
+  const window = main.mainWindow;
+
+  if (!window || window.isDestroyed()) {
+    return;
+  }
+
+  window.isVisible() ? window.hide() : window.show();
 }
 
 export function refreshTray() {
