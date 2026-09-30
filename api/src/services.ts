@@ -9,7 +9,7 @@ import { YoutubeUserStreamService } from './stream-services/youtube-user';
 import { YoutubeUsernameStreamService } from './stream-services/youtube-username';
 import { Channel } from './channel-class';
 import { BaseStreamService, ServiceNamesEnum } from './stream-services/_base';
-import { main, refreshTrayIconMenuLinux } from './main';
+import { main, refreshTray } from './main';
 import { KickStreamService } from './stream-services/kick';
 
 class ServiceManager {
@@ -71,7 +71,7 @@ class ServiceManager {
         const count = await service.getInfo(channels);
 
         if (count > 0) {
-          refreshTrayIconMenuLinux();
+          refreshTray();
 
           main.mainWindow!.webContents.send('runChannelUpdates', __filename);
         }

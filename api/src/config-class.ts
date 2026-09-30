@@ -6,7 +6,7 @@ import { EventEmitter } from 'events';
 
 import { Channel } from './channel-class';
 import { logger } from './logs';
-import { contextMenuTemplate, main } from './main';
+import { contextMenuTemplate, main, refreshTray } from './main';
 import { sleep } from './helpers';
 import { SourcesEnum } from './enums';
 import { config } from './settings-file';
@@ -295,6 +295,8 @@ export class Config extends EventEmitter {
 
     _.pull(this.channels, channel);
 
+    refreshTray();
+
     config.deletedChannels.push(channel.url);
 
     main.mainWindow!.webContents.send('channel_removeSync');
@@ -402,7 +404,13 @@ export class Config extends EventEmitter {
 
   public setSettings(settingName: string, settingValue: unknown) {
     if (settingName === 'showNotifications') {
-      contextMenuTemplate[3]!.checked = settingValue as boolean;
+      const notificationsItem = contextMenuTemplate.find(
+        (item) => item.label === 'Notifications',
+      );
+
+      if (notificationsItem) {
+        notificationsItem.checked = settingValue as boolean;
+      }
     }
 
     this.updateSettingsPage();

@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, NativeImage } from 'electron';
+import { app, BrowserWindow, dialog, NativeImage } from 'electron';
 import { URL } from 'url';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
@@ -14,7 +14,7 @@ import {
 } from './stream-services/_base';
 
 import { launchPlayerChannel, playInWindow } from './channel-play';
-import { main, refreshTrayIconMenuLinux } from './main';
+import { main, refreshTray } from './main';
 import { ISavedSettingsFile } from './config-class';
 import { SourcesEnum } from './enums';
 import { sleep } from './helpers';
@@ -102,6 +102,10 @@ export class Channel extends EventEmitter {
     _.forEach(channelConfig, (value, key) => {
       this[key] = value;
     });
+
+    if (app.isReady()) {
+      refreshTray();
+    }
   }
 
   private changeSetting(settingName: string, settingValue: unknown): boolean {
@@ -120,6 +124,8 @@ export class Channel extends EventEmitter {
     _.forEach(settings, (settingValue, settingName) => {
       this.changeSetting(settingName, settingValue);
     });
+
+    refreshTray();
 
     main.mainWindow!.webContents.send('channel_changeSetting_api');
 
@@ -208,8 +214,6 @@ export class Channel extends EventEmitter {
       lastUpdated: Date.now(),
       isLive: true,
     });
-
-    refreshTrayIconMenuLinux();
   }
 
   public setOffline() {
@@ -229,8 +233,6 @@ export class Channel extends EventEmitter {
       lastUpdated: Date.now(),
       isLive: false,
     });
-
-    refreshTrayIconMenuLinux();
   }
 
   public async startPlaying(

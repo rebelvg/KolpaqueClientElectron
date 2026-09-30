@@ -10,6 +10,7 @@ import {
   nativeImage,
   MenuItem,
   IpcMainEvent,
+  NativeImage,
 } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
@@ -27,7 +28,7 @@ fixPath();
 
 import { config } from './settings-file';
 import { launchPlayerUrl } from './channel-play';
-import { rebuildIconMenu } from './tray-icon';
+import { createLiveTrayIcon, rebuildIconMenu } from './tray-icon';
 
 import { logger, crashLogPath } from './logs';
 import { init } from './client-init';
@@ -313,20 +314,6 @@ ipcMain.handle(
 
 export const contextMenuTemplate: Electron.MenuItemConstructorOptions[] = [
   {
-    label: 'Hide/Show Client',
-    type: 'normal',
-    visible: process.platform === 'linux',
-    click: (): void => {
-      toggleHideClient();
-    },
-  },
-  {
-    label: 'Online Channels',
-    type: 'submenu',
-    visible: true,
-    submenu: [],
-  },
-  {
     label: 'Play / Clipboard',
     type: 'normal',
     visible: true,
@@ -361,10 +348,26 @@ function toggleHideClient(): void {
     : main.mainWindow!.show();
 }
 
-export function refreshTrayIconMenuLinux() {
-  if (process.platform === 'linux') {
-    logger('info', 'refreshTrayIconMenuLinux');
+export function refreshTray() {
+  if (!appIcon || appIcon.isDestroyed()) {
+    return;
+  }
 
+  const liveFavoriteCount = config.channels.filter(
+    (channel) => channel.isPinned && channel.isLive,
+  ).length;
+
+  if (liveFavoriteCount !== showingLiveFavoriteCount) {
+    appIcon.setImage(createLiveTrayIcon(regularTrayIcon, liveFavoriteCount));
+    appIcon.setToolTip(
+      liveFavoriteCount > 0
+        ? `${CLIENT_NAME} — ${liveFavoriteCount} live favorite${liveFavoriteCount === 1 ? '' : 's'}`
+        : CLIENT_NAME,
+    );
+    showingLiveFavoriteCount = liveFavoriteCount;
+  }
+
+  if (process.platform === 'linux') {
     appIcon.setContextMenu(rebuildIconMenu());
   }
 }
@@ -376,13 +379,16 @@ function showTrayContextMenu(): void {
 }
 
 let appIcon: Tray;
+let regularTrayIcon: NativeImage;
+let showingLiveFavoriteCount = 0;
 
 app.on('ready', () => {
-  appIcon = new Tray(nativeImage.createFromPath(iconPathTray));
+  regularTrayIcon = nativeImage.createFromPath(iconPathTray);
+  appIcon = new Tray(regularTrayIcon);
   appIcon.setToolTip(CLIENT_NAME);
   appIcon.setIgnoreDoubleClickEvents(true);
 
-  refreshTrayIconMenuLinux();
+  refreshTray();
 
   appIcon.on('middle-click', () => {
     logger('info', 'middle_click_event');
