@@ -1,7 +1,7 @@
 {
   "name": "KolpaqueClientElectron",
   "build": {
-    "dockerfile": "Containerfile"
+    "dockerfile": "../Containerfile"
   },
 
   // Extra args to pass to docker/podman run
@@ -35,7 +35,7 @@
     // "source=${localEnv:HOME}/.1password,target=/ssh-agent,type=bind"
   ],
 
-  "postCreateCommand": "chown -R $(id -u):$(id -g) /workspaces/${localWorkspaceFolderBasename}",
+  "postCreateCommand": "sudo chown -R $(id -u):$(id -g) /workspaces/${localWorkspaceFolderBasename}",
 
   "remoteEnv": {
     // "SSH_AUTH_SOCK": "/ssh-agent/agent.sock"
