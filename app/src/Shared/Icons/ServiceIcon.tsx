@@ -41,6 +41,11 @@ const Services: Record<string, Service> = {
     isImage: false,
     color: '#E62117',
   },
+  'youtube-custom': {
+    asset: youtubePlay,
+    isImage: false,
+    color: '#E62117',
+  },
   kick: {
     asset: './icons/kick.ico',
     isImage: true,
