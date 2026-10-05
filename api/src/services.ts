@@ -7,6 +7,7 @@ import { TwitchStreamService } from './stream-services/twitch';
 import { YoutubeChannelStreamService } from './stream-services/youtube-channel';
 import { YoutubeUserStreamService } from './stream-services/youtube-user';
 import { YoutubeUsernameStreamService } from './stream-services/youtube-username';
+import { YoutubeCustomStreamService } from './stream-services/youtube-custom';
 import { Channel } from './channel-class';
 import { BaseStreamService, ServiceNamesEnum } from './stream-services/_base';
 import { main, refreshTray } from './main';
@@ -21,6 +22,7 @@ class ServiceManager {
     new ChaturbateStreamService(),
     new CustomStreamService(),
     new YoutubeUsernameStreamService(),
+    new YoutubeCustomStreamService(),
     new KickStreamService(),
   ];
 
